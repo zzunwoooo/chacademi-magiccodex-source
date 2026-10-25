@@ -8122,3 +8122,2192 @@ bindings:
         delay-ticks: 0
         duration-ticks: 16
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
+  # ---- 325~387 신규 마법 (magic-mythic-paper/tools/nova_spells.py) ----
+  spark_flick:
+    folder: SparkFlick
+    number: 325
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 130
+    sequence:
+      sustainStart: 0
+    holdTicks: 30
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sparkflick/spark_flick_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:spark_flick_hit
+        effect: claude:sparkflick/spark_flick_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ember_puff:
+    folder: EmberPuff
+    number: 326
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 145
+    sequence:
+      sustainStart: 0
+    holdTicks: 45
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:emberpuff/ember_puff
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:ember_puff_burn
+        effect: claude:emberpuff/ember_puff_burn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  tide_slash:
+    folder: TideSlash
+    number: 327
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:tideslash/tide_slash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:tide_slash_hit
+        effect: claude:tideslash/tide_slash_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ice_shard:
+    folder: IceShard
+    number: 328
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 175
+    sequence:
+      sustainStart: 0
+    holdTicks: 75
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:iceshard/ice_shard_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:ice_shard_hit
+        effect: claude:iceshard/ice_shard_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:ice_shard_frostbite
+        effect: claude:iceshard/ice_shard_frostbite
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  wind_needle:
+    folder: WindNeedle
+    number: 329
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 145
+    sequence:
+      sustainStart: 0
+    holdTicks: 45
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:windneedle/wind_needle_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: impact
+        trigger: external:wind_needle_pierce
+        effect: claude:windneedle/wind_needle_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:wind_needle_end
+        effect: claude:windneedle/wind_needle_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  mini_twister:
+    folder: MiniTwister
+    number: 330
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:minitwister/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:lift
+        effect: claude:minitwister/lift
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:end
+        effect: claude:minitwister/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 22
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_fang:
+    folder: ShadowFang
+    number: 331
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 145
+    sequence:
+      sustainStart: 0
+    holdTicks: 45
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:shadowfang/shadow_fang_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:shadow_fang
+        effect: claude:shadowfang/shadow_fang
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  dusk_orb:
+    folder: DuskOrb
+    number: 332
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 275
+    sequence:
+      sustainStart: 0
+    holdTicks: 175
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:duskorb/dusk_orb_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: impact
+        trigger: external:dusk_orb_hit
+        effect: claude:duskorb/dusk_orb_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:dusk_orb_fizzle
+        effect: claude:duskorb/dusk_orb_fizzle
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  prism_shot:
+    folder: PrismShot
+    number: 333
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 170
+    sequence:
+      sustainStart: 0
+    holdTicks: 70
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:prismshot/prism_shot_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:prism_shot_hit
+        effect: claude:prismshot/prism_shot_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:prism_shot_split_hit
+        effect: claude:prismshot/prism_shot_split_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sand_flick:
+    folder: SandFlick
+    number: 334
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 155
+    sequence:
+      sustainStart: 0
+    holdTicks: 55
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sandflick/sand_flick
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:sand_flick_eyes
+        effect: claude:sandflick/sand_flick_eyes
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sunlance_drop:
+    folder: SunlanceDrop
+    number: 335
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 160
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sunlancedrop/sunlance_drop_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 9
+      - role: impact
+        trigger: external:sunlance_drop
+        effect: claude:sunlancedrop/sunlance_drop
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 36
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flame_wheel:
+    folder: FlameWheel
+    number: 336
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 170
+    sequence:
+      sustainStart: 0
+    holdTicks: 70
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flamewheel/flame_wheel_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:flame_wheel_pierce
+        effect: claude:flamewheel/flame_wheel_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:flame_wheel_bounce
+        effect: claude:flamewheel/flame_wheel_bounce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:flame_wheel_end
+        effect: claude:flamewheel/flame_wheel_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  eruption_line:
+    folder: EruptionLine
+    number: 337
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:eruptionline/eruption_line
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 66
+      - role: impact
+        trigger: external:eruption_line_hit
+        effect: claude:eruptionline/eruption_line_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flame_javelin:
+    folder: FlameJavelin
+    number: 338
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 150
+    sequence:
+      sustainStart: 0
+    holdTicks: 50
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flamejavelin/flame_javelin_throw
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:flame_javelin_hit
+        effect: claude:flamejavelin/flame_javelin_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:flame_javelin_hit_full
+        effect: claude:flamejavelin/flame_javelin_hit_full
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  heat_haze:
+    folder: HeatHaze
+    number: 339
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 195
+    sequence:
+      sustainStart: 0
+    holdTicks: 95
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:heathaze/heat_haze_dash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: static
+        trigger: cast
+        effect: claude:heathaze/heat_haze_decoy
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:heat_haze_pop
+        effect: claude:heathaze/heat_haze_pop
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  frost_path:
+    folder: FrostPath
+    number: 340
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 245
+    sequence:
+      sustainStart: 0
+    holdTicks: 145
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:frostpath/frost_path_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:frost_path
+        effect: claude:frostpath/frost_path
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: static
+        trigger: external:frost_path_end
+        effect: claude:frostpath/frost_path_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:frostpath/frost_path
+      - role: attached
+        trigger: external:frost_path_skate
+        effect: claude:frostpath/frost_path_skate
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 92
+      - role: attached
+        trigger: external:frost_path_skate_off
+        effect: claude:frostpath/frost_path_skate
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:frostpath/frost_path_skate
+      - role: attached
+        trigger: external:frost_path_chill
+        effect: claude:frostpath/frost_path_chill
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  hydro_burst:
+    folder: HydroBurst
+    number: 341
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 170
+    sequence:
+      sustainStart: 0
+    holdTicks: 70
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:hydroburst/channel
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: impact
+        trigger: external:splash
+        effect: claude:hydroburst/splash
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:channel_cut
+        effect: claude:hydroburst/splash
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        stop-effects:
+          - claude:hydroburst/channel
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crystal_coat:
+    folder: CrystalCoat
+    number: 342
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:crystalcoat/crystal_coat_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: link
+        trigger: external:crystal_coat_link
+        effect: claude:crystalcoat/crystal_coat_link
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:crystal_coat_begin
+        effect: claude:crystalcoat/crystal_coat_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:crystal_coat
+        effect: claude:crystalcoat/crystal_coat
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 74
+      - role: attached
+        trigger: external:crystal_coat_shatter
+        effect: claude:crystalcoat/crystal_coat_shatter
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:crystalcoat/crystal_coat
+          - claude:crystalcoat/crystal_coat_begin
+      - role: attached
+        trigger: external:crystal_coat_fade
+        effect: claude:crystalcoat/crystal_coat_fade
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:crystalcoat/crystal_coat
+          - claude:crystalcoat/crystal_coat_begin
+      - role: impact
+        trigger: external:crystal_coat_absorb
+        effect: claude:crystalcoat/crystal_coat_absorb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: impact
+        trigger: external:crystal_coat_chill
+        effect: claude:crystalcoat/crystal_coat_chill
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ice_bloom:
+    folder: IceBloom
+    number: 343
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 185
+    sequence:
+      sustainStart: 0
+    holdTicks: 85
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:icebloom/ice_bloom
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: impact
+        trigger: external:ice_bloom_hit
+        effect: claude:icebloom/ice_bloom_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  vacuum_burst:
+    folder: VacuumBurst
+    number: 344
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 164
+    sequence:
+      sustainStart: 0
+    holdTicks: 64
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:vacuumburst/vacuum_burst
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 44
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  gale_combo:
+    folder: GaleCombo
+    number: 345
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 140
+    sequence:
+      sustainStart: 0
+    holdTicks: 40
+    phases:
+      - role: attached
+        trigger: external:gale_combo_slash1
+        effect: claude:galecombo/gale_combo_slash1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:gale_combo_slash2
+        effect: claude:galecombo/gale_combo_slash2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:gale_combo_push3
+        effect: claude:galecombo/gale_combo_push3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:gale_combo_hit
+        effect: claude:galecombo/gale_combo_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:gale_combo_push_hit
+        effect: claude:galecombo/gale_combo_push_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  air_choke:
+    folder: AirChoke
+    number: 346
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: link
+        trigger: external:air_choke_cast
+        effect: claude:airchoke/air_choke_cast
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:air_choke_form
+        effect: claude:airchoke/air_choke_form
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: attached
+        trigger: external:air_choke
+        effect: claude:airchoke/air_choke
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: attached
+        trigger: external:air_choke_release
+        effect: claude:airchoke/air_choke_release
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:airchoke/air_choke
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  storm_eye:
+    folder: StormEye
+    number: 347
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:stormeye/storm_eye_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 9
+      - role: attached
+        trigger: external:storm_eye
+        effect: claude:stormeye/storm_eye
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 74
+      - role: attached
+        trigger: external:storm_eye_end
+        effect: claude:stormeye/storm_eye_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+        stop-effects:
+          - claude:stormeye/storm_eye
+      - role: impact
+        trigger: external:storm_eye_catch
+        effect: claude:stormeye/storm_eye_catch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 4
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_mire:
+    folder: ShadowMire
+    number: 348
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: external:shadow_mire_begin
+        effect: claude:shadowmire/shadow_mire_begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:shadow_mire
+        effect: claude:shadowmire/shadow_mire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: static
+        trigger: external:shadow_mire_end
+        effect: claude:shadowmire/shadow_mire_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:shadowmire/shadow_mire
+      - role: attached
+        trigger: external:shadow_mire_root
+        effect: claude:shadowmire/shadow_mire_root
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 56
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  dread_dream:
+    folder: DreadDream
+    number: 349
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 160
+    sequence:
+      sustainStart: 0
+    holdTicks: 60
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:dreaddream/dread_dream_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:dread_dream_thread
+        effect: claude:dreaddream/dread_dream_thread
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:dread_dream_nightmare
+        effect: claude:dreaddream/dread_dream_nightmare
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:dread_dream_fear
+        effect: claude:dreaddream/dread_dream_fear
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  shadow_step:
+    folder: ShadowStep
+    number: 350
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 150
+    sequence:
+      sustainStart: 0
+    holdTicks: 50
+    phases:
+      - role: static
+        trigger: external:shadow_step_depart
+        effect: claude:shadowstep/shadow_step_depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:shadow_step
+        effect: claude:shadowstep/shadow_step
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:shadow_step_arrive
+        effect: claude:shadowstep/shadow_step_arrive
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:shadowstep/shadow_step
+      - role: attached
+        trigger: external:shadow_step_blind
+        effect: claude:shadowstep/shadow_step_blind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 28
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  halo_throw:
+    folder: HaloThrow
+    number: 351
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:halothrow/halo_throw_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:halo_throw_hit
+        effect: claude:halothrow/halo_throw_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:halo_throw_slow
+        effect: claude:halothrow/halo_throw_slow
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:halo_throw_end
+        effect: claude:halothrow/halo_throw_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flash_blink:
+    folder: FlashBlink
+    number: 352
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: static
+        trigger: external:depart
+        effect: claude:flashblink/depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: link
+        trigger: external:streak
+        effect: claude:flashblink/streak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: event-point
+        link-target: caster
+      - role: attached
+        trigger: external:arrive
+        effect: claude:flashblink/arrive
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 36
+      - role: attached
+        trigger: external:blind
+        effect: claude:flashblink/blind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  boulder_charge:
+    folder: BoulderCharge
+    number: 353
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:bouldercharge/boulder_charge
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:boulder_charge_dash
+        effect: claude:bouldercharge/boulder_charge_dash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:boulder_charge_hit
+        effect: claude:bouldercharge/boulder_charge_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:boulder_charge_stun
+        effect: claude:bouldercharge/boulder_charge_stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:boulder_charge_end
+        effect: claude:bouldercharge/boulder_charge_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:bouldercharge/boulder_charge
+          - claude:bouldercharge/boulder_charge_dash
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  air_cannon:
+    folder: AirCannon
+    number: 354
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:aircannon/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: impact
+        trigger: external:impact
+        effect: claude:aircannon/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:heavy
+        effect: claude:aircannon/heavy
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  hex_doll:
+    folder: HexDoll
+    number: 355
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: external:dollIn
+        effect: claude:hexdoll/dollIn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: link
+        trigger: external:form
+        effect: claude:hexdoll/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:doll
+        effect: claude:hexdoll/doll
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: link
+        trigger: external:bind
+        effect: claude:hexdoll/bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:dollOut
+        effect: claude:hexdoll/dollOut
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:hexdoll/doll
+      - role: link
+        trigger: external:fade
+        effect: claude:hexdoll/fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: event-point
+        link-target: target
+        stop-effects:
+          - claude:hexdoll/bind
+      - role: link
+        trigger: external:strike
+        effect: claude:hexdoll/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+        link-source: event-point
+        link-target: target
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crimson_spiral:
+    folder: CrimsonSpiral
+    number: 356
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:crimsonspiral/crimson_spiral_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:crimson_spiral_pierce
+        effect: claude:crimsonspiral/crimson_spiral_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: attached
+        trigger: external:crimson_spiral_burn
+        effect: claude:crimsonspiral/crimson_spiral_burn
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: impact
+        trigger: external:crimson_spiral_end
+        effect: claude:crimsonspiral/crimson_spiral_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  volcanic_barrage:
+    folder: VolcanicBarrage
+    number: 357
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:volcanicbarrage/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: static
+        trigger: cast
+        effect: claude:volcanicbarrage/zone
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: static
+        trigger: external:mark
+        effect: claude:volcanicbarrage/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: impact
+        trigger: external:impact
+        effect: claude:volcanicbarrage/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  scorch_lock:
+    folder: ScorchLock
+    number: 358
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 270
+    sequence:
+      sustainStart: 0
+    holdTicks: 170
+    phases:
+      - role: link
+        trigger: external:lock
+        effect: claude:scorchlock/aimForm
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 7
+        link-source: caster-hand
+        link-target: target-chest
+      - role: attached
+        trigger: external:lock
+        effect: claude:scorchlock/lockForm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 7
+      - role: link
+        trigger: external:lock
+        effect: claude:scorchlock/aim
+        anchor: impact
+        delay-ticks: 7
+        duration-ticks: 140
+        link-source: caster-hand
+        link-target: target-chest
+      - role: attached
+        trigger: external:lock
+        effect: claude:scorchlock/lock
+        anchor: target
+        delay-ticks: 7
+        duration-ticks: 140
+      - role: link
+        trigger: external:fire
+        effect: claude:scorchlock/aimFire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target-chest
+        stop-effects:
+          - claude:scorchlock/aim
+          - claude:scorchlock/aimForm
+      - role: attached
+        trigger: external:fire
+        effect: claude:scorchlock/strike
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:scorchlock/lock
+          - claude:scorchlock/lockForm
+      - role: link
+        trigger: external:break
+        effect: claude:scorchlock/aimBreak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target-chest
+        stop-effects:
+          - claude:scorchlock/aim
+          - claude:scorchlock/aimForm
+      - role: attached
+        trigger: external:break
+        effect: claude:scorchlock/fizzle
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:scorchlock/lock
+          - claude:scorchlock/lockForm
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  freeze_field:
+    folder: FreezeField
+    number: 359
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 270
+    sequence:
+      sustainStart: 0
+    holdTicks: 170
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 19
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field
+        anchor: target
+        delay-ticks: 16
+        duration-ticks: 104
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field_end
+        anchor: target
+        delay-ticks: 120
+        duration-ticks: 30
+        stop-effects:
+          - claude:freezefield/freeze_field
+      - role: attached
+        trigger: external:freeze_field_freeze
+        effect: claude:freezefield/freeze_field_freeze
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 22
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ebb_mark:
+    folder: EbbMark
+    number: 360
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:ebbmark/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:markHit
+        effect: claude:ebbmark/markHit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: static
+        trigger: external:anchor
+        effect: claude:ebbmark/anchor
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:brand
+        effect: claude:ebbmark/brand
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: link
+        trigger: external:tether
+        effect: claude:ebbmark/tether
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 64
+        link-source: target-chest
+        link-target: event-point
+      - role: link
+        trigger: external:tide
+        effect: claude:ebbmark/tide
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: target-chest
+        link-target: event-point
+        stop-effects:
+          - claude:ebbmark/brand
+          - claude:ebbmark/tether
+      - role: impact
+        trigger: external:ebb
+        effect: claude:ebbmark/ebb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  ice_serpent:
+    folder: IceSerpent
+    number: 361
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:iceserpent/ice_serpent_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:ice_serpent_hit
+        effect: claude:iceserpent/ice_serpent_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:ice_serpent_end
+        effect: claude:iceserpent/ice_serpent_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  sky_dive:
+    folder: SkyDive
+    number: 362
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:skydive/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: attached
+        trigger: cast
+        effect: claude:skydive/rise
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:mark
+        effect: claude:skydive/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: attached
+        trigger: external:dive
+        effect: claude:skydive/dive
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:skydive/rise
+      - role: impact
+        trigger: external:land
+        effect: claude:skydive/land
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 62
+        stop-effects:
+          - claude:skydive/dive
+          - claude:skydive/mark
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  thundercloud:
+    folder: Thundercloud
+    number: 363
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 250
+    sequence:
+      sustainStart: 0
+    holdTicks: 150
+    phases:
+      - role: attached
+        trigger: external:cloud
+        effect: claude:thundercloud/cloud
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 124
+      - role: impact
+        trigger: external:strike
+        effect: claude:thundercloud/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  fate_link:
+    folder: FateLink
+    number: 364
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 250
+    sequence:
+      sustainStart: 0
+    holdTicks: 150
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:fatelink/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: attached
+        trigger: external:mark
+        effect: claude:fatelink/mark
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 130
+      - role: link
+        trigger: external:form
+        effect: claude:fatelink/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 9
+        link-source: event-point
+        link-target: target-chest
+      - role: link
+        trigger: external:bind
+        effect: claude:fatelink/bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+      - role: link
+        trigger: external:taut
+        effect: claude:fatelink/taut
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/taut
+      - role: link
+        trigger: external:strain
+        effect: claude:fatelink/strain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/strain
+      - role: link
+        trigger: external:snap
+        effect: claude:fatelink/snap
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/form
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+      - role: impact
+        trigger: external:snapMid
+        effect: claude:fatelink/snapMid
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: attached
+        trigger: external:snapHit
+        effect: claude:fatelink/snapHit
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 10
+        stop-effects:
+          - claude:fatelink/mark
+      - role: link
+        trigger: external:fade
+        effect: claude:fatelink/fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/form
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+          - claude:fatelink/mark
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  prism_cage:
+    folder: PrismCage
+    number: 365
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: static
+        trigger: external:cage
+        effect: claude:prismcage/cage
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: attached
+        trigger: external:stun
+        effect: claude:prismcage/stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  wraith_march:
+    folder: WraithMarch
+    number: 366
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 200
+    sequence:
+      sustainStart: 0
+    holdTicks: 100
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:wraithmarch/wraith_march
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: impact
+        trigger: external:wraith_march_fear
+        effect: claude:wraithmarch/wraith_march_fear
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  fault_rift:
+    folder: FaultRift
+    number: 367
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 210
+    sequence:
+      sustainStart: 0
+    holdTicks: 110
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:faultrift/fault_rift
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 48
+      - role: impact
+        trigger: external:fault_rift_pin
+        effect: claude:faultrift/fault_rift_pin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 64
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  flame_emperor:
+    folder: FlameEmperor
+    number: 368
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 390
+    sequence:
+      sustainStart: 0
+    holdTicks: 290
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flameemperor/flame_emperor_chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: attached
+        trigger: external:struct_cancel
+        effect: claude:flameemperor/flame_emperor_chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:flameemperor/flame_emperor_chant
+      - role: attached
+        trigger: external:flame_emperor
+        effect: claude:flameemperor/flame_emperor
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 175
+      - role: attached
+        trigger: external:flame_emperor_end
+        effect: claude:flameemperor/flame_emperor_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 50
+        stop-effects:
+          - claude:flameemperor/flame_emperor
+      - role: impact
+        trigger: external:flame_emperor_fireball_hit
+        effect: claude:flameemperor/flame_emperor_fireball_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  leviathan_rise:
+    folder: LeviathanRise
+    number: 369
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 330
+    sequence:
+      sustainStart: 0
+    holdTicks: 230
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:leviathanrise/casterChant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 100
+      - role: static
+        trigger: external:zoneChant
+        effect: claude:leviathanrise/zoneChant
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 100
+      - role: static
+        trigger: external:struct_cancel
+        effect: claude:leviathanrise/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:leviathanrise/zoneChant
+          - claude:leviathanrise/casterChant
+      - role: static
+        trigger: external:strike
+        effect: claude:leviathanrise/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: static
+        trigger: external:drain
+        effect: claude:leviathanrise/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:leviathanrise/strike
+      - role: impact
+        trigger: external:struck
+        effect: claude:leviathanrise/struck
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  heaven_cyclone:
+    folder: HeavenCyclone
+    number: 370
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 370
+    sequence:
+      sustainStart: 0
+    holdTicks: 270
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:heavencyclone/begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: static
+        trigger: external:sustain
+        effect: claude:heavencyclone/sustain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 210
+      - role: static
+        trigger: external:end
+        effect: claude:heavencyclone/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:heavencyclone/sustain
+      - role: attached
+        trigger: external:lift
+        effect: claude:heavencyclone/lift
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 220
+      - role: impact
+        trigger: external:slam
+        effect: claude:heavencyclone/slam
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:heavencyclone/lift
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  abyss_gate:
+    folder: AbyssGate
+    number: 371
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 390
+    sequence:
+      sustainStart: 0
+    holdTicks: 290
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:abyssgate/chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: static
+        trigger: external:mark
+        effect: claude:abyssgate/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:struct_cancel
+        effect: claude:abyssgate/chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:abyssgate/chant
+          - claude:abyssgate/mark
+      - role: static
+        trigger: external:begin
+        effect: claude:abyssgate/begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:abyssgate/mark
+      - role: static
+        trigger: external:sustain
+        effect: claude:abyssgate/sustain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 160
+      - role: static
+        trigger: external:end
+        effect: claude:abyssgate/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+        stop-effects:
+          - claude:abyssgate/sustain
+      - role: link
+        trigger: external:pull
+        effect: claude:abyssgate/pull
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 175
+        link-source: target-chest
+        link-target: event-point
+      - role: impact
+        trigger: external:sleep
+        effect: claude:abyssgate/sleep
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:abyssgate/pull
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  aurora_veil:
+    folder: AuroraVeil
+    number: 372
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 400
+    sequence:
+      sustainStart: 0
+    holdTicks: 300
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:auroraveil/aurora_veil_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: static
+        trigger: external:aurora_veil
+        effect: claude:auroraveil/aurora_veil
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 240
+      - role: static
+        trigger: external:aurora_veil_end
+        effect: claude:auroraveil/aurora_veil_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:auroraveil/aurora_veil
+          - claude:auroraveil/aurora_veil_ally
+          - claude:auroraveil/aurora_veil_weaken
+      - role: attached
+        trigger: external:aurora_veil_ally
+        effect: claude:auroraveil/aurora_veil_ally
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 240
+      - role: attached
+        trigger: external:aurora_veil_weaken
+        effect: claude:auroraveil/aurora_veil_weaken
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 240
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  titan_stride:
+    folder: TitanStride
+    number: 373
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 230
+    sequence:
+      sustainStart: 0
+    holdTicks: 130
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:titanstride/titan_stride
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: impact
+        trigger: external:titan_stride_step_l
+        effect: claude:titanstride/titan_stride_step_l
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:titan_stride_step_r
+        effect: claude:titanstride/titan_stride_step_r
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:titan_stride_final
+        effect: claude:titanstride/titan_stride_final
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  alchemy_preheat:
+    folder: AlchemyPreheat
+    number: 374
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 210
+    sequence:
+      sustainStart: 0
+    holdTicks: 110
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:alchemypreheat/alchemy_preheat
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 90
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  broom_afterburner:
+    folder: BroomAfterburner
+    number: 375
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:broomafterburner/broom_afterburner_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 3
+      - role: attached
+        trigger: external:broom_afterburner
+        effect: claude:broomafterburner/broom_afterburner
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 58
+      - role: attached
+        trigger: external:broom_afterburner_end
+        effect: claude:broomafterburner/broom_afterburner_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+        stop-effects:
+          - claude:broomafterburner/broom_afterburner
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  signal_flare:
+    folder: SignalFlare
+    number: 376
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 410
+    sequence:
+      sustainStart: 0
+    holdTicks: 310
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:signalflare/signal_flare
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 290
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  water_glimpse:
+    folder: WaterGlimpse
+    number: 377
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 230
+    sequence:
+      sustainStart: 0
+    holdTicks: 130
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:waterglimpse/water_glimpse_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 29
+      - role: static
+        trigger: external:water_glimpse
+        effect: claude:waterglimpse/water_glimpse
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 96
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  calm_ripple:
+    folder: CalmRipple
+    number: 378
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 225
+    sequence:
+      sustainStart: 0
+    holdTicks: 125
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:calmripple/calm_ripple
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 104
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  treasure_scent:
+    folder: TreasureScent
+    number: 379
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 220
+    sequence:
+      sustainStart: 0
+    holdTicks: 120
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:treasurescent/treasure_scent
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 100
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  tailwind:
+    folder: Tailwind
+    number: 380
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 430
+    sequence:
+      sustainStart: 0
+    holdTicks: 330
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:tailwind/tailwind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: attached
+        trigger: external:tailwind_buff
+        effect: claude:tailwind/tailwind_buff
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 300
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  season_sense:
+    folder: SeasonSense
+    number: 381
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:seasonsense/season_sense
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 70
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  pack_sort:
+    folder: PackSort
+    number: 382
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:packsort/pack_sort
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  heart_read:
+    folder: HeartRead
+    number: 383
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:heartread/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:read
+        effect: claude:heartread/read
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 39
+        link-source: caster
+        link-target: target
+      - role: attached
+        trigger: external:glimmer
+        effect: claude:heartread/glimmer
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 56
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  insight_flash:
+    folder: InsightFlash
+    number: 384
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 190
+    sequence:
+      sustainStart: 0
+    holdTicks: 90
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:insightflash/insight_flash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  harvest_bell:
+    folder: HarvestBell
+    number: 385
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 1370
+    sequence:
+      sustainStart: 0
+    holdTicks: 1270
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:harvestbell/harvest_bell
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 61
+      - role: impact
+        trigger: external:reveal
+        effect: claude:harvestbell/reveal
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  blessed_ribbon:
+    folder: BlessedRibbon
+    number: 386
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 180
+    sequence:
+      sustainStart: 0
+    holdTicks: 80
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:blessedribbon/blessed_ribbon
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 58
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
+  crop_snare:
+    folder: CropSnare
+    number: 387
+    range: 30
+    speed: 1
+    trajectory: server-events
+    max-ticks: 2600
+    sequence:
+      sustainStart: 0
+    holdTicks: 2500
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:cropsnare/crop_snare
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: impact
+        trigger: external:crop_snare_bind
+        effect: claude:cropsnare/crop_snare_bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 78
+    review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending

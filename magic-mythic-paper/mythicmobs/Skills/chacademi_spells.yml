@@ -1360,6 +1360,386 @@ CHA_dimension_mark:
   Skills:
   - chagimmick{type=mark;range=24;mana=40;element=dark;spell=dimension_mark} @self
 
+# 325 불씨 튕기기 - 손끝 불씨 3개를 전방 6블록 ±17° 부채꼴로 0.10/0.13/0.16초에 튕김, 불씨마다 1회 피해 (가까울수록 여러 발)
+CHA_spark_flick:
+  Cooldown: 0
+  Skills:
+  - chanova{type=spark_flick;pack=sparkflick;aim=cone:6:34;element=fire;spell=spark_flick}
+
+# 326 작은 불숨 - 전방 3블록 ±30° 원뿔, 0.1초에 숨이 나가 초속 9블록으로 퍼지며 닿는 순서대로 피해 + 화상 3초 (시야 막힌 적 제외)
+CHA_ember_puff:
+  Cooldown: 0
+  Skills:
+  - chanova{type=ember_puff;pack=emberpuff;aim=cone:3:60;element=fire;spell=ember_puff}
+
+# 327 물살 베기 - 전방 3블록 반원을 0.1초에 베어 피해 + 시전자 반대쪽으로 약 1블록 밀침
+CHA_tide_slash:
+  Cooldown: 0
+  Skills:
+  - chanova{type=tide_slash;pack=tideslash;aim=cone:3:180;element=water;spell=tide_slash}
+
+# 328 얼음 조각 - 얼음 조각 2발을 0.12/0.27초에 발사 (16블록), 발마다 피해, 두 발 모두 같은 적에게 맞으면 둔화 3초
+CHA_ice_shard:
+  Cooldown: 0
+  Skills:
+  - chanova{type=ice_shard;pack=iceshard;aim=line:16:0.6;element=water;spell=ice_shard}
+
+# 329 바람 송곳 - 0.12초에 바늘 발사, 24블록을 틱당 3블록으로 날며 닿는 적 모두 1번씩 관통 피해
+CHA_wind_needle:
+  Cooldown: 0
+  Skills:
+  - chanova{type=wind_needle;pack=windneedle;aim=line:24:0.5;element=wind;spell=wind_needle}
+
+# 330 작은 회오리 - 0.15초에 앞 0.9블록에서 회오리 출발, 땅을 따라 틱당 0.18블록으로 8블록 (약 2.2초), 막히면 멈춤. 닿은 적(반경 0.75)마다 1번 피해 + 살짝 띄움
+CHA_mini_twister:
+  Cooldown: 0
+  Skills:
+  - chanova{type=mini_twister;pack=minitwister;aim=line:8:1.5;element=wind;spell=mini_twister}
+
+# 331 그림자 송곳니 - 대상 발밑(0.08초)에 그림자 웅덩이, 0.2초 뒤 송곳니가 솟아 피해. 그 사이 웅덩이(반경 1.8) 밖으로 피하면 빗나감
+CHA_shadow_fang:
+  Cooldown: 0
+  Skills:
+  - chanova{type=shadow_fang;pack=shadowfang;aim=point;element=dark;spell=shadow_fang}
+
+# 332 어둠 구슬 - 0.15초에 느린 구슬(틱당 0.18블록)이 대상을 6초 동안 따라감. 처음 닿은 적에게 피해 + 약화 3초, 벽에 막히거나 6초가 지나면 사라짐
+CHA_dusk_orb:
+  Cooldown: 0
+  Skills:
+  - chanova{type=dusk_orb;pack=duskorb;aim=point;element=dark;spell=dusk_orb}
+
+# 333 프리즘 탄 - 0.18초에 빛탄 발사 (20블록). 적에게 맞으면 그 자리에서 굴절돼 반경 6 안의 다른 적 최대 2명에게 작은 빛탄 (각 60% 피해). 벽·빗나감은 굴절 없음
+CHA_prism_shot:
+  Cooldown: 0
+  Skills:
+  - chanova{type=prism_shot;pack=prismshot;aim=line:20:0.6;element=light;spell=prism_shot}
+
+# 334 모래 한 줌 - 전방 3.5블록 ±30° 원뿔, 0.12초에 모래가 나가 초속 9블록으로 퍼지며 닿는 순서대로 약한 피해 + 실명 3초 (시야 막힌 적 제외)
+CHA_sand_flick:
+  Cooldown: 0
+  Skills:
+  - chanova{type=sand_flick;pack=sandflick;aim=cone:3.5:60;element=earth;spell=sand_flick}
+
+# 335 햇살 꽂기 - 대상 발밑 위로 해 문양(0.05초), 0.43초 뒤 빛줄기가 땅에 닿아 피해. 그 사이 표시 원(반경 1.3) 밖으로 피하면 빗나감
+CHA_sunlance_drop:
+  Cooldown: 0
+  Skills:
+  - chanova{type=sunlance_drop;pack=sunlancedrop;aim=point;element=light;spell=sunlance_drop}
+
+# 336 화염 원반 - +0.30초에 발밑 불 바퀴 발사, 지면 따라 12블록(0.75블록/틱) 관통. 첫 벽에 닿으면 반사 방향으로 남은 거리만큼 되굴러옴(왕복 각 1회 피해)
+CHA_flame_wheel:
+  Cooldown: 0
+  Skills:
+  - chanova{type=flame_wheel;pack=flamewheel;aim=line:12:1.4;element=fire;spell=flame_wheel}
+
+# 337 분화선 - 정면 2.5/4.6/6.7/8.8블록에 불기둥 4개가 +0.45/0.70/0.95/1.20초에 솟음(반경 1.2). 적마다 1회 피해 + 살짝 띄움, 벽 너머는 안 솟음
+CHA_eruption_line:
+  Cooldown: 0
+  Skills:
+  - chanova{type=eruption_line;pack=eruptionline;aim=line:10:2.4;element=fire;spell=eruption_line}
+
+# 338 화염 투창 - 조준 미리보기에서 좌클릭을 누른 시간(최대 1.5초, 클라가 chacademia:spell_charge로 알림, 없으면 완충)만큼 사거리 10→30, 피해 x0.5→x1.5. 꽂힌 자리 폭발 반경 1.5(완충 2.5)
+CHA_flame_javelin:
+  Cooldown: 0
+  Skills:
+  - chanova{type=flame_javelin;pack=flamejavelin;aim=line:30:1;min=10;max=30;element=fire;spell=flame_javelin}
+
+# 339 아지랑이 - 옆으로 2블록 미끄러짐(좌우 이동 키 방향, 없으면 오른쪽 / 빗자루 위에서는 미끄러짐 없이 허상만). 제자리에 허상 3초: 10블록 안 몬스터는 시전자 대신 허상으로 감. 끝날 때 반경 2.5 폭발 + 화상 3초
+CHA_heat_haze:
+  Cooldown: 0
+  Skills:
+  - chanova{type=heat_haze;pack=heathaze;ticks=60;lure=10;r=2.5;element=fire;spell=heat_haze}
+
+# 340 서리 길 - 발밑부터 정면 폭 2 x 길이 8 얼음길 5초(+0.5초부터 판정). 위의 적 둔화 3초(풀리면 다시), 시전자는 길 위에서 이동속도 +30%
+CHA_frost_path:
+  Cooldown: 0
+  Skills:
+  - chanova{type=frost_path;pack=frostpath;aim=line:8.4:2;ticks=100;haste=0.3;element=water;spell=frost_path}
+
+# 341 수류 탄환 - 1.5초 채널링: +0.20초부터 0.17초마다 물줄기 8발(지금 보는 방향, 14블록). 맞으면 피해 + 조금 밀림. 시전 중 자기 이동속도 -50%, 기절·수면·공포·무장해제 시 끊김
+CHA_hydro_burst:
+  Cooldown: 0
+  Skills:
+  - chanova{type=hydro_burst;pack=hydroburst;aim=line:14:1;speed=1.25;range=14;knock=0.25;element=water;spell=hydro_burst}
+
+# 342 결정 갑옷 - 바라본 15블록 안 아군 1명(없으면 자신)에게 4초 얼음 보호막(임시 체력 = 6+0.3x마력). 다 깎이면 깨지며 반경 3 적 둔화 3초, 4초 지나면 조용히 녹음
+CHA_crystal_coat:
+  Cooldown: 0
+  Skills:
+  - chanova{type=crystal_coat;pack=crystalcoat;range=15;ticks=80;r=3;element=water;spell=crystal_coat}
+
+# 343 얼음 꽃 - 조준 지면에 얼음 꽃, 1.5초 뒤 6방향(60° 간격, 0번 = 정면) 6블록 파편. 줄 0.9 안의 적은 파편이 닿는 순간(1.5+거리/20초) 1회 피해
+CHA_ice_bloom:
+  Cooldown: 0
+  Skills:
+  - chanova{type=ice_bloom;pack=icebloom;aim=area:6;len=6;w=0.9;element=water;spell=ice_bloom}
+
+# 344 진공 폭발 - 조준 지면 반경 4: 0.8초 동안 적을 가운데로 끌어당김(보스 제외), +0.8초에 터지며 피해 + 바깥으로 살짝 밀침
+CHA_vacuum_burst:
+  Cooldown: 0
+  Skills:
+  - chanova{type=vacuum_burst;pack=vacuumburst;aim=area:4;r=4;pull=0.35;knock=0.45;element=wind;spell=vacuum_burst}
+
+# 345 질풍 연격 - 2초 안에 다시 쓰면 다음 타: 1·2타 정면 3.5블록 130° 베기(+0.05초), 3타 4.5블록 130° 밀쳐내기(+0.10초, 피해 x1.4). 마나는 첫 타만(2·3타 환급), 3타 뒤 또는 2초 창이 지나면 쿨 10초
+CHA_gale_combo:
+  Cooldown: 0
+  Skills:
+  - chanova{type=gale_combo;pack=galecombo;aim=cone:4.5:130;mana=30;cooldown=10;r=3.5;push_r=4.5;push_mult=1.4;knock=1.3;element=wind;spell=gale_combo}
+
+# 346 숨 막힘 - 대상 1명: 0.2초에 바람 실이 목에 닿으며 무장해제 3초. 정화되거나 20블록 넘게 멀어지면 바로 풀림(풀림 연출)
+CHA_air_choke:
+  Cooldown: 0
+  Skills:
+  - chanova{type=air_choke;pack=airchoke;aim=point;mana=100;element=wind;spell=air_choke}
+
+# 347 폭풍의 눈 - 4초간 몸 주위 바람 장벽: 반경 2.4 안으로 날아드는(빠른 화살은 다음 틱 경로까지 봄) 적의 바닐라 투사체(화살·삼지창·화염구·눈덩이 등, 최대 16개)를 붙잡아 반경 1.6 궤도로 돌리고, 4.1초에 바깥으로 흩뿌림. 흩뿌린 투사체는 시전자 소유, 시전자·아군은 맞지 않음. 엔더 진주·낚싯찌·폭죽 제외, 물약은 터뜨려 없앰, 삼지창은 땅에 닿으면 원래 주인에게 돌아감
+CHA_storm_eye:
+  Cooldown: 0
+  Skills:
+  - chanova{type=storm_eye;pack=stormeye;mana=120;element=wind;spell=storm_eye}
+
+# 348 그림자 늪 - 조준한 땅에 반경 3 늪 4초. 안의 적: 처음 한 번 고정 3초(붙잡는 연출), 안에 있는 동안 둔화 30%(나온 뒤 1.5초)
+CHA_shadow_mire:
+  Cooldown: 0
+  Skills:
+  - chanova{type=shadow_mire;pack=shadowmire;aim=area:3;mana=90;element=dark;spell=shadow_mire}
+
+# 349 악몽 - 대상이 수면·공포 상태면 0.62초에 악몽의 아가리가 물어 큰 피해 + 수면·공포 해제, 아니면 0.36초에 공포 1초 (피해 없음)
+CHA_dread_dream:
+  Cooldown: 0
+  Skills:
+  - chanova{type=dread_dream;pack=dreaddream;aim=point;mana=70;element=dark;spell=dread_dream}
+
+# 350 그림자 걸음 - 바라보는 수평 방향으로 0.25초에 5블록 이동(적은 통과, 벽·보호 구역 앞에서 멈춤, 한 칸 턱은 오름). 이동 중 잠깐 투명, 지나친 적 실명 3초. 빗자루 탑승 중 불가
+CHA_shadow_step:
+  Cooldown: 0
+  Skills:
+  - chanova{type=shadow_step;pack=shadowstep;aim=line:5:1.2;mana=60;element=dark;spell=shadow_step}
+
+# 351 광륜 투척 - 0.45초에 빛 고리 발사(20블록, 탄속 1.2). 처음 맞은 적 피해 + 둔화 3초, 그 자리에서 8블록 안 가장 가까운 다른 적에게 한 번 튕겨 피해 80%
+CHA_halo_throw:
+  Cooldown: 0
+  Skills:
+  - chanova{type=halo_throw;pack=halothrow;aim=line:20:1;element=light;spell=halo_throw}
+
+# 352 섬광 도약 - 바라보는 방향 6블록 안의 안전한 설 자리로 순간이동(벽·보호 구역 너머 불가). 출발 자리 반경 3 적 실명 3초. 빗자루 탑승 중 불가(마나·쿨 돌려줌)
+CHA_flash_blink:
+  Cooldown: 0
+  Skills:
+  - chanova{type=flash_blink;pack=flashblink;aim=line:6:1;mana=90;element=light;spell=flash_blink}
+
+# 353 바위 돌진 - 0.45초 바위 갑옷 뒤 바라보는 수평 방향으로 6블록 돌진(틱당 0.9). 처음 부딪힌 적 피해 + 기절 1초 + 밀침 1.4, 돌진은 거기서 멈춤. 벽·보호 구역 앞에서 멈춤, 빗자루 탑승 중 불가
+CHA_boulder_charge:
+  Cooldown: 0
+  Skills:
+  - chanova{type=boulder_charge;pack=bouldercharge;aim=line:6:1.2;mana=80;element=earth;spell=boulder_charge}
+
+# 354 공기 포탄 - 0.40/0.65/0.90초에 바라보는 방향으로 공기 포탄 3발(20블록, 탄속 1.5). 맞을 때마다 피해 + 0.35 밀침, 한 대상이 3발 모두 맞으면 중력 3초
+CHA_air_cannon:
+  Cooldown: 0
+  Skills:
+  - chanova{type=air_cannon;pack=aircannon;aim=line:20:1;element=wind;spell=air_cannon}
+
+# 355 저주 인형 - 대상 옆 1.4블록에 4초간 저주 인형(보이지 않는 갑옷 거치대, 0.3초부터 맞음, 드롭·저장 없음). 시전자·아군이 인형을 때리면 그 피해의 50%(최대 12, 같은 사람 0.25초 간격)를 0.2초 뒤 대상에게 마법 피해로. 적이 때리면 아무 일 없음. 대상이 멀리 가도 유지, 대상이 죽으면 끝
+CHA_hex_doll:
+  Cooldown: 0
+  Skills:
+  - chanova{type=hex_doll;pack=hexdoll;aim=point;mana=90;element=dark;spell=hex_doll}
+
+# 356 홍염 나선 - 0.35초 뒤 두 화염 줄기가 감긴 나선이 18블록 관통 (멈추지 않음). 닿은 적마다 0/0.12/0.24초 3회 피해, 3번째 타에 화상 3초
+CHA_crimson_spiral:
+  Cooldown: 0
+  Skills:
+  - chanova{type=crimson_spiral;pack=crimsonspiral;aim=line:18:1.6;mana=220;element=fire;spell=crimson_spiral}
+
+# 357 화산탄 세례 - 화산탄 6발을 쏘아 올려 조준 반경 6 안 6곳에 떨어뜨림. 낙하 자리마다 1.2초 빨간 예고 뒤 착탄 (반경 2 피해 + 둔화 3초)
+CHA_volcanic_barrage:
+  Cooldown: 0
+  Skills:
+  - chanova{type=volcanic_barrage;pack=volcanicbarrage;aim=area:6;mana=300;element=fire;spell=volcanic_barrage}
+
+# 358 작열의 표적 - 대상 1명에 조준선 6초 (0.25초마다 눈→대상 시야·25블록 검사, 0.5초 넘게 놓치면 실패). 성공 시 하늘의 화염창이 0.43초 뒤 꽂혀 큰 피해, 실패 시 마나 절반 환급
+CHA_scorch_lock:
+  Cooldown: 0
+  Skills:
+  - chanova{type=scorch_lock;pack=scorchlock;aim=point;mana=250;element=fire;spell=scorch_lock}
+
+# 359 빙결 지대 - 조준 반경 5 냉기 6초. 안에 누적 3초 머문 적은 기절 1초 (대상마다 1회), 0.9초 뒤 얼음이 깨지며 피해
+CHA_freeze_field:
+  Cooldown: 0
+  Skills:
+  - chanova{type=freeze_field;pack=freezefield;aim=area:5;element=water;spell=freeze_field}
+
+# 360 썰물 - 0.22초 뒤 물살 탄 (유도). 맞은 적 발밑에 물결 표식, 3초 뒤 대상이 표식 자리로 0.35초 동안 쓸려 돌아가며 피해 (보스는 끌지 않고 피해만)
+CHA_ebb_mark:
+  Cooldown: 0
+  Skills:
+  - chanova{type=ebb_mark;pack=ebbmark;aim=point;element=water;spell=ebb_mark}
+
+# 361 얼음 뱀 - 0.3초 뒤 얼음 뱀이 S자(좌우 ±1.4블록)로 지면을 따라 20블록 관통 전진. 지나간 적마다 0/0.15/0.3초 3회 피해 + 둔화 3초
+CHA_ice_serpent:
+  Cooldown: 0
+  Skills:
+  - chanova{type=ice_serpent;pack=iceserpent;aim=line:20:3;mana=350;element=water;spell=ice_serpent}
+
+# 362 천공 강하 - 7블록 위로 솟구쳤다가 조준 지점(12블록)으로 급강하. 착지 반경 3 피해 + 중력 3초, 이 강하의 낙하 피해 없음. 빗자루 탑승 중 불가 (마나 환급)
+CHA_sky_dive:
+  Cooldown: 0
+  Skills:
+  - chanova{type=sky_dive;pack=skydive;aim=area:3;mana=260;element=wind;spell=sky_dive}
+
+# 363 뇌운 - 대상 머리 위 먹구름 6초, 대상을 따라감. 1.5/3.0/4.5/6.0초에 대상 자리로 낙뢰 (낙뢰 지점 반경 1.5 적 피해)
+CHA_thundercloud:
+  Cooldown: 0
+  Skills:
+  - chanova{type=thundercloud;pack=thundercloud;aim=point;element=wind;spell=thundercloud}
+
+# 364 운명의 실 - 대상 + 대상 8블록 안의 가장 가까운 다른 적(없으면 조준선 위의 적)을 실로 6초 연결. 둘 사이가 8블록을 넘으면 둘 다 피해 + 기절 1초 후 끊김. 둘째 적이 없으면 시전 안 됨 (마나 환급)
+CHA_fate_link:
+  Cooldown: 0
+  Skills:
+  - chanova{type=fate_link;pack=fatelink;aim=point;mana=240;element=dark;spell=fate_link}
+
+# 365 빛의 감옥 - 대상 발밑에 빛기둥 6개 (반경 2.4), 1.5초 뒤 레이저가 모임. 그때 대상이 감옥(반경 2.6) 안에 있으면 피해 + 기절 1초, 빠져나가면 빗나감
+CHA_prism_cage:
+  Cooldown: 0
+  Skills:
+  - chanova{type=prism_cage;pack=prismcage;aim=point;element=light;spell=prism_cage}
+
+# 366 망령의 행진 - 망령 5체가 바라보는 방향 15블록(폭 2)을 초속 7.5블록으로 행진 (선두 0.42초 출발, 벽 통과). 행렬에 닿은 적마다 1회 피해 + 공포 1초
+CHA_wraith_march:
+  Cooldown: 0
+  Skills:
+  - chanova{type=wraith_march;pack=wraithmarch;aim=line:15:2;element=dark;spell=wraith_march}
+
+# 367 단층 붕괴 - 바라보는 방향 땅에 균열 (폭 2.5, 0.8~16.2블록), 1.4초 뒤 무너짐: 그때 균열 위(발이 땅 근처)의 적 피해 + 고정 3초. 실제 지형 변화 없음
+CHA_fault_rift:
+  Cooldown: 0
+  Skills:
+  - chanova{type=fault_rift;pack=faultrift;aim=line:16:2.5;element=earth;spell=fault_rift}
+
+# 368 염제 강림 - 3초 영창(이동·피격 시 실패) → 8초 화신: 걸은 자리에 화염길(밟은 적 화상 3초, 점마다 약 1.7초, 실제 불 없음), 화신 중 이 마법 키 = 대형 화염탄(최대 4발, 반경 2.5 폭발 + 화상, 마나·쿨 없음), 끝날 때 반경 6 폭발(끝 + 0.35초) + 화상. 쿨 600초는 화신이 끝날 때부터
+CHA_flame_emperor:
+  Cooldown: 0
+  Skills:
+  - chachannel{ticks=60;move=0.3;then=CHA_flame_emperor_x;element=fire;spell=flame_emperor}
+
+# 369 레비아탄 - 5초 영창(이동·피격 시 실패) → 조준 지점 반경 10: 바다뱀이 솟아 삼킴(+0.4초, 피해 x0.35 + 둔화 3초) → 내려찍음(+1.4초, 피해 + 기절 1초)
+CHA_leviathan_rise:
+  Cooldown: 0
+  Skills:
+  - chanova{type=leviathan_rise_mark;pack=leviathanrise;aim=area:10;element=water;spell=leviathan_rise}
+  - chachannel{ticks=100;move=0.3;then=CHA_leviathan_rise_x;element=water;spell=leviathan_rise}
+
+# 370 하늘의 눈 - 시전 위치 반경 8 대폭풍 10초: 안의 적을 1.5초에 걸쳐 4블록 띄워 붙잡음(속도로 유지, 플레이어는 중력 = 비행·빗자루 불가, 보스는 안 뜸), 끝 + 0.4초에 한꺼번에 내리꽂고 끝 + 0.55초 피해
+CHA_heaven_cyclone:
+  Cooldown: 0
+  Skills:
+  - chanova{type=heaven_cyclone;pack=heavencyclone;r=8;lift=4;ticks=200;element=wind;spell=heaven_cyclone}
+
+# 371 심연의 문 - 3초 영창(이동·피격 시 실패) → 조준 지점에 문 8초: 반경 8 적을 문 쪽으로 끌어당김(보스 30%), 닫힐 때(끝 + 0.45초) 큰 피해 + 수면 1초
+CHA_abyss_gate:
+  Cooldown: 0
+  Skills:
+  - chanova{type=abyss_gate_mark;pack=abyssgate;aim=area:8;element=dark;spell=abyss_gate}
+  - chachannel{ticks=60;move=0.3;then=CHA_abyss_gate_x;element=dark;spell=abyss_gate}
+
+# 372 오로라 - 지원형: 시전 위치 반경 10 오로라 12초. 안의 아군(본인 + 파티원) 2초마다 회복(시전 + 2.3초부터 5회) + 안에 있는 동안 새 디버프 면역, 안의 적 약화(나가면 1.5초 뒤 풀림)
+CHA_aurora_veil:
+  Cooldown: 0
+  Skills:
+  - chanova{type=aurora_veil;pack=auroraveil;r=10;ticks=240;element=light;spell=aurora_veil}
+
+# 373 타이탄의 발걸음 - 바라보는 방향 3.5 / 7 / 11블록에 거인의 발이 차례로 내려찍음(각 1초 예고): +1.0초·+1.8초 반경 2.2 피해 x0.6, +2.8초 반경 3.5 피해 + 기절 1초
+CHA_titan_stride:
+  Cooldown: 0
+  Skills:
+  - chanova{type=titan_stride;pack=titanstride;aim=line:13:7;element=earth;spell=titan_stride}
+
+# 374 연금로 예열 - Bridge 유틸: 10분 안의 다음 연금 제작 1회 경험치 30% 감소 (성공한 제작에서만 쓰임, 이미 걸려 있으면 거절). 메모리 버프, 나가면 사라짐
+CHA_alchemy_preheat:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=fire;spell=alchemy_preheat} @self
+
+# 377 물밑 엿보기 - Bridge 유틸: 바라보는 물(24블록)의 깊이·넓이·바이옴 묶음과 이 물에서 낚이는 물고기 등급별 목록(도감 미등록 ???), 0.85초 뒤 채팅·알림. 물이 아니면 거절
+CHA_water_glimpse:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=water;spell=water_glimpse} @self
+
+# 378 잔잔한 물결 - Bridge 유틸: 다음 낚시 1회(입질 때 적용) 물고기 strain x0.7 → 장력 상승·당기는 힘이 30% 줄어듦. 이미 걸려 있으면 거절
+CHA_calm_ripple:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=water;spell=calm_ripple} @self
+
+# 379 보물 냄새 - Bridge 유틸: 10분 동안 입질마다 보물상자 확률 x2
+CHA_treasure_scent:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=water;spell=treasure_scent} @self
+
+# 381 계절 예보 - Bridge 유틸: 지금 계절, 다음 계절까지 남은 시간(계절 시계 방식대로), 회오리 이벤트 안내(이 서버의 ChAcademiaTornado 상태), 2.2초 뒤 채팅·알림
+CHA_season_sense:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=wind;spell=season_sense} @self
+
+# 382 배낭 정리 - Bridge 유틸: 해금된 아공간 배낭 모든 쪽(지금 인벤토리 27칸 포함, 핫바 제외)을 합치고 종류별 정렬. 쪽 넘기기와 같은 WAL·잠금·CAS 경로 한 번, 동기화 중·창 열림·이미 정리됨이면 거절
+CHA_pack_sort:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=dark;spell=pack_sort} @self
+
+# 383 마음 읽기 - Bridge 유틸: 바라보는 ChacaNPC(10블록)가 좋아하는 선물(gift_likes loved+liked) 하나를 1.25초 뒤 채팅·알림으로. NPC마다 하루 1번(플레이어별, 서버 메모리). NPC가 아니거나 오늘 읽었으면 거절
+CHA_heart_read:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=dark;spell=heart_read} @self
+
+# 384 영감의 섬광 - Bridge 유틸: 다음 연금 시도 1회(재료가 다 있는 합성 누르기), 넣은 재료 종류 중 가장 가까운 레시피에 든 종류 수를 숫자로 알림. 이미 걸려 있으면 거절
+CHA_insight_flash:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=light;spell=insight_flash} @self
+
+# 386 축복의 리본 - Bridge 유틸: 손에 든 선물 1개에 리본(PDC gift_ribbon + 설명 한 줄). 그 선물은 좋아하는 선물 점수 x1.2(반올림, 최소 +1), 상한·퀘스트 규칙 그대로. 선물이 아니거나 이미 리본이면 거절
+CHA_blessed_ribbon:
+  Cooldown: 0
+  Skills:
+  - chanote{n=1;element=light;spell=blessed_ribbon} @self
+
+# 375 불꽃 추진 - 빗자루 탑승 중에만: 3초간 최고 속도 ×1.2, 빗자루 궤적을 숨기고 불꽃 분사 VFX가 대신 그림. 내리면 바로 끝. 안 타고 있으면 거절(마나 환급)
+CHA_broom_afterburner:
+  Cooldown: 0
+  Skills:
+  - chanova{type=broom_afterburner;pack=broomafterburner;mana=80;ticks=60;speed=1.2;element=fire;spell=broom_afterburner}
+
+# 376 봉화 신호 - 발밑에서 25m 불꽃 기둥(약 13초). 30초 동안 같은 서버·같은 세계의 파티원 지도 창에 시전자 위치가 표시(1초마다 갱신) + 파티원 알림. 이 서버에 파티원이 없으면 거절(마나 환급)
+CHA_signal_flare:
+  Cooldown: 0
+  Skills:
+  - chanova{type=signal_flare;pack=signalflare;mana=20;ticks=600;element=fire;spell=signal_flare}
+
+# 380 순풍 - 빗자루 탑승 중에만: 0.24초 뒤 반경 8 안 빗자루 탄 파티원(자신 포함) 균형 게이지 즉시 가득 + 15초 균형 감소 ×0.7. 안 타고 있으면 거절(마나 환급)
+CHA_tailwind:
+  Cooldown: 0
+  Skills:
+  - chanova{type=tailwind;pack=tailwind;mana=50;r=8;ticks=300;drain=0.7;element=wind;spell=tailwind}
+
+# 385 수확제의 종 - 첫 종소리(0.78초)부터 1분 동안 내가 수확한 작물이 살아날 확률 ×2. 살아난 작물마다 그 자리에 표시 VFX + 30초 발광
+CHA_harvest_bell:
+  Cooldown: 0
+  Skills:
+  - chanova{type=harvest_bell;pack=harvestbell;mana=60;ticks=1200;chance=2;element=light;spell=harvest_bell}
+
+# 387 작물 붙잡기 - 2분 동안 내 수확으로 살아난 작물이 땅에서 나오는 그 틱에 속박 3초 + 뿌리 VFX
+CHA_crop_snare:
+  Cooldown: 0
+  Skills:
+  - chanova{type=crop_snare;pack=cropsnare;mana=30;ticks=2400;root=60;element=earth;spell=crop_snare}
+
 # (추가 스킬) 태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)
 CHA_solar_judgment_fire:
   Cooldown: 0
@@ -1371,3 +1751,21 @@ CHA_eclipse_eye_zone:
   Cooldown: 0
   Skills:
   - chaarcana{type=eclipse;r=15;ticks=200;shards=6;speed=0.3;contact=20;haste=0.3;element=dark;spell=eclipse_eye}
+
+# (추가 스킬) 염제 강림 영창 완료 후 8초 화신 (chachannel then=)
+CHA_flame_emperor_x:
+  Cooldown: 0
+  Skills:
+  - chanova{type=flame_emperor;pack=flameemperor;ticks=160;shots=4;r=6;cooldown=600;element=fire;spell=flame_emperor}
+
+# (추가 스킬) 레비아탄 영창 완료 후 바다뱀 (chachannel then=)
+CHA_leviathan_rise_x:
+  Cooldown: 0
+  Skills:
+  - chanova{type=leviathan_rise;pack=leviathanrise;r=10;element=water;spell=leviathan_rise}
+
+# (추가 스킬) 심연의 문 영창 완료 후 문 8초 (chachannel then=)
+CHA_abyss_gate_x:
+  Cooldown: 0
+  Skills:
+  - chanova{type=abyss_gate;pack=abyssgate;r=8;ticks=160;element=dark;spell=abyss_gate}

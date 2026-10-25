@@ -8449,3 +8449,2192 @@ spells:
         delay-ticks: 0
         duration-ticks: 16
     preparation-status: server-events-connected
+  # ---- 325~387 신규 마법 (magic-mythic-paper/tools/nova_spells.py) ----
+  spark_flick:
+    number: 325
+    name: 불씨 튕기기
+    permission: magic.learned.spark_flick
+    icon: ''
+    mana-cost: 5
+    cooldown-seconds: 4
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sparkflick/spark_flick_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:spark_flick_hit
+        effect: claude:sparkflick/spark_flick_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  ember_puff:
+    number: 326
+    name: 작은 불숨
+    permission: magic.learned.ember_puff
+    icon: ''
+    mana-cost: 8
+    cooldown-seconds: 6
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:emberpuff/ember_puff
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:ember_puff_burn
+        effect: claude:emberpuff/ember_puff_burn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  tide_slash:
+    number: 327
+    name: 물살 베기
+    permission: magic.learned.tide_slash
+    icon: ''
+    mana-cost: 6
+    cooldown-seconds: 4
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:tideslash/tide_slash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:tide_slash_hit
+        effect: claude:tideslash/tide_slash_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  ice_shard:
+    number: 328
+    name: 얼음 조각
+    permission: magic.learned.ice_shard
+    icon: ''
+    mana-cost: 8
+    cooldown-seconds: 5
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:iceshard/ice_shard_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:ice_shard_hit
+        effect: claude:iceshard/ice_shard_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:ice_shard_frostbite
+        effect: claude:iceshard/ice_shard_frostbite
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+    preparation-status: server-events-connected
+  wind_needle:
+    number: 329
+    name: 바람 송곳
+    permission: magic.learned.wind_needle
+    icon: ''
+    mana-cost: 5
+    cooldown-seconds: 3
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:windneedle/wind_needle_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: impact
+        trigger: external:wind_needle_pierce
+        effect: claude:windneedle/wind_needle_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:wind_needle_end
+        effect: claude:windneedle/wind_needle_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+    preparation-status: server-events-connected
+  mini_twister:
+    number: 330
+    name: 작은 회오리
+    permission: magic.learned.mini_twister
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 6
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:minitwister/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:lift
+        effect: claude:minitwister/lift
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:end
+        effect: claude:minitwister/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 22
+    preparation-status: server-events-connected
+  shadow_fang:
+    number: 331
+    name: 그림자 송곳니
+    permission: magic.learned.shadow_fang
+    icon: ''
+    mana-cost: 6
+    cooldown-seconds: 4
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:shadowfang/shadow_fang_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:shadow_fang
+        effect: claude:shadowfang/shadow_fang
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  dusk_orb:
+    number: 332
+    name: 어둠 구슬
+    permission: magic.learned.dusk_orb
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 7
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:duskorb/dusk_orb_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 15
+      - role: impact
+        trigger: external:dusk_orb_hit
+        effect: claude:duskorb/dusk_orb_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:dusk_orb_fizzle
+        effect: claude:duskorb/dusk_orb_fizzle
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+    preparation-status: server-events-connected
+  prism_shot:
+    number: 333
+    name: 프리즘 탄
+    permission: magic.learned.prism_shot
+    icon: ''
+    mana-cost: 8
+    cooldown-seconds: 5
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:prismshot/prism_shot_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:prism_shot_hit
+        effect: claude:prismshot/prism_shot_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: impact
+        trigger: external:prism_shot_split_hit
+        effect: claude:prismshot/prism_shot_split_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    preparation-status: server-events-connected
+  sand_flick:
+    number: 334
+    name: 모래 한 줌
+    permission: magic.learned.sand_flick
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sandflick/sand_flick
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:sand_flick_eyes
+        effect: claude:sandflick/sand_flick_eyes
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  sunlance_drop:
+    number: 335
+    name: 햇살 꽂기
+    permission: magic.learned.sunlance_drop
+    icon: ''
+    mana-cost: 8
+    cooldown-seconds: 5
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:sunlancedrop/sunlance_drop_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 9
+      - role: impact
+        trigger: external:sunlance_drop
+        effect: claude:sunlancedrop/sunlance_drop
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 36
+    preparation-status: server-events-connected
+  flame_wheel:
+    number: 336
+    name: 화염 원반
+    permission: magic.learned.flame_wheel
+    icon: ''
+    mana-cost: 40
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flamewheel/flame_wheel_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:flame_wheel_pierce
+        effect: claude:flamewheel/flame_wheel_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:flame_wheel_bounce
+        effect: claude:flamewheel/flame_wheel_bounce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:flame_wheel_end
+        effect: claude:flamewheel/flame_wheel_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  eruption_line:
+    number: 337
+    name: 분화선
+    permission: magic.learned.eruption_line
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:eruptionline/eruption_line
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 66
+      - role: impact
+        trigger: external:eruption_line_hit
+        effect: claude:eruptionline/eruption_line_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    preparation-status: server-events-connected
+  flame_javelin:
+    number: 338
+    name: 화염 투창
+    permission: magic.learned.flame_javelin
+    icon: ''
+    mana-cost: 50
+    cooldown-seconds: 9
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flamejavelin/flame_javelin_throw
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:flame_javelin_hit
+        effect: claude:flamejavelin/flame_javelin_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+      - role: impact
+        trigger: external:flame_javelin_hit_full
+        effect: claude:flamejavelin/flame_javelin_hit_full
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+    preparation-status: server-events-connected
+  heat_haze:
+    number: 339
+    name: 아지랑이
+    permission: magic.learned.heat_haze
+    icon: ''
+    mana-cost: 70
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:heathaze/heat_haze_dash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: static
+        trigger: cast
+        effect: claude:heathaze/heat_haze_decoy
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:heat_haze_pop
+        effect: claude:heathaze/heat_haze_pop
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  frost_path:
+    number: 340
+    name: 서리 길
+    permission: magic.learned.frost_path
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 18
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:frostpath/frost_path_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:frost_path
+        effect: claude:frostpath/frost_path
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: static
+        trigger: external:frost_path_end
+        effect: claude:frostpath/frost_path_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:frostpath/frost_path
+      - role: attached
+        trigger: external:frost_path_skate
+        effect: claude:frostpath/frost_path_skate
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 92
+      - role: attached
+        trigger: external:frost_path_skate_off
+        effect: claude:frostpath/frost_path_skate
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:frostpath/frost_path_skate
+      - role: attached
+        trigger: external:frost_path_chill
+        effect: claude:frostpath/frost_path_chill
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+    preparation-status: server-events-connected
+  hydro_burst:
+    number: 341
+    name: 수류 탄환
+    permission: magic.learned.hydro_burst
+    icon: ''
+    mana-cost: 45
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:hydroburst/channel
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: impact
+        trigger: external:splash
+        effect: claude:hydroburst/splash
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:channel_cut
+        effect: claude:hydroburst/splash
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        stop-effects:
+          - claude:hydroburst/channel
+    preparation-status: server-events-connected
+  crystal_coat:
+    number: 342
+    name: 결정 갑옷
+    permission: magic.learned.crystal_coat
+    icon: ''
+    mana-cost: 90
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:crystalcoat/crystal_coat_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: link
+        trigger: external:crystal_coat_link
+        effect: claude:crystalcoat/crystal_coat_link
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:crystal_coat_begin
+        effect: claude:crystalcoat/crystal_coat_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:crystal_coat
+        effect: claude:crystalcoat/crystal_coat
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 74
+      - role: attached
+        trigger: external:crystal_coat_shatter
+        effect: claude:crystalcoat/crystal_coat_shatter
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:crystalcoat/crystal_coat
+          - claude:crystalcoat/crystal_coat_begin
+      - role: attached
+        trigger: external:crystal_coat_fade
+        effect: claude:crystalcoat/crystal_coat_fade
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:crystalcoat/crystal_coat
+          - claude:crystalcoat/crystal_coat_begin
+      - role: impact
+        trigger: external:crystal_coat_absorb
+        effect: claude:crystalcoat/crystal_coat_absorb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: impact
+        trigger: external:crystal_coat_chill
+        effect: claude:crystalcoat/crystal_coat_chill
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    preparation-status: server-events-connected
+  ice_bloom:
+    number: 343
+    name: 얼음 꽃
+    permission: magic.learned.ice_bloom
+    icon: ''
+    mana-cost: 70
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:icebloom/ice_bloom
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: impact
+        trigger: external:ice_bloom_hit
+        effect: claude:icebloom/ice_bloom_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    preparation-status: server-events-connected
+  vacuum_burst:
+    number: 344
+    name: 진공 폭발
+    permission: magic.learned.vacuum_burst
+    icon: ''
+    mana-cost: 80
+    cooldown-seconds: 16
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:vacuumburst/vacuum_burst
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 44
+    preparation-status: server-events-connected
+  gale_combo:
+    number: 345
+    name: 질풍 연격
+    permission: magic.learned.gale_combo
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: external:gale_combo_slash1
+        effect: claude:galecombo/gale_combo_slash1
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:gale_combo_slash2
+        effect: claude:galecombo/gale_combo_slash2
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: attached
+        trigger: external:gale_combo_push3
+        effect: claude:galecombo/gale_combo_push3
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: impact
+        trigger: external:gale_combo_hit
+        effect: claude:galecombo/gale_combo_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:gale_combo_push_hit
+        effect: claude:galecombo/gale_combo_push_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+    preparation-status: server-events-connected
+  air_choke:
+    number: 346
+    name: 숨 막힘
+    permission: magic.learned.air_choke
+    icon: ''
+    mana-cost: 100
+    cooldown-seconds: 24
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: link
+        trigger: external:air_choke_cast
+        effect: claude:airchoke/air_choke_cast
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:air_choke_form
+        effect: claude:airchoke/air_choke_form
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: attached
+        trigger: external:air_choke
+        effect: claude:airchoke/air_choke
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: attached
+        trigger: external:air_choke_release
+        effect: claude:airchoke/air_choke_release
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:airchoke/air_choke
+    preparation-status: server-events-connected
+  storm_eye:
+    number: 347
+    name: 폭풍의 눈
+    permission: magic.learned.storm_eye
+    icon: ''
+    mana-cost: 120
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:stormeye/storm_eye_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 9
+      - role: attached
+        trigger: external:storm_eye
+        effect: claude:stormeye/storm_eye
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 74
+      - role: attached
+        trigger: external:storm_eye_end
+        effect: claude:stormeye/storm_eye_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 12
+        stop-effects:
+          - claude:stormeye/storm_eye
+      - role: impact
+        trigger: external:storm_eye_catch
+        effect: claude:stormeye/storm_eye_catch
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 4
+    preparation-status: server-events-connected
+  shadow_mire:
+    number: 348
+    name: 그림자 늪
+    permission: magic.learned.shadow_mire
+    icon: ''
+    mana-cost: 90
+    cooldown-seconds: 20
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:shadow_mire_begin
+        effect: claude:shadowmire/shadow_mire_begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: static
+        trigger: external:shadow_mire
+        effect: claude:shadowmire/shadow_mire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: static
+        trigger: external:shadow_mire_end
+        effect: claude:shadowmire/shadow_mire_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 18
+        stop-effects:
+          - claude:shadowmire/shadow_mire
+      - role: attached
+        trigger: external:shadow_mire_root
+        effect: claude:shadowmire/shadow_mire_root
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 56
+    preparation-status: server-events-connected
+  dread_dream:
+    number: 349
+    name: 악몽
+    permission: magic.learned.dread_dream
+    icon: ''
+    mana-cost: 70
+    cooldown-seconds: 15
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:dreaddream/dread_dream_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:dread_dream_thread
+        effect: claude:dreaddream/dread_dream_thread
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: caster-hand
+        link-target: target
+      - role: attached
+        trigger: external:dread_dream_nightmare
+        effect: claude:dreaddream/dread_dream_nightmare
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:dread_dream_fear
+        effect: claude:dreaddream/dread_dream_fear
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  shadow_step:
+    number: 350
+    name: 그림자 걸음
+    permission: magic.learned.shadow_step
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:shadow_step_depart
+        effect: claude:shadowstep/shadow_step_depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:shadow_step
+        effect: claude:shadowstep/shadow_step
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:shadow_step_arrive
+        effect: claude:shadowstep/shadow_step_arrive
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:shadowstep/shadow_step
+      - role: attached
+        trigger: external:shadow_step_blind
+        effect: claude:shadowstep/shadow_step_blind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 28
+    preparation-status: server-events-connected
+  halo_throw:
+    number: 351
+    name: 광륜 투척
+    permission: magic.learned.halo_throw
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:halothrow/halo_throw_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 14
+      - role: impact
+        trigger: external:halo_throw_hit
+        effect: claude:halothrow/halo_throw_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: attached
+        trigger: external:halo_throw_slow
+        effect: claude:halothrow/halo_throw_slow
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 62
+      - role: impact
+        trigger: external:halo_throw_end
+        effect: claude:halothrow/halo_throw_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    preparation-status: server-events-connected
+  flash_blink:
+    number: 352
+    name: 섬광 도약
+    permission: magic.learned.flash_blink
+    icon: ''
+    mana-cost: 90
+    cooldown-seconds: 18
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:depart
+        effect: claude:flashblink/depart
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: link
+        trigger: external:streak
+        effect: claude:flashblink/streak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: event-point
+        link-target: caster
+      - role: attached
+        trigger: external:arrive
+        effect: claude:flashblink/arrive
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 36
+      - role: attached
+        trigger: external:blind
+        effect: claude:flashblink/blind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  boulder_charge:
+    number: 353
+    name: 바위 돌진
+    permission: magic.learned.boulder_charge
+    icon: ''
+    mana-cost: 80
+    cooldown-seconds: 18
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:bouldercharge/boulder_charge
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: attached
+        trigger: external:boulder_charge_dash
+        effect: claude:bouldercharge/boulder_charge_dash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: static
+        trigger: external:boulder_charge_hit
+        effect: claude:bouldercharge/boulder_charge_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+      - role: attached
+        trigger: external:boulder_charge_stun
+        effect: claude:bouldercharge/boulder_charge_stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: attached
+        trigger: external:boulder_charge_end
+        effect: claude:bouldercharge/boulder_charge_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:bouldercharge/boulder_charge
+          - claude:bouldercharge/boulder_charge_dash
+    preparation-status: server-events-connected
+  air_cannon:
+    number: 354
+    name: 공기 포탄
+    permission: magic.learned.air_cannon
+    icon: ''
+    mana-cost: 70
+    cooldown-seconds: 14
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:aircannon/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 31
+      - role: impact
+        trigger: external:impact
+        effect: claude:aircannon/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+      - role: impact
+        trigger: external:heavy
+        effect: claude:aircannon/heavy
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  hex_doll:
+    number: 355
+    name: 저주 인형
+    permission: magic.learned.hex_doll
+    icon: ''
+    mana-cost: 90
+    cooldown-seconds: 22
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:dollIn
+        effect: claude:hexdoll/dollIn
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: link
+        trigger: external:form
+        effect: claude:hexdoll/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:doll
+        effect: claude:hexdoll/doll
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: link
+        trigger: external:bind
+        effect: claude:hexdoll/bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 72
+        link-source: event-point
+        link-target: target
+      - role: static
+        trigger: external:dollOut
+        effect: claude:hexdoll/dollOut
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+        stop-effects:
+          - claude:hexdoll/doll
+      - role: link
+        trigger: external:fade
+        effect: claude:hexdoll/fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: event-point
+        link-target: target
+        stop-effects:
+          - claude:hexdoll/bind
+      - role: link
+        trigger: external:strike
+        effect: claude:hexdoll/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+        link-source: event-point
+        link-target: target
+    preparation-status: server-events-connected
+  crimson_spiral:
+    number: 356
+    name: 홍염 나선
+    permission: magic.learned.crimson_spiral
+    icon: ''
+    mana-cost: 220
+    cooldown-seconds: 35
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:crimsonspiral/crimson_spiral_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 18
+      - role: impact
+        trigger: external:crimson_spiral_pierce
+        effect: claude:crimsonspiral/crimson_spiral_pierce
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: attached
+        trigger: external:crimson_spiral_burn
+        effect: claude:crimsonspiral/crimson_spiral_burn
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: impact
+        trigger: external:crimson_spiral_end
+        effect: claude:crimsonspiral/crimson_spiral_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  volcanic_barrage:
+    number: 357
+    name: 화산탄 세례
+    permission: magic.learned.volcanic_barrage
+    icon: ''
+    mana-cost: 300
+    cooldown-seconds: 50
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:volcanicbarrage/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: static
+        trigger: cast
+        effect: claude:volcanicbarrage/zone
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 40
+      - role: static
+        trigger: external:mark
+        effect: claude:volcanicbarrage/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: impact
+        trigger: external:impact
+        effect: claude:volcanicbarrage/impact
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+    preparation-status: server-events-connected
+  scorch_lock:
+    number: 358
+    name: 작열의 표적
+    permission: magic.learned.scorch_lock
+    icon: ''
+    mana-cost: 250
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: link
+        trigger: external:lock
+        effect: claude:scorchlock/aimForm
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 7
+        link-source: caster-hand
+        link-target: target-chest
+      - role: attached
+        trigger: external:lock
+        effect: claude:scorchlock/lockForm
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 7
+      - role: link
+        trigger: external:lock
+        effect: claude:scorchlock/aim
+        anchor: impact
+        delay-ticks: 7
+        duration-ticks: 140
+        link-source: caster-hand
+        link-target: target-chest
+      - role: attached
+        trigger: external:lock
+        effect: claude:scorchlock/lock
+        anchor: target
+        delay-ticks: 7
+        duration-ticks: 140
+      - role: link
+        trigger: external:fire
+        effect: claude:scorchlock/aimFire
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target-chest
+        stop-effects:
+          - claude:scorchlock/aim
+          - claude:scorchlock/aimForm
+      - role: attached
+        trigger: external:fire
+        effect: claude:scorchlock/strike
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:scorchlock/lock
+          - claude:scorchlock/lockForm
+      - role: link
+        trigger: external:break
+        effect: claude:scorchlock/aimBreak
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: caster-hand
+        link-target: target-chest
+        stop-effects:
+          - claude:scorchlock/aim
+          - claude:scorchlock/aimForm
+      - role: attached
+        trigger: external:break
+        effect: claude:scorchlock/fizzle
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 26
+        stop-effects:
+          - claude:scorchlock/lock
+          - claude:scorchlock/lockForm
+    preparation-status: server-events-connected
+  freeze_field:
+    number: 359
+    name: 빙결 지대
+    permission: magic.learned.freeze_field
+    icon: ''
+    mana-cost: 280
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field_begin
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 19
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field
+        anchor: target
+        delay-ticks: 16
+        duration-ticks: 104
+      - role: static
+        trigger: cast
+        effect: claude:freezefield/freeze_field_end
+        anchor: target
+        delay-ticks: 120
+        duration-ticks: 30
+        stop-effects:
+          - claude:freezefield/freeze_field
+      - role: attached
+        trigger: external:freeze_field_freeze
+        effect: claude:freezefield/freeze_field_freeze
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 22
+    preparation-status: server-events-connected
+  ebb_mark:
+    number: 360
+    name: 썰물
+    permission: magic.learned.ebb_mark
+    icon: ''
+    mana-cost: 200
+    cooldown-seconds: 40
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:ebbmark/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:markHit
+        effect: claude:ebbmark/markHit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: static
+        trigger: external:anchor
+        effect: claude:ebbmark/anchor
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:brand
+        effect: claude:ebbmark/brand
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 64
+      - role: link
+        trigger: external:tether
+        effect: claude:ebbmark/tether
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 64
+        link-source: target-chest
+        link-target: event-point
+      - role: link
+        trigger: external:tide
+        effect: claude:ebbmark/tide
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+        link-source: target-chest
+        link-target: event-point
+        stop-effects:
+          - claude:ebbmark/brand
+          - claude:ebbmark/tether
+      - role: impact
+        trigger: external:ebb
+        effect: claude:ebbmark/ebb
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 12
+    preparation-status: server-events-connected
+  ice_serpent:
+    number: 361
+    name: 얼음 뱀
+    permission: magic.learned.ice_serpent
+    icon: ''
+    mana-cost: 350
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:iceserpent/ice_serpent_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: impact
+        trigger: external:ice_serpent_hit
+        effect: claude:iceserpent/ice_serpent_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 8
+      - role: impact
+        trigger: external:ice_serpent_end
+        effect: claude:iceserpent/ice_serpent_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+    preparation-status: server-events-connected
+  sky_dive:
+    number: 362
+    name: 천공 강하
+    permission: magic.learned.sky_dive
+    icon: ''
+    mana-cost: 260
+    cooldown-seconds: 40
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:skydive/launch
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 26
+      - role: attached
+        trigger: cast
+        effect: claude:skydive/rise
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 16
+      - role: static
+        trigger: external:mark
+        effect: claude:skydive/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: attached
+        trigger: external:dive
+        effect: claude:skydive/dive
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:skydive/rise
+      - role: impact
+        trigger: external:land
+        effect: claude:skydive/land
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 62
+        stop-effects:
+          - claude:skydive/dive
+          - claude:skydive/mark
+    preparation-status: server-events-connected
+  thundercloud:
+    number: 363
+    name: 뇌운
+    permission: magic.learned.thundercloud
+    icon: ''
+    mana-cost: 300
+    cooldown-seconds: 50
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: external:cloud
+        effect: claude:thundercloud/cloud
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 124
+      - role: impact
+        trigger: external:strike
+        effect: claude:thundercloud/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+    preparation-status: server-events-connected
+  fate_link:
+    number: 364
+    name: 운명의 실
+    permission: magic.learned.fate_link
+    icon: ''
+    mana-cost: 240
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:fatelink/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 6
+      - role: attached
+        trigger: external:mark
+        effect: claude:fatelink/mark
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 130
+      - role: link
+        trigger: external:form
+        effect: claude:fatelink/form
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 9
+        link-source: event-point
+        link-target: target-chest
+      - role: link
+        trigger: external:bind
+        effect: claude:fatelink/bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+      - role: link
+        trigger: external:taut
+        effect: claude:fatelink/taut
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/taut
+      - role: link
+        trigger: external:strain
+        effect: claude:fatelink/strain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 120
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/strain
+      - role: link
+        trigger: external:snap
+        effect: claude:fatelink/snap
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 6
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/form
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+      - role: impact
+        trigger: external:snapMid
+        effect: claude:fatelink/snapMid
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+      - role: attached
+        trigger: external:snapHit
+        effect: claude:fatelink/snapHit
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 10
+        stop-effects:
+          - claude:fatelink/mark
+      - role: link
+        trigger: external:fade
+        effect: claude:fatelink/fade
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 10
+        link-source: event-point
+        link-target: target-chest
+        stop-effects:
+          - claude:fatelink/form
+          - claude:fatelink/bind
+          - claude:fatelink/taut
+          - claude:fatelink/strain
+          - claude:fatelink/mark
+    preparation-status: server-events-connected
+  prism_cage:
+    number: 365
+    name: 빛의 감옥
+    permission: magic.learned.prism_cage
+    icon: ''
+    mana-cost: 280
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: external:cage
+        effect: claude:prismcage/cage
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: attached
+        trigger: external:stun
+        effect: claude:prismcage/stun
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  wraith_march:
+    number: 366
+    name: 망령의 행진
+    permission: magic.learned.wraith_march
+    icon: ''
+    mana-cost: 260
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:wraithmarch/wraith_march
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: impact
+        trigger: external:wraith_march_fear
+        effect: claude:wraithmarch/wraith_march_fear
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 16
+    preparation-status: server-events-connected
+  fault_rift:
+    number: 367
+    name: 단층 붕괴
+    permission: magic.learned.fault_rift
+    icon: ''
+    mana-cost: 280
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:faultrift/fault_rift
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 48
+      - role: impact
+        trigger: external:fault_rift_pin
+        effect: claude:faultrift/fault_rift_pin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 64
+    preparation-status: server-events-connected
+  flame_emperor:
+    number: 368
+    name: 염제 강림
+    permission: magic.learned.flame_emperor
+    icon: ''
+    mana-cost: 1800
+    cooldown-seconds: 600
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:flameemperor/flame_emperor_chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: attached
+        trigger: external:struct_cancel
+        effect: claude:flameemperor/flame_emperor_chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:flameemperor/flame_emperor_chant
+      - role: attached
+        trigger: external:flame_emperor
+        effect: claude:flameemperor/flame_emperor
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 175
+      - role: attached
+        trigger: external:flame_emperor_end
+        effect: claude:flameemperor/flame_emperor_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 50
+        stop-effects:
+          - claude:flameemperor/flame_emperor
+      - role: impact
+        trigger: external:flame_emperor_fireball_hit
+        effect: claude:flameemperor/flame_emperor_fireball_hit
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  leviathan_rise:
+    number: 369
+    name: 레비아탄
+    permission: magic.learned.leviathan_rise
+    icon: ''
+    mana-cost: 2000
+    cooldown-seconds: 900
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:leviathanrise/casterChant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 100
+      - role: static
+        trigger: external:zoneChant
+        effect: claude:leviathanrise/zoneChant
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 100
+      - role: static
+        trigger: external:struct_cancel
+        effect: claude:leviathanrise/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:leviathanrise/zoneChant
+          - claude:leviathanrise/casterChant
+      - role: static
+        trigger: external:strike
+        effect: claude:leviathanrise/strike
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: static
+        trigger: external:drain
+        effect: claude:leviathanrise/drain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:leviathanrise/strike
+      - role: impact
+        trigger: external:struck
+        effect: claude:leviathanrise/struck
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+    preparation-status: server-events-connected
+  heaven_cyclone:
+    number: 370
+    name: 하늘의 눈
+    permission: magic.learned.heaven_cyclone
+    icon: ''
+    mana-cost: 2000
+    cooldown-seconds: 900
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:heavencyclone/begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 30
+      - role: static
+        trigger: external:sustain
+        effect: claude:heavencyclone/sustain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 210
+      - role: static
+        trigger: external:end
+        effect: claude:heavencyclone/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:heavencyclone/sustain
+      - role: attached
+        trigger: external:lift
+        effect: claude:heavencyclone/lift
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 220
+      - role: impact
+        trigger: external:slam
+        effect: claude:heavencyclone/slam
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 20
+        stop-effects:
+          - claude:heavencyclone/lift
+    preparation-status: server-events-connected
+  abyss_gate:
+    number: 371
+    name: 심연의 문
+    permission: magic.learned.abyss_gate
+    icon: ''
+    mana-cost: 2200
+    cooldown-seconds: 900
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:abyssgate/chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+      - role: static
+        trigger: external:mark
+        effect: claude:abyssgate/mark
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 70
+      - role: attached
+        trigger: external:struct_cancel
+        effect: claude:abyssgate/chant
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 1
+        stop-effects:
+          - claude:abyssgate/chant
+          - claude:abyssgate/mark
+      - role: static
+        trigger: external:begin
+        effect: claude:abyssgate/begin
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 30
+        stop-effects:
+          - claude:abyssgate/mark
+      - role: static
+        trigger: external:sustain
+        effect: claude:abyssgate/sustain
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 160
+      - role: static
+        trigger: external:end
+        effect: claude:abyssgate/end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 46
+        stop-effects:
+          - claude:abyssgate/sustain
+      - role: link
+        trigger: external:pull
+        effect: claude:abyssgate/pull
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 175
+        link-source: target-chest
+        link-target: event-point
+      - role: impact
+        trigger: external:sleep
+        effect: claude:abyssgate/sleep
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 24
+        stop-effects:
+          - claude:abyssgate/pull
+    preparation-status: server-events-connected
+  aurora_veil:
+    number: 372
+    name: 오로라
+    permission: magic.learned.aurora_veil
+    icon: ''
+    mana-cost: 1800
+    cooldown-seconds: 900
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:auroraveil/aurora_veil_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 34
+      - role: static
+        trigger: external:aurora_veil
+        effect: claude:auroraveil/aurora_veil
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 240
+      - role: static
+        trigger: external:aurora_veil_end
+        effect: claude:auroraveil/aurora_veil_end
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 40
+        stop-effects:
+          - claude:auroraveil/aurora_veil
+          - claude:auroraveil/aurora_veil_ally
+          - claude:auroraveil/aurora_veil_weaken
+      - role: attached
+        trigger: external:aurora_veil_ally
+        effect: claude:auroraveil/aurora_veil_ally
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 240
+      - role: attached
+        trigger: external:aurora_veil_weaken
+        effect: claude:auroraveil/aurora_veil_weaken
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 240
+    preparation-status: server-events-connected
+  titan_stride:
+    number: 373
+    name: 타이탄의 발걸음
+    permission: magic.learned.titan_stride
+    icon: ''
+    mana-cost: 2000
+    cooldown-seconds: 900
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:titanstride/titan_stride
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+      - role: impact
+        trigger: external:titan_stride_step_l
+        effect: claude:titanstride/titan_stride_step_l
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:titan_stride_step_r
+        effect: claude:titanstride/titan_stride_step_r
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 44
+      - role: impact
+        trigger: external:titan_stride_final
+        effect: claude:titanstride/titan_stride_final
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 52
+    preparation-status: server-events-connected
+  alchemy_preheat:
+    number: 374
+    name: 연금로 예열
+    permission: magic.learned.alchemy_preheat
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 300
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:alchemypreheat/alchemy_preheat
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 90
+    preparation-status: server-events-connected
+  broom_afterburner:
+    number: 375
+    name: 불꽃 추진
+    permission: magic.learned.broom_afterburner
+    icon: ''
+    mana-cost: 80
+    cooldown-seconds: 40
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:broomafterburner/broom_afterburner_begin
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 3
+      - role: attached
+        trigger: external:broom_afterburner
+        effect: claude:broomafterburner/broom_afterburner
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 58
+      - role: attached
+        trigger: external:broom_afterburner_end
+        effect: claude:broomafterburner/broom_afterburner_end
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 8
+        stop-effects:
+          - claude:broomafterburner/broom_afterburner
+    preparation-status: server-events-connected
+  signal_flare:
+    number: 376
+    name: 봉화 신호
+    permission: magic.learned.signal_flare
+    icon: ''
+    mana-cost: 20
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:signalflare/signal_flare
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 290
+    preparation-status: server-events-connected
+  water_glimpse:
+    number: 377
+    name: 물밑 엿보기
+    permission: magic.learned.water_glimpse
+    icon: ''
+    mana-cost: 15
+    cooldown-seconds: 10
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:waterglimpse/water_glimpse_cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 29
+      - role: static
+        trigger: external:water_glimpse
+        effect: claude:waterglimpse/water_glimpse
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 96
+    preparation-status: server-events-connected
+  calm_ripple:
+    number: 378
+    name: 잔잔한 물결
+    permission: magic.learned.calm_ripple
+    icon: ''
+    mana-cost: 40
+    cooldown-seconds: 120
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:calmripple/calm_ripple
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 104
+    preparation-status: server-events-connected
+  treasure_scent:
+    number: 379
+    name: 보물 냄새
+    permission: magic.learned.treasure_scent
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 600
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:treasurescent/treasure_scent
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 100
+    preparation-status: server-events-connected
+  tailwind:
+    number: 380
+    name: 순풍
+    permission: magic.learned.tailwind
+    icon: ''
+    mana-cost: 50
+    cooldown-seconds: 45
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:tailwind/tailwind
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 38
+      - role: attached
+        trigger: external:tailwind_buff
+        effect: claude:tailwind/tailwind_buff
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 300
+    preparation-status: server-events-connected
+  season_sense:
+    number: 381
+    name: 계절 예보
+    permission: magic.learned.season_sense
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:seasonsense/season_sense
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 70
+    preparation-status: server-events-connected
+  pack_sort:
+    number: 382
+    name: 배낭 정리
+    permission: magic.learned.pack_sort
+    icon: ''
+    mana-cost: 10
+    cooldown-seconds: 30
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:packsort/pack_sort
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 60
+    preparation-status: server-events-connected
+  heart_read:
+    number: 383
+    name: 마음 읽기
+    permission: magic.learned.heart_read
+    icon: ''
+    mana-cost: 40
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:heartread/cast
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 20
+      - role: link
+        trigger: external:read
+        effect: claude:heartread/read
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 39
+        link-source: caster
+        link-target: target
+      - role: attached
+        trigger: external:glimmer
+        effect: claude:heartread/glimmer
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 56
+    preparation-status: server-events-connected
+  insight_flash:
+    number: 384
+    name: 영감의 섬광
+    permission: magic.learned.insight_flash
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 120
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:insightflash/insight_flash
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 72
+    preparation-status: server-events-connected
+  harvest_bell:
+    number: 385
+    name: 수확제의 종
+    permission: magic.learned.harvest_bell
+    icon: ''
+    mana-cost: 60
+    cooldown-seconds: 300
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: static
+        trigger: cast
+        effect: claude:harvestbell/harvest_bell
+        anchor: target
+        delay-ticks: 0
+        duration-ticks: 61
+      - role: impact
+        trigger: external:reveal
+        effect: claude:harvestbell/reveal
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 32
+    preparation-status: server-events-connected
+  blessed_ribbon:
+    number: 386
+    name: 축복의 리본
+    permission: magic.learned.blessed_ribbon
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:blessedribbon/blessed_ribbon
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 58
+    preparation-status: server-events-connected
+  crop_snare:
+    number: 387
+    name: 작물 붙잡기
+    permission: magic.learned.crop_snare
+    icon: ''
+    mana-cost: 30
+    cooldown-seconds: 60
+    reviewed: true
+    enabled: true
+    aliases: []
+    phases:
+      - role: attached
+        trigger: cast
+        effect: claude:cropsnare/crop_snare
+        anchor: caster
+        delay-ticks: 0
+        duration-ticks: 90
+      - role: impact
+        trigger: external:crop_snare_bind
+        effect: claude:cropsnare/crop_snare_bind
+        anchor: impact
+        delay-ticks: 0
+        duration-ticks: 78
+    preparation-status: server-events-connected

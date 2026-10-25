@@ -1,9 +1,5 @@
 # 서버 마력 스냅샷: 피해 = base-damage + power-ratio * 마력. (자동 생성: magic-mythic-paper/tools/spells.py)
 # 피해 수치는 밸런스 검토 전 임시값입니다.
-# 전체 마법 사거리 배율 (#80). 1.0 = 아래 range 그대로. 0.25~3. 서버 판정(조준 확인·대상 탐색)에만 적용됩니다.
-# 주의: 클라이언트 조준 미리보기(spell-targeting.json)·이펙트(PortableVFX spell-bindings.yml range)·미몹 투사체(range=) 는 따로라
-#       1.0 이 아니면 미리보기 원보다 멀리/가까이 판정될 수 있습니다. 바꾸기 전에 개발자에게 클라이언트 동기화를 요청하세요.
-range-multiplier: 1.0
 spells:
   feather_fall:
     name: "feather fall"
@@ -1794,6 +1790,518 @@ spells:
     skill: "CHA_dimension_mark"
     target: "SELF"
     range: 24
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  spark_flick:
+    name: "불씨 튕기기"
+    skill: "CHA_spark_flick"
+    target: "AIM"
+    range: 6
+    utility: false
+    base-damage: 2
+    power-ratio: 0.2
+  ember_puff:
+    name: "작은 불숨"
+    skill: "CHA_ember_puff"
+    target: "AIM"
+    range: 3
+    utility: false
+    base-damage: 2.5
+    power-ratio: 0.2
+  tide_slash:
+    name: "물살 베기"
+    skill: "CHA_tide_slash"
+    target: "AIM"
+    range: 3
+    utility: false
+    base-damage: 2.5
+    power-ratio: 0.2
+  ice_shard:
+    name: "얼음 조각"
+    skill: "CHA_ice_shard"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 2
+    power-ratio: 0.2
+  wind_needle:
+    name: "바람 송곳"
+    skill: "CHA_wind_needle"
+    target: "AIM"
+    range: 24
+    utility: false
+    base-damage: 2
+    power-ratio: 0.2
+  mini_twister:
+    name: "작은 회오리"
+    skill: "CHA_mini_twister"
+    target: "AIM"
+    range: 8
+    utility: false
+    base-damage: 2.5
+    power-ratio: 0.25
+  shadow_fang:
+    name: "그림자 송곳니"
+    skill: "CHA_shadow_fang"
+    target: "ENTITY"
+    range: 12
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  dusk_orb:
+    name: "어둠 구슬"
+    skill: "CHA_dusk_orb"
+    target: "ENTITY"
+    range: 16
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  prism_shot:
+    name: "프리즘 탄"
+    skill: "CHA_prism_shot"
+    target: "AIM"
+    range: 20
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  sand_flick:
+    name: "모래 한 줌"
+    skill: "CHA_sand_flick"
+    target: "AIM"
+    range: 4
+    utility: false
+    base-damage: 1.5
+    power-ratio: 0.15
+  sunlance_drop:
+    name: "햇살 꽂기"
+    skill: "CHA_sunlance_drop"
+    target: "ENTITY"
+    range: 16
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  flame_wheel:
+    name: "화염 원반"
+    skill: "CHA_flame_wheel"
+    target: "AIM"
+    range: 12
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  eruption_line:
+    name: "분화선"
+    skill: "CHA_eruption_line"
+    target: "AIM"
+    range: 10
+    utility: false
+    base-damage: 6
+    power-ratio: 0.5
+  flame_javelin:
+    name: "화염 투창"
+    skill: "CHA_flame_javelin"
+    target: "AIM"
+    range: 30
+    utility: false
+    base-damage: 6
+    power-ratio: 0.5
+  heat_haze:
+    name: "아지랑이"
+    skill: "CHA_heat_haze"
+    target: "SELF"
+    range: 2
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  frost_path:
+    name: "서리 길"
+    skill: "CHA_frost_path"
+    target: "AIM"
+    range: 8
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  hydro_burst:
+    name: "수류 탄환"
+    skill: "CHA_hydro_burst"
+    target: "AIM"
+    range: 14
+    utility: false
+    base-damage: 0.9
+    power-ratio: 0.08
+  crystal_coat:
+    name: "결정 갑옷"
+    skill: "CHA_crystal_coat"
+    target: "SELF"
+    range: 15
+    utility: false
+    base-damage: 6
+    power-ratio: 0.3
+  ice_bloom:
+    name: "얼음 꽃"
+    skill: "CHA_ice_bloom"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+    ground: true
+  vacuum_burst:
+    name: "진공 폭발"
+    skill: "CHA_vacuum_burst"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 6
+    power-ratio: 0.5
+    ground: true
+  gale_combo:
+    name: "질풍 연격"
+    skill: "CHA_gale_combo"
+    target: "AIM"
+    range: 5
+    utility: false
+    base-damage: 2.5
+    power-ratio: 0.2
+  air_choke:
+    name: "숨 막힘"
+    skill: "CHA_air_choke"
+    target: "ENTITY"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  storm_eye:
+    name: "폭풍의 눈"
+    skill: "CHA_storm_eye"
+    target: "SELF"
+    range: 4
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  shadow_mire:
+    name: "그림자 늪"
+    skill: "CHA_shadow_mire"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+    ground: true
+  dread_dream:
+    name: "악몽"
+    skill: "CHA_dread_dream"
+    target: "ENTITY"
+    range: 12
+    utility: false
+    base-damage: 10
+    power-ratio: 0.8
+  shadow_step:
+    name: "그림자 걸음"
+    skill: "CHA_shadow_step"
+    target: "AIM"
+    range: 5
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  halo_throw:
+    name: "광륜 투척"
+    skill: "CHA_halo_throw"
+    target: "AIM"
+    range: 20
+    utility: false
+    base-damage: 5
+    power-ratio: 0.4
+  flash_blink:
+    name: "섬광 도약"
+    skill: "CHA_flash_blink"
+    target: "AIM"
+    range: 6
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  boulder_charge:
+    name: "바위 돌진"
+    skill: "CHA_boulder_charge"
+    target: "AIM"
+    range: 6
+    utility: false
+    base-damage: 6
+    power-ratio: 0.45
+  air_cannon:
+    name: "공기 포탄"
+    skill: "CHA_air_cannon"
+    target: "AIM"
+    range: 20
+    utility: false
+    base-damage: 3
+    power-ratio: 0.25
+  hex_doll:
+    name: "저주 인형"
+    skill: "CHA_hex_doll"
+    target: "ENTITY"
+    range: 12
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  crimson_spiral:
+    name: "홍염 나선"
+    skill: "CHA_crimson_spiral"
+    target: "AIM"
+    range: 18
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  volcanic_barrage:
+    name: "화산탄 세례"
+    skill: "CHA_volcanic_barrage"
+    target: "AIM"
+    range: 24
+    utility: false
+    base-damage: 7
+    power-ratio: 0.5
+    ground: true
+  scorch_lock:
+    name: "작열의 표적"
+    skill: "CHA_scorch_lock"
+    target: "ENTITY"
+    range: 25
+    utility: false
+    base-damage: 14
+    power-ratio: 0.9
+  freeze_field:
+    name: "빙결 지대"
+    skill: "CHA_freeze_field"
+    target: "AIM"
+    range: 20
+    utility: false
+    base-damage: 8
+    power-ratio: 0.6
+    ground: true
+  ebb_mark:
+    name: "썰물"
+    skill: "CHA_ebb_mark"
+    target: "ENTITY"
+    range: 20
+    utility: false
+    base-damage: 10
+    power-ratio: 0.7
+  ice_serpent:
+    name: "얼음 뱀"
+    skill: "CHA_ice_serpent"
+    target: "AIM"
+    range: 20
+    utility: false
+    base-damage: 3.5
+    power-ratio: 0.25
+  sky_dive:
+    name: "천공 강하"
+    skill: "CHA_sky_dive"
+    target: "AIM"
+    range: 12
+    utility: false
+    base-damage: 11
+    power-ratio: 0.8
+    ground: true
+  thundercloud:
+    name: "뇌운"
+    skill: "CHA_thundercloud"
+    target: "ENTITY"
+    range: 24
+    utility: false
+    base-damage: 4.5
+    power-ratio: 0.3
+  fate_link:
+    name: "운명의 실"
+    skill: "CHA_fate_link"
+    target: "ENTITY"
+    range: 16
+    utility: false
+    base-damage: 9
+    power-ratio: 0.6
+  prism_cage:
+    name: "빛의 감옥"
+    skill: "CHA_prism_cage"
+    target: "ENTITY"
+    range: 20
+    utility: false
+    base-damage: 12
+    power-ratio: 0.8
+  wraith_march:
+    name: "망령의 행진"
+    skill: "CHA_wraith_march"
+    target: "AIM"
+    range: 15
+    utility: false
+    base-damage: 9
+    power-ratio: 0.6
+  fault_rift:
+    name: "단층 붕괴"
+    skill: "CHA_fault_rift"
+    target: "AIM"
+    range: 16
+    utility: false
+    base-damage: 11
+    power-ratio: 0.8
+  flame_emperor:
+    name: "염제 강림"
+    skill: "CHA_flame_emperor"
+    target: "SELF"
+    range: 6
+    utility: false
+    base-damage: 18
+    power-ratio: 1.2
+  leviathan_rise:
+    name: "레비아탄"
+    skill: "CHA_leviathan_rise"
+    target: "AIM"
+    range: 24
+    utility: false
+    base-damage: 20
+    power-ratio: 1.3
+    ground: true
+  heaven_cyclone:
+    name: "하늘의 눈"
+    skill: "CHA_heaven_cyclone"
+    target: "SELF"
+    range: 8
+    utility: false
+    base-damage: 18
+    power-ratio: 1.2
+  abyss_gate:
+    name: "심연의 문"
+    skill: "CHA_abyss_gate"
+    target: "AIM"
+    range: 24
+    utility: false
+    base-damage: 22
+    power-ratio: 1.4
+    ground: true
+  aurora_veil:
+    name: "오로라"
+    skill: "CHA_aurora_veil"
+    target: "SELF"
+    range: 10
+    utility: false
+    base-damage: 4
+    power-ratio: 0.3
+  titan_stride:
+    name: "타이탄의 발걸음"
+    skill: "CHA_titan_stride"
+    target: "AIM"
+    range: 13
+    utility: false
+    base-damage: 16
+    power-ratio: 1.1
+  alchemy_preheat:
+    name: "연금로 예열"
+    skill: "CHA_alchemy_preheat"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  water_glimpse:
+    name: "물밑 엿보기"
+    skill: "CHA_water_glimpse"
+    target: "SELF"
+    range: 24
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  calm_ripple:
+    name: "잔잔한 물결"
+    skill: "CHA_calm_ripple"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  treasure_scent:
+    name: "보물 냄새"
+    skill: "CHA_treasure_scent"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  season_sense:
+    name: "계절 예보"
+    skill: "CHA_season_sense"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  pack_sort:
+    name: "배낭 정리"
+    skill: "CHA_pack_sort"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  heart_read:
+    name: "마음 읽기"
+    skill: "CHA_heart_read"
+    target: "SELF"
+    range: 10
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  insight_flash:
+    name: "영감의 섬광"
+    skill: "CHA_insight_flash"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  blessed_ribbon:
+    name: "축복의 리본"
+    skill: "CHA_blessed_ribbon"
+    target: "SELF"
+    range: 8
+    utility: true
+    base-damage: 0
+    power-ratio: 0
+  broom_afterburner:
+    name: "불꽃 추진"
+    skill: "CHA_broom_afterburner"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  signal_flare:
+    name: "봉화 신호"
+    skill: "CHA_signal_flare"
+    target: "SELF"
+    range: 1
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  tailwind:
+    name: "순풍"
+    skill: "CHA_tailwind"
+    target: "SELF"
+    range: 8
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  harvest_bell:
+    name: "수확제의 종"
+    skill: "CHA_harvest_bell"
+    target: "SELF"
+    range: 8
+    utility: false
+    base-damage: 0
+    power-ratio: 0
+  crop_snare:
+    name: "작물 붙잡기"
+    skill: "CHA_crop_snare"
+    target: "SELF"
+    range: 1
     utility: false
     base-damage: 0
     power-ratio: 0
