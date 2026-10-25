@@ -240,4 +240,27 @@ class AffinityStoreTest {
         assertNull(NpcSocialService.gateQuest(null, new AffinityStore.Row(30, 0, "")), "설정 비어 있음");
         assertNull(NpcSocialService.gateQuest(q, new AffinityStore.Row(100, 3, "")));
     }
+
+    /** #100: 상한 퀘스트를 이미 깼는데 하트가 안 오른 채 상한에 갇혔으면 다시 주지 않고 다음 상한을 연다. */
+    @Test void gateQuestAlreadyCompletedUnlocksInsteadOfReoffering() {
+        assertEquals(NpcSocialService.GateAction.UNLOCK, NpcSocialService.gateAction(true, false), "일회성 의뢰 완료 → 제안 불가지만 상한은 열어야 함");
+        assertEquals(NpcSocialService.GateAction.UNLOCK, NpcSocialService.gateAction(true, true), "일일 의뢰로 적었어도 깬 적 있으면 다시 주지 않음");
+        assertEquals(NpcSocialService.GateAction.OFFER, NpcSocialService.gateAction(false, true));
+        assertEquals(NpcSocialService.GateAction.NONE, NpcSocialService.gateAction(false, false), "진행 중·권한 없음");
+    }
+
+    /** #100: 상한 해제 뒤에는 막혔던 선물이 같은 날 바로 다시 들어가고, 오른 만큼만 새 상한까지 오른다. */
+    @Test void giftResumesAfterGateQuestAndClampsToNextGate() throws Exception {
+        try (var s = new AffinityStore(SQLITE, dir.resolve("affinity.db"))) {
+            s.add(p, "mira", "quest", 60, 0, "2026-10-26", 1);
+            assertEquals(30, s.load(p, "mira").score());
+            assertEquals(AffinityStore.GiftBegin.FULL, s.beginGift("t1", p, "mira", 15, "2026-10-26", 1, 2, "A"));
+            s.setHeart(p, "mira", 1, 3);
+            assertEquals(AffinityStore.GiftBegin.OK, s.beginGift("t2", p, "mira", 40, "2026-10-26", 1, 4, "A"), "하루 1번인데 막혔던 건 횟수를 안 썼음");
+            var r = s.commitGift("t2", 5);
+            assertEquals(60, r.row().score(), "새 상한 60에서 멈춤");
+            assertEquals(30, r.applied());
+            assertEquals(AffinityStore.GiftBegin.FULL, s.beginGift("t3", p, "mira", 1, "2026-10-26", 1, 6, "A"), "60 상한: 다음 퀘스트 전에는 다시 받지 않음");
+        }
+    }
 }

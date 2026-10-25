@@ -347,6 +347,8 @@ public final class DialogueService {
             warmupAt.values().removeIf(at -> now - at > WARMUP_RETRY_MS);
             strikes.prune(now);
         }
+        Map<Integer, DialogueSession> facing = newestPerNpc(sessions.values(),
+                x -> x.adminTest() ? null : x.citizensId(), x -> x.lastActivity);
         for (DialogueSession s : new ArrayList<>(sessions.values())) {
             Player p = Bukkit.getPlayer(s.player());
             if (p == null || !p.isOnline()) {
@@ -380,9 +382,31 @@ public final class DialogueService {
                     close(p, false);
                     continue;
                 }
-                plugin.npcs().face(s.citizensId(), p);
+                if (facing.get(s.citizensId()) == s) {
+                    plugin.npcs().face(s.citizensId(), p);
+                }
             }
         }
+    }
+
+    /**
+     * #99 같은 NPC 와 여러 명이 동시에 대화: NPC 몸(서버 엔티티)은 모두에게 하나로 보이므로 1초마다 번갈아 돌아서지 않게
+     * NPC 하나당 가장 최근에 말한 사람 한 명만 바라본다. 대화 내용·진행은 원래 사람별 세션이라 영향 없음.
+     */
+    static <T> Map<Integer, T> newestPerNpc(Collection<T> items, java.util.function.Function<T, Integer> npcOf,
+                                            java.util.function.ToLongFunction<T> atOf) {
+        Map<Integer, T> out = new java.util.HashMap<>();
+        for (T t : items) {
+            Integer id = npcOf.apply(t);
+            if (id == null) {
+                continue;
+            }
+            T cur = out.get(id);
+            if (cur == null || atOf.applyAsLong(t) > atOf.applyAsLong(cur)) {
+                out.put(id, t);
+            }
+        }
+        return out;
     }
 
     // =================================================================== 입력 처리

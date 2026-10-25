@@ -80,6 +80,8 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         if(entries.stream().anyMatch(e->e.quest().id().equals(id)&&e.cycle().equals(cycle)&&e.completions()>=q.completionLimit()))return q.daily()?"오늘은 이 의뢰를 더 받을 수 없습니다.":"이미 완료한 의뢰입니다.";
         return "";
     }
+    /** 한 번이라도 완료(보상까지)한 의뢰인지 (접속 때 읽은 캐시만 봄, 메인 스레드). NPC 호감도 상한 퀘스트 복구(#100)용. */
+    boolean completedEver(Player p,String id){return completed.getOrDefault(p.getUniqueId(),Set.of()).contains(id);}
     int activeCount(Player p){long now=System.currentTimeMillis();return QuestStore.activeSubquests(cache.getOrDefault(p.getUniqueId(),List.of()),now);}
     String title(String id){var q=catalog.get(id);return q==null?"":q.title();}
     /** 길잡이 별 (2026-10-26 메모 #93): 진행 중 의뢰에서 아직 못 채운 "NPC" 목표의 Citizens 번호 (이 서버 것만). 캐시만 본다, 메인 스레드. */
