@@ -50,6 +50,20 @@ class TitleAwardsTest {
         assertThrows(IllegalArgumentException.class,()->TitleAwards.parse(yaml("players:\n  x: {house: 없는곳}\n"),yaml("")));
     }
 
+    @Test void npcPrefixTitlesAreAutomaticUnlessOverridden()throws Exception{
+        var awards=TitleAwards.parse(yaml("""
+            affinity:
+              npc-threshold: 30
+              npc-prefix: {format: '{npc}의', color: '#96E4EC'}
+              npc: {mina: prefix_custom_mina}
+            """),yaml(""));
+        assertEquals(Map.of("affinity.npc.ria","prefix_npc_ria","affinity.npc.mina","prefix_custom_mina"),awards.affinityKeys(Map.of("ria",30,"mina",40,"ella",29)));
+        assertEquals("리아의",awards.npcTitleName("리아"));
+        assertNull(awards.npcTitle("리아"),"Korean NPC IDs cannot become title IDs");
+        assertThrows(IllegalArgumentException.class,()->TitleAwards.parse(yaml("affinity:\n  npc-prefix: {format: '의'}\n"),yaml("")));
+        assertNull(TitleAwards.parse(yaml("affinity:\n  npc-prefix: {format: ''}\n"),yaml("")).npcTitle("ria"));
+    }
+
     @Test void bundledFilesParseAndPointAtRegisteredTitles()throws Exception{
         var titles=new YamlConfiguration();try(var in=getClass().getClassLoader().getResourceAsStream("titles.yml")){titles.loadFromString(new String(in.readAllBytes(),java.nio.charset.StandardCharsets.UTF_8));}
         var awards=new YamlConfiguration();try(var in=getClass().getClassLoader().getResourceAsStream("title-awards.yml")){awards.loadFromString(new String(in.readAllBytes(),java.nio.charset.StandardCharsets.UTF_8));}
@@ -57,5 +71,6 @@ class TitleAwardsTest {
         var parsed=TitleAwards.parse(awards,presets);
         for(String id:parsed.referencedTitles())assertTrue(titles.isConfigurationSection("titles."+id),id);
         assertTrue(titles.getConfigurationSection("titles").getKeys(false).size()<=school.magiccodex.protocol.TitleProtocol.MAX_TITLES);
+        assertEquals(237,parsed.discovery.size(),"owner plan: one title per spell");
     }
 }
