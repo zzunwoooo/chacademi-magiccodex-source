@@ -21,8 +21,8 @@ final class GenericDatabaseFile {
     static final String DEDICATED = "player-state-database.properties";
     static final String OPT_IN = "use-for-all-domains";
     /** 이 파일 설정을 따르는 도메인과 SQLite일 때의 로컬 파일 (시작 경고·상태 줄용). */
-    static final List<String> DOMAINS = List.of("닉네임", "친구", "칭호", "기숙사 배정·기부·점수", "의뢰", "대화·스토리", "NPC 호감도", "계절 공유");
-    static final String SQLITE_FILES = "friends.db, titles.db, school.db, quests.db, dialogue.db, affinity.db";
+    static final List<String> DOMAINS = List.of("닉네임", "친구", "칭호", "기숙사 배정·기부·점수", "의뢰", "대화·스토리", "NPC 호감도", "계절 공유", "운영 기록");
+    static final String SQLITE_FILES = "friends.db, titles.db, school.db, quests.db, dialogue.db, affinity.db, audit.db";
 
     private GenericDatabaseFile() {}
 

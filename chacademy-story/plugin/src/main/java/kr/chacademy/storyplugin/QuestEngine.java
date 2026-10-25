@@ -463,6 +463,9 @@ final class QuestEngine implements Listener {
         st.finished(s.id);
         String next = s.next.isEmpty() || defs.get(s.next) == null ? "" : s.next;
         if (!s.next.isEmpty() && next.isEmpty()) plugin.getLogger().warning("[스토리 단계] " + s.id + " 의 다음 단계 " + s.next + " 이(가) 없어 스토리를 여기서 멈춥니다");
+        var detail = new java.util.LinkedHashMap<String, String>(); detail.put("단계", s.id); detail.put("다음", next); detail.put("회차", String.valueOf(st.run));
+        ChacaLink.stat(p.getUniqueId(), "스토리단계", 1);
+        ChacaLink.audit(p.getUniqueId(), "스토리", "스토리 단계 완료 · " + s.id + (next.isEmpty() ? "" : " → " + next), detail); // 운영 기록 (메모 #92)
         enter(p, st, next, true);
     }
 

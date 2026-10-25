@@ -146,6 +146,23 @@ public final class ChacaApi {
     /** LuckPerms에 저장된 노드 중 prefix로 시작하는 것 (오프라인 유저도). */
     public static CompletableFuture<List<String>> permissions(UUID id, String prefix) { return hub().permissions().list(id, prefix); }
 
+    /**
+     * 운영 기록 한 줄 (메모 #92). 아무 스레드에서 불러도 된다: 메모리 대기열에 넣기만 하고 DB·파일 쓰기는 기록 스레드가 묶어서 한다.
+     * kind 는 AuditLog 종류 이름(마법·상점·퀘스트·스토리·호감도…), summary 는 한 줄 한국어 설명, detail 은 key=value (null 가능).
+     * player 가 null 이면 시스템 기록. 기록이 꺼져 있거나 아직 준비 전이면 조용히 건너뛴다.
+     */
+    public static void audit(UUID player, String kind, String summary, java.util.Map<String, String> detail) {
+        AuditLog.record(player, kind, summary, detail);
+    }
+
+    /**
+     * 서버 통계 카운터 더하기 (메모 #96, codex_player_stats). 아무 스레드, 메모리에 더하기만 하고 몇 분마다 묶어서 DB 에 쓴다.
+     * key 예: "결투참가", "큐디치승리", "발견시도:fireball". 96자까지.
+     */
+    public static void stat(UUID player, String key, long amount) {
+        AuditStats.add(player, key, amount);
+    }
+
     @FunctionalInterface
     public interface ThrowingRunnable { void run() throws Exception; }
 }

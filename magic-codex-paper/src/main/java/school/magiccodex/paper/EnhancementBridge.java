@@ -89,7 +89,9 @@ final class EnhancementBridge implements Listener,PluginMessageListener,AutoClos
  private ItemStack result(Session s,boolean win){ItemStack i=s.wand.clone();var m=i.getItemMeta();var d=m.getPersistentDataContainer();d.set(key("enhance_attempts"),PersistentDataType.INTEGER,integer(s.wand,"enhance_attempts",0)+(s.consume||win?1:0));d.set(key("enhance_successes"),PersistentDataType.INTEGER,integer(s.wand,"enhance_successes",0)+(win?1:0));String[] keys={"wand_power","wand_mana","wand_haste"};for(int j=0;j<3;j++)d.set(key(keys[j]),PersistentDataType.DOUBLE,s.before.get(j)+(win?s.gains.get(j):0));i.setItemMeta(m);lore(i);return i;}
  private void finish(Player p,Session s,boolean eligible){boolean perfect=eligible&&s.miss==0&&s.hit==(1<<s.nodes)-1;boolean win=s.baseWin;
   if(perfect&&!win&&EnhancementRules.success(s.roll,Math.min(1,s.base+s.bonus))){if(s.committed.equals(p.getInventory().getItem(s.slot))){var result=result(s,true);p.getInventory().setItem(s.slot,result);s.committed=result.clone();s.attempts=integer(result,"enhance_attempts",0);p.saveData();plugin.refreshEquipment(p);win=true;}}
-  s.state=win?2:3;s.message=win?"강화 성공":"강화 실패 · 기존 능력치는 유지됩니다.";send(p,s);
+  s.state=win?2:3;s.message=win?"강화 성공":"강화 실패 · 기존 능력치는 유지됩니다.";
+  AuditLog.log(p,AuditLog.강화,"장비 강화 "+(win?"성공":"실패")+" · "+s.name+(perfect&&win&&!s.baseWin?" (스타캐치)":"")+" · 비용 "+s.cost,"결과",win?"성공":"실패","장비",s.name,"스타캐치",perfect?"완벽":"아님","전",s.before.toString(),"상승",win?s.gains.toString():"없음","시도",s.attempts,"비용",s.cost);
+  send(p,s);
  }
  private void tick(){long time=now();for(var it=sessions.entrySet().iterator();it.hasNext();){var e=it.next();Session s=e.getValue();Player p=Bukkit.getPlayer(e.getKey());if(p==null){it.remove();continue;}if(s.state!=1){if(time-s.created>90000)it.remove();continue;}
   if(!p.hasPermission("magiccodex.enhance")||!usable(p)||p.getInventory().getHeldItemSlot()!=s.slot||!s.committed.equals(p.getInventory().getItem(s.slot))){finish(p,s,false);continue;}

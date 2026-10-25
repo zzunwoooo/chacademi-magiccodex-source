@@ -104,7 +104,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         if(p.isDead()||p.getGameMode()==GameMode.SPECTATOR){reply(p,r,"지금은 기증할 수 없습니다.");return;}
         var record=new Donation(r.spell(),spell.name(),p.getUniqueId(),plugin.names().name(p),h,now);
         // 기증 기록 INSERT와 점수는 SchoolStore.donate 한 트랜잭션. 공지는 커밋이 끝난 뒤 메인 스레드에서만.
-        work(()->store.donate(record,spell.points()),ok->{if(ok)announce(record);reply(p,r,ok?"학교에 기증했습니다. +"+spell.points()+"점":"누군가 이미 기증한 마법입니다.");},error->reply(p,r,error));
+        work(()->store.donate(record,spell.points()),ok->{if(ok){announce(record);AuditLog.log(p,AuditLog.마법,"마법 기증 · "+spell.name()+" · +"+spell.points()+"점","마법",r.spell(),"이름",spell.name(),"점수",spell.points(),"기숙사",h);}reply(p,r,ok?"학교에 기증했습니다. +"+spell.points()+"점":"누군가 이미 기증한 마법입니다.");},error->reply(p,r,error));
     }
     // ------------------------------------------------------------------ 첫 기증 전체 공지 (7-5 #3)
     private static final long ANNOUNCE_WINDOW=120_000L;
@@ -158,7 +158,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
     void adminHouse(Player player,int house,Consumer<String> done){
         if(house<0||house>=SchoolProtocol.HOUSES.size()){done.accept("등록된 기숙사를 선택해 주세요.");return;}
         UUID id=player.getUniqueId();
-        work(()->{store.presetHouse(id,house);return true;},ok->{DiscoveryLink.signal(id,"dormitory.assigned",1);reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
+        work(()->{store.presetHouse(id,house);return true;},ok->{DiscoveryLink.signal(id,"dormitory.assigned",1);AuditLog.log(id,AuditLog.기숙사,"기숙사 지정 · "+SchoolProtocol.HOUSES.get(house),"기숙사",SchoolProtocol.HOUSES.get(house),"경로","관리자 지정");reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");done.accept(null);},done);
     }
     void adminScore(int house,String action,long amount,Consumer<String> done){
         if(house<0||house>=SchoolProtocol.HOUSES.size())throw new IllegalArgumentException("등록된 기숙사를 선택해 주세요.");
@@ -215,7 +215,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                     if(outside>=0){adopt(sender,player,outside);return true;}
                     work(()->store.assignHouse(id,t,d,tolerance),result->{
                         // Database has committed before signals or Bukkit commands run on the main thread.
-                        if(result.created())assigned(sender,id);
+                        if(result.created()){assigned(sender,id);AuditLog.log(id,AuditLog.기숙사,"기숙사 배정 · "+SchoolProtocol.HOUSES.get(result.house())+(result.house()!=result.preferred()?" (인원 맞춤, 원래 "+SchoolProtocol.HOUSES.get(result.preferred())+")":""),"기숙사",SchoolProtocol.HOUSES.get(result.house()),"성향",SchoolProtocol.HOUSES.get(result.preferred()),"경로","분류의 거울","진행",sender.getName());}
                         reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
                         sortingDialogue(sender,player,"ch1-17"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
                     },failTo(sender));

@@ -86,7 +86,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         var q=catalog.get(id);UUID uid=p.getUniqueId();long now=System.currentTimeMillis();
         if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))||!p.hasPermission("magiccodex.quests")){done.accept(false);return;}
         flush(uid,true);/* 수락 전에 모인 진행도가 새 의뢰에 들어가지 않게 먼저 기록한다 */
-        work(()->{var all=store.entries(uid);if(all.stream().anyMatch(e->e.quest().id().equals(id)&&e.current(now)&&e.status().equals("active")))return 1;return store.accept(uid,q,now)?2:0;},result->{if(current(p)){load(p,false,"");if(result==2)JournalBridge.notify(plugin,p,q.title(),q.description());}done.accept(result>0);},m->done.accept(false));
+        work(()->{var all=store.entries(uid);if(all.stream().anyMatch(e->e.quest().id().equals(id)&&e.current(now)&&e.status().equals("active")))return 1;return store.accept(uid,q,now)?2:0;},result->{if(result==2)AuditLog.log(uid,AuditLog.퀘스트,"의뢰 수락 (대화) · "+q.title(),"의뢰",q.id(),"제목",q.title(),"경로","대화");if(current(p)){load(p,false,"");if(result==2)JournalBridge.notify(plugin,p,q.title(),q.description());}done.accept(result>0);},m->done.accept(false));
     }
     void eventFromDialogue(Player p,String id,Consumer<Boolean> done){
         UUID uid=p.getUniqueId();String world=p.getWorld().getName(),sid=server;long now=System.currentTimeMillis();
@@ -155,7 +155,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         UUID uid=p.getUniqueId();long now=System.currentTimeMillis();if(!p.hasPermission("magiccodex.quests")||now<limits.getOrDefault(uid,0L)||busy.contains(uid))return;
         limits.put(uid,now+250);pages.put(uid,page);viewers.put(uid,now+15000);
         if(action==0){load(p,open,"");return;}if(p.isDead()||p.getGameMode()==GameMode.SPECTATOR||!plugin.playerStateReady(p)){reply(p,false,"지금은 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.");return;}
-        if(action==1){var q=catalog.get(id);if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))){reply(p,false,"수락 조건을 충족하지 않습니다.");return;}busy.add(uid);flush(uid,true);work(uid,()->store.accept(uid,q,now),ok->{busy.remove(uid);if(ok)JournalBridge.notify(plugin,p,q.title(),q.description());load(p,false,ok?"의뢰를 수락했습니다.":"수락 한도 또는 클리어 가능 횟수를 확인해 주세요.");},m->{busy.remove(uid);reply(p,false,m);});}
+        if(action==1){var q=catalog.get(id);if(q==null||!q.available(now)||(!q.permission().isEmpty()&&!p.hasPermission(q.permission()))){reply(p,false,"수락 조건을 충족하지 않습니다.");return;}busy.add(uid);flush(uid,true);work(uid,()->store.accept(uid,q,now),ok->{busy.remove(uid);if(ok){JournalBridge.notify(plugin,p,q.title(),q.description());AuditLog.log(uid,AuditLog.퀘스트,"의뢰 수락 · "+q.title(),"의뢰",q.id(),"제목",q.title(),"경로","게시판");}load(p,false,ok?"의뢰를 수락했습니다.":"수락 한도 또는 클리어 가능 횟수를 확인해 주세요.");},m->{busy.remove(uid);reply(p,false,m);});}
         if(action==3){busy.add(uid);flush(uid,true);work(uid,()->store.abandon(uid,id,now),ok->{busy.remove(uid);load(p,false,ok?"의뢰를 포기했습니다.":"포기할 수 없는 의뢰입니다.");},m->{busy.remove(uid);reply(p,false,m);});}
         if(action==2)claim(p,id);
     }
@@ -202,7 +202,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
             submit(uid,()->{store.stage(uid,reserved,reached|QuestStore.RECORDED);return true;},v->held.accept("보상 처리 확인이 필요합니다. 관리자에게 문의해 주세요."),m->held.accept("보상 처리 확인이 필요합니다. 관리자에게 문의해 주세요."));return;
         }
         int reached=stage;plugin.getLogger().info("QUEST DELIVERED "+ref);
-        Runnable finish=()->submit(uid,()->{store.finish(uid,reserved,true);return true;},v->{fireCompleted(uid,q.id());ok.run();},m->{
+        Runnable finish=()->submit(uid,()->{store.finish(uid,reserved,true);return true;},v->{fireCompleted(uid,q.id());AuditStats.add(uid,"퀘스트완료",1);AuditLog.log(uid,AuditLog.퀘스트,"의뢰 완료·보상 · "+q.title()+(q.money()>0?" · 돈 +"+q.money():"")+(q.housePoints()>0?" · 기숙사 +"+q.housePoints():""),"의뢰",q.id(),"제목",q.title(),"주기",reserved.cycle(),"돈",q.money()>0?q.money():null,"기숙사점수",q.housePoints()>0?q.housePoints():null,"아이템",q.items().isEmpty()?null:String.join(", ",q.items()),"명령",q.commands().isEmpty()?null:String.join(" | ",q.commands()),"토큰",reserved.token());ok.run();},m->{
             plugin.getLogger().severe("QUEST REVIEW "+ref+" 보상은 모두 지급했으나 완료 기록에 실패했습니다. /유저관리 "+p.getName()+" 의뢰기록 처리 "+q.id()+" "+reserved.cycle()+" 완료처리 로 닫으세요.");
             submit(uid,()->{store.stage(uid,reserved,15|QuestStore.RECORDED);return true;},v->{},x->{});held.accept("보상 기록 확인이 필요합니다. 관리자에게 문의해 주세요.");});
         if(q.housePoints()>0&&(reached&QuestStore.HOUSE)==0)plugin.questHouseReward(reserved.token(),rewardHouse,q.housePoints(),finish,m->{

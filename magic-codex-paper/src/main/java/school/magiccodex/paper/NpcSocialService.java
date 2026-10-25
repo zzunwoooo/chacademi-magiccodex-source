@@ -243,6 +243,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
             cur.setAmount(cur.getAmount() - 1);
             inv.setItem(slot, cur);
         }
+        if (giftItems.size() < 4096) giftItems.put(token, AuditLog.item(one));
         p.getPersistentDataContainer().set(giftReceipt(token), PersistentDataType.BYTE, (byte) 1);
         try {
             p.saveData();
@@ -383,6 +384,8 @@ final class NpcSocialService implements Listener, AutoCloseable {
         long now = System.currentTimeMillis();
         return work(() -> operation.equals("query") ? store.load(player, id)
                 : store.adminChange(player, id, operation, nonnegativeValue, now)).thenApply(row -> {
+            if (!operation.equals("query")) AuditLog.log(player, AuditLog.호감도, "관리자 호감도 " + action + " " + nonnegativeValue + " · " + id + " → " + row.score() + " (하트 " + row.heart() + ")",
+                    "NPC", id, "경로", "관리자", "변경", action, "값", nonnegativeValue, "점수", row.score(), "하트", row.heart());
             // 오프라인 관리로 접속자 캐시가 무한히 늘어나지 않게 한다.
             if (Bukkit.getPlayer(player) != null) remember(player, id, row);
             return row;
@@ -394,6 +397,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
         long now = System.currentTimeMillis();
         return work(() -> store.adminHeart(player, npc, level, now)).thenApply(row -> {
+            AuditLog.log(player, AuditLog.호감도, "관리자 하트 단계 " + level + " · " + npc + " (점수 " + row.score() + ")", "NPC", npc, "경로", "관리자하트", "하트", row.heart(), "점수", row.score());
             if (Bukkit.getPlayer(player) != null) remember(player, npc, row);
             return row;
         });
@@ -449,6 +453,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         long now = System.currentTimeMillis();
         return work(() -> store.add(player, npc, source, value, cap, day, now)).thenApply(r -> {
             remember(player, npc, r.row());
+            auditAffinity(player, npc, source, value, r, null);
             reachedGate(player, npc, r);
             return r;
         });
@@ -466,6 +471,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         long now = System.currentTimeMillis();
         return work(() -> store.addCounted(player, npc, "chat_reward", value, count, day, now)).thenApply(r -> {
             remember(player, npc, r.row());
+            auditAffinity(player, npc, "chat_reward", value, r, null);
             reachedGate(player, npc, r);
             return r;
         });
@@ -611,7 +617,9 @@ final class NpcSocialService implements Listener, AutoCloseable {
             if (r != null) {
                 remember(player, npc, r.row());
                 reachedGate(player, npc, r);
+                auditAffinity(player, npc, "gift", r.applied(), r, giftItems.get(token));
             }
+            giftItems.remove(token);
             // 확정됐거나(이번 또는 이전에) 이미 처리된 토큰: 영수증은 더 필요 없다.
             Player online = Bukkit.getPlayer(player);
             if (online != null) {
@@ -621,7 +629,21 @@ final class NpcSocialService implements Listener, AutoCloseable {
         });
     }
 
+    /** 운영 기록 (메모 #92): 실제로 바뀐 호감도만 (applied 0 이면 상한·일일 제한으로 안 오른 것 → 남기지 않음, 선물은 성공이라 남김). */
+    private static void auditAffinity(UUID player, String npc, String source, int requested, AffinityStore.AddResult r, String item) {
+        if (r != null && source.equals("gift")) AuditStats.add(player, "선물", 1);
+        if (r == null || r.applied() == 0 && !source.equals("gift")) return;
+        String how = switch (source) { case "gift" -> "선물"; case "chat_reward" -> "AI 대화"; default -> source; };
+        AuditLog.log(player, AuditLog.호감도, how + " · " + npc + " " + (r.applied() >= 0 ? "+" : "") + r.applied() + " → " + r.row().score() + " (하트 " + r.row().heart() + ")"
+                        + (item == null ? "" : " · " + item),
+                "NPC", npc, "경로", source, "요청", requested, "증감", r.applied(), "점수", r.row().score(), "하트", r.row().heart(), "선물", item);
+    }
+
+    /** 선물 토큰 → 아이템 이름 (운영 기록용, 확정·취소 때 지움). */
+    private final Map<String, String> giftItems = new java.util.concurrent.ConcurrentHashMap<>();
+
     CompletableFuture<Boolean> cancelGift(String token) {
+        giftItems.remove(token);
         return work(() -> store.cancelGift(token));
     }
 

@@ -54,6 +54,15 @@ final class Results {
             change.put(m.id, d);
         }
         int win = winner == null ? -1 : winner.ordinal();
+        // 서버 통계 (메모 #96): 경기장에 실제로 온 선수만, 무효 경기 제외. 결투/큐디치 참가·승리·무승부·나감.
+        if (!voided) for (var m : match.players.values()) {
+            if (m.neverArrived) continue;
+            String mode = match.duel ? "결투" : "큐디치";
+            ChacaLink.stat(m.id, mode + "참가", 1);
+            if (m.left) ChacaLink.stat(m.id, mode + "나감", 1);
+            else if (winner == null) ChacaLink.stat(m.id, mode + "무승부", 1);
+            else if (winner == m.team) ChacaLink.stat(m.id, mode + "승리", 1);
+        }
         if (!deltas.isEmpty()) {
             // A09: persisted before the DB write; deleted only once the DB says recorded (or already recorded)
             var entry = new ResultOutbox.Entry(match.duel ? RatingStore.DUEL : RatingStore.MODE, match.id, match.arena.name, match.score[0], match.score[1], win, reason.name(), teams(match), deltas);

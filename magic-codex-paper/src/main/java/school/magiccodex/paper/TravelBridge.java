@@ -563,6 +563,8 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
             catch (RuntimeException e) { timeout.cancel(); failOrigin(p, op, tk, "이동 요청을 보내지 못했어요"); return; }
             result(p, op, TravelProtocol.STAGE_ACCEPTED, def.label() + "(으)로 이동하는 중…");
             plugin.getLogger().info("지도 이동 요청: " + p.getName() + " → " + server + "/" + point + " (표 " + Long.toHexString(tk) + ")");
+            AuditLog.log(p, AuditLog.접속, "서버 이동 요청 · " + config.self() + " → " + server + " (" + point + ")", "출발", config.self(), "도착", server, "지점", point, "위치", AuditLog.where(p.getLocation()));
+            AuditStats.add(id, "서버이동", 1);
         });
     }
 

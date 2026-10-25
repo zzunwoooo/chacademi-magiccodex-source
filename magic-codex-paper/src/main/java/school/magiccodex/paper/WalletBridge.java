@@ -57,6 +57,7 @@ final class WalletBridge implements PluginMessageListener,Listener,AutoCloseable
                 if(delta!=0)transfer(id,Math.abs(delta),delta>0);
                 double result=money(id);
                 plugin.getLogger().info("WALLET ADMIN admin="+CmdKit.sender(ctx).getName()+" player="+id+" action="+change+" value="+value+" before="+before+" after="+result);
+                AuditLog.log(id,AuditLog.돈,"관리자 돈 "+change+" "+AdminCommandRules.number(value)+" G ("+AdminCommandRules.number(before)+" → "+AdminCommandRules.number(result)+") · "+CmdKit.sender(ctx).getName(),"관리자",CmdKit.sender(ctx).getName(),"변경",change,"값",value,"전",before,"후",result,"증감",delta);
                 CmdKit.ok(CmdKit.sender(ctx),CmdKit.name(id)+" 님 돈 "+AdminCommandRules.number(result)+" G ("+(delta>=0?"+":"")+AdminCommandRules.number(delta)+")");
             }))));
         ChacaApi.branch(plugin,ChacaApi.유저관리,root,"돈 보기·설정·추가·빼기 (Vault)","돈 보기");

@@ -219,3 +219,98 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 - 마음 읽기(383) 하루 1번 기록을 서버 메모리 → **공유 DB** `codex_affinity_daily` (source `heart_read`, npc = 캐릭터 id) 로. 접속 때 오늘 기록을 읽어 캐시, 서버 이동·재시작에도 유지.
 - 관리 명령 `/유저관리 <닉> 일일제한 보기` · `일일제한 초기화 <선물|AI대화|마음읽기|전체>` (DailyLimits). 오늘 횟수만 지우고 호감도 점수는 그대로. 다른 하루 제한 기능은 `DailyLimits.register(...)` 로 종류를 붙이면 같은 명령에 나온다 (인기도는 기능 만들 때 붙일 것).
 - 배포 확인: 학교·야생 `MagicCodexBridge/database.properties` 가 같은 MariaDB, 하루 기준 timezone Asia/Seoul.
+
+## 15. 운영 기록 (감사 로그, 2026-10-26, 메모 #92)
+오너: "누가 어떤 마법을 얻었다·무엇을 팔았다·어떤 퀘스트를 깼다… 가끔 복구할 때 보게. 서버에 무리 안 가게, 사소한 건 빼고."
+
+**렉 방지 구조**: 게임 스레드는 `AuditLog.record/log` 에서 메모리 대기열(AuditQueue)에 한 줄 넣기만 한다 (DB·파일 IO 없음). 기록 스레드 `MagicCodex-Audit` 하나가 `batch-seconds`(기본 5초)마다 500줄씩 한 트랜잭션으로 넣는다. 대기열 `queue-limit`(기본 2만 줄) 넘으면 사소한 종류(접속·낚시)부터 버리고 콘솔 경고 1번. DB 가 안 되면 `plugins/MagicCodexBridge/audit/yyyy-MM-dd.log` 에 탭 구분 한 줄씩(시각·서버·uuid·닉·종류·설명·상세JSON), 1분 뒤 DB 재시도. 보관 `retention-days`(기본 90일) — 하루 한 번 기록 스레드가 5000줄씩 나눠 지움(파일도). 서버 끌 때 남은 줄을 최대 5초 동안 마저 씀.
+
+**표 `codex_audit_log`** (대시보드가 읽음). 저장소 = `database.properties`(일반 도메인과 같은 파일): MariaDB 면 모든 서버 공유, 없으면 이 서버 `audit.db`(SQLite). 칭호 장부(codex_title_awards)와 같은 방식(`AuditStore`).
+
+| 칸 | 형 | 내용 |
+|---|---|---|
+| id | BIGINT 자동증가 PK | 들어온 순서 |
+| at_ms | BIGINT | 시각 (유닉스 ms) |
+| server | VARCHAR(48) | 기록한 서버 (`audit.yml server-name`, 비우면 `quests.yml server-id`) |
+| player | VARCHAR(36) | 플레이어 UUID (시스템/콘솔 기록은 "") — 관리 명령은 **대상 유저** UUID |
+| player_name | VARCHAR(64) | 그때의 한글 닉 (없으면 계정명) |
+| kind | VARCHAR(32) | 종류 (아래 한글 이름 그대로) |
+| summary | VARCHAR(255) | 한 줄 한국어 설명 |
+| detail | TEXT | 상세 JSON 객체 `{"키":"값"}` — 값은 전부 문자열, 4000자 넘으면 `"_잘림":"예"` |
+
+인덱스: `idx_audit_player(player,at_ms)` · `idx_audit_kind(kind,at_ms)` · `idx_audit_time(at_ms)`. 웹 검색은 `WHERE player=? AND at_ms>=? ORDER BY at_ms DESC` / `WHERE kind=? AND at_ms>=?` 로 인덱스를 타게, 글자 검색은 기간을 꼭 걸 것.
+
+**종류와 연결한 곳** (성공한 것만):
+| 종류 | 남기는 것 | 연결 |
+|---|---|---|
+| 마법 | 발견·다시 습득(수업·책·신호 경로 포함), 관리자 배우기/잊기·사전 해금, 발견 조건 지급/회수/초기화, 마법 기증 | MagicDiscovery `acquire`·`adminSetLearned`·`adminCondition` (ChacaLink.audit), SchoolBridge 기증 |
+| 상점 | 일반 상점(피피 잡화점·튜토리얼 상점 포함) 구매(우편 저장까지)·판매(대금 입금까지), 물고기 판매(종류·개체·합계) | ShopBridge, FishShopBridge |
+| 마일리지 | 마일리지샵 구매, 관리자 마일리지 설정·추가·빼기(전→후) | MileageBridge |
+| 우편 | 첨부 수령(영수증 확인 뒤, 아이템 이름·개수) | MailboxBridge |
+| 퀘스트 | 의뢰 수락(게시판·대화·호감도 퀘스트), 완료·보상(돈·아이템·명령·기숙사 점수) | QuestBridge |
+| 스토리 | 스토리 단계 완료(단계 → 다음) | ChacademyStory QuestEngine.advance (ChacaLink.audit) |
+| 호감도 | 선물(아이템·증감·결과 점수), AI 대화 보상, 퀘스트·기타 출처 증가, 관리자 설정/추가/빼기·하트 단계 | NpcSocialService add·chatReward·commitGift·adminChange·adminHeart |
+| 아티팩트 | 뽑기 결과(등급·새것/중복 조각·천장 발동·천장 카운터) | ArtifactBridge |
+| 펫 | 교화 성공(몹·펫·확률·위치), 관리자 펫 주기·회수 | TamingBridge, PetBridge |
+| 강화 / 감정 | 장비 강화 성공·실패(전 능력치·상승·스타캐치·비용), 코어 감정(노드 수·파괴·비용) | EnhancementBridge, AppraisalBridge |
+| 연금술 | 제작(레시피·결과·경험치·레시피 발견) — **레시피에 등급이 없어 전부** 남김 (자주 하지 않는 행동) | AlchemyBridge |
+| 낚시 | 고급 이상 물고기(등급 ≥1, 크기·첫 발견·최고 기록), 고급 이상 보물상자(나온 아이템) | FishingBridge |
+| 돈 | 관리자 돈 설정·추가·빼기(전→후), 행운의 동전 지급(money-threshold 이상) | WalletBridge, ArtifactLife |
+| 관리자 | 관리 대단원(/유저관리·/컨텐츠관리·/서버관리·/상점관리 … 전부)에서 **바꾸는** 명령 실행: 누가·명령 전체·대상. 보기·목록·상태·기록·검색·도움말 같은 경로는 뺌 (AuditText.readOnlyCommand) | CommandHub.wrap (한 곳) |
+| 기숙사 | 분류의 거울 배정(성향·인원 맞춤 여부), 관리자 지정 | SchoolBridge |
+| 칭호 | 관리자 지급·회수, 획득 경로(발견·호감도·낚시·사전 설정) 지급 | TitleBridge |
+| 접속 | 접속·퇴장 한 줄(서버 이름·위치), 지도/귀환권 서버 이동 요청(출발→도착) | AuditLog 리스너, TravelBridge |
+| 사망 | 원인·처치자·위치·아이템 유지/떨군 묶음·경험치 | AuditLog 리스너 |
+
+빼는 것: 일반 이동, 채팅, 블록, 마법 시전 하나하나, 일반 몹 처치, 줍기, 일반 등급 물고기 (→ 수는 §16 통계로만).
+
+**명령**: `/유저관리 <닉> 기록 [종류|전체] [일수] [쪽]` (한 쪽 15줄, 최근 것부터) · `/서버관리 기록 검색 <글자>` (최근 `search-days`=7일, 설명·상세·닉 포함, 30줄) · `/서버관리 기록 상태` · `/서버관리 새로고침 운영기록`. 읽기도 기록 스레드에서 하고 결과만 채팅으로.
+
+**설정 `audit.yml`** (jar 에 기본 판, 처음 켤 때 생김): `enabled`, `server-name`, `retention-days: 90`, `batch-seconds: 5`, `queue-limit: 20000`, `search-days: 7`, `money-threshold: 10000`, `minor-kinds: [접속, 낚시]`, `kinds:` 종류별 true/false, `stats:` (§16). queue-limit·batch-seconds 는 재시작 때 적용.
+
+**다른 플러그인 연결**: `ChacaApi.audit(UUID, 종류, 설명, Map<String,String>)` (아무 스레드). MagicDiscovery·ChacademyStory 는 ChacaLink.audit 로 리플렉션 호출 (브리지 없으면 조용히 건너뜀).
+
+**배치**: MagicCodexBridge·MagicDiscovery·ChacademyStory·Kyudichi jar 다시 빌드 → 학교·야생·아레나·튜토리얼 전부. 서버마다 `audit.yml server-name` 을 `school`/`wild1`/`wild2`/`arena1`/`tutorial_1` … 로 (또는 quests.yml server-id 가 이미 다르면 비워 둠). `database.properties` 가 같은 MariaDB 여야 한 표로 모임 (아니면 서버별 audit.db).
+
+연결 못 한 것: 유저 간 거래·유저 우편 보내기는 기능이 없어 해당 없음 (우편은 시스템·관리자 발송뿐 — 관리자 발송은 '관리자' 종류로 남음). 퀘스트 보상 명령어·스토리 시작 명령 안에서 다른 플러그인이 주는 것(아이템 등)은 그 명령 문자열만 남음. ChacaNPC 쪽 독자 동작은 호감도가 MagicCodex 로 오므로 그쪽에서 남음. MCPets 자체 GUI 로 펫 꺼내기/넣기는 남기지 않음.
+
+## 16. 서버 통계 수집 (2026-10-26, 메모 #96)
+오너: "보여 줄 필요 없음, 기록만 쌓고 서버 끝날 때 정리". 운영 기록과 같은 저장소·같은 기록 스레드.
+
+**표 `codex_player_stats`**: `player VARCHAR(36)`, `stat_key VARCHAR(96)`, `count BIGINT`(누적 합), `updated_at BIGINT`(ms), PK `(player, stat_key)`. `AuditStats.add(uuid, 키, n)` 은 메모리 맵에 더하기만 (아무 스레드). `stats.flush-minutes`(기본 5분)마다·그 유저가 나갈 때·서버 끌 때 기록 스레드가 upsert(`count = count + 증가분`, MariaDB `ON DUPLICATE KEY UPDATE`, SQLite `ON CONFLICT DO UPDATE`). DB 실패면 메모리에 되돌려 두고 다음에 다시 (메모리 상한 20만 키, 넘으면 새 키 버리고 경고). 다른 플러그인은 `ChacaApi.stat(UUID, 키, long)`.
+
+| 키 | 뜻 (판단한 정의) | 센 곳 |
+|---|---|---|
+| `접속횟수` · `접속초` | 서버 접속 수 · 접속 시간(초). 접속 중이면 5분마다 지난 만큼 더함 (분 = /60) | AuditLog 리스너 |
+| `서버이동` | 지도·귀환권으로 다른 서버 이동 요청 | TravelBridge |
+| `사망` · `사망:몹` · `사망:플레이어` · `사망:기타` | 마지막 피해가 플레이어(처치자 있음) / 살아있는 몹·몹 투사체 / 그 밖(낙하·용암·마법 등) | AuditLog |
+| `플레이어처치` | 다른 플레이어를 처치 | AuditLog |
+| `몹처치` · `처치:<미몹ID>` | 플레이어가 막타 친 몹 전체 · 그중 MythicMobs 커스텀 몹 ID별 | AuditLog (EntityDeathEvent) |
+| `시전` · `시전:<마법ID>` | 마나·쿨타임까지 통과한 성공 시전 | MagicCodexBridge.artifactCast |
+| `마법발견` | 처음 발견(새 기록이 생긴 것만, 다시 습득 제외) | MagicDiscovery |
+| `발견시도실패:<마법ID>` | **발견 조건은 다 채웠는데 확률(chance)에서 떨어진 판정** 한 번. 조건 미달 자체는 매 행동마다라 세지 않음 | MagicDiscovery.signal |
+| `낚시` · `낚시:등급N` · `보물상자` | 수조로 간 물고기 (0 일반 1 고급 2 유일 3 전설) · 보물상자 | FishingBridge |
+| `물고기판매` | 판 마리 수 | FishShopBridge |
+| `상점구매` · `상점판매` | 끝까지 성공한 거래 건수 | ShopBridge |
+| `퀘스트완료` · `스토리단계` | 의뢰 보상까지 끝남 · 스토리 단계 완료 | QuestBridge, ChacademyStory |
+| `선물` | 확정된 NPC 선물 | NpcSocialService |
+| `교화` · `연금술제작` | 교화 성공 · 연금술 제작 | TamingBridge, AlchemyBridge |
+| `결투참가/승리/무승부/나감` · `큐디치참가/승리/무승부/나감` | 경기장에 실제 도착한 선수만, 무효 경기 제외 | Kyudichi Results.finish |
+
+끝날 때 쓸 SQL 예시 (MariaDB):
+```sql
+-- 항목별 서버 전체 합계
+SELECT stat_key, SUM(count) AS total, COUNT(*) AS players FROM codex_player_stats GROUP BY stat_key ORDER BY total DESC;
+-- 접속 시간 순위 (시간 단위) + 한글 닉 (운영 기록의 가장 최근 닉)
+SELECT s.player, (SELECT player_name FROM codex_audit_log a WHERE a.player=s.player ORDER BY at_ms DESC LIMIT 1) AS nick,
+       ROUND(s.count/3600,1) AS hours FROM codex_player_stats s WHERE s.stat_key='접속초' ORDER BY s.count DESC LIMIT 30;
+-- 많이 쓴 마법 TOP 20
+SELECT SUBSTRING(stat_key,4) AS spell, SUM(count) AS casts FROM codex_player_stats WHERE stat_key LIKE '시전:%' GROUP BY stat_key ORDER BY casts DESC LIMIT 20;
+-- 사람별 순위 (예: 큐디치 승리)
+SELECT player, count FROM codex_player_stats WHERE stat_key='큐디치승리' ORDER BY count DESC LIMIT 20;
+-- 가장 많이 잡힌 커스텀 몹
+SELECT SUBSTRING(stat_key,4) AS mob, SUM(count) AS kills FROM codex_player_stats WHERE stat_key LIKE '처치:%' GROUP BY stat_key ORDER BY kills DESC;
+-- 발견 확률에 가장 많이 떨어진 마법
+SELECT SUBSTRING(stat_key,8) AS spell, SUM(count) AS fails FROM codex_player_stats WHERE stat_key LIKE '발견시도실패:%' GROUP BY stat_key ORDER BY fails DESC LIMIT 20;
+```
+설정: `audit.yml stats.enabled`(기본 true), `stats.flush-minutes`(1~60, 재시작 때 적용). `/서버관리 기록 상태` 에 대기 칸 수가 같이 보임.

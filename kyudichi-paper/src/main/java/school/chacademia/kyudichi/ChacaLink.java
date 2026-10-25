@@ -140,6 +140,12 @@ final class ChacaLink {
         catch (RuntimeException e) { to.sendMessage(title + (body == null || body.isEmpty() ? "" : " — " + body)); }
     }
 
+    /** 서버 통계 카운터 (ChacaApi.stat, 메모 #96). 메모리에 더하기만. 브리지가 없으면 조용히 건너뛴다. */
+    static void stat(UUID player, String key, long amount) {
+        try { call("stat", new Class<?>[]{UUID.class, String.class, long.class}, player, key, amount); }
+        catch (RuntimeException | LinkageError ignored) { }
+    }
+
     @SuppressWarnings("unchecked")
     static CompletableFuture<Void> permission(UUID id, String node, boolean grant) {
         return (CompletableFuture<Void>) call("permission", new Class<?>[]{UUID.class, String.class, boolean.class}, id, node, grant);
