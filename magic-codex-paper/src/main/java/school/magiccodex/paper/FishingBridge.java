@@ -538,13 +538,18 @@ final class FishingBridge implements PluginMessageListener, Listener {
                         if (pick < 0) { var it = item(rw.item(), rnd.nextInt(rw.min(), rw.max() + 1)); if (it != null) items.add(it); break; }
                     }
                 }
-                if (!s.preview) { var r = store.record(p.getUniqueId(), "treasure_" + grade, 0); fresh = r[0]; }
+                if (!s.preview) { var r = store.record(p.getUniqueId(), "treasure_" + grade, 0); fresh = r[0]; AuditStats.add(p.getUniqueId(), "보물상자", 1);
+                    if (grade >= 1) { var got = new StringBuilder(); for (var it : items) got.append(got.length() == 0 ? "" : ", ").append(AuditLog.item(it));
+                        AuditLog.log(p, AuditLog.낚시, "보물상자 · " + name + " · " + AuditText.clip(got.toString(), 150), "종류", "보물상자", "등급", grade, "아이템", got.toString(), "위치", AuditLog.where(p.getLocation())); } }
             } else {
                 var f = s.fish;
                 fishId = f.id(); name = f.name(); grade = f.grade(); shape = f.shape(); cm = s.size;
                 // owner 2026-10-20: fish go into the 아공간 수조 tank, not the inventory
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
+                    AuditStats.add(p.getUniqueId(), "낚시", 1); AuditStats.add(p.getUniqueId(), "낚시:등급" + grade, 1);
+                    if (grade >= 1) AuditLog.log(p, AuditLog.낚시, "낚시 · " + FishingProtocol.GRADE_LABELS[grade] + " " + name + " " + String.format("%.1f", cm) + "cm" + (fresh ? " (첫 발견)" : "") + (record ? " (최고 기록)" : ""),
+                            "물고기", f.id(), "이름", name, "등급", grade, "크기", String.format("%.2f", cm), "첫발견", fresh ? "예" : "아니오", "위치", AuditLog.where(p.getLocation()));
                     // 낚시 칭호 (메모 #21): title-awards.yml fishing 규칙 (기본은 비어 있음 = 아무것도 안 함)
                     var titles = plugin.titleService(); if (titles != null) titles.fish(p.getUniqueId(), f.id(), cm);
                     tank.add(p.getUniqueId(),f.id(),cm,(saved,put)->{

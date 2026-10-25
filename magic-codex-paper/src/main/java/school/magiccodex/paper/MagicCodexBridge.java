@@ -18,6 +18,7 @@ import school.magiccodex.database.DatabaseSettings;
 /** Permission/wallet synchronization and authoritative mana/casting service. */
 public final class MagicCodexBridge extends JavaPlugin implements PluginMessageListener, Listener {
     private PermissionSubscriptions subscriptions;
+    private AuditLog audit;
     private final Set<UUID> viewers = ConcurrentHashMap.newKeySet();
     private final Set<UUID> dirty = ConcurrentHashMap.newKeySet();
     private AutoCloseable luckPermsHook;
@@ -160,7 +161,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** 동행 펫 passive fishing: 낚시 희귀 등급 배율 (1 = 없음). */
     double petFishing(Player p){var c=pets==null?null:pets.companions();return c==null?1:c.fishingFactor(p);}
     /** A spell was cast successfully (after mana and cooldown). */
-    void artifactCast(Player p,String spell,double cost){if(artifactEffects!=null)artifactEffects.cast(p,spell,cost);}
+    void artifactCast(Player p,String spell,double cost){AuditStats.add(p.getUniqueId(),"시전",1);AuditStats.add(p.getUniqueId(),"시전:"+spell,1);/* 서버 통계 #96 (메모리만) */if(artifactEffects!=null)artifactEffects.cast(p,spell,cost);}
     private PlayerStateBridge playerState;
     boolean playerStateReady(Player p){return playerState==null||playerState.ready(p);}
     /** Combat tag (artifact effects: dealt or took hostile damage in the last 5 s). */
@@ -233,6 +234,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         names=new DisplayNames(this);
         commandHub=new CommandHub(this);
         commandHub.status(this,"DB 공유",()->databaseStatus);
+        audit=AuditLog.start(this); // 운영 기록 (메모 #92): 대기열 + 기록 스레드, 게임 스레드 IO 없음
         wallet=new WalletBridge(this);
         long refresh = Math.clamp(getConfig().getLong("refresh-interval-ticks", 200), 20, 1200) * 50;
         long timeout = Math.clamp(getConfig().getLong("session-timeout-seconds", 45), 30, 120) * 1000;
@@ -377,6 +379,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(mana!=null){mana.close();mana=null;}
         if(wallet!=null){wallet.close();wallet=null;}
         if (luckPermsHook != null) try { luckPermsHook.close(); } catch (Exception ignored) {}
+        if(audit!=null){audit.close();audit=null;} // 다른 기능이 닫히며 남긴 줄까지 마저 쓴다
         getServer().getScheduler().cancelTasks(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);

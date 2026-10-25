@@ -178,6 +178,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             syncPermission(id,spell.permission(),learned).whenComplete((ok,permissionError)->later(()->{
                 if(permissionError!=null){failure(permissionError);completion.accept("습득 상태는 저장했지만 권한 동기화에 실패했습니다. 재접속하거나 다시 시도해 주세요.");return;}
                 if(!Objects.equals(learnedVersions.get(key),version)){completion.accept("더 최근의 관리자 변경이 적용되어 이 요청은 대체되었습니다.");return;}
+                audit(id,(learned?"마법 배우기(관리자·지급) · ":"마법 잊기(관리자) · ")+spell.name(),"마법",spellId,"이름",spell.name(),"경로",learned?"관리자배우기":"관리자잊기");
                 completion.accept(null);
                 var latest=sessions.get(id);if(learned&&latest!=null&&latest.loaded&&Objects.equals(learnedVersions.get(key),version))checkMeta(latest,true);
             }));
@@ -223,6 +224,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
                 if(grant&&award.created()&&online!=null&&online.isOnline()&&current!=null){if(current.noticeReady)sendPending(online,current);else ChacaLink.notify(online,"shop","discovery:"+spellId,"새로운 마법 발견",spell.name(),0);rewards.claim(online,current,false);discoveryFirst(id,spellId);}
                 if(grant&&award.acquisition()!=null)discoveryTitles(id,List.of(spellId));
                 if(grant&&current!=null)checkMeta(current,true);
+                audit(id,"발견 조건 "+action+" · "+spell.name(),"마법",spellId,"이름",spell.name(),"경로",action,"권한",node,"새발견",grant&&award.created()?"예":"아니오");
                 done.accept(action+" 완료: "+spell.name()+" ("+node+")"+(grant&&!award.created()?" · 기존 발견 기록 유지, 알림·최초보상 추가 없음":""));
             }));
         }));
@@ -233,7 +235,9 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         if(definitions.index.get(key).stream().noneMatch(sp->needed(p,sp.id())))return true;
         double cap=definitions.index.get(key).stream().mapToDouble(sp->sp.requirements().get(key)+s.learned.baseline(sp.id(),key)).max().orElse(1e9);
         double before=s.progress.getOrDefault(key,0d),after=Math.max(before,Math.min(cap,before+amount));s.progress.put(key,after);if(after!=before)s.dirtyKeys.add(key);
-        for(var spell:definitions.index.get(key))if(s.learned.meets(spell,s.progress)&&spell.prerequisites().stream().allMatch(p::hasPermission)&&ThreadLocalRandom.current().nextDouble()<spell.chance())acquire(p,s,spell);
+        for(var spell:definitions.index.get(key))if(s.learned.meets(spell,s.progress)&&spell.prerequisites().stream().allMatch(p::hasPermission)){
+            // 서버 통계 #96: 조건은 채웠지만 확률(chance)에서 떨어진 시도 = "발견시도실패:<마법>", 통과 = acquire
+            if(ThreadLocalRandom.current().nextDouble()<spell.chance())acquire(p,s,spell);else if(needed(p,spell.id()))ChacaLink.stat(id,"발견시도실패:"+spell.id(),1);}
         return true;
     }
     public boolean state(UUID id,String key,double value){return state(id,key,value,false);}
@@ -264,11 +268,17 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             s.acquired.putIfAbsent(spell.id(),award.acquisition());
             if(learnedVersions.getOrDefault(key,0L)!=version)return;
             s.learned.set(spell.id(),true,Map.of());syncPermission(s.id,spell.permission(),true);
-            if(award.created()){if(s.noticeReady)sendPending(p,s);else ChacaLink.notify(p,"shop","discovery:"+spell.id(),"새로운 마법 발견",spell.name(),0);rewards.claim(p,s,false);discoveryFirst(s.id,spell.id());}
+            audit(s.id,(award.created()?"마법 발견 · ":"마법 다시 습득 · ")+spell.name(),"마법",spell.id(),"이름",spell.name(),"경로",award.created()?"발견":"다시습득","조건",String.join(",",spell.requirements().keySet()));
+            if(award.created()){ChacaLink.stat(s.id,"마법발견",1);if(s.noticeReady)sendPending(p,s);else ChacaLink.notify(p,"shop","discovery:"+spell.id(),"새로운 마법 발견",spell.name(),0);rewards.claim(p,s,false);discoveryFirst(s.id,spell.id());}
             else ChacaLink.notify(p,"system","discovery-relearn:"+spell.id(),"마법을 다시 습득했어요",spell.name(),0);
             discoveryTitles(s.id,List.of(spell.id()));
             checkMeta(s,true);
         }));
+    }
+    /** 운영 기록 (메모 #92): 마법 종류 한 줄. MagicCodexBridge 가 없으면 조용히 건너뛴다. */
+    private static void audit(UUID id,String summary,String... kv){
+        var detail=new LinkedHashMap<String,String>();for(int i=0;i+1<kv.length;i+=2)if(kv[i+1]!=null)detail.put(kv[i],kv[i+1]);
+        ChacaLink.audit(id,"마법",summary,detail);
     }
     /** MagicCodexBridge.discoveryTitles(UUID,Collection): 발견한 마법의 칭호 (title-awards.yml). 브리지가 없거나 옛 버전이면 조용히 건너뛴다. */
     private void discoveryTitles(UUID id,Collection<String> spells){

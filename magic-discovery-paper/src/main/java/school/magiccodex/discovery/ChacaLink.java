@@ -150,6 +150,18 @@ final class ChacaLink {
         catch (RuntimeException e) { to.sendMessage(title + (body == null || body.isEmpty() ? "" : " — " + body)); }
     }
 
+    /** 운영 기록 한 줄 (MagicCodexBridge ChacaApi.audit, 메모 #92). 브리지가 없거나 옛 버전이면 조용히 건너뛴다. IO 없음. */
+    static void audit(UUID player, String kind, String summary, java.util.Map<String, String> detail) {
+        try { call("audit", new Class<?>[]{UUID.class, String.class, String.class, java.util.Map.class}, player, kind, summary, detail); }
+        catch (RuntimeException | LinkageError ignored) { /* 기록 실패가 게임 진행을 막지 않는다 */ }
+    }
+
+    /** 서버 통계 카운터 (ChacaApi.stat, 메모 #96). 메모리에 더하기만. 브리지가 없으면 조용히 건너뛴다. */
+    static void stat(UUID player, String key, long amount) {
+        try { call("stat", new Class<?>[]{UUID.class, String.class, long.class}, player, key, amount); }
+        catch (RuntimeException | LinkageError ignored) { }
+    }
+
     @SuppressWarnings("unchecked")
     static CompletableFuture<Void> permission(UUID id, String node, boolean grant) {
         return (CompletableFuture<Void>) call("permission", new Class<?>[]{UUID.class, String.class, boolean.class}, id, node, grant);

@@ -208,7 +208,9 @@ final class CommandHub {
         return ctx -> {
             CommandSender sender = ctx.getSource().getSender();
             try {
-                return command.run(ctx);
+                int result = command.run(ctx);
+                audit(ctx, path); // 운영 기록 (메모 #92): 바꾸는 관리 명령만, 대기열에 한 줄
+                return result;
             } catch (CommandSyntaxException e) {
                 if (e.getRawMessage() instanceof UserError) feedback.userFail(sender, e.getRawMessage().getString(), null);
                 else feedback.userFail(sender, "명령어 형식이 맞지 않아요", path);
@@ -218,6 +220,21 @@ final class CommandHub {
                 return 0;
             }
         };
+    }
+
+    /** 운영 기록: 관리 대단원(/관리 질문 제외) 명령이 예외 없이 실행되면 한 줄. 유저 명령은 남기지 않는다. */
+    private void audit(CommandContext<CommandSourceStack> ctx, String path) {
+        try {
+            if (path == null || path.length() < 2) return;
+            int space = path.indexOf(' ');
+            String root = path.substring(1, space < 0 ? path.length() : space);
+            if (!ROOTS.containsKey(root)) return;
+            UUID target = null;
+            if (root.equals(ChacaApi.유저관리)) {
+                try { target = arguments.find(ctx.getArgument(ChacaApi.TARGET, String.class)); } catch (IllegalArgumentException ignored) { }
+            }
+            AuditLog.adminCommand(ctx.getSource().getSender(), path, ctx.getInput(), target);
+        } catch (RuntimeException ignored) { /* 기록 실패가 명령을 막지 않는다 */ }
     }
 
     private int usage(CommandContext<CommandSourceStack> ctx, CommandNode<CommandSourceStack> node, String path) {

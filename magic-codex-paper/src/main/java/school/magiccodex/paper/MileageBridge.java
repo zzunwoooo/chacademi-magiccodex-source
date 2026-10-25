@@ -160,6 +160,8 @@ final class MileageBridge implements PluginMessageListener, Listener {
                 return;
             }
             plugin.getLogger().info("MILEAGE BUY player=" + id + " order=" + b.order().id() + " product=" + b.order().product() + " qty=" + b.order().quantity() + " total=" + b.order().total() + " balance=" + b.balance());
+            AuditLog.log(p, AuditLog.마일리지, "마일리지샵 구매 · " + b.order().title() + " x" + b.order().quantity() + " · " + MileageProtocol.amount(b.order().total()),
+                    "상품", b.order().product(), "이름", b.order().title(), "수량", b.order().quantity(), "합계", b.order().total(), "남은마일리지", b.balance(), "주문", b.order().id());
             deliver(b.order(), ok -> {
                 if (!p.isOnline()) return;
                 send(p, new Result(r.operation(), true, b.balance(), ok ? "" : "구매는 완료됐어요. 우편이 곧 도착해요"));
@@ -320,6 +322,8 @@ final class MileageBridge implements PluginMessageListener, Listener {
         work(() -> store.change(id, change, value), v -> {
             plugin.getLogger().info("MILEAGE ADMIN admin=" + to.getName() + " player=" + id + " action=" + change + " value=" + value + " before=" + v[0] + " after=" + v[1]);
             long delta = v[1] - v[0];
+            AuditLog.log(id, AuditLog.마일리지, "관리자 마일리지 " + change + " " + value + " (" + v[0] + " → " + v[1] + ") · " + to.getName(),
+                    "관리자", to.getName(), "변경", change, "값", value, "전", v[0], "후", v[1]);
             CmdKit.ok(to, CmdKit.name(id) + " 님 마일리지 " + MileageProtocol.amount(v[1]) + " (" + (delta >= 0 ? "+" : "") + MileageProtocol.amount(delta) + ")");
             var p = Bukkit.getPlayer(id);
             if (p != null) { cached.put(id, v[1]); if (sessions.containsKey(id)) push(p, MileageProtocol.KIND_STATE, "", ""); }

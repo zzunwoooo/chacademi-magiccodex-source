@@ -244,7 +244,9 @@ final class ArtifactLife implements Listener {
                 var reg = Bukkit.getServicesManager().getRegistration((Class) type);
                 if (reg == null) return false;
                 Object response = type.getMethod("depositPlayer", OfflinePlayer.class, double.class).invoke(reg.getProvider(), p, amount);
-                return (boolean) response.getClass().getMethod("transactionSuccess").invoke(response);
+                boolean ok = (boolean) response.getClass().getMethod("transactionSuccess").invoke(response);
+                if (ok && amount >= AuditLog.moneyThreshold()) AuditLog.log(p, AuditLog.돈, "아티팩트 행운의 동전 지급 +" + amount, "출처", "행운의 동전", "금액", amount);
+                return ok;
             }
         } catch (ReflectiveOperationException | RuntimeException e) {
             fx.plugin.getLogger().warning("행운의 동전 지급 실패: " + e.getClass().getSimpleName());

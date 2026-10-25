@@ -386,6 +386,9 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         p.updateInventory();
         plugin.getLogger().info("ALCHEMY CRAFT player=" + p.getName() + " recipe=" + match.id() + " amount=" + match.amount() + " exp=" + match.exp()
                 + (isNew ? " new" : "") + (preheat ? " preheated=" + cost : "") + " craft=" + craftId);
+        AuditStats.add(p.getUniqueId(), "연금술제작", 1);
+        AuditLog.log(p, AuditLog.연금술, "연금술 제작 · " + match.name() + " x" + match.amount() + (isNew ? " (레시피 발견)" : "") + " · 경험치 " + (preheat ? cost : match.exp()),
+                "레시피", match.id(), "이름", match.name(), "결과", match.result(), "수량", match.amount(), "경험치", preheat ? cost : match.exp(), "발견", isNew ? "예" : "아니오", "제작번호", craftId);
         if (preheat && LifeSpells.take(p.getUniqueId(), "alchemy_preheat"))
             CmdKit.notify(p, "system", "life-alchemy_preheat", "연금로 예열 효과", "경험치를 " + match.exp() + " 대신 " + cost + "만 썼어요", 0);
         String notice = message(isNew ? "discovered" : "crafted", match, match.amount(), "");

@@ -239,6 +239,7 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
             boolean grant=action.equals("주기");
             ChacaApi.permission(id,perm,grant).whenComplete((v,error)->{
                 if(error!=null){ChacaApi.fail(sender,"펫 보유를 바꾸지 못했어요",error);return;}
+                AuditLog.log(id,AuditLog.펫,"관리자 펫 "+action+" · "+petName(pet)+" · "+sender.getName(),"펫",pet,"권한",perm,"변경",action,"관리자",sender.getName());
                 ChacaApi.ok(sender,ChacaApi.name(id)+" 님에게 "+petName(pet)+(grant?" 펫을 주었어요":" 펫을 회수했어요"));
                 Bukkit.getScheduler().runTask(plugin,()->{var target=Bukkit.getPlayer(id);if(target!=null&&plugin.stats()!=null)plugin.stats().refresh(target);}); // 도감 체력
             });return Command.SINGLE_SUCCESS;

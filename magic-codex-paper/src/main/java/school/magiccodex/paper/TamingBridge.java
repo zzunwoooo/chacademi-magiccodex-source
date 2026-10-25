@@ -289,7 +289,7 @@ final class TamingBridge implements Listener,PluginMessageListener,AutoCloseable
             lp.getUserManager().saveUser(user).whenComplete((v,error)->{
                 if(error!=null&&added)user.data().remove(node);
                 if(!plugin.isEnabled())return;
-                Bukkit.getScheduler().runTask(plugin,()->{if(closed)return;if(error!=null){plugin.getLogger().warning("교화 권한 저장 실패: "+c.player.getUniqueId());finish(c,false,"펫을 저장하지 못했습니다. 다시 시도해 주세요.");}else {if(PhoenixDiscovery.isPhoenix(c.profile.pet))DiscoveryLink.signal(c.player.getUniqueId(),"pet.phoenix",1);if(finish(c,true,"교화 성공 · "+c.profile.name)){StoryProgressEvent.fire(c.player,StoryProgressEvent.TAMING);if(plugin.stats()!=null&&c.player.isOnline())plugin.stats().refresh(c.player);/* 도감 체력 다시 계산 */}}});
+                Bukkit.getScheduler().runTask(plugin,()->{if(closed)return;if(error!=null){plugin.getLogger().warning("교화 권한 저장 실패: "+c.player.getUniqueId());finish(c,false,"펫을 저장하지 못했습니다. 다시 시도해 주세요.");}else {if(PhoenixDiscovery.isPhoenix(c.profile.pet))DiscoveryLink.signal(c.player.getUniqueId(),"pet.phoenix",1);if(finish(c,true,"교화 성공 · "+c.profile.name)){AuditStats.add(c.player.getUniqueId(),"교화",1);AuditLog.log(c.player,AuditLog.펫,"교화 성공 · "+c.profile.name+" → 펫 "+c.profile.pet,"몹",c.profile.id,"이름",c.profile.name,"펫",c.profile.pet,"권한",c.permission,"확률",String.format("%.3f",c.chance),"보스",c.profile.boss?"예":"아니오","위치",AuditLog.where(c.entity.getLocation()));StoryProgressEvent.fire(c.player,StoryProgressEvent.TAMING);if(plugin.stats()!=null&&c.player.isOnline())plugin.stats().refresh(c.player);/* 도감 체력 다시 계산 */}}});
             });
         }catch(RuntimeException ex){c.pending=false;finish(c,false,"펫을 저장하지 못했습니다. 다시 시도해 주세요.");}
     }

@@ -97,6 +97,7 @@ final class AppraisalBridge implements PluginMessageListener,Listener,AutoClosea
   if(!withdraw(p,o.cost())){deny(p,o,"돈이 부족합니다.");return;}
   // Entire transaction executes on the main thread. Commit before animation, never trust client outcome.
   p.getInventory().setItem(o.slot(),result);p.saveData();
+  AuditLog.log(p,AuditLog.감정,"코어 감정 · "+(newState==2?"파괴":"성공 · 마력 노드 "+nodes+"개")+" · 비용 "+o.cost(),"결과",newState==2?"파괴":"감정","노드",nodes,"비용",o.cost(),"아이템",AuditLog.item(held),"칸",o.slot());
   send(p,new Response(o.token(),newState,nodes,true,false,o.cost(),balance(p),0,""));
  }
  private void deny(Player p,Offer o,String text){send(p,new Response(o.token(),value(o.item(),"core_state",0),value(o.item(),"core_nodes",0),false,false,o.cost(),balance(p),0,text));}

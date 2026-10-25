@@ -93,6 +93,12 @@ final class MailboxBridge implements MailService,PluginMessageListener,Listener,
  static boolean same(ItemStack[] a,ItemStack[] b){if(a.length!=b.length)return false;for(int i=0;i<a.length;i++){if(a[i]==null||a[i].getType().isAir()){if(b[i]!=null&&!b[i].getType().isAir())return false;}else if(b[i]==null||!Arrays.equals(a[i].serializeAsBytes(),b[i].serializeAsBytes()))return false;}return true;}
  /** Inserts a whole attachment or leaves the simulated inventory unchanged. Never drops overflow. */
  static boolean insert(ItemStack[] inventory,ItemStack value){var next=copy(inventory);int left=value.getAmount();for(int i=0;i<next.length&&left>0;i++){var old=next[i];if(old!=null&&!old.getType().isAir()&&old.isSimilar(value)){int n=Math.min(left,Math.max(0,Math.min(64,old.getMaxStackSize())-old.getAmount()));old.setAmount(old.getAmount()+n);left-=n;}}for(int i=0;i<next.length&&left>0;i++)if(next[i]==null||next[i].getType().isAir()){int n=Math.min(left,Math.min(64,value.getMaxStackSize()));next[i]=value.clone();next[i].setAmount(n);left-=n;}if(left!=0)return false;System.arraycopy(next,0,inventory,0,next.length);return true;}
+ /** 운영 기록 (메모 #92): 수령이 영수증까지 확인된 첨부만. */
+ private static void audit(UUID owner,String claim,List<MailboxStore.Ref> fits){
+  var items=new StringBuilder();var mails=new java.util.LinkedHashSet<String>();
+  for(var f:fits){if(items.length()<400)items.append(items.length()==0?"":", ").append(f.item().name()).append(" x").append(f.item().amount());mails.add(f.mail());}
+  AuditLog.log(owner,AuditLog.우편,"우편 수령 · 첨부 "+fits.size()+"개 · "+AuditText.clip(items.toString(),120),"수령번호",claim,"첨부",items.toString(),"우편",String.join(",",mails));
+ }
  private void claim(Player p,Request r,long session){
   if(r.action()==MailboxProtocol.CLAIM&&r.mail().isEmpty()){finishError(p,r,session,"우편을 선택해 주세요.");return;}
   UUID owner=p.getUniqueId();work(owner,()->store.ready(owner,r.action()==MailboxProtocol.CLAIM_ALL?"":r.mail()),refs->{
@@ -104,7 +110,7 @@ final class MailboxBridge implements MailService,PluginMessageListener,Listener,
     // A crash with no durable receipt remains pending for review; never blindly release/replay it.
     try{p.getInventory().setStorageContents(next);p.getPersistentDataContainer().set(receipt(claim),PersistentDataType.BYTE,(byte)1);p.saveData();}
     catch(RuntimeException e){finishError(p,r,session,"수령 저장을 확인해야 합니다. 자동으로 재지급하지 않습니다.");return;}
-    Path file=playerFile(p);String savedKey=receipt(claim).toString();must(owner,()->{if(!DeliveryReceipt.saved(file,savedKey))throw new IllegalStateException("아이템 저장 영수증 확인이 필요합니다. 자동으로 재지급하지 않습니다.");store.settle(owner,claim,true);return true;},v->{if(current(p)){p.getPersistentDataContainer().remove(receipt(claim));p.saveData();}snapshot(p,r,session,fits.size()+"개의 첨부를 수령했습니다. 공간이 부족한 첨부는 우편에 남아 있습니다.");},m->finishError(p,r,session,m));
+    Path file=playerFile(p);String savedKey=receipt(claim).toString();must(owner,()->{if(!DeliveryReceipt.saved(file,savedKey))throw new IllegalStateException("아이템 저장 영수증 확인이 필요합니다. 자동으로 재지급하지 않습니다.");store.settle(owner,claim,true);return true;},v->{if(current(p)){p.getPersistentDataContainer().remove(receipt(claim));p.saveData();}audit(owner,claim,fits);snapshot(p,r,session,fits.size()+"개의 첨부를 수령했습니다. 공간이 부족한 첨부는 우편에 남아 있습니다.");},m->finishError(p,r,session,m));
    },m->finishError(p,r,session,m));
   },m->finishError(p,r,session,m));
  }

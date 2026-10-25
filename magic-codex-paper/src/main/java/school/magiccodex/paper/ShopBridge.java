@@ -109,12 +109,19 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   // 접수 단계(work): 대기열이 차 있으면 여기서 거절되고 아무 것도 바뀌지 않는다.
   work(owner,()->store.prepare(owner,r.operation(),s.shop,r.revision(),r.product(),quantity,selling,origin),order->{
    if(!ready(p)||!near(p,s.anchor)||selling&&!MailboxBridge.same(before,p.getInventory().getStorageContents())){abort(order,List.of("prepared"),()->done(p,s,r,"접속/인벤토리가 변경되었습니다."));return;}
-   if(selling)sell(p,order,after,()->done(p,s,r,"판매가 완료되었습니다.",true),m->done(p,s,r,m));else buy(p,s,r,order);
+   if(selling)sell(p,order,after,()->{audit(order,s.shop,sample);done(p,s,r,"판매가 완료되었습니다.",true);},m->done(p,s,r,m));else buy(p,s,r,order,sample);
   },message->done(p,s,r,message));
  }
  /** 부작용이 없었던 것이 확실한 기록을 실패로 닫는다. 이 기록마저 실패하면 prepared 는 다음에 자동으로 닫히고, paying 은 관리자 목록에 남으므로 무엇을 하면 되는지 로그에 적는다. */
  private void abort(ShopStore.Order order,List<String> from,Runnable then){must(order.owner(),()->store.move(order.id(),from,"failed"),v->then.run(),m->{if(from.contains("paying"))plugin.getLogger().severe("SHOP REVIEW order="+order.id()+" player="+order.owner()+": 돈·아이템은 움직이지 않았으나 실패 기록을 남기지 못했습니다. /상점관리 처리 "+order.id()+" 취소 로 닫으세요.");then.run();});}
- private void buy(Player p,Session s,Request r,ShopStore.Order order){
+ /** 운영 기록 (메모 #92): 끝까지 성공한 구매·판매만. sample = 거래한 아이템 한 개. */
+ private static void audit(ShopStore.Order o,String shop,ItemStack sample){
+  boolean sell=o.mode().equals("sell");String item=sample==null?o.product():sample.getType().name();
+  AuditStats.add(o.owner(),sell?"상점판매":"상점구매",1);
+  AuditLog.log(o.owner(),AuditLog.상점,(sell?"판매":"구매")+" · "+o.title()+" · "+o.product()+" x"+o.quantity()+" · 합계 "+o.total(),
+   "방식",sell?"판매":"구매","상점",shop,"상점이름",o.title(),"상품",o.product(),"아이템",item,"수량",o.quantity(),"합계",o.total(),"거래번호",o.id());
+ }
+ private void buy(Player p,Session s,Request r,ShopStore.Order order,ItemStack sample){
   String id=order.id();UUID owner=order.owner();
   // 출금 전에 paying 을 먼저 기록한다. 이 기록이 실패하면 출금하지 않는다.
   reverts.put(id,()->store.move(id,List.of("prepared","paying"),"failed"));
@@ -124,7 +131,7 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
    // money() 가 직접 던지는 IllegalStateException 은 경제 서비스 호출 전의 사전 검사 실패다: 출금되지 않은 것이 확실하다.
    boolean paid;try{paid=money(p,order.total(),false);}catch(IllegalStateException e){String why=String.valueOf(e.getMessage());abort(order,List.of("paying"),()->done(p,s,r,why));return;}catch(Exception e){plugin.getLogger().log(Level.SEVERE,"SHOP REVIEW order="+id+" player="+owner+" state=paying: 출금 결과를 알 수 없습니다 (total="+order.total()+")",e);done(p,s,r,"결제 결과 확인이 필요합니다. 자동으로 다시 결제하지 않습니다. 관리자에게 문의해 주세요.");return;}
    if(!paid){abort(order,List.of("paying"),()->done(p,s,r,"잔액이 부족하거나 결제가 거절되었습니다."));return;}
-   must(owner,()->{store.state(id,"paying","paid");return true;},v->deliver(order,()->done(p,s,r,"구매가 완료되었습니다.",true),m->done(p,s,r,m)),m->{plugin.getLogger().severe("SHOP REVIEW order="+id+" player="+owner+" state=paying: 출금은 완료했으나 paid 기록에 실패했습니다 (total="+order.total()+"). /상점관리 거래처리 "+id+" 완료 로 상품을 지급하세요.");done(p,s,r,"결제는 되었으나 기록 확인이 필요합니다. 다시 결제하지 말고 관리자에게 문의해 주세요.");});
+   must(owner,()->{store.state(id,"paying","paid");return true;},v->deliver(order,()->{audit(order,s.shop,sample);done(p,s,r,"구매가 완료되었습니다.",true);},m->done(p,s,r,m)),m->{plugin.getLogger().severe("SHOP REVIEW order="+id+" player="+owner+" state=paying: 출금은 완료했으나 paid 기록에 실패했습니다 (total="+order.total()+"). /상점관리 거래처리 "+id+" 완료 로 상품을 지급하세요.");done(p,s,r,"결제는 되었으나 기록 확인이 필요합니다. 다시 결제하지 말고 관리자에게 문의해 주세요.");});
   },m->{reverts.remove(id);abort(order,List.of("prepared","paying"),()->done(p,s,r,m));});
  }
  /** 아이템 회수와 영수증(PDC)을 같은 틱·같은 플레이어 데이터에 기록한 뒤, 디스크 저장을 확인하고 대금을 지급한다. */

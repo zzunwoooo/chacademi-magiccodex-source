@@ -113,7 +113,8 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
     /** Trusted server-thread hook; return callback after durable commit. */
     void grant(UUID id,String title,boolean remove,Consumer<Boolean> done){
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Use server thread");if(!AdminCommandRules.titleAllowed(catalog.get(title),remove)){done.accept(false);return;}var defaults=defaults();
-        work(()->remove?store.revoke(id,title,defaults):store.grant(id,title,defaults),state->{Player p=Bukkit.getPlayer(id);if(p!=null&&current(p)){cache.put(id,new Cached(state,plugin.names().name(p)));if(sessions.containsKey(id))reply(p,false,0,remove?"칭호가 회수되었습니다.":"새 칭호를 획득했습니다.");}done.accept(true);},()->done.accept(false));
+        work(()->remove?store.revoke(id,title,defaults):store.grant(id,title,defaults),state->{Player p=Bukkit.getPlayer(id);if(p!=null&&current(p)){cache.put(id,new Cached(state,plugin.names().name(p)));if(sessions.containsKey(id))reply(p,false,0,remove?"칭호가 회수되었습니다.":"새 칭호를 획득했습니다.");}
+            var d=catalog.get(title);AuditLog.log(id,AuditLog.칭호,(remove?"칭호 회수 · ":"칭호 지급 · ")+(d==null?title:d.name()),"칭호",title,"이름",d==null?title:d.name(),"경로",remove?"회수":"지급");done.accept(true);},()->done.accept(false));
     }
     // ------------------------------------------------------------------ 획득 경로 (2026-10-25, 메모 #21·#89)
     /** 서버 스레드. 마법 발견(MagicDiscovery가 발견 직후·접속 로드 때 부름). 설정에 없는 마법은 DB를 부르지 않는다. */
@@ -138,6 +139,7 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
                 for(String t:result.granted()){var d=snapshot.get(t);CmdKit.notify(p,"shop","title-award:"+t,"새 칭호를 얻었어요",d==null?t:d.name(),0);}
                 if(!result.granted().isEmpty()){if(sessions.containsKey(id))reply(p,false,0,"새 칭호를 획득했습니다.");p.playSound(p.getLocation(),Sound.BLOCK_AMETHYST_BLOCK_CHIME,.35f,1.3f);}}
             if(!result.granted().isEmpty())plugin.getLogger().info("칭호 획득: "+id+" "+result.granted()+" ← "+wanted.keySet());
+            for(String t:result.granted()){var d=snapshot.get(t);AuditLog.log(id,AuditLog.칭호,"칭호 획득 · "+(d==null?t:d.name()),"칭호",t,"이름",d==null?t:d.name(),"경로",String.join(",",wanted.entrySet().stream().filter(e->e.getValue().equals(t)).map(Map.Entry::getKey).toList()));}
         },()->{});
     }
     /**

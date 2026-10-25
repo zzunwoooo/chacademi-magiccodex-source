@@ -361,12 +361,28 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
             choices.add(high<0?rolled:new ArtifactOwnershipStore.Choice(rolled.id(),rolled.grade(),rolled.shards(),rolled.temporaryAccess(),choice(p,high)));
         }
         boolean accepted=ownership.purchase(p.getUniqueId(),choices,shardItem,pity,()->takeKeys(p,cost),rows->{
+            auditSummon(p,choices,rows,cost);
             if(!p.isOnline())return;send(p,false,"");
             String left=pityText(p);
             if(count==1){var x=rows.getFirst();int[] decoys=new int[ArtifactProtocol.DECOYS];for(int i=0;i<decoys.length;i++)decoys[i]=rollDecoy();sendSummon(p,new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT,keys(p),x.id(),x.grade(),x.fresh(),x.shards(),decoys,left));}
             else {var pulls=rows.stream().map(x->new ArtifactProtocol.Pull(x.id(),x.grade(),x.fresh(),x.shards())).toList();if(p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE))p.sendPluginMessage(plugin,ArtifactProtocol.RESPONSE,ArtifactProtocol.encode(new ArtifactProtocol.SummonMulti(keys(p),pulls,left)));}
         });
         if(!accepted)sendSummon(p,ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_REFUSED,keys(p),"소환을 처리하지 못했습니다. 재료가 차감됐다면 관리자에게 문의해 주세요."));
+    }
+
+    /** 운영 기록 (메모 #92): 뽑기 결과 한 줄 (천장 발동 표시 포함). */
+    private void auditSummon(Player p, List<ArtifactOwnershipStore.Choice> choices, List<ArtifactOwnershipStore.Pull> rows, int cost) {
+        var text = new StringBuilder(); int pityHits = 0;
+        for (int i = 0; i < rows.size(); i++) {
+            var x = rows.get(i); var c = i < choices.size() ? choices.get(i) : null;
+            boolean byPity = c != null && c.pity() != null && x.id().equals(c.pity().id()) && !x.id().equals(c.id());
+            if (byPity) pityHits++;
+            if (text.length() > 0) text.append(", ");
+            text.append(x.id()).append('(').append(x.grade() >= 0 && x.grade() < ArtifactProtocol.GRADE_LABELS.length ? ArtifactProtocol.GRADE_LABELS[x.grade()] : x.grade())
+                    .append(x.fresh() ? ",새것" : ",중복+조각" + x.shards()).append(byPity ? ",천장" : "").append(')');
+        }
+        AuditLog.log(p, AuditLog.아티팩트, "아티팩트 뽑기 " + rows.size() + "회" + (pityHits > 0 ? " · 천장 " + pityHits : "") + " · " + AuditText.clip(text.toString(), 180),
+                "횟수", rows.size(), "재료", cost, "결과", text.toString(), "천장발동", pityHits, "천장카운터", ownership.pityCount(p.getUniqueId()));
     }
 
     private void sendSummon(Player p, ArtifactProtocol.Summon frame) {
