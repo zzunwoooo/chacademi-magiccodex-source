@@ -296,7 +296,9 @@ public final class CatalogVisualEngine {
                 start(c,phase);
             }
             // 시전 직후가 아니면 그 단계만 건너뛴다(예: 대상 사망, 예산 초과). 시전 전체를 취소하지 않는다.
-            catch(RuntimeException failure){if(c.starting)throw failure;phaseFailures++;noteFailure(c,"phase "+phase.effect(),failure);}
+            catch(RuntimeException failure){if(c.starting)throw failure;phaseFailures++;noteFailure(c,"phase "+phase.effect(),failure);
+                // 메모 #79: 발사 단계가 실패해도 그 단계가 끝내야 할 대기 화살·검(수명 20초)은 지운다 — 안 그러면 공중에 계속 떠 있다.
+                for(Active old:c.active)if(!old.finished&&phase.stopEffects().contains(old.phase.effect()))try{finish(old,true);}catch(RuntimeException ignored){}}
             finally{c.impact=impact;c.aim=aim;c.target=target;c.scaleTargetHeight=height;c.lastTargetHeight=lastHeight;}
         }
     }

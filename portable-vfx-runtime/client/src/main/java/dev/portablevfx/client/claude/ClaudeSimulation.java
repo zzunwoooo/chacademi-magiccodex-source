@@ -196,9 +196,20 @@ public final class ClaudeSimulation {
                         p.ageOffset+=next-p.age;p.age=next;p.previousAge=next;
                     }
                 }
+            } else {
+                // 마법이 끝났는데 수명이 아주 긴 입자(손에 든 조약돌 10초, 대기 화살 20초 등)가 그대로 떠 있지 않게,
+                // 남은 수명을 MAX_FINISH_LINGER 초로 줄여 수명 끝의 페이드만 보여 준다 (오너 2026-10-26, 메모 #79).
+                for(Particle p:layer.particles) {
+                    if(p.lifetime-p.age>MAX_FINISH_LINGER) {
+                        double next=p.lifetime-MAX_FINISH_LINGER;
+                        p.ageOffset+=next-p.age;p.age=next;p.previousAge=next;
+                    }
+                }
             }
         }
     }
+    /** FINISH 뒤 남은 입자가 더 보일 수 있는 최대 시간(초). 보통 연기·불씨 꼬리는 4초 안이라 영향이 없다. */
+    static final double MAX_FINISH_LINGER=4.0;
     public void clear() { emitting=false;for(LayerState layer:layers) layer.particles.clear();trailPointCount=0; }
 
     private void fixedStep(Transform next,double sceneTime) {

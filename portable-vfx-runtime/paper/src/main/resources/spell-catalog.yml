@@ -3423,7 +3423,7 @@ spells:
         effect: claude:pebbletoss/summon
         anchor: caster
         delay-ticks: 0
-        duration-ticks: 210
+        duration-ticks: 14  # 메모 #79: 손의 조약돌(수명 10초)이 던진 뒤에도 남지 않게
         finish-after-ticks: 8
       - role: projectile
         follow-entity: false

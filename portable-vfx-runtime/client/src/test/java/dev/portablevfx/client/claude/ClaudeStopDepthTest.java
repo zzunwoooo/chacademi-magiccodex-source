@@ -41,10 +41,17 @@ class ClaudeStopDepthTest {
   var l=sim("local",new StopBehavior("jumpToTail",.3));l.advance(.2,Transform.IDENTITY);l.stopEmission(true);assertTrue(l.isFinished());
   var w=sim("world",new StopBehavior("jumpToTail",.3));w.advance(.2,Transform.IDENTITY);w.stopEmission(true);assertEquals(1.7,w.snapshot().getFirst().age(),1e-12);w.advance(.31,Transform.IDENTITY);assertTrue(w.isFinished());
  }
- private static ClaudeSimulation sim(String space,StopBehavior stop)throws Exception {
+ @Test void veryLongLifeIsCutToFinishLingerCap() throws Exception {
+  /* 메모 #79: 수명 10초 입자는 FINISH 뒤 MAX_FINISH_LINGER 초만 남는다. */
+  var s=sim("local",StopBehavior.FINISH,10);s.advance(.2,Transform.IDENTITY);s.stopEmission(false);
+  assertEquals(10-ClaudeSimulation.MAX_FINISH_LINGER,s.snapshot().getFirst().age(),1e-12);
+  s.advance(ClaudeSimulation.MAX_FINISH_LINGER+.05,Transform.IDENTITY);assertTrue(s.isFinished());
+ }
+ private static ClaudeSimulation sim(String space,StopBehavior stop)throws Exception { return sim(space,stop,2); }
+ private static ClaudeSimulation sim(String space,StopBehavior stop,double life)throws Exception {
   var e=ClaudeEffect.parse(json(false,"finish",0).toString());var b=e.systems().getFirst().layers().getFirst();Range z=new Range(0,0);Range3 z3=new Range3(z,z,z);
   Trail trail=new Trail(b.material(),1,0,List.of(new CurveKey(0,1,0,0)),List.of(new ColorKey(0,Vec3.X)));
-  Layer l=new Layer("test",b.material(),b.render(),0,space,Vec3.ZERO,new Emission(0,0,List.of(new Burst(0,1,1,0))),new Shape("none",0,1,Vec3.ZERO,0),new Start(new Range(2,2),new Range(1,1),new Range(1,1),z,null),z3,new Velocity("local",z3,z,z),0,0,null,b.colorOverLifetime(),b.sizeOverLifetime(),null,trail,Set.of(),stop);
+  Layer l=new Layer("test",b.material(),b.render(),0,space,Vec3.ZERO,new Emission(0,0,List.of(new Burst(0,1,1,0))),new Shape("none",0,1,Vec3.ZERO,0),new Start(new Range(life,life),new Range(1,1),new Range(1,1),z,null),z3,new Velocity("local",z3,z,z),0,0,null,b.colorOverLifetime(),b.sizeOverLifetime(),null,trail,Set.of(),stop);
   return new ClaudeSimulation(new ClaudeEffect("test","1.9.0",1.0/120,9.81,e.post(),e.materials(),e.meshes(),List.of(new SystemDef("test","attached",10,true,List.of(l))),Set.of()),"test",Transform.IDENTITY,0);
  }
  private static JsonObject layer(JsonObject j){return j.getAsJsonArray("systems").get(0).getAsJsonObject().getAsJsonArray("layers").get(0).getAsJsonObject();}
