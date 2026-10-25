@@ -58,6 +58,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1233,6 +1234,44 @@ final class QuestEngine implements Listener {
     }
 
     /**
+     * 퀘스트창 메인 스토리 (2026-10-25 오너: 런처 기록 대신 서버 기록). 단계 정의 순서대로, 끝낸 단계 = claimed, 지금 단계 = active.
+     * 각 줄: id · title · description · state · chapter · details. meta(대화 id) = {대화 제목, 대화 장} (없으면 null).
+     */
+    List<Map<String, String>> journalRows(UUID uuid, java.util.function.Function<String, String[]> meta) {
+        P st = prog.players.get(uuid);
+        if (st == null) return List.of();
+        Player p = Bukkit.getPlayer(uuid);
+        List<Map<String, String>> out = new ArrayList<>();
+        for (Step s : defs.steps.values()) {
+            boolean current = s.id.equals(st.step);
+            if (!current && !st.history.contains(s.id)) continue;
+            if (!s.id.matches("[a-z0-9_-]{1,64}")) continue;
+            String[] m = s.dialogue.isEmpty() ? null : meta.apply(s.dialogue);
+            String title = m != null && !m[0].isBlank() ? m[0] : !s.description.isBlank() ? s.description : s.id;
+            String chapter = m != null && !m[1].isBlank() ? m[1] : s.chapter;
+            StringBuilder details = new StringBuilder();
+            if (current) {
+                int[] cur = currents(p, st, s, true);
+                for (int i = 0; i < cur.length; i++) {
+                    Cond c = s.conds.get(i);
+                    if (c.hidden()) continue;
+                    if (details.length() > 0) details.append('\n');
+                    details.append(c.label().isBlank() ? c.target() : c.label()).append(' ').append(cur[i]).append(" / ").append(c.required());
+                }
+            }
+            Map<String, String> row = new LinkedHashMap<>();
+            row.put("id", s.id);
+            row.put("title", title);
+            row.put("description", s.description);
+            row.put("state", current ? "active" : "claimed");
+            row.put("chapter", chapter);
+            row.put("details", details.toString());
+            out.add(row);
+        }
+        return out;
+    }
+
+    /**
      * 길잡이 별 (오너 2026-10-20·10-23): 지금 단계의 목표(위치 포탈 / 말 걸 NPC)를 화살표로 가리킨다. 조건을 아직 못 채운 단계도
      * 가리킨다. 켜져 있을 때 다시 시전하면 끈다. 목표 10블록 안에서는 클라가 스스로 끈다. 공개 전인 장·미리보기 중·목표 없는 단계 = NONE.
      */
@@ -1782,11 +1821,31 @@ final class QuestEngine implements Listener {
         return 1;
     }
 
+    /** 시작 단계에서 다음을 따라가며 id 앞에 오는 단계들 (진행 순). 그 길에 없으면 steps.yml 에 적힌 순서로. */
+    private List<String> stepsBefore(String id) {
+        List<String> path = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        String cur = defs.startStep;
+        while (cur != null && !cur.isEmpty() && seen.add(cur) && defs.get(cur) != null) {
+            if (cur.equals(id)) return path;
+            path.add(cur);
+            cur = defs.get(cur).next;
+        }
+        List<String> order = new ArrayList<>();
+        for (String k : defs.steps.keySet()) { if (k.equals(id)) return order; order.add(k); }
+        return List.of();
+    }
+
     private int cmdUserSet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player p = ChacaLink.targetOnline(ctx);
         String id = ctx.getArgument("이동단계", String.class);
         if (defs.get(id) == null) throw ChacaLink.error("단계 " + id + " 이(가) 없어요");
-        enter(p, prog.of(p.getUniqueId()), id, true);
+        P st = prog.of(p.getUniqueId());
+        // 2026-10-25 오너: 단계를 정하면 그 앞 단계는 전부 완료, 뒤 단계는 미완료로 (퀘스트창 진행중·완료가 그대로 따라옴)
+        List<String> before = stepsBefore(id);
+        st.history.clear();
+        for (int i = before.size() - 1; i >= 0; i--) st.history.add(before.get(i)); // history = 최근 순
+        enter(p, st, id, true);
         ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 단계 " + id + " (으)로 옮겼어요"
                 + (chapterLocked(defs.get(id)) ? " (공개 전인 장이라 장이 열릴 때까지 멈춰 있어요)" : ""));
         return 1;
