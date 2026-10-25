@@ -68,6 +68,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 #28 /테스트 마법 자동시전 [시작 [번호|ID|이름]|정지|일시정지|재개|건너뛰기|간격 <1~60초>|상태]. 기본 5초, 도감번호 순. 실제 /마법 경로(ManaBridge.cast) 사용, 시전 직전 쿨·마나·권한 잠깐 채우고 복원. 몹 앞에서 돌리기 권장. config spell-review.skip 선택. 새 SpellReviewRunner, ManaBridge/ManaSpells 수정.
 #26 활성 = 운영 mana-spells.yml enabled 226개(원본 224). 꺼진 11개.
 #40 tools/spell_audit/audit_icons.py — 확실한 누락 12개(239~250 기믹), 169개는 런처 리소스팩에서만 확인 가능(--pack). 발견 알림 아이콘 경로 다른 26개(87,88, 300~323). → 26개는 도감(모드) 아이콘 경로로 맞춤 (discoveries.yml·PortableVFX spell-catalog.yml 원본+운영본). **운영 서버의 MagicDiscovery discoveries.yml·PortableVFX spell-catalog.yml 에도 같은 수정 반영 필요**. GPT: `python tools/spell_audit/audit_icons.py --pack <런처 리소스팩 폴더>` 로 169개 실제 파일 확인.
+#47 마법 효과음 전면 교체 (오너 2026-10-25 "전체 다 바꿔야 해, 마크 기본 사운드로"): Bridge SpellSounds + resources/spell-sounds.yml — 237개 마법 전부 cast(237)·hit(164)·end(82), 층 1,272개, 1.21.4 기본 사운드 392종(이름 전부 공식 목록으로 검사). 서버가 재생(주변도 들림): 시전 성공 = ManaBridge, 적중·끝 = MagicMythic Links.vfx → Bridge.spellSound(리플렉션). 클라 예전 시전음(ScreenVfxClient.onCast) 끔. 미리듣기 /테스트 마법 효과음 <마법> [cast|hit|end], 새로고침 /서버관리 새로고침 마법소리. **Bridge·MagicMythic·클라 모드 같이 배포**, 운영 서버에 spell-sounds.yml 이 없으면 jar 기본 파일이 깔림. PortableVFX 만으로 도는 마법(MagicMythic 안 거침)은 시전음만 남.
 #47 audit_sounds.py — 사운드 없음 52개(1 feather fall 이름 불일치, 79/83/86/87/88/92/93/95, 203,210~214, 239~250, 300~323, 324).
 #45 docs/ELEMENT_REACTIONS_GUIDE_KO.md — 확정 14조합 코드와 일치. 바람+빛 미정(예전 효과), 물+빛 회복 1, 몹 마나번 아이콘만, 보스 CC 예외.
 배포: paper jar만.
