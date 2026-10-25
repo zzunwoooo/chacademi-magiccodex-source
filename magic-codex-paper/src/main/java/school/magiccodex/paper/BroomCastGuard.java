@@ -4,7 +4,9 @@ import org.bukkit.entity.Player;
 import java.util.Set;
 /** Optional Motion link. No mana or cooldown changes here. */
 final class BroomCastGuard {
- private static final Set<String> MOVES_CASTER=Set.of("gale_dash","light_leap");
+ /** Owner 2026-10-17: spells that move the rider are refused on a broom. #35 (2026-10-25): the two leap-to-target spells
+  *  (MythicMobs leap = server velocity on the rider, same kind as 상승 기류) were missing. */
+ private static final Set<String> MOVES_CASTER=Set.of("gale_dash","light_leap","hunting_pounce","roar_leap");
  static boolean blocked(String spell,boolean riding){return riding&&(MOVES_CASTER.contains(spell)||"flight".equals(spell));}
  /** Owner 2026-10-17: the flight key while riding ends the flight (no mana, no cooldown). @return true when it dismounted. */
  static boolean endFlight(Player player,String spell){

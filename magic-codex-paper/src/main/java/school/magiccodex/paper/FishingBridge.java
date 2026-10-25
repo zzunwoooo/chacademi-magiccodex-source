@@ -492,6 +492,8 @@ final class FishingBridge implements PluginMessageListener, Listener {
                 // owner 2026-10-20: fish go into the 아공간 수조 tank, not the inventory
                 if (!s.preview) {
                     var r = store.record(p.getUniqueId(), f.id(), cm); fresh = r[0]; record = r[1];
+                    // 낚시 칭호 (메모 #21): title-awards.yml fishing 규칙 (기본은 비어 있음 = 아무것도 안 함)
+                    var titles = plugin.titleService(); if (titles != null) titles.fish(p.getUniqueId(), f.id(), cm);
                     tank.add(p.getUniqueId(),f.id(),cm,(saved,put)->{
                         // 스토리 "낚시성공": 물고기가 수조 DB 에 저장된 뒤에만 (보물상자·미리보기·보류 저장 제외)
                         if(put==FishTank.Put.OK)StoryProgressEvent.fire(p,StoryProgressEvent.FISH);

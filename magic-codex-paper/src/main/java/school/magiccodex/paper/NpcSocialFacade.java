@@ -26,6 +26,16 @@ public final class NpcSocialFacade {
         this.service = service;
     }
 
+    /**
+     * (추가 메서드, API_VERSION 그대로) NPC 대화창의 상점 버튼 (예: 피피 "물건 좀 볼 수 있어요?").
+     * 일반 NPC 상점 클릭과 같은 경로라 거리 확인·튜토리얼 재료 상점 분기(tutorial-shop.yml)가 그대로 적용된다.
+     * 물고기 판매소 ID 도 받는다. 메인 스레드에서 호출.
+     */
+    public boolean openShop(Player player, String shopId, Entity anchor) {
+        ShopBridge shops = org.bukkit.Bukkit.getServicesManager().load(ShopBridge.class);
+        return shops != null && shops.openFromNpc(player, shopId, anchor);
+    }
+
     public int apiVersion() {
         return API_VERSION;
     }
@@ -60,6 +70,15 @@ public final class NpcSocialFacade {
 
     public CompletableFuture<Boolean> setNickname(UUID player, String npc, String nickname) {
         return service.setNickname(player, npc, nickname).thenApply(r -> true);
+    }
+
+    /**
+     * (추가 메서드, API_VERSION 그대로) 호의적 AI 대화 보상 (#83): NPC 하나당 하루 횟수·지급량은 affinity.yml chat-reward.
+     * 상한(30·60·90, 퀘스트 미완료)이면 오르지 않고 횟수도 쓰지 않는다. 반환 {score, heart, applied}
+     */
+    public CompletableFuture<int[]> chatReward(UUID player, String npc) {
+        return service.chatReward(player, npc)
+                .thenApply(r -> new int[]{r.row().score(), r.row().heart(), r.applied()});
     }
 
     // ------------------------------------------------------------------ 선물 (2단계)

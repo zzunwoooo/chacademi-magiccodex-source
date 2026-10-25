@@ -51,12 +51,14 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     private Passives passives;
     private UtilMech.State utilState;
     private ArcanaMech.State arcanaState;
+    private TrainingDummies dummies;
 
     @Override public void onEnable() {
         if(!protectionReady){getServer().getPluginManager().disablePlugin(this);return;}
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(protection,this);
         getServer().getPluginManager().registerEvents(allies,this);
+        getServer().getPluginManager().registerEvents(new PartyFriendlyFire(this),this); // #23 근접·투사체·불·물약 아군 피해 차단
         targets = new Targets(this);
         tempBlocks = new TempBlocks(this);
         tempBlocks.restoreLeftovers();
@@ -88,6 +90,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ChannelMech.Hooks(), this);
         getServer().getPluginManager().registerEvents(new SummonMech.Hooks(this), this);
         getServer().getPluginManager().registerEvents(new DiscoveryHooks(this), this);
+        dummies = new TrainingDummies(this); // #107 마법 연습장 훈련 허수아비
+        getServer().getPluginManager().registerEvents(dummies, this);
         spellRoutes = new SpellRoutes(new java.io.File(getDataFolder().getParentFile(), "MagicCodexBridge/spell-runtime.yml"));
         if (ChacaLink.ready()) {
             try { new MythicCommands(this).register(); }
@@ -98,6 +102,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
 
     @Override public void onDisable() {
         if (reactions != null) reactions.close();
+        if (dummies != null) { dummies.close(); dummies = null; }
         Targets.sealed = null;
         Links.manaSealed = null;
         if (status != null) { status.close(); status = null; }
@@ -177,6 +182,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     StatusEffects status() { return status; }
     Telegraphs telegraphs() { return telegraphs; }
     Passives passives() { return passives; }
+    TrainingDummies dummies() { return dummies; }
     SpellSlots slots() { return slots; }
     boolean debug() { return getConfig().getBoolean("debug", false); }
 }

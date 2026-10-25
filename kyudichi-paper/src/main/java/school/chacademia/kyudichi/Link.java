@@ -95,6 +95,15 @@ final class Link implements PluginMessageListener {
         send(via, new AdminRequest(request, action, target, mode));
     }
 
+    /** /큐디치관리 경기 커스텀: the proxy checks everyone, asks them to accept and assigns an unrated match here (#62). */
+    void custom(CommandSender to, int mode, List<UUID> a, List<UUID> b) {
+        Player via = anyone();
+        if (via == null) { ChacaLink.fail(to, "이 서버에 접속한 사람이 없어 프록시에 요청을 보낼 수 없어요", null); return; }
+        UUID request = UUID.randomUUID();
+        adminPending.put(request, new Pending(to, tick));
+        send(via, new Custom(request, mode, a, b));
+    }
+
     private void adminReply(AdminReply r) {
         var p = adminPending.remove(r.request());
         if (p == null) return;

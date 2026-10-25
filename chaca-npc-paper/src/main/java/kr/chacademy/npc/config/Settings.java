@@ -89,6 +89,8 @@ public final class Settings {
 
     // 호감도 (임시 연결부)
     public final int affinityDefaultScore;
+    /** #83 호의적 AI 대화 판정 기준 (AI 에게 주는 문구). 비우면 대화 호감도 보상을 쓰지 않음. */
+    public final String chatRewardCriteria;
 
     // 장난 누적
     public final int strikeWindowMinutes;
@@ -227,6 +229,7 @@ public final class Settings {
         hintDailyPerPlayer = c.getInt("hints.daily-per-player", 3);
 
         affinityDefaultScore = c.getInt("affinity.default-score", 25);
+        chatRewardCriteria = c.getString("affinity.chat-reward-criteria", DEFAULT_CHAT_REWARD_CRITERIA).trim();
 
         strikeWindowMinutes = c.getInt("strikes.window-minutes", 10);
         strikeMax = c.getInt("strikes.max", 3);
@@ -278,6 +281,9 @@ public final class Settings {
     public int dayIndex(LocalDate today) {
         return (int) java.time.temporal.ChronoUnit.DAYS.between(budgetStartDate, today);
     }
+
+    public static final String DEFAULT_CHAT_REWARD_CRITERIA =
+            "학생의 이번 말이 너의 성격·좋아하는 것에 잘 맞아 정말 기분이 좋아졌다(진심 어린 칭찬·공감·네가 좋아하는 이야기 등). 평범한 인사·질문·부탁, 무례하거나 억지스러운 말은 해당하지 않는다.";
 
     public LocalDate today() {
         return LocalDate.now(zone);

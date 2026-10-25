@@ -10,6 +10,16 @@ class FollowupFixesTest {
         assertEquals(0, SettingsSlider.fraction(SettingsSlider.KNOB_MIN - 200), 0);
         assertEquals(SettingsSlider.KNOB_MAX, SettingsSlider.knobX(1.4f), 0, "the knob never runs past the track");
     }
+    @Test void threeSliderRowsStayAboveThePanelDivider() {
+        // Two-row pages keep the original grid; 3-row pages (effect + bloom, camera) end above the art's divider.
+        assertEquals(193, SettingsSlider.rowY(0, 2)); assertEquals(284, SettingsSlider.rowY(1, 2));
+        for (int count = 1; count <= 3; count++) for (int row = 0; row < count; row++) {
+            int y = SettingsSlider.rowY(row, count);
+            assertTrue(y + 56 < SettingsSlider.DIVIDER_Y, "row " + row + "/" + count + " knob bottom above divider");
+            assertTrue(y - 18 > 143, "value box below the top divider");
+            if (row > 0) assertTrue(SettingsSlider.rowY(row - 1, count) + 56 <= y - 18, "rows do not overlap");
+        }
+    }
     @Test void typedValuesParseAndRejectGarbage() {
         assertEquals(.8f, SettingsSlider.parse("80", true), 1e-6);
         assertEquals(.8f, SettingsSlider.parse("80%", true), 1e-6);

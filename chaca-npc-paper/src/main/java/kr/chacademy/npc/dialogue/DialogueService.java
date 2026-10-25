@@ -427,6 +427,35 @@ public final class DialogueService {
             plugin.gifts().offer(p, s, seq);
             return;
         }
+        // 상점 버튼 (예: 피피 "물건 좀 볼 수 있어요?", action: shop:pipi) = 대사 대신 대화창을 닫고 상점을 연다.
+        // 스토리 단계 호출은 이 대화창보다 먼저 클릭을 가져가고(QuestEngine, 준비된 단계만), 튜토리얼 대상이면 Bridge 가
+        // 일반 잡화점 대신 튜토리얼 재료 상점을 연다 — 그래서 여기서는 상점 ID 만 넘긴다.
+        if (buttonId != null) {
+            for (Button x : s.character().buttonsOr(st.buttons)) {
+                if (!x.id().equals(buttonId) || x.shop() == null) {
+                    continue;
+                }
+                s.lastActivity = now;
+                if (!plugin.link().shops()) {
+                    s.view.info(p, s, "(지금은 상점을 열 수 없어요. 잠시 뒤 다시 말을 걸어 주세요)");
+                    plugin.getLogger().warning("[ChacaNPC] 상점 버튼 " + s.character().id() + "/" + x.id() + ": MagicCodexBridge 상점 연결(openShop)이 없음");
+                    return;
+                }
+                Integer npcId = s.citizensId();
+                org.bukkit.entity.Entity anchor = null;
+                if (npcId != null) {
+                    var npc = net.citizensnpcs.api.CitizensAPI.getNPCRegistry().getById(npcId);
+                    if (npc != null && npc.isSpawned()) {
+                        anchor = npc.getEntity();
+                    }
+                }
+                close(p, false);
+                if (!plugin.link().openShop(p, x.shop(), anchor)) {
+                    plugin.getLogger().warning("[ChacaNPC] 상점 버튼 " + x.shop() + " 을(를) 열지 못함 (Bridge 응답 없음)");
+                }
+                return;
+            }
+        }
         if (now - s.lastInputAt < st.cooldownSeconds * 1000L) {
             s.view.info(p, s, "(조금만 천천히 말해 주세요)");
             return;
@@ -609,6 +638,32 @@ public final class DialogueService {
         }
     }
 
+    /**
+     * AI 대답 뒤 호감도 (#83, 2026-10-25). 새 Bridge: liked=true 면 호의적 대화 보상(유저별·NPC별 하루 횟수·지급량은 Bridge),
+     * 양수 mood 로는 더 올리지 않는다(같은 대화로 두 번 오르지 않게). 무례한 대화(mood 음수)는 예전처럼 깎는다.
+     * 옛 Bridge(chatReward 없음): 예전 mood 방식 그대로.
+     */
+    private void chatAffinity(DialogueSession s, ReplyParser.AiReply reply) {
+        if (s.adminTest() || !link().available()) {
+            return;
+        }
+        if (!link().chatRewards()) {
+            addAffinity(s, "chat", reply.mood());
+            return;
+        }
+        if (reply.mood() < 0) {
+            addAffinity(s, "chat", reply.mood());
+        }
+        if (reply.liked() && !plugin.settings().chatRewardCriteria.isEmpty()) {
+            link().chatReward(s.player(), s.character().id()).thenAccept(v -> {
+                if (v != null && v.length >= 2) {
+                    s.score = v[0];
+                    s.heart = v[1];
+                }
+            });
+        }
+    }
+
     private void addAffinity(DialogueSession s, String source, int amount) {
         if (amount == 0 || s.adminTest() || !link().available()) {
             return;
@@ -655,6 +710,7 @@ public final class DialogueService {
         x.storyChapter = s.storyChapter != null ? s.storyChapter : st.defaultStoryChapter;
         fillPlace(x, c, slot);
         x.todayMood = moodOfDay(c.id());
+        x.likedCriteria = link().chatRewards() ? st.chatRewardCriteria : null; // 관리자 테스트도 판정은 보여 주고 지급만 안 함
 
         List<QuestDef> quests = pickQuests(p, s, x.todayMood);
         x.allowedQuests.addAll(quests);
@@ -817,7 +873,7 @@ public final class DialogueService {
         long now = System.currentTimeMillis();
         if (!s.adminTest()) {
             if (!generic) {
-                addAffinity(s, "chat", reply.mood());
+                chatAffinity(s, reply);
             }
             // 메모·약속은 플레이어가 내용을 유도할 수 있는 글이다: 정리 + 금지어 검사를 통과한 것만 저장한다.
             // 버튼 캐시용(generic) 대답은 특정 플레이어 이야기가 아니므로 저장하지 않는다.
@@ -868,7 +924,7 @@ public final class DialogueService {
         if (s.adminTest()) {
             s.view.info(p, s, String.format(Locale.ROOT, "(테스트) 입력 %d (캐시 %d) / 출력 %d 토큰, 첫 글자 %dms, 전체 %dms, 기분 %+d%s%s%s",
                     r.usage().input(), r.usage().cached(), r.usage().output(), r.firstChunkMs(), r.totalMs(), reply.mood(),
-                    reply.quest() == null ? "" : ", 퀘스트 " + reply.quest(),
+                    (reply.liked() ? ", 마음에 듦(테스트는 지급 안 함)" : "") + (reply.quest() == null ? "" : ", 퀘스트 " + reply.quest()),
                     limits.allowedHints().isEmpty() ? "" : ", 힌트 제공 " + limits.allowedHints()
                             + (reply.hint() == null ? " (AI 표시 없음)" : ""),
                     reply.memo() == null ? "" : ", 메모 \"" + reply.memo() + "\""));
@@ -1138,6 +1194,9 @@ public final class DialogueService {
         warmupAt.put(key, now);
         int delay = 0;
         for (Button b : c.buttonsOr(st.buttons)) {  // NPC 전용 버튼이면 그 버튼으로 미리 만든다
+            if (!b.aiReply()) {
+                continue; // 상점 버튼 등: AI 대답이 없으므로 미리 만들지 않는다
+            }
             int have = buttonCache.size(today, c.id(), slot, b.id());
             int need = Math.min(2, st.buttonCacheVariants - have);
             for (int i = 0; i < need; i++) {

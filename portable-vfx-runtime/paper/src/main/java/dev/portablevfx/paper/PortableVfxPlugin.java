@@ -118,12 +118,18 @@ public final class PortableVfxPlugin extends JavaPlugin implements Listener, Plu
      * null: 이 카탈로그의 마법이 아님. false: 연출을 시작하지 못함(호출자가 마나를 환불하고 시전을 실패 처리한다).
      * 거부는 건별 로그 대신 사유별로 집계해 약 10초에 한 줄만 남긴다.
      */
-    public Boolean castAuthorizedSpell(Player player,String id) {
+    public Boolean castAuthorizedSpell(Player player,String id) { return castAuthorizedSpell(player,id,null); }
+
+    /**
+     * #77 (2026-10-25): same as {@link #castAuthorizedSpell(Player,String)}, with the target the gameplay route already
+     * validated (MagicCodexBridge SpellRuntime). The visual then follows that entity instead of re-tracing a thin eye ray.
+     */
+    public Boolean castAuthorizedSpell(Player player,String id,LivingEntity chosenTarget) {
         Boolean admitted=catalogAdmission(player,id);if(!Boolean.TRUE.equals(admitted))return admitted;
         // The existing mana transaction executes Mythic gameplay after admission; those mechanics play their own VFX.
         if(spellCatalog.resolve(id).map(dev.portablevfx.paper.internal.spell.SpellCatalog.Spell::mechanicVfx).orElse(false))return Boolean.TRUE;
         Boolean result;
-        try{result=catalogVisuals.cast(player,id);}
+        try{result=chosenTarget==null?catalogVisuals.cast(player,id):catalogVisuals.cast(player,id,chosenTarget);}
         catch(RuntimeException failure){return refuse(player,id,"dispatch exception "+failure.getClass().getSimpleName()+": "+failure.getMessage(),failure);}
         if(Boolean.TRUE.equals(result))return Boolean.TRUE;
         return refuse(player,id,result==null?"no visual plan":catalogVisuals.lastFailure(player.getUniqueId()),null);

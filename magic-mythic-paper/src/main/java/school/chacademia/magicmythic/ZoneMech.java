@@ -50,7 +50,10 @@ final class ZoneMech extends Mech {
         @Override public String kind() { return "zone"; }
         final Set<UUID> regen = new HashSet<>();
         final String regenKey = "magicmythic:" + (p.s("spell", "").isBlank() ? "zone" : p.s("spell", ""));
+        /** #79: a trap's armed loop ends only on external:trigger (exploded) or expire (removed early: limit, region, caster gone). */
+        boolean fired;
         @Override public void stop() {
+            if (trap && !fired) { fired = true; vfx("expire", center, null); }
             ACTIVE.remove(this);
             for (UUID id : regen) if (ACTIVE.stream().noneMatch(z -> z != this && z.regen.contains(id) && z.regenKey.equals(regenKey))) Links.regen(id, regenKey, 1);
             regen.clear();
@@ -135,6 +138,7 @@ final class ZoneMech extends Mech {
             var near = targets.enemiesNear(c.caster(), center, r, 1);
             if (near.isEmpty()) return true;
             double dmg = c.damage() * p.d("trapmult", p.d("mult", 1)) + p.d("flat", 0);
+            fired = true; vfx("external:trigger", center, null); // #79: explode branch stops the armed loop
             for (LivingEntity t : targets.enemiesNear(c.caster(), center, p.d("trapr", 3), p.i("max", 16))) {
                 if(!targets.hurt(c.caster(), t, dmg, p.s("element", "")))continue;
                 plugin.reactions().hit(c.caster(), t, p.s("element", ""), dmg);

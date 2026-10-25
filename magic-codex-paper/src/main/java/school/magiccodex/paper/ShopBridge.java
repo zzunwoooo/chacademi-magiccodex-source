@@ -31,8 +31,10 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private final Map<String,Callable<?>> reverts=new HashMap<>();
  /** 관리자가 방금 `기록`으로 본 거래 ID (탭 완성용). */
  private final Map<String,List<String>> listed=new HashMap<>();
+ /** 튜토리얼 전용 재료 상점 (메모 #12): 설정, 지금 그 상점을 연 대상 유저 → 구매를 세기 시작한 시각. */
+ private TutorialShop.Config tutorial=TutorialShop.Config.OFF;private final Map<UUID,Long> tutorialOpen=new HashMap<>();
  ShopBridge(MagicCodexBridge plugin)throws Exception{this.plugin=plugin;var dir=plugin.getDataFolder().toPath();origin=Files.readString(dir.resolve("mailbox-origin.txt")).strip();try{store=io.submit(()->new ShopStore(ShopMailboxDatabaseSettings.load(dir),dir.resolve("shops.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
-  catalog=io.submit(store::catalog).get(10,TimeUnit.SECONDS);bindings=io.submit(()->store.bindings(origin)).get(10,TimeUnit.SECONDS);version=io.submit(store::version).get(10,TimeUnit.SECONDS);
+  try{loadTutorial();}catch(Exception e){plugin.getLogger().severe("tutorial-shop.yml 을 읽지 못해 튜토리얼 재료 상점을 끕니다: "+e.getMessage());}catalog=io.submit(store::catalog).get(10,TimeUnit.SECONDS);bindings=io.submit(()->store.bindings(origin)).get(10,TimeUnit.SECONDS);version=io.submit(store::version).get(10,TimeUnit.SECONDS);
   try{int closed=io.submit(()->store.failPrepared(origin)).get(10,TimeUnit.SECONDS);if(closed>0)plugin.getLogger().info("Shop recovery: 출금 전 구매 기록 "+closed+"건을 실패로 닫았습니다.");}catch(Exception e){plugin.getLogger().warning("Shop recovery at startup skipped: "+e.getClass().getSimpleName());}
   Bukkit.getMessenger().registerIncomingPluginChannel(plugin,ShopProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,ShopProtocol.RESPONSE);Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getServicesManager().register(ShopBridge.class,this,plugin,org.bukkit.plugin.ServicePriority.Normal);CmdKit.register(plugin,"/상점관리·/유저관리 거래기록",this::commands);citizens();refreshCompletionKeys();Bukkit.getScheduler().runTaskTimer(plugin,this::refresh,100,100);for(Player p:Bukkit.getOnlinePlayers())recoverLater(p,0);
  }
@@ -55,8 +57,19 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
  private ItemStack sample(ShopStore.Product product){return samples.computeIfAbsent(product.id(),k->ItemStack.deserializeBytes(product.bytes()));}
  private int owned(Player p,ItemStack sample){int n=0;for(var i:p.getInventory().getStorageContents())if(i!=null&&i.isSimilar(sample))n+=i.getAmount();return n;}
  private NamespacedKey saleKey(String order){return new NamespacedKey(plugin,"shop_sale_"+order.replace("-",""));}
+ /** NPC 대화창 상점 버튼 (ChacaNPC → NpcSocialFacade.openShop, 2026-10-25). 일반 NPC 클릭과 같은 open — 거리·튜토리얼 상점 분기 그대로. false = 아직 준비 안 됨(메시지는 open 이 알림). */
+ boolean openFromNpc(Player p,String shop,Entity anchor){if(p==null||shop==null||shop.isBlank()||!p.isOnline())return false;open(p,shop,anchor);return true;}
  private void open(Player p,String input,Entity anchor){String id=ShopNpcTarget.canonical(input);if(!ready(p)||!near(p,anchor)||busy.contains(p.getUniqueId()))return;
   if(ShopNpcTarget.fish(id)){var fish=Bukkit.getServicesManager().load(FishShopBridge.class);if(fish==null)CmdKit.notify(p,"warning","shop-open","물고기 판매소를 열 수 없어요","관리자에게 알려 주세요.",3000);else fish.open(p,anchor,npcName(anchor));return;}
+  // 튜토리얼 대상이면 일반 잡화점 대신 전용 재료 상점 (대상 여부는 공유 DB 에서 읽는다. 읽지 못하면 아무 상점도 열지 않는다).
+  var cfg=tutorial;UUID who=p.getUniqueId();tutorialOpen.remove(who);
+  if(cfg.redirects(id)||cfg.enabled()&&id.equals(cfg.shop())){busy.add(who);
+   work(who,()->store.tutorialStarted(who),started->{busy.remove(who);if(!current(p))return;String target=started>0?cfg.shop():id;
+    if(started>0&&!catalog.containsKey(target)){plugin.getLogger().warning("튜토리얼 상점 "+target+" 이 없어요 (tutorial-shop.yml shop / /상점관리 만들기)");CmdKit.notify(p,"warning","shop-tutorial","상점을 준비하고 있어요","잠시 뒤 다시 찾아와 주세요.",3000);return;}
+    if(started>0)tutorialOpen.put(who,started);openShop(p,target,anchor);},m->{busy.remove(who);if(current(p))CmdKit.notify(p,"warning","shop-open","상점을 열 수 없어요",m,3000);});
+   return;}
+  openShop(p,id,anchor);}
+ private void openShop(Player p,String id,Entity anchor){if(!ready(p)||!near(p,anchor)||busy.contains(p.getUniqueId()))return;
   if(!catalog.containsKey(id))return;UUID owner=p.getUniqueId();var s=new Session(p,ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE),0,id,anchor);sessions.put(owner,s);send(p,s,0,"","");busy.add(owner);
   // 열 때마다 이전 거래를 정리한다: 안전하게 판정되는 것은 자동 처리, 나머지는 안내만 한다.
   recover(p,m->{busy.remove(owner);if(m.isEmpty()||!current(p))return;var latest=sessions.get(owner);if(latest!=null&&latest.token==s.token&&latest.sequence==0)send(p,latest,0,m,"");else CmdKit.notify(p,"warning","shop-recover","상점",m,3000);});}
@@ -87,7 +100,10 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   try{var dep=Bukkit.getPluginManager().getPlugin("Citizens");if(dep!=null){Class<?> api=Class.forName("net.citizensnpcs.api.CitizensAPI",true,dep.getClass().getClassLoader());Object registry=api.getMethod("getNPCRegistry").invoke(null);Class<?> registryType=Class.forName("net.citizensnpcs.api.npc.NPCRegistry",true,dep.getClass().getClassLoader());Object npc=registryType.getMethod("getNPC",Entity.class).invoke(registry,anchor);if(npc!=null){Class<?> npcType=Class.forName("net.citizensnpcs.api.npc.NPC",true,dep.getClass().getClassLoader());String value=String.valueOf(npcType.getMethod("getName").invoke(npc));return value.length()>120?value.substring(0,120):value;}}}catch(ReflectiveOperationException ignored){}
   var custom=anchor.customName();if(custom==null)return "";String value=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(custom);return value.length()>120?value.substring(0,120):value;
  }
- @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){if(!channel.equals(ShopProtocol.REQUEST)||!ready(p))return;Request r;try{r=ShopProtocol.request(bytes);}catch(IllegalArgumentException ignored){return;}var s=sessions.get(p.getUniqueId());if(s==null||s.player!=p||s.token!=r.session()||!s.shop.equals(r.shop())||r.sequence()<=s.sequence||!near(p,s.anchor))return;long now=System.currentTimeMillis();if(busy.contains(p.getUniqueId())||now<limits.getOrDefault(p.getUniqueId(),0L))return;limits.put(p.getUniqueId(),now+200);s=new Session(p,s.token,r.sequence(),s.shop,s.anchor);sessions.put(p.getUniqueId(),s);if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());return;}if(r.action()==ShopProtocol.OPEN){send(p,s,r.sequence(),"",r.search());return;}trade(p,s,r);}
+ @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){if(!channel.equals(ShopProtocol.REQUEST)||!ready(p))return;Request r;try{r=ShopProtocol.request(bytes);}catch(IllegalArgumentException ignored){return;}var s=sessions.get(p.getUniqueId());if(s==null||s.player!=p||s.token!=r.session()||!s.shop.equals(r.shop())||r.sequence()<=s.sequence)return;
+  // 닫기는 거래 중·연속 요청 제한·거리와 상관없이 받는다 (세션만 지움). 튜토리얼 재료 구매 확인이 닫기에서 일어난다.
+  if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());tutorialClosed(p,s.shop);return;}
+  if(!near(p,s.anchor))return;long now=System.currentTimeMillis();if(busy.contains(p.getUniqueId())||now<limits.getOrDefault(p.getUniqueId(),0L))return;limits.put(p.getUniqueId(),now+200);s=new Session(p,s.token,r.sequence(),s.shop,s.anchor);sessions.put(p.getUniqueId(),s);if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());return;}if(r.action()==ShopProtocol.OPEN){send(p,s,r.sequence(),"",r.search());return;}trade(p,s,r);}
  private void trade(Player p,Session s,Request r){var shop=catalog.get(s.shop);var product=shop==null?null:shop.products().stream().filter(i->i.id().equals(r.product())).findFirst().orElse(null);if(product==null||shop.revision()!=r.revision()){send(p,s,r.sequence(),"상점 설정이 변경되었습니다. 다시 확인해 주세요.",r.search());return;}int quantity=ShopProtocol.quantity(r.quantity());boolean selling=r.action()==ShopProtocol.SELL;ItemStack sample;try{sample=sample(product);}catch(RuntimeException e){send(p,s,r.sequence(),"이 상품은 지금 거래할 수 없습니다. 관리자에게 알려 주세요.",r.search());return;}if(quantity>sample.getMaxStackSize()*9){send(p,s,r.sequence(),"한 거래의 우편 첨부 가능 수량을 초과했습니다.",r.search());return;}if(economy()==null){send(p,s,r.sequence(),"경제 서비스 연결이 필요합니다.",r.search());return;}var before=MailboxBridge.copy(p.getInventory().getStorageContents());var after=MailboxBridge.copy(before);if(selling){if(owned(p,sample)<quantity){send(p,s,r.sequence(),"판매할 아이템 수량이 부족합니다.",r.search());return;}int left=quantity;for(int i=0;i<after.length&&left>0;i++)if(after[i]!=null&&after[i].isSimilar(sample)){int n=Math.min(left,after[i].getAmount());left-=n;after[i].setAmount(after[i].getAmount()-n);if(after[i].getAmount()==0)after[i]=null;}}
   UUID owner=p.getUniqueId();busy.add(owner);
   // 접수 단계(work): 대기열이 차 있으면 여기서 거절되고 아무 것도 바뀌지 않는다.
@@ -304,6 +320,55 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   ChacaApi.branch(plugin,ChacaApi.상점관리,CmdKit.literal("거래처리").then(order),"멈춘 거래 처리 (완료: 상품 지급 / 환불 / 취소)","거래처리 ");
   ChacaApi.branch(plugin,ChacaApi.유저관리,CmdKit.literal("거래기록").executes(CmdKit.run(ctx->records(CmdKit.sender(ctx),ChacaApi.target(ctx)))),"끝나지 않은 상점 거래 보기","거래기록");
   ChacaApi.reload(plugin,"상점","상점 목록·상품·NPC 연결 (DB에서 다시 읽기)",()->{version=-1;refresh();});
+  ChacaApi.reload(plugin,"튜토리얼상점","tutorial-shop.yml (튜토리얼 전용 재료 상점·필요 재료)",this::loadTutorial);
+  ChacaApi.branch(plugin,ChacaApi.유저관리,CmdKit.literal("튜토리얼상점")
+   .then(CmdKit.literal("시작").executes(CmdKit.run(ctx->tutorialAdmin(ctx,"시작"))))
+   .then(CmdKit.literal("다시").executes(CmdKit.run(ctx->tutorialAdmin(ctx,"다시"))))
+   .then(CmdKit.literal("끝").executes(CmdKit.run(ctx->tutorialAdmin(ctx,"끝"))))
+   .then(CmdKit.literal("보기").executes(CmdKit.run(ctx->tutorialAdmin(ctx,"보기")))),
+   "튜토리얼 전용 재료 상점 대상 지정(시작·다시=구매 기록 새로)·해제(끝)·구매 현황(보기) — 스토리 시작명령용","튜토리얼상점 보기");
+ }
+
+ // ------------------------------------------------------------------ 튜토리얼 전용 재료 상점 (2026-10-25, 메모 #12)
+
+ private void loadTutorial()throws Exception{
+  var file=new java.io.File(plugin.getDataFolder(),"tutorial-shop.yml");if(!file.exists())plugin.saveResource("tutorial-shop.yml",false);
+  var y=new org.bukkit.configuration.file.YamlConfiguration();y.load(file);tutorial=TutorialShop.parse(y);
+  if(tutorial.enabled())plugin.getLogger().info("튜토리얼 재료 상점: "+tutorial.shop()+" (대신 열 상점 "+tutorial.general()+", 필요 재료 "+tutorial.required().size()+"종, 신호 "+tutorial.signal()+")");
+ }
+ /** 상점 창을 닫음: 튜토리얼 대상이 전용 상점을 닫았으면, 대상이 된 뒤 결제를 마친 구매로 필요 재료가 다 찼는지 확인하고 스토리 신호를 보낸다. */
+ private void tutorialClosed(Player p,String shopId){
+  UUID owner=p.getUniqueId();Long started=tutorialOpen.remove(owner);var cfg=tutorial;
+  if(started==null||!cfg.enabled()||!shopId.equals(cfg.shop())||cfg.required().isEmpty())return;
+  var shop=catalog.get(cfg.shop());if(shop==null)return;
+  var missing=new ArrayList<String>();var need=TutorialShop.requiredIds(shop.products(),cfg.required(),missing);
+  if(!missing.isEmpty()){plugin.getLogger().warning("튜토리얼 상점 "+cfg.shop()+" 에 없는(또는 구매 불가) 필요 재료: "+missing+" — 신호를 보내지 않습니다");return;}
+  work(owner,()->store.bought(owner,need.keySet(),started),got->{
+   if(!TutorialShop.complete(need,got)||!current(p))return;
+   plugin.getLogger().info("튜토리얼 재료 구매 완료: "+p.getName()+" → 스토리 신호 "+cfg.signal());
+   StoryProgressEvent.fire(p,cfg.signal());
+  },m->plugin.getLogger().warning("튜토리얼 재료 구매 확인 실패 ("+p.getName()+"): "+m));
+ }
+ private void tutorialAdmin(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx,String action)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+  UUID owner=ChacaApi.target(ctx);var sender=CmdKit.sender(ctx);String who=CmdKit.name(owner);var cfg=tutorial;
+  switch(action){
+   case "시작","다시"->work(null,()->store.tutorialStart(owner,action.equals("다시")),at->{tutorialOpen.remove(owner);plugin.getLogger().info("튜토리얼 상점 대상 "+action+": "+who+" ("+owner+")");CmdKit.ok(sender,who+" 님은 이제 "+(cfg.enabled()?"튜토리얼 재료 상점("+cfg.shop()+")":"튜토리얼 재료 상점(설정 꺼짐: tutorial-shop.yml shop)")+"을 봐요"+(action.equals("다시")?" (구매 기록을 지금부터 다시 세요)":""));},m->CmdKit.fail(sender,"튜토리얼 상점 대상으로 지정하지 못했어요",new IllegalStateException(m)));
+   case "끝"->work(null,()->store.tutorialEnd(owner),ok->{tutorialOpen.remove(owner);CmdKit.ok(sender,ok?who+" 님은 이제 일반 상점을 봐요":who+" 님은 튜토리얼 상점 대상이 아니었어요");},m->CmdKit.fail(sender,"튜토리얼 상점 대상을 풀지 못했어요",new IllegalStateException(m)));
+   default->{
+    var shop=cfg.enabled()?catalog.get(cfg.shop()):null;var missing=new ArrayList<String>();var need=shop==null?Map.<String,Integer>of():TutorialShop.requiredIds(shop.products(),cfg.required(),missing);
+    work(null,()->{long at=store.tutorialStarted(owner);return new Object[]{at,at>0?store.bought(owner,need.keySet(),at):Map.<String,Integer>of()};},v->{
+     long at=(Long)v[0];@SuppressWarnings("unchecked") var got=(Map<String,Integer>)v[1];var out=new ArrayList<String>();
+     out.add("── "+who+" 튜토리얼 재료 상점 ──");
+     out.add(at>0?" 대상 (구매 기록 시작 "+QuestBridge.timeText(at)+")":" 대상 아님 (일반 상점을 봐요)");
+     out.add(" 설정: "+(cfg.enabled()?"상점 "+cfg.shop()+(shop==null?" (상점 없음!)":"")+" · 대신 열 상점 "+cfg.general()+" · 신호 "+cfg.signal():"꺼짐 (tutorial-shop.yml shop 비어 있음)"));
+     if(cfg.required().isEmpty())out.add(" 필요 재료: 정하지 않음 (신호를 보내지 않아요)");
+     if(shop!=null)for(var pr:shop.products())if(need.containsKey(pr.id()))out.add(" · "+pr.name()+" "+got.getOrDefault(pr.id(),0)+" / "+need.get(pr.id()));
+     if(!missing.isEmpty())out.add(" ⚠ 상점에 없는(또는 구매 불가) 재료: "+String.join(", ",missing));
+     if(at>0&&!need.isEmpty())out.add(TutorialShop.complete(need,got)?" → 다 샀어요. 상점 창을 닫으면 신호를 보내요":" → 아직 덜 샀어요");
+     CmdKit.lines(sender,out);
+    },m->CmdKit.fail(sender,"튜토리얼 상점 기록을 읽지 못했어요",new IllegalStateException(m)));
+   }
+  }
  }
  /** /상점관리 열기 <상점> [닉네임]: NPC 없이 연다. */
  private void adminOpen(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx,Player p)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
@@ -313,7 +378,7 @@ final class ShopBridge implements PluginMessageListener,Listener,AutoCloseable {
   if(busy.contains(p.getUniqueId()))throw ChacaApi.error(who+" 님의 거래를 처리하는 중이에요. 잠시 뒤 다시 해 주세요");
   open(p,sh.id(),null);
  }
- @EventHandler public void quit(PlayerQuitEvent e){sessions.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());listed.remove(e.getPlayer().getName());/* busy remains until the queued order steps finish */}
+ @EventHandler public void quit(PlayerQuitEvent e){sessions.remove(e.getPlayer().getUniqueId());tutorialOpen.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());listed.remove(e.getPlayer().getName());/* busy remains until the queued order steps finish */}
  @Override public void close(){closing=true;Bukkit.getServicesManager().unregister(ShopBridge.class,this);
   // 여기부터 메인 스레드 후속 처리는 실행되지 않는다. 부작용 전인 것이 확실한 기록만 되돌리고, 나머지는 기록된 상태 그대로 다음 접속 때 복구한다.
   for(var revert:reverts.values())try{io.execute(()->{try{revert.call();}catch(Exception e){plugin.getLogger().warning("Shop shutdown revert failed: "+e.getClass().getSimpleName());}});}catch(RejectedExecutionException ignored){}

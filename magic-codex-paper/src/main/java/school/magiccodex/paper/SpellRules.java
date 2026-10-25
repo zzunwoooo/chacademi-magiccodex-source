@@ -12,9 +12,14 @@ final class SpellRules {
         Rule(String id,String name,String skill,Target target,boolean utility,int range,double base,double ratio){this(id,name,skill,target,utility,range,base,ratio,false);}
         double damage(double power){return Math.clamp(base+ratio*Math.clamp(power,0,1_000_000),0,1_000_000);}
     }
+    /** #80: range x multiplier, rounded, 1..64 blocks. Multiplier 1.0 returns the configured range unchanged. */
+    static int scaledRange(int range,double multiplier){return multiplier==1.0?range:(int)Math.clamp(Math.round(range*multiplier),1,64);}
     static Map<String,Rule> load(File file)throws Exception {
         var yaml=new YamlConfiguration();yaml.load(file);var root=yaml.getConfigurationSection("spells");
         if(root==null||root.getKeys(false).size()>512)throw new IllegalArgumentException("spells 목록을 확인하세요.");
+        // #80 (2026-10-25): one multiplier for every spell's range (1.0 = unchanged). Server checks only - see scaledRange.
+        double mult=yaml.getDouble("range-multiplier",1.0);
+        if(!Double.isFinite(mult)||mult<0.25||mult>3)throw new IllegalArgumentException("range-multiplier 는 0.25~3 이어야 합니다.");
         var result=new LinkedHashMap<String,Rule>();
         for(String id:root.getKeys(false)){
             var s=root.getConfigurationSection(id);if(s==null||!id.matches("[a-z0-9_-]{1,64}"))throw new IllegalArgumentException(id);
@@ -23,7 +28,7 @@ final class SpellRules {
             var target=Target.valueOf(s.getString("target","SELF"));int range=s.getInt("range",24);
             double base=s.getDouble("base-damage",0),ratio=s.getDouble("power-ratio",0);
             if(range<1||range>48||!Double.isFinite(base)||!Double.isFinite(ratio)||base<0||base>10000||ratio<0||ratio>100)throw new IllegalArgumentException(id+" 수치");
-            result.put(id,new Rule(id,name,skill,target,s.getBoolean("utility",false),range,base,ratio,target==Target.AIM&&s.getBoolean("ground",false)));
+            result.put(id,new Rule(id,name,skill,target,s.getBoolean("utility",false),scaledRange(range,mult),base,ratio,target==Target.AIM&&s.getBoolean("ground",false)));
         }
         return Collections.unmodifiableMap(result);
     }

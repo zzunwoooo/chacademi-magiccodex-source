@@ -19,8 +19,24 @@ public final class PetBbModel {
     public static PetBbModel load(Path root,String id)throws Exception{
         if(!school.magiccodex.protocol.PetProtocol.validId(id))throw new IllegalArgumentException("잘못된 펫 ID");
         Path base=root.toRealPath(),file=base.resolve(id+".bbmodel").normalize();
+        // 2026-10-25: 펫 ID와 파일 이름이 다를 때 models/aliases.json {"펫ID":"파일이름(확장자 없이)"} 로 연결 (바닐라 몹 펫 → 기존 bbmodel).
+        if(!Files.exists(file)){String alias=alias(base,id);if(alias!=null)file=base.resolve(alias+".bbmodel").normalize();}
         if(!file.toRealPath().startsWith(base)||Files.size(file)>MAX_FILE)throw new IllegalArgumentException("모델 경로 또는 용량 오류");
         return parse(JsonParser.parseString(Files.readString(file)).getAsJsonObject(),file,base);
+    }
+    /** models/aliases.json lookup; null when absent, unreadable or the target name is not a safe pet-style id. */
+    static String alias(Path base,String id){
+        try{
+            Path file=base.resolve("aliases.json");
+            if(!Files.isRegularFile(file)||Files.size(file)>262144)return null;
+            var json=JsonParser.parseString(Files.readString(file));
+            if(!json.isJsonObject())return null;
+            var value=json.getAsJsonObject().get(id);
+            if(value==null||!value.isJsonPrimitive())return null;
+            String name=value.getAsString().trim();
+            if(name.endsWith(".bbmodel"))name=name.substring(0,name.length()-8);
+            return school.magiccodex.protocol.PetProtocol.validId(name)&&!name.equals(id)?name:null;
+        }catch(Exception e){return null;}
     }
     public static PetBbModel parse(JsonObject json,Path file,Path root)throws Exception{
         var warnings=new LinkedHashSet<String>();var textures=new ArrayList<Texture>();

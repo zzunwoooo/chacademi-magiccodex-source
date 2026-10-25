@@ -201,4 +201,43 @@ class AffinityStoreTest {
         assertThrows(IllegalArgumentException.class, () -> NpcSocialService.registeredNpcId(duplicates, "엘라"));
         assertEquals("ella_2", NpcSocialService.registeredNpcId(duplicates, "ella_2"));
     }
+
+    @Test void chatRewardCountsPerNpcPerDayAndStopsAtGate() throws Exception {
+        Path db = dir.resolve("affinity.db");
+        try (var s = new AffinityStore(SQLITE, db)) {
+            for (int i = 0; i < 3; i++) assertEquals(1, s.addCounted(p, "ella", "chat_reward", 1, 3, "2026-10-25", i).applied());
+            assertEquals(0, s.addCounted(p, "ella", "chat_reward", 1, 3, "2026-10-25", 4).applied(), "NPC 하나당 하루 3번");
+            assertEquals(1, s.addCounted(p, "mina", "chat_reward", 1, 3, "2026-10-25", 5).applied(), "다른 NPC 는 따로 셈");
+            assertEquals(3, s.usedToday(p, "ella", "chat_reward", "2026-10-25"));
+            assertEquals(1, s.add(p, "ella", "chat", 1, 3, "2026-10-25", 6).applied(), "mood(chat) 한도와 따로 셈");
+        }
+        // 다시 연 저장소(서버 이동·재시작과 같음)에서도 같은 날 횟수 그대로
+        try (var s = new AffinityStore(SQLITE, db)) {
+            assertEquals(0, s.addCounted(p, "ella", "chat_reward", 1, 3, "2026-10-25", 7).applied(), "재접속으로 초기화되지 않음");
+            assertEquals(1, s.addCounted(p, "ella", "chat_reward", 1, 3, "2026-10-26", 8).applied(), "다음 날 다시");
+            s.add(p, "luka", "quest", 30, 0, "2026-10-26", 9); // 상한 30
+            assertEquals(0, s.addCounted(p, "luka", "chat_reward", 1, 3, "2026-10-26", 10).applied());
+            assertEquals(0, s.usedToday(p, "luka", "chat_reward", "2026-10-26"), "상한이면 횟수도 안 씀");
+            s.setHeart(p, "luka", 1, 11);
+            assertEquals(1, s.addCounted(p, "luka", "chat_reward", 1, 3, "2026-10-26", 12).applied(), "퀘스트 완료 후 재개");
+            s.add(p, "mina", "quest", 28, 0, "2026-10-26", 13); // 29
+            var r = s.addCounted(p, "mina", "chat_reward", 5, 3, "2026-10-26", 14);
+            assertEquals(1, r.applied(), "상한까지 남은 만큼만");
+            assertEquals(30, r.row().score());
+        }
+    }
+
+    @Test void gateQuestLookup() {
+        assertEquals(1, NpcSocialService.gateLevel("30"));
+        assertEquals(3, NpcSocialService.gateLevel("90"));
+        assertEquals(0, NpcSocialService.gateLevel("100"));
+        Map<Integer, String> q = Map.of(30, "q30", 60, "q60");
+        assertEquals("q30", NpcSocialService.gateQuest(q, new AffinityStore.Row(30, 0, "")));
+        assertNull(NpcSocialService.gateQuest(q, new AffinityStore.Row(29, 0, "")), "상한 전");
+        assertNull(NpcSocialService.gateQuest(q, new AffinityStore.Row(30, 1, "")), "이미 깸 (상한 60)");
+        assertEquals("q60", NpcSocialService.gateQuest(q, new AffinityStore.Row(60, 1, "")));
+        assertNull(NpcSocialService.gateQuest(q, new AffinityStore.Row(90, 2, "")), "90 설정 없음 → 아무 일 없음");
+        assertNull(NpcSocialService.gateQuest(null, new AffinityStore.Row(30, 0, "")), "설정 비어 있음");
+        assertNull(NpcSocialService.gateQuest(q, new AffinityStore.Row(100, 3, "")));
+    }
 }

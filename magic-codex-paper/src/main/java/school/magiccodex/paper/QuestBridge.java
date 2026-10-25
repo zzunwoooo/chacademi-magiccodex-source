@@ -202,7 +202,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
             submit(uid,()->{store.stage(uid,reserved,reached|QuestStore.RECORDED);return true;},v->held.accept("보상 처리 확인이 필요합니다. 관리자에게 문의해 주세요."),m->held.accept("보상 처리 확인이 필요합니다. 관리자에게 문의해 주세요."));return;
         }
         int reached=stage;plugin.getLogger().info("QUEST DELIVERED "+ref);
-        Runnable finish=()->submit(uid,()->{store.finish(uid,reserved,true);return true;},v->ok.run(),m->{
+        Runnable finish=()->submit(uid,()->{store.finish(uid,reserved,true);return true;},v->{fireCompleted(uid,q.id());ok.run();},m->{
             plugin.getLogger().severe("QUEST REVIEW "+ref+" 보상은 모두 지급했으나 완료 기록에 실패했습니다. /유저관리 "+p.getName()+" 의뢰기록 처리 "+q.id()+" "+reserved.cycle()+" 완료처리 로 닫으세요.");
             submit(uid,()->{store.stage(uid,reserved,15|QuestStore.RECORDED);return true;},v->{},x->{});held.accept("보상 기록 확인이 필요합니다. 관리자에게 문의해 주세요.");});
         if(q.housePoints()>0&&(reached&QuestStore.HOUSE)==0)plugin.questHouseReward(reserved.token(),rewardHouse,q.housePoints(),finish,m->{
@@ -226,6 +226,10 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
     List<school.magiccodex.protocol.JournalProtocol.Entry> journalDefinitions(){return catalog.values().stream().map(q->new school.magiccodex.protocol.JournalProtocol.Entry("quest",q.id(),q.title(),q.description(),"available",q.main(),"","",npcGroup(q.id()))).toList();}
     /** quests.yml 의 npc: 키(표시 전용). 일지에서 "NPC <이름>" 카테고리로 묶인다. */
     private volatile Map<String,String> npcGroups=Map.of();
+    /** 의뢰 완료(보상 지급·완료 기록까지 끝남) 알림. 메인 스레드. NPC 호감도 퀘스트(#39·#100)가 다음 상한을 여는 데 쓴다. */
+    private final List<java.util.function.BiConsumer<UUID,String>> completedHooks=new java.util.concurrent.CopyOnWriteArrayList<>();
+    void onCompleted(java.util.function.BiConsumer<UUID,String> hook){if(hook!=null)completedHooks.add(hook);}
+    private void fireCompleted(UUID player,String id){for(var h:completedHooks)try{h.accept(player,id);}catch(RuntimeException ex){plugin.getLogger().warning("Quest completed hook: "+ex.getClass().getSimpleName());}}
     String npcGroup(String id){String n=npcGroups.get(id);return n==null?"":"NPC "+n;}
     Map<String,String> journalCatalog(){var map=new TreeMap<String,String>();catalog.values().forEach(q->map.put("quest:"+q.id(),q.title()));return map;}
     void journalRows(Player player,java.util.function.Consumer<List<school.magiccodex.protocol.JournalProtocol.Entry>> callback){
@@ -478,7 +482,7 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         UUID id=ChacaApi.target(ctx);var s=CodexCommands.sender(ctx);String quest=ctx.getArgument("퀘스트",String.class),cycle=ctx.getArgument("주기",String.class),admin=s.getName();
         if(busy.contains(id))throw ChacaApi.error("이 유저의 의뢰를 지금 처리하는 중이에요. 잠시 뒤 다시 해 주세요");
         if(!action.equals("retry")){
-            work(()->{store.resolve(id,quest,cycle,action.equals("delivered"));return true;},v->{
+            work(()->{store.resolve(id,quest,cycle,action.equals("delivered"));return true;},v->{if(action.equals("delivered"))fireCompleted(id,quest);
                 plugin.getLogger().warning("QUEST ADMIN admin="+admin+" player="+id+" quest="+quest+" cycle="+cycle+" action="+action);
                 ChacaApi.ok(s,action.equals("delivered")?"지급 완료로 닫았어요 (더 주지 않음)":"보상 받기 전으로 되돌렸어요. 유저가 처음부터 다시 받을 수 있어요");
                 Player online=Bukkit.getPlayer(id);if(online!=null&&current(online))load(online,false,"");

@@ -34,7 +34,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         SpellRuntime.Plan plan=spellRuntime==null?null:spellRuntime.prepare(player,id);
         if(plan==null&&missingRuntimeRoutes.add(id))getLogger().warning("No gameplay runtime route for "+id+"; using existing VFX/command fallback.");
         return CatalogGameplayFlow.cast(plan==null||plan.ok(),plan!=null,
-            ()->CatalogVfxLink.cast(this,player,id),()->spellRuntime.execute(player,plan),
+            ()->CatalogVfxLink.cast(this,player,id,plan==null?null:plan.target()),()->spellRuntime.execute(player,plan),
             failure->getLogger().warning("마법 실행 실패: "+id+" / "+failure.getClass().getSimpleName()));
     }
     boolean requiresCatalogVisual(String id){return mana!=null&&mana.requiresCatalogVisual(id);}
@@ -79,6 +79,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** Trusted server-thread API; the callback runs after database commit. */
     public void grantTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,false,result);}
     public void revokeTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,true,result);}
+    /** MagicDiscovery가 리플렉션으로 부른다 (서버 스레드): 발견한 마법 → title-awards.yml discovery 칭호. 중복 지급은 칭호 장부가 막는다. */
+    public void discoveryTitles(UUID player,java.util.Collection<String> spells){if(titles!=null)titles.discovered(player,spells);}
     public void registerDialogueAction(String id,java.util.function.BiConsumer<Player,String> action){if(dialogues==null)throw new IllegalStateException("Dialogue not ready");dialogues.register(id,action);}
     public void registerDialogueCondition(String id,java.util.function.BiPredicate<Player,String> condition){if(dialogues==null)throw new IllegalStateException("Dialogue not ready");dialogues.registerCondition(id,condition);}
     boolean dialogueQuestCondition(Player p,String id,String status){return quests!=null&&quests.dialogueCondition(p,id,status);}
@@ -135,6 +137,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
     DisplayNames names(){return names;}
     TitleBridge titleService(){return titles;}
+    SchoolBridge schoolBridge(){return school;}
     private CommandHub commandHub;
     CommandHub commandHub(){return commandHub;}
     int questHouse(Player p){return school==null?-1:school.house(p);}
@@ -229,6 +232,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{books=new BookBridge(this);}catch(Exception error){getLogger().severe("책 읽기 초기화 실패 (books.yml·book-blocks.yml 확인): "+error.getMessage());}
         try{travel=new TravelBridge(this);}catch(Exception error){getLogger().severe("지도 이동 초기화 실패 (travel.yml 확인): "+error.getMessage());}
         if(travel!=null&&mana!=null){mana.spatialLeapCast=travel::castSpatialLeap;travel.mana(mana);}
+        if(travel!=null)try{new ReturnTicketBridge(this,travel);}catch(Exception error){getLogger().severe("귀환권 초기화 실패 (return-ticket.yml 확인): "+error.getMessage());}
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);

@@ -17,7 +17,7 @@ public final class ReconfigurationScreen extends Screen {
     private static final String[] TABS={"강화 초기화","실패 횟수 복구","코어 성향 변경"};
     private static final String[] SCROLLS={"scroll-reset","scroll-restore","scroll-affinity"};
     private static final String[] NAMES={"강화 초기화권","강화 횟수 복구권","능력치 변경권"};
-    private static final String[] STATS={"마력","마나 최대치","마법 가속"};
+    private static final String[] STATS={"지능","마나 최대치","마법 가속"};
     private static final String[] ICONS={"icon-power","icon-mana","icon-haste"};
     private static final int GOLD=0xFFE7CE9C,INK=0xFFDEE8EE,MUTED=0xFFACBBC8,CYAN=0xFF9CE5EF;
     private Response data;

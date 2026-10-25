@@ -78,7 +78,7 @@ M = [
  (176, 'misfortune_whisper', '나약함의 저주', 'dark', 'ENTITY', 12, 0, 0, 60, 20,
   ['chahit{mult=0;status=magic_weakness:160+physical_weakness:160}'],
   '대상 8초 약화(마법 피해↓) + 물리 약화(공격 피해↓)', '감소율 = config status 공통 값 (magicWeakness / physicalWeakness), 사거리 12',
-  '적 하나의 공격력과 마력을 8초 동안 낮춥니다.', '나약함 효과 상태에서 몬스터 5마리 처치', None,
+  '적 하나의 공격력과 지능을 8초 동안 낮춥니다.', '나약함 효과 상태에서 몬스터 5마리 처치', None,
   'misfortune_whisper', 180,
   [att('cast', 'misfortune_whisper_begin', 28, 'target'), att('cast', 'misfortune_whisper', 160, 'target', delay=6),
    att('cast', 'misfortune_whisper_end', 24, 'target', delay=160)], True),

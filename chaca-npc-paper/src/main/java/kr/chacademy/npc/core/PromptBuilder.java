@@ -38,6 +38,7 @@ public final class PromptBuilder {
         public List<String> promises = new ArrayList<>();
         public boolean generic;            // 버튼 대답 캐시용: 개인 정보 없이 만든다
         public boolean magicAsked;         // 학생이 마법 이야기를 물었다 (마법 버튼 또는 마법 낱말)
+        public String likedCriteria;       // #83 liked 판정 기준 (config affinity.chat-reward-criteria), null 이면 안 씀
     }
 
     /** 공통 규칙 + 캐릭터 = instructions (캐시되는 앞부분). */
@@ -122,6 +123,11 @@ public final class PromptBuilder {
             }
             AffinityStage st = x.stage == null ? AffinityStage.ACQUAINTANCE : x.stage;
             sb.append("- 너와의 관계: ").append(st.label).append(" — ").append(st.attitude).append('\n');
+        }
+        if (x.generic || x.likedCriteria == null || x.likedCriteria.isBlank()) {
+            sb.append("- liked: 항상 false.\n");
+        } else {
+            sb.append("- liked: ").append(x.likedCriteria.trim()).append(" 그럴 때만 true, 아니면 false.\n");
         }
 
         sb.append("\n[이번 대화에서 허락된 것]\n");
@@ -221,10 +227,11 @@ public final class PromptBuilder {
         props.put("promise", Json.map("type", List.of("string", "null"), "description", "학생이 고백·약속·'너밖에 없어' 같은 특별한 말을 했으면 한 줄 요약"));
         props.put("rumor", Json.map("type", List.of("integer", "null")));
         props.put("end", Json.map("type", "boolean"));
+        props.put("liked", Json.map("type", "boolean", "description", "학생의 이번 말이 정말 마음에 들었으면 true ([지금 상황]의 liked 기준)"));
         return Json.map(
                 "type", "object",
                 "properties", props,
-                "required", List.of("line", "mood", "quest", "hint", "memo", "promise", "rumor", "end"),
+                "required", List.of("line", "mood", "quest", "hint", "memo", "promise", "rumor", "end", "liked"),
                 "additionalProperties", false);
     }
 

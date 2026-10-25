@@ -36,6 +36,10 @@ import school.magiccodex.protocol.ArtifactProtocol.Entry;
  * (artifacts.yml summon.item, default item:random_artifact), rolls a grade by summon.weights and then a uniform
  * artifact of that grade. New ownership and duplicate classification commit atomically; duplicates mail
  * summon.duplicate.item (item:artifact_shard). The client only plays the reveal; the result is decided here.
+ * Pity (천장, #98 2026-10-25): summon.pity.grade / summon.pity.count. The shared counter (codex_artifact_pity) is
+ * updated in the same locked DB transaction as ownership; each pull also carries a pre-rolled replacement of the pity
+ * grade or higher that the store uses only when the counter reaches the threshold. Remaining pulls ride in the
+ * existing text fields (grade-chance line and result notice); no new client UI.
  */
 final class ArtifactBridge implements PluginMessageListener, Listener {
     private final MagicCodexBridge plugin;
@@ -53,6 +57,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
     // ---- summon settings (artifacts.yml summon:)
     private String summonItem = "item:random_artifact", shardItem = "item:artifact_shard", summonItemName = "유물함 열쇠";
     private int summonCost = 1;
+    /** 천장: 이 등급 이상이 `pityCount`번 연속 안 나오면 다음 뽑기 확정. 0 = 끔. 기본값은 자리표시 (오너 미정). */
+    private int pityGrade = 2, pityCount = 50;
     private final double[] weights = {5, 3, 1, 0.1};
     /** Grades shown on the four unpicked chests: cosmetic only, tilted toward high grades for a near-miss feel. */
     private final double[] decoyWeights = {4, 3, 2, 1};
@@ -135,8 +141,12 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
         }
         if (total <= 0) throw new IllegalArgumentException("summon.weights 합이 0");
         if (decoyTotal <= 0) throw new IllegalArgumentException("summon.decoy-weights 합이 0");
+        int pg = sm == null ? 2 : grade(sm.getString("pity.grade", "unique"));
+        int pc = sm == null ? 50 : sm.getInt("pity.count", 50);
+        if (pg < 0) throw new IllegalArgumentException("summon.pity.grade 는 common/rare/unique/legendary (또는 일반/고급/유일/전설)");
+        if (pc < 0 || pc > 1000) throw new IllegalArgumentException("summon.pity.count 는 0~1000 (0 = 천장 끔)");
         catalog = next; revision = crc.getValue() == 0 ? 1 : crc.getValue(); maxEquipped = max; ownsAll = all;
-        summonItem = item; shardItem = shard; summonCost = cost;
+        summonItem = item; shardItem = shard; summonCost = cost; pityGrade = pg; pityCount = pc;
         System.arraycopy(w, 0, weights, 0, 4); System.arraycopy(dw, 0, decoyWeights, 0, 4); System.arraycopy(shards, 0, shardAmount, 0, 4);
         if (sm != null) {
             mailTitle = sm.getString("duplicate.mail-title", mailTitle); mailBody = sm.getString("duplicate.mail-body", mailBody);
@@ -221,7 +231,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
             if (r.knownCatalog() != revision) send(p, true, "");
             if (r.action() == ArtifactProtocol.SUMMON_MULTI || r.action() == ArtifactProtocol.SUMMON) {
                 summonShared(p,r.action()==ArtifactProtocol.SUMMON_MULTI?ArtifactProtocol.MULTI:1);
-            } else sendSummon(p, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_STATE, keys(p), summonInfoText()));
+            } else sendSummon(p, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_STATE, keys(p), summonInfoText(p)));
             return;
         }
         send(p, r.knownCatalog() != revision, notice);
@@ -302,12 +312,28 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
         return left == 0;
     }
 
-    private int rollGrade() {
-        double total = 0; for (int g = 0; g < 4; g++) if (hasGrade(g)) total += weights[g];
+    private int rollGrade() { return rollGrade(0); }
+    /** Grade among the summonable grades >= `min`, by summon.weights. -1 when there is none. */
+    private int rollGrade(int min) {
+        double total = 0; for (int g = min; g < 4; g++) if (hasGrade(g)) total += weights[g];
+        if (total <= 0) return -1;
         double x = random.nextDouble() * total;
-        for (int g = 0; g < 4; g++) { if (!hasGrade(g)) continue; x -= weights[g]; if (x < 0) return g; }
-        for (int g = 3; g >= 0; g--) if (hasGrade(g) && weights[g] > 0) return g;
-        return 0;
+        for (int g = min; g < 4; g++) { if (!hasGrade(g)) continue; x -= weights[g]; if (x < 0) return g; }
+        for (int g = 3; g >= min; g--) if (hasGrade(g) && weights[g] > 0) return g;
+        return -1;
+    }
+    private boolean pityOn() { if (pityCount <= 0) return false; for (int g = pityGrade; g < 4; g++) if (hasGrade(g)) return true; return false; }
+    private ArtifactOwnershipStore.Pity pity() { return pityOn() ? new ArtifactOwnershipStore.Pity(pityGrade, pityCount) : ArtifactOwnershipStore.Pity.NONE; }
+    private ArtifactOwnershipStore.Choice choice(Player p, int grade) {
+        var pool = catalog.stream().filter(e -> e.grade() == grade).toList();
+        var won = pool.get(random.nextInt(pool.size()));
+        return new ArtifactOwnershipStore.Choice(won.id(), grade, shardAmount[grade], temporaryAccess(p, won.id()));
+    }
+    /** "유일 이상 확정까지 N회" for the existing text lines; "" when pity is off or the shared counter is not known yet. */
+    private String pityText(Player p) {
+        int done = ownership.pityCount(p.getUniqueId());
+        if (!pityOn() || done < 0) return "";
+        return ArtifactProtocol.GRADE_LABELS[pityGrade] + " 이상 확정까지 " + Math.max(1, pityCount - done) + "회";
     }
     /** Cosmetic grade for an unpicked chest (no artifact behind it, so the catalogue does not limit it). */
     private int rollDecoy() {
@@ -327,11 +353,18 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
         boolean any=false;for(int g=0;g<4;g++)any|=hasGrade(g);
         if(!any||have<cost){sendSummon(p,ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_REFUSED,have,"소환 재료가 부족하거나 소환할 수 있는 아티팩트가 없습니다."));return;}
         var choices=new ArrayList<ArtifactOwnershipStore.Choice>();
-        for(int i=0;i<count;i++){int grade=rollGrade();var pool=catalog.stream().filter(e->e.grade()==grade).toList();var won=pool.get(random.nextInt(pool.size()));choices.add(new ArtifactOwnershipStore.Choice(won.id(),grade,shardAmount[grade],temporaryAccess(p,won.id())));}
-        boolean accepted=ownership.purchase(p.getUniqueId(),choices,shardItem,()->takeKeys(p,cost),rows->{
+        var pity=pity();
+        for(int i=0;i<count;i++){
+            var rolled=choice(p,rollGrade());
+            // 천장: 기준 등급 미만이 나온 칸마다 기준 이상 대체 결과를 미리 굴려 둔다. 실제 교체 여부는 공유 DB 카운터로 정한다.
+            int high=pity.on()&&rolled.grade()<pity.grade()?rollGrade(pity.grade()):-1;
+            choices.add(high<0?rolled:new ArtifactOwnershipStore.Choice(rolled.id(),rolled.grade(),rolled.shards(),rolled.temporaryAccess(),choice(p,high)));
+        }
+        boolean accepted=ownership.purchase(p.getUniqueId(),choices,shardItem,pity,()->takeKeys(p,cost),rows->{
             if(!p.isOnline())return;send(p,false,"");
-            if(count==1){var x=rows.getFirst();int[] decoys=new int[ArtifactProtocol.DECOYS];for(int i=0;i<decoys.length;i++)decoys[i]=rollDecoy();sendSummon(p,new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT,keys(p),x.id(),x.grade(),x.fresh(),x.shards(),decoys,""));}
-            else {var pulls=rows.stream().map(x->new ArtifactProtocol.Pull(x.id(),x.grade(),x.fresh(),x.shards())).toList();if(p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE))p.sendPluginMessage(plugin,ArtifactProtocol.RESPONSE,ArtifactProtocol.encode(new ArtifactProtocol.SummonMulti(keys(p),pulls,"")));}
+            String left=pityText(p);
+            if(count==1){var x=rows.getFirst();int[] decoys=new int[ArtifactProtocol.DECOYS];for(int i=0;i<decoys.length;i++)decoys[i]=rollDecoy();sendSummon(p,new ArtifactProtocol.Summon(ArtifactProtocol.SUMMON_RESULT,keys(p),x.id(),x.grade(),x.fresh(),x.shards(),decoys,left));}
+            else {var pulls=rows.stream().map(x->new ArtifactProtocol.Pull(x.id(),x.grade(),x.fresh(),x.shards())).toList();if(p.getListeningPluginChannels().contains(ArtifactProtocol.RESPONSE))p.sendPluginMessage(plugin,ArtifactProtocol.RESPONSE,ArtifactProtocol.encode(new ArtifactProtocol.SummonMulti(keys(p),pulls,left)));}
         });
         if(!accepted)sendSummon(p,ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_REFUSED,keys(p),"소환을 처리하지 못했습니다. 재료가 차감됐다면 관리자에게 문의해 주세요."));
     }
@@ -349,7 +382,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
         }
         listening.add(target.getUniqueId());
         send(target, true, "");
-        sendSummon(target, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_OPEN, keys(target), summonInfoText()));
+        sendSummon(target, ArtifactProtocol.Summon.simple(ArtifactProtocol.SUMMON_OPEN, keys(target), summonInfoText(target)));
     }
 
     /** After the shared state (school/wild) loaded: send equipped + cooldowns so the client's X-key HUD and codex match. */
@@ -372,7 +405,10 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
     }
 
     /** OPEN/STATE notice: "<key item name>\u0001<cost>\u0001<grade chances>" for the window's guide text. */
-    private String summonInfoText() { return summonItemName + "\u0001" + summonCost + "\u0001" + rates(); }
+    private String summonInfoText(Player p) {
+        String left = pityText(p), text = summonItemName + "\u0001" + summonCost + "\u0001" + rates() + (left.isEmpty() ? "" : " · " + left);
+        return text.length() <= ArtifactProtocol.MAX_NOTICE ? text : summonItemName + "\u0001" + summonCost + "\u0001" + rates();
+    }
 
     /** Grade chances as shown to players, e.g. 일반 55.0% / 고급 33.0% / 유일 11.0% / 전설 1.1%. */
     private String rates() {
@@ -449,6 +485,7 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
         out.add("── 아티팩트 목록 (" + catalog.size() + "개, 장착 최대 " + maxEquipped + ") ──");
         for (Entry e : catalog) out.add("[" + ArtifactProtocol.GRADE_LABELS[e.grade()] + "] " + e.name() + "  (" + e.id() + ")" + (e.usable() ? " · 사용형" + (e.cooldown() > 0 ? " " + e.cooldown() + "초" : "") : ""));
         out.add("뽑기: " + summonItemName + " " + summonCost + "개 · 확률 " + rates());
+        out.add("천장: " + (pityOn() ? ArtifactProtocol.GRADE_LABELS[pityGrade] + " 이상, " + pityCount + "회째 뽑기에서 확정 (그 등급이 나오면 처음부터)" : "꺼짐"));
         out.add("중복: " + shardItem + " (일반 " + shardAmount[0] + " · 고급 " + shardAmount[1] + " · 유일 " + shardAmount[2] + " · 전설 " + shardAmount[3] + "개)" + (ownsAll ? " · 전체 보유 테스트 모드 켜짐" : ""));
         CmdKit.lines(sender, out);
     }
@@ -465,6 +502,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
             Player p = Bukkit.getPlayer(id);
             if (p != null) {
                 out.add("장착: " + (equipped(p).isEmpty() ? "없음" : String.join(", ", equipped(p).stream().map(this::label).toList())));
+                int pulls = ownership.pityCount(id);
+                if (pityOn()) out.add("천장: " + (pulls < 0 ? "불러오는 중" : ArtifactProtocol.GRADE_LABELS[pityGrade] + " 이상 없이 " + pulls + "회 (" + pityCount + "회째 확정)"));
                 String cd = cooldownText(id);
                 out.add("쿨타임: " + (cd.isEmpty() ? "없음" : cd.replace(";", " ").strip()));
             } else out.add("장착·쿨타임: 이 서버에 접속 중일 때만 보여요");

@@ -15,7 +15,7 @@ import school.magiccodex.protocol.HousingRules.Placement;
  *   2 CLOSE                              (창 닫음 → 구경 중 명단에서 빠짐)
  *   3 SAVE       u8 slot · Layout        (그 레이아웃 저장 + 방문자에게 보이는 레이아웃으로)
  *   4 EXPAND     u8 지금 크기            (두 번 눌러 두 번 빠지지 않게 지금 크기를 같이 보낸다)
- *   5 LIKE       UUID 방 주인            (좋아요 켜기/끄기)
+ *   5 LIKE       UUID 방 주인            (좋아요 — 2026-10-25부터 한 번만, 취소 없음)
  *   6 GB_POST    UUID 방 주인 · UTF 글
  *   7 GB_DELETE  UUID 방 주인 · i64 글 번호
  *   8 FRIENDS                            (친구 방 목록 요청)

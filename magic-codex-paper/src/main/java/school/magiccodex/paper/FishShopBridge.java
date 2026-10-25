@@ -249,6 +249,7 @@ final class FishShopBridge implements PluginMessageListener, Listener {
                 plugin.getLogger().info("FISH SHOP PAYMENT_RESULT owner="+id+" op="+r.operation()+" confirmed="+paid+" total="+accepted);
                 boolean payment=paid;
                 fishing.tank().finish(id,claimed,FishTankSql.Action.SELL,payment,ok->{
+                    if(ok&&payment)Bukkit.getScheduler().runTask(plugin,()->StoryProgressEvent.fire(p,StoryProgressEvent.FISH_SOLD));
                     busy.remove(id);result(p,r.operation(),ok&&payment,ok&&payment?claimed.size():0,ok&&payment?accepted:0,
                         !ok?"판매 기록 확인이 필요해요. 관리자에게 알려 주세요.":payment?claimed.size()+"마리를 "+String.format("%,d",accepted)+" G에 팔았어요.":"돈을 지급하지 못해서 물고기를 수조에 보존했어요.");
                     send(p,FishShopProtocol.KIND_STATE,"");

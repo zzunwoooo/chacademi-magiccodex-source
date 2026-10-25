@@ -41,7 +41,8 @@ class KyudichiQueueProtocolTest {
     @Test void linkRoundTrip() {
         for (ToArena m : List.of(new Assign(M, true, List.of(A), List.of(B), 1), new KyudichiQueueProtocol.Spectate(A, ""), new Practice(B, 1)))
             assertEquals(m, KyudichiQueueProtocol.decodeToArena(KyudichiQueueProtocol.encode(m)));
-        for (ToProxy m : List.of(new Hello(A), new LiveList(2, List.of(new LiveMatch(M, LIVE, List.of(A), List.of(B))), 1), new Return(List.of(A, B)), new Ended(M)))
+        for (ToProxy m : List.of(new Hello(A), new LiveList(2, List.of(new LiveMatch(M, LIVE, List.of(A), List.of(B))), 1), new Return(List.of(A, B)), new Ended(M),
+                new Custom(M, 1, List.of(A), List.of(B)), new Custom(M, 0, List.of(A, B), List.of(M))))
             assertEquals(m, KyudichiQueueProtocol.decodeToProxy(KyudichiQueueProtocol.encode(m)));
     }
 
@@ -63,5 +64,7 @@ class KyudichiQueueProtocolTest {
         assertThrows(IllegalArgumentException.class, () -> KyudichiQueueProtocol.decodeFromClient(hex.parseHex("0163")));
         assertThrows(IllegalArgumentException.class, () -> KyudichiQueueProtocol.decodeToArena(hex.parseHex("0201")));
         assertThrows(IllegalArgumentException.class, () -> KyudichiQueueProtocol.decodeToProxy(hex.parseHex("01")));
+        // 커스텀 경기: 빈 팀은 보내지도 받지도 않는다
+        assertThrows(IllegalArgumentException.class, () -> KyudichiQueueProtocol.encode(new Custom(M, 0, List.of(), List.of(B))));
     }
 }

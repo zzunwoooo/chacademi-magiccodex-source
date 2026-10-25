@@ -6,8 +6,13 @@ import java.util.logging.Logger;
 import org.bukkit.configuration.ConfigurationSection;
 import school.magiccodex.protocol.HousingRules;
 
-/** config.yml 값. */
-record Settings(String server, int startSize, TreeMap<Integer, Long> expansion, boolean visitCommand, long guestbookCooldownMs, int guestbookKeep, int presenceTicks) {
+/**
+ * config.yml 값.
+ * likeGlobal: 좋아요(추천) 1회 단위 — false = 방마다 한 번 (기본), true = 모든 방을 통틀어 한 번 (#78, 2026-10-25).
+ * visitOnceEver: 누적 방문 집계 단위 — false = 방문자별 하루 한 번 (기본, 예전 동작), true = 방문자별 평생 한 번 (#51).
+ */
+record Settings(String server, int startSize, TreeMap<Integer, Long> expansion, boolean visitCommand, long guestbookCooldownMs, int guestbookKeep, int presenceTicks,
+                boolean likeGlobal, boolean visitOnceEver) {
     static Settings from(ConfigurationSection c, Logger log) {
         String server = c.getString("server-name", "school").strip();
         if (!server.matches("[A-Za-z0-9_-]{1,32}")) { log.warning("server-name 은 영문·숫자 32자 이하: school 로 씁니다."); server = "school"; }
@@ -24,7 +29,17 @@ record Settings(String server, int startSize, TreeMap<Integer, Long> expansion, 
         }
         return new Settings(server, start, steps, c.getBoolean("visit-command", true),
                 Math.max(0, c.getLong("guestbook.cooldown-seconds", 10)) * 1000, Math.clamp(c.getInt("guestbook.keep", 100), 10, 1000),
-                Math.clamp(c.getInt("presence-interval-ticks", 40), 20, 200));
+                Math.clamp(c.getInt("presence-interval-ticks", 40), 20, 200),
+                scope(c.getString("like.limit", "room"), "global", "like.limit", log),
+                scope(c.getString("visits.count-once-per", "day"), "ever", "visits.count-once-per", log));
+    }
+
+    /** 두 값 중 하나: 기본값이면 false, other 이면 true, 그 밖은 경고 후 기본값. */
+    private static boolean scope(String raw, String other, String key, Logger log) {
+        String v = raw == null ? "" : raw.strip().toLowerCase(java.util.Locale.ROOT);
+        if (v.equals(other)) return true;
+        if (!v.equals("room") && !v.equals("day")) log.warning(key + " 값 '" + raw + "' 을(를) 알 수 없어 기본값을 씁니다.");
+        return false;
     }
 
     /** 지금 크기 다음 단계 (없으면 null). */

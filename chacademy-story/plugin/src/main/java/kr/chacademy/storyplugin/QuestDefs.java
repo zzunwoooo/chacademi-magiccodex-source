@@ -35,6 +35,7 @@ final class QuestDefs {
     static final double MIN_RADIUS = 1.0, MAX_RADIUS = 16.0, DEFAULT_RADIUS = 1.5;
     static final Pattern KEY = Pattern.compile("[\\p{L}\\p{N}_\\-]{1,32}");
     static final int MAX_START_COMMANDS = 8;
+    static final int MAX_WAITING = 8;
 
     /** 대화완료 대상 형식이 맞는지: "id" 또는 "앞부분*" 을 | 로 묶은 것. */
     static boolean validDialoguePattern(String target) {
@@ -146,6 +147,11 @@ final class QuestDefs {
         /** 시작명령-한번. null = 생략 (명령 내용으로 정함). */
         Boolean startOnce;
         Trigger trigger = new Trigger();
+        /**
+         * 대기대화 (2026-10-25 오너): 이 단계 조건을 아직 못 채운 사람이 이 NPC(Citizens 번호)를 누르면 AI 대화 대신 띄울 짧은 고정 대화.
+         * 예) 낚시 단계에 올레 → "아직도 못 잡았나?". 단계 진행에는 영향 없음.
+         */
+        final Map<Integer, String> waiting = new LinkedHashMap<>();
 
         Step(String id) { this.id = id; }
 
@@ -220,6 +226,15 @@ final class QuestDefs {
                 String c = text(o, 256);
                 if (c.startsWith("/")) c = c.substring(1);
                 if (!c.isBlank()) s.startCommands.add(c);
+            }
+        }
+        if (m.get("대기대화") instanceof List<?> waits) {
+            for (Object o : waits) {
+                if (!(o instanceof Map<?, ?> w) || s.waiting.size() >= MAX_WAITING) continue;
+                int npc = integer(w.get("NPC"), -1);
+                String dlg = id(w.get("대화"));
+                if (npc < 0 || dlg.isEmpty()) { warnings.add(id + ": 대기대화 는 { NPC: 번호, 대화: 대화ID } 형식 (건너뜀)"); continue; }
+                s.waiting.put(npc, dlg);
             }
         }
         if (m.get("시작명령-한번") instanceof Boolean once) s.startOnce = once;
@@ -308,6 +323,11 @@ final class QuestDefs {
             m.put("다음", s.next);
             if (!s.startCommands.isEmpty()) m.put("시작명령", new ArrayList<>(s.startCommands));
             if (s.startOnce != null) m.put("시작명령-한번", s.startOnce);
+            if (!s.waiting.isEmpty()) {
+                List<Object> waits = new ArrayList<>();
+                s.waiting.forEach((npc, dlg) -> { Map<String, Object> w = new LinkedHashMap<>(); w.put("NPC", npc); w.put("대화", dlg); waits.add(w); });
+                m.put("대기대화", waits);
+            }
             all.put(s.id, m);
         }
         root.put("단계", all);

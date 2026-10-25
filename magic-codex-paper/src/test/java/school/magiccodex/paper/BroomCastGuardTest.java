@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BroomCastGuardTest {
  @Test void ridingBlocksOnlyTheTwoMovementSpellsAndRemount(){
-  for(String id:new String[]{"gale_dash","light_leap","flight"}){assertTrue(BroomCastGuard.blocked(id,true));assertFalse(BroomCastGuard.blocked(id,false));}
+  for(String id:new String[]{"gale_dash","light_leap","flight","hunting_pounce","roar_leap"}){assertTrue(BroomCastGuard.blocked(id,true));assertFalse(BroomCastGuard.blocked(id,false));}
   for(String id:new String[]{"taming","wind_message","fireball","water_bomb"})assertFalse(BroomCastGuard.blocked(id,true));
  }
  @Test void unavailableIsRejectedBeforeConsumeDispatchAndCooldownEvenWithNoMana(){

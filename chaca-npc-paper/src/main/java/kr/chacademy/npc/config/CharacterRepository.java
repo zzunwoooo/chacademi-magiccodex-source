@@ -162,6 +162,7 @@ public final class CharacterRepository {
      *   - { id: daily, label: "교수님, 요즘 어떠세요?" }
      *   - { id: help,  label: "제가 도울 일이 있을까요?" }
      *   - { id: magic, label: "마법 이야기 들려주세요" }
+     *   - { id: shop,  label: "물건 좀 볼 수 있어요?", action: "shop:pipi" }   ← 대사 대신 상점(MagicCodexBridge)을 연다
      * </pre>
      * id 는 소문자·숫자·_·- 1~32자 (같은 NPC 안에서 겹치지 않게). 미리 만드는 대답(캐시)은 NPC·버튼 id 별로 따로 쌓인다.
      */
@@ -170,7 +171,7 @@ public final class CharacterRepository {
         List<kr.chacademy.npc.core.Defs.Button> out = new ArrayList<>();
         java.util.Set<String> seen = new java.util.HashSet<>();
         for (Map<?, ?> m : y.getMapList("buttons")) {
-            Object bid = m.get("id"), label = m.get("label");
+            Object bid = m.get("id"), label = m.get("label"), action = m.get("action");
             if (bid == null || label == null) continue;
             String b = bid.toString().strip(), l = label.toString().strip();
             if (!b.matches("[a-z0-9_-]{1,32}") || l.isEmpty() || !seen.add(b)) {
@@ -181,7 +182,12 @@ public final class CharacterRepository {
                 log.warning("[ChacaNPC] " + id + " 의 버튼은 3개까지만 씁니다 (나머지 무시)");
                 break;
             }
-            out.add(new kr.chacademy.npc.core.Defs.Button(b, l));
+            var button = new kr.chacademy.npc.core.Defs.Button(b, l, action == null ? "" : action.toString());
+            if (!button.aiReply() && button.shop() == null) {
+                log.warning("[ChacaNPC] " + id + " 의 버튼 " + b + " 의 action 을 알 수 없음 (" + button.action() + ") — 일반 대사 버튼으로 씁니다");
+                button = new kr.chacademy.npc.core.Defs.Button(b, l);
+            }
+            out.add(button);
         }
         return List.copyOf(out);
     }

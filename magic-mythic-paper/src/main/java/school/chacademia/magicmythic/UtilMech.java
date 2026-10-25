@@ -31,7 +31,7 @@ import org.bukkit.util.Vector;
  *                          restores config mana-potion.restore mana (159 마력 예금)
  *  exp ratio=0.5         - spend all current mana, gain mana x ratio experience points (161 경험의 환전)
  *  deepdark depth=64     - is there a Deep Dark biome below the caster? answer only by VFX event found/absent (114)
- *  star ticks=200        - sneaking: save this spot. otherwise: point at the saved spot (VFX + action bar) (132 길잡이 별)
+ *  star                  - point at the current story step's target (ChacademyStory arrow); recast turns it off (132 길잡이 별)
  *  reprise               - reset the cooldown of one random other equipped spell (163 별빛 재현; needs the Bridge
  *                          cooldown API and the client slot report, see handoff)
  *  core ticks=6000 speed range radius aoe - first cast gathers a stone core, the next cast fires it (131 원초의 돌)
@@ -284,33 +284,18 @@ final class UtilMech extends Mech {
 
     // ------------------------------------------------------------------ 132 guiding star
     static NamespacedKey starKey() { return new NamespacedKey("chacademiamagicmythic", "guiding_star"); }
+    /**
+     * 132 길잡이 별 (오너 2026-10-20·10-23): 진행 중인 스토리 단계의 목표(포탈·NPC)를 화살표로 가리킨다 (스토리 모드가 그림,
+     * 목표 10블록 안에서 사라짐). 웅크림 위치 저장은 삭제, 다시 시전하면 끈다. 쿨타임은 mana-spells.yml (0).
+     */
     private boolean star(Player pl) {
-        var pdc = pl.getPersistentDataContainer();
-        if (pl.isSneaking()) {
-            Location l = pl.getLocation();
-            pdc.set(starKey(), PersistentDataType.STRING, l.getWorld().getName() + ";" + l.getX() + ";" + l.getY() + ";" + l.getZ());
-            vfx(pl, "external:save", l, null);
-            info(pl, "길잡이 별: 이 위치를 기억했습니다.");
-            return true;
+        switch (StoryLink.guide(pl)) {
+            case StoryLink.OK -> { vfx(pl, "external:form", pl.getLocation().add(0, 1.2, 0), null); info(pl, "길잡이 별이 퀘스트 목표를 가리킵니다."); return true; }
+            case StoryLink.OFF -> { info(pl, "길잡이 별을 껐습니다."); return true; }
+            case StoryLink.NEAR -> { bar(pl, "길잡이 별: 퀘스트 목표가 바로 근처에 있어요."); return false; }
+            case StoryLink.OTHER_WORLD -> { bar(pl, "길잡이 별: 퀘스트 목표가 다른 곳에 있어요."); return false; }
+            default -> { bar(pl, "길잡이 별: 지금은 가리킬 퀘스트 목표가 없어요."); return false; }
         }
-        String raw = pdc.get(starKey(), PersistentDataType.STRING);
-        if (raw == null) { bar(pl, "길잡이 별: 기억한 위치가 없습니다. 웅크린 채 시전하세요."); return false; }
-        String[] f = raw.split(";");
-        World w = Bukkit.getWorld(f[0]);
-        if (w == null || !w.equals(pl.getWorld())) { bar(pl, "길잡이 별: 기억한 위치가 다른 세계에 있습니다."); return false; }
-        Location target = new Location(w, Double.parseDouble(f[1]), Double.parseDouble(f[2]), Double.parseDouble(f[3]));
-        org.bukkit.util.Vector guide=target.toVector().subtract(pl.getLocation().toVector()).setY(0);if(guide.lengthSquared()<1e-8)guide=SummonMech.flat(pl.getLocation());
-        vfx(pl, "external:form", pl.getLocation().add(guide.normalize()).add(0,1.2,0), null);
-        int ticks = Math.clamp(p.i("ticks", 200), 20, 20 * 60);
-        plugin.ticker().add(new Ticker.Tick() {
-            int age = 0;
-            public boolean tick() {
-                if (!pl.isOnline() || !pl.getWorld().equals(w) || age++ >= ticks) return false;
-                if (age % 10 == 1 && plugin.getConfig().getBoolean("guiding-star-text", true)) live(pl, "길잡이 별 " + arrow(pl.getLocation(), target) + "  " + Math.round(pl.getLocation().distance(target)) + "블록");
-                return true;
-            }
-        });
-        return true;
     }
     /** Arrow relative to where the player faces. */
     static String arrow(Location from, Location to) {

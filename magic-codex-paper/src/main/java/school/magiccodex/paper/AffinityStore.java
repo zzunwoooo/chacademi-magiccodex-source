@@ -265,6 +265,40 @@ final class AffinityStore implements AutoCloseable {
     }
 
     /**
+     * 횟수로 세는 호감도 상승 (#83 호의적 AI 대화: NPC 하나당 하루 count 번, 한 번에 amount).
+     * 하루 칸(daily 표, source 행)의 amount 열에 "쓴 횟수"를 적는다. 상한(30·60·90, 퀘스트 미완료)에 닿아 있으면
+     * 오르지 않고 횟수도 쓰지 않는다 (선물과 같은 규칙). 상한까지 남은 양이 amount 보다 적으면 남은 만큼만 오른다.
+     */
+    AddResult addCounted(UUID owner, String npc, String source, int amount, int count, String day, long now) throws SQLException {
+        return tx(db -> {
+            ensureRow(db, owner, npc);
+            Row cur = lockRow(db, owner, npc);
+            int delta = Math.min(amount, gate(cur.heart()) - cur.score());
+            if (amount <= 0 || count <= 0 || delta <= 0) {
+                return new AddResult(cur, 0);
+            }
+            if (consumeDaily(db, owner, npc, day, source, 1, count) == 0) {
+                return new AddResult(cur, 0);
+            }
+            return applyScore(db, owner, npc, delta, now);
+        });
+    }
+
+    /** 오늘 이 출처로 쓴 양 (횟수형 출처면 횟수). 관리·검수용. */
+    int usedToday(UUID owner, String npc, String source, String day) throws SQLException {
+        try (PreparedStatement s = holder.get().prepareStatement("SELECT amount FROM " + daily
+                + " WHERE owner=? AND npc=? AND day=? AND source=?")) {
+            s.setString(1, owner.toString());
+            s.setString(2, npc);
+            s.setString(3, day);
+            s.setString(4, source);
+            try (ResultSet r = s.executeQuery()) {
+                return r.next() ? r.getInt(1) : 0;
+            }
+        }
+    }
+
+    /**
      * 관리자 점수 변경. 행 잠금 안에서 최신 점수로 계산하며 하루 한도는 소비하거나 초기화하지 않는다.
      * 하트 단계·호칭은 그대로 두고 점수만 현재 하트 상한 안으로 제한한다.
      */

@@ -60,6 +60,8 @@ import java.util.UUID;
  *      A2P 4 ENDED    UUID match
  *      A2P 5 ADMIN    UUID request · u8 action · UUID target · u8 mode
  *                     (/유저관리 &lt;닉네임&gt; 큐디치·결투·파티: 1 대기열에서빼기 · 2 매칭상태초기화 · 3 파티 보기 · 4 파티 빼기 · 5 파티 해산)
+ *      A2P 6 CUSTOM   UUID request · u8 mode · u8 nA(1~3) · nA×UUID · u8 nB(1~3) · nB×UUID
+ *                     (2026-10-25 /큐디치관리 경기 커스텀: 레이팅 없는 지정 경기, 수락 확인 후 ASSIGN rated=0. 답은 ADMIN_REPLY)
  * </pre>
  * Tier: 0 브론즈 1 실버 2 골드 3 플래티넘 4 다이아몬드 5 마스터 6~8 챌린저 1~3.
  */
@@ -133,7 +135,7 @@ public final class KyudichiQueueProtocol {
     /** 관리 요청 결과. ok=false 이면 message 는 관리자에게 보여 줄 실패 이유. lines 는 보기 결과(채팅 줄). */
     public record AdminReply(UUID request, boolean ok, String message, List<String> lines) implements ToArena {}
 
-    public sealed interface ToProxy permits Hello, LiveList, Return, Ended, AdminRequest {}
+    public sealed interface ToProxy permits Hello, LiveList, Return, Ended, AdminRequest, Custom {}
     public record Hello(UUID player) implements ToProxy {}
     public record LiveMatch(UUID match, Live live, List<UUID> teamA, List<UUID> teamB) {}
     public record LiveList(int freeArenas, List<LiveMatch> matches, int freeDuelArenas) implements ToProxy {}
@@ -141,6 +143,8 @@ public final class KyudichiQueueProtocol {
     public record Ended(UUID match) implements ToProxy {}
     /** 관리 요청: action = ADMIN_*, mode = MODE_* (파티 요청은 0). */
     public record AdminRequest(UUID request, int action, UUID target, int mode) implements ToProxy {}
+    /** 커스텀 경기 (레이팅 없음): 관리자가 정한 두 팀. 프록시가 수락 확인 → 경기장 이동, 결과는 {@link AdminReply}. */
+    public record Custom(UUID request, int mode, List<UUID> teamA, List<UUID> teamB) implements ToProxy {}
 
     // ------------------------------------------------------------------ queue channel
     public static byte[] encode(ToClient m) {
@@ -369,6 +373,10 @@ public final class KyudichiQueueProtocol {
                 case Return x -> { o.writeByte(3); uuids(o, x.players, 64); }
                 case Ended x -> { o.writeByte(4); uuid(o, x.match); }
                 case AdminRequest x -> { o.writeByte(5); uuid(o, x.request); u8(o, x.action, ADMIN_ACTIONS); uuid(o, x.target); u8(o, x.mode, MODES - 1); }
+                case Custom x -> {
+                    if (x.teamA.isEmpty() || x.teamB.isEmpty()) throw new IllegalArgumentException("team");
+                    o.writeByte(6); uuid(o, x.request); u8(o, x.mode, MODES - 1); uuids(o, x.teamA, 3); uuids(o, x.teamB, 3);
+                }
             }
         });
     }
@@ -387,6 +395,11 @@ public final class KyudichiQueueProtocol {
                 UUID request = ruuid(i); int action = r8(i, ADMIN_ACTIONS);
                 if (action == 0) throw new IllegalArgumentException("action");
                 yield new AdminRequest(request, action, ruuid(i), r8(i, MODES - 1));
+            }
+            case 6 -> {
+                UUID request = ruuid(i); int mode = r8(i, MODES - 1); var a = ruuids(i, 3); var b = ruuids(i, 3);
+                if (a.isEmpty() || b.isEmpty()) throw new IllegalArgumentException("team");
+                yield new Custom(request, mode, a, b);
             }
             default -> throw new IllegalArgumentException("kind");
         });

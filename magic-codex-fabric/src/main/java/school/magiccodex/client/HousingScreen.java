@@ -408,7 +408,7 @@ public final class HousingScreen extends SocialScreen {
     }
     private void label(DrawContext c,Drawn d){
         float top=Float.MAX_VALUE,cx=0;for(var p:d.hull()){top=Math.min(top,p[1]);cx+=p[0];}cx/=d.hull().length;
-        String name=d.def().name();float w=type.width(name,16,BODY)+30;
+        String name=d.def().name()+(!editing()&&functional(d.def().id())?" · 클릭해서 보기":"");float w=type.width(name,16,BODY)+30;
         nine(images,c,TOOLTIP,cx-w/2,top-40,w,32,8,0xF0FFFFFF);
         type.draw(c,name,cx,top-24,16,TEXT,BODY,true);
     }
@@ -827,7 +827,7 @@ public final class HousingScreen extends SocialScreen {
         if(h==H_FRIENDS){openFriends();return true;}
         if(h==H_HOME){visit(self());return true;}
         if(h==H_ZOOM_IN||h==H_ZOOM_OUT){zoom=Math.clamp(zoom*(h==H_ZOOM_IN?1.2f:1/1.2f),.5f,3f);sound(1.2f,.12f);return true;}
-        if(h==H_LIKE){if(send(new Like(room.owner().id())))sound(1.3f,.2f);return true;}
+        if(h==H_LIKE){if(room.liked()){say("이미 좋아요를 누른 방이에요.",false);return true;}if(send(new Like(room.owner().id())))sound(1.3f,.2f);return true;} // #78: 한 번만, 취소 없음
         if(h==H_SEND){postGuestbook();return true;}
         if(h>=H_MORE&&h<H_DELETE){var e=entry(h-H_MORE);if(e!=null){moreEntry=moreEntry==e.id()?-1:e.id();sound(1.1f,.15f);}return true;}
         if(h>=H_DELETE&&h<H_VISIT){var e=entry(h-H_DELETE);if(e!=null&&send(new Delete(room.owner().id(),e.id())))moreEntry=-1;return true;}
@@ -850,8 +850,29 @@ public final class HousingScreen extends SocialScreen {
         if(inRoom(mx,my)){
             if(edit&&held!=null){place();return true;}
             if(edit&&hoverItem>=0){pickUp(hoverItem);return true;}
+            if(!edit&&held==null&&hoverItem>=0&&openFunctional(room,hoverItem))return true;
             panning=true;lastX=mx;lastY=my;return true;
         }
+        return true;
+    }
+    /**
+     * #108 (2026-10-25): 구경 중 기능성 가구 클릭 → 이미 있는 화면으로 연결. 새 화면은 만들지 않는다 (레퍼런스 필요).
+     * house_scoreboard = 기숙사 점수 창(SchoolScreen, 전체 공개 정보), profile_frame = 방 주인의 내 정보(/스탯창 — 주인이 같은 서버에 접속 중일 때만 서버가 열어 줌).
+     * 빗자루 거치대·아티팩트 진열장·큐디치 트로피장은 남에게 보여 줄 서버 경로·화면이 없어 아직 연결하지 않음.
+     */
+    private static boolean functional(String id){return id.equals("house_scoreboard")||id.equals("profile_frame");}
+    private boolean openFunctional(Room room,int index){
+        var list=layout().placements();if(index<0||index>=list.size())return false;
+        String id=list.get(index).id();if(!functional(id))return false;
+        sound(1.13f,.2f);
+        if(id.equals("house_scoreboard")){
+            if(!SchoolClient.supported()){say("기숙사 점수판을 열 수 없어요. 서버 연결을 확인해 주세요.",false);return true;}
+            SchoolClient.open();return true;
+        }
+        UUID owner=room.owner().id();
+        if(owner.equals(self())){MagicCodexClient.dismiss();client.setScreen(new StatsScreen());return true;}
+        var h=client.getNetworkHandler();if(h==null){say("서버에 연결되어 있지 않아요.",false);return true;}
+        h.sendChatCommand("스탯창 "+owner); // 주인이 접속 중이 아니면 서버가 안내 문구를 보낸다 (창은 그대로)
         return true;
     }
     private Entry entry(int index){var b=HousingClient.guestbook();return b==null||index<0||index>=b.entries().size()?null:b.entries().get(index);}

@@ -145,6 +145,16 @@ public final class MagicCodexLink implements Listener {
         return future("addAffinity", player, npc, source, amount);
     }
 
+    /** 이 Bridge 가 호의적 대화 보상(chatReward, #83)을 지원하는지. 옛 Bridge 면 예전 mood 방식을 그대로 쓴다. */
+    public boolean chatRewards() {
+        return facade != null && methods.containsKey("chatReward");
+    }
+
+    /** {score, heart, applied} — 하루 횟수·지급량·상한은 Bridge 가 판단한다. */
+    public CompletableFuture<int[]> chatReward(UUID player, String npc) {
+        return future("chatReward", player, npc);
+    }
+
     public CompletableFuture<String> nickname(UUID player, String npc) {
         return future("nickname", player, npc);
     }
@@ -192,6 +202,23 @@ public final class MagicCodexLink implements Listener {
 
     public CompletableFuture<String> storySummary(UUID player) {
         return future("storySummary", player);
+    }
+
+    /** 이 Bridge 가 NPC 대화창에서 상점 열기(openShop)를 지원하는지. */
+    public boolean shops() {
+        return facade != null && methods.containsKey("openShop");
+    }
+
+    /**
+     * NPC 대화창 버튼으로 상점 열기. 튜토리얼 대상이면 Bridge 가 일반 잡화점 대신 튜토리얼 재료 상점을 연다.
+     * false = Bridge 가 없거나 옛 버전이라 열지 못함 (거리·준비 상태 거절은 Bridge 가 직접 알린다).
+     */
+    public boolean openShop(Player player, String shopId, org.bukkit.entity.Entity anchor) {
+        try {
+            return Boolean.TRUE.equals(call("openShop", player, shopId, anchor));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return false;
+        }
     }
 
     public boolean questOfferable(Player player, String questId) {

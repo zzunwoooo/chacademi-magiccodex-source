@@ -1,0 +1,29 @@
+# 칭호 획득 경로 (메모 #21, 2026-10-25). 학교·야생·던전에 같은 파일. 수정 뒤 /서버관리 새로고침 칭호
+# 값은 titles.yml 의 칭호 ID. titles.yml 에 없거나 enabled: false 인 칭호는 주지 않는다 (시작·새로고침 때 콘솔 경고).
+# 같은 획득 경로는 유저마다 한 번만 준다 (DB 표 codex_title_awards). 관리자가 회수해도 같은 경로로 다시 주지 않는다.
+# 칭호 표시: 접두+접미+이름 (예: 가벼운질주꾼 준우). 마법 칭호는 마법마다 하나, 접두·접미 반반 (오너 결정 2026-10-23).
+
+# 마법 발견: <마법 ID>: <칭호 ID>. 발견 직후 + 접속 때(예전에 발견한 마법 포함) 지급.
+# 오너 기획 목록이 저장소에 없어 비워 둠. 다른 유저가 마법을 유추하지 못하게 마법 효과를 비틀어 지은 이름을 titles.yml 에 먼저 등록할 것.
+# 예)  feather_step: prefix_light        (titles.yml: prefix_light → side: prefix, name: 가벼운)
+discovery: {}
+
+affinity:
+  # 아무 NPC와 처음 이 점수에 닿으면 한 번 (오너 결정 2026-10-24: 30 친구 · 60 단짝 · 90 연인)
+  first-any:
+    30: suffix_affinity_friend
+    60: suffix_affinity_bestie
+    90: suffix_affinity_lover
+  # NPC별 칭호: 그 NPC와 이 점수에 닿으면 그 NPC 이름 칭호 (오너 결정: 30)
+  npc-threshold: 30
+  # <NPC 등록 ID>: <칭호 ID>. NPC 이름 칭호(예: 리아)를 titles.yml 에 접두(prefix)로 등록한 뒤 연결. "리아의친구"처럼 붙는 이름 모양은 오너 결정 필요.
+  # 예)  ria: prefix_npc_ria               (titles.yml: prefix_npc_ria → side: prefix, name: 리아의)
+  npc: {}
+
+# 낚시: 규칙 ID 아래 min-cm 이상(fish 를 적으면 그 물고기만)을 잡아 수조에 넣으면 한 번. 기준 크기 미정이라 비워 둠.
+# 예)
+#  big_catch:
+#    min-cm: 100
+#    fish: ''                            # 비우면 모든 물고기
+#    title: suffix_big_catch             (titles.yml: suffix_big_catch → side: suffix, name: 대물)
+fishing: {}

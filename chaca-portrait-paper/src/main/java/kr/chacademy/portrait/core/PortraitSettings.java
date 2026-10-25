@@ -50,6 +50,8 @@ public final class PortraitSettings {
     public final int maxWaiting;
 
     public final boolean autoFirstJoin;
+    /** 자동 생성을 하는 server-id 목록 (auto.server-ids, 기본 [school]). 튜토리얼 서버 분리(메모 #3) 뒤 오너가 정한다. */
+    public final List<String> autoServerIds;
     public final int autoDelaySeconds;
     public final int autoMaxAttempts;
 
@@ -119,10 +121,15 @@ public final class PortraitSettings {
         moderationEnabled = c.getBoolean("moderation.enabled", true);
         moderationModel = c.getString("moderation.model", "omni-moderation-latest");
 
-        workers = clamp(c.getInt("queue.workers", 2), 1, 8);
+        workers = clamp(c.getInt("queue.workers", 12), 1, 16); // 2026-10-25 오너: 60명 10분 안 (동시 12 × 약 90초). CPU 배경 제거는 BackgroundMatte 1칸 고정이라 늘지 않음
         maxWaiting = clamp(c.getInt("queue.max-waiting", 300), 1, 5000);
 
         autoFirstJoin = c.getBoolean("auto.first-join", false);
+        List<String> autoIds = new java.util.ArrayList<>();
+        for (String id : c.isList("auto.server-ids") ? c.getStringList("auto.server-ids") : List.of("school", "tutorial_1", "tutorial_2")) {
+            if (id != null && id.trim().matches("[A-Za-z0-9_-]{1,32}")) autoIds.add(id.trim());
+        }
+        autoServerIds = List.copyOf(autoIds);
         autoDelaySeconds = clamp(c.getInt("auto.delay-seconds", 20), 0, 600);
         autoMaxAttempts = clamp(c.getInt("auto.max-attempts", 3), 1, 50);
 
@@ -196,7 +203,7 @@ public final class PortraitSettings {
     }
 
     public boolean automaticGenerationAllowed() {
-        return enabled && autoFirstJoin && "school".equals(serverId);
+        return enabled && autoFirstJoin && autoServerIds.contains(serverId);
     }
 
     public boolean hasKey() {

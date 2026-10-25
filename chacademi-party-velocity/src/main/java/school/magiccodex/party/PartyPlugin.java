@@ -112,6 +112,9 @@ public final class PartyPlugin {
             travel.initialize(directory);
             proxy.getEventManager().register(this,travel);
         }catch(RuntimeException e){logger.error("Travel relay initialization failed; map travel between servers unavailable",e);travel=null;}
+        // 튜토리얼 서버 분산 (tutorial.properties, 서버 2개 이상일 때만 동작 — 1개·비움이면 예전과 같음)
+        try{var tutorial=new TutorialRouter(proxy,logger,PartyPlugin.this::enqueue,this);tutorial.initialize(directory);if(tutorial.enabled())proxy.getEventManager().register(this,tutorial);}
+        catch(RuntimeException e){logger.error("Tutorial router initialization failed; tutorial servers are not balanced",e);}
         // C12: 통합 채팅 뮤트는 Velocity 권한 chacademi.chat.muted 뿐 — 권한 플러그인이 없으면 아무도 뮤트되지 않는다
         if(!proxy.getPluginManager().isLoaded("luckperms"))logger.warn("Velocity 에 LuckPerms 가 없어 통합 채팅(전체·기숙사) 뮤트 권한 chacademi.chat.muted 가 동작하지 않습니다");
     }

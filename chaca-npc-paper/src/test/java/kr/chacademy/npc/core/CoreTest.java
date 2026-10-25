@@ -50,8 +50,12 @@ class CoreTest {
         assertEquals(10, r.memo().length());
         assertEquals(Long.valueOf(5L), r.rumorId());
         assertTrue(r.end());
+        assertFalse(r.liked(), "liked 가 없으면 false");
+        assertTrue(ReplyParser.parse("{\"line\":\"고마워!\",\"mood\":1,\"liked\":true}", lim).liked());
+        assertFalse(ReplyParser.parse("{\"line\":\"고마워!\",\"mood\":1,\"liked\":\"true\"}", lim).liked(), "불리언만 인정");
         ReplyParser.AiReply cut = ReplyParser.parse("{\"line\":\"잘린 대사", lim);
         assertEquals("잘린 대사", cut.line());
+        assertFalse(cut.liked(), "잘린 대답은 보상 없음");
         assertNull(ReplyParser.parse("{\"line\":\"  \"}", lim));
     }
 

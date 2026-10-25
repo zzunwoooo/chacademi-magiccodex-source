@@ -34,6 +34,11 @@ summon:
     amount: {common: 1, rare: 1, unique: 1, legendary: 1}
     mail-title: "아티팩트 조각"
     mail-body: "이미 가진 아티팩트가 나와 조각으로 바꿔 드렸습니다."
+  pity:                          # 천장 (#98): count번째 뽑기까지 grade 이상이 한 번도 안 나오면 그 뽑기는 grade 이상 확정.
+                                 # grade 이상이 나오면(천장이든 운이든) 카운터는 0부터. 카운터는 학교·야생·아레나 공유 DB.
+                                 # ※ 자리표시 값 — 기준 등급·횟수는 오너 결정 필요. count: 0 이면 천장 끔.
+    grade: unique
+    count: 50
 
 # 항목 형식
 #   아이디(영문 소문자·숫자·_):
@@ -866,7 +871,7 @@ artifacts:
     name: "반응 기폭 장갑"
     grade: rare
     description: "손끝에 원소 불꽃이 맺힌 검은 장갑."
-    effect: "사용하면 원소 표식이 하나만 붙은 적의 표식을 터뜨려 내 마력에 비례한 피해"
+    effect: "사용하면 원소 표식이 하나만 붙은 적의 표식을 터뜨려 내 지능에 비례한 피해"
     icon: "magiccodex:textures/artifact/reaction_detonator_glove.png"
     use: true
     cooldown: 30
@@ -1079,7 +1084,7 @@ artifacts:
     name: "단 하나의 서"
     grade: legendary
     description: "단 하나의 주문만 기억하는 책."
-    effect: "키세팅에 마법을 1개만 넣으면 최대 4번까지 충전해 연속으로 쓸 수 있음. 재사용 대기 30초 이하 마법만 가능하며, 마력 -50%, 그 마법의 재사용 대기 2배, 대기가 끝나면 충전이 모두 찬다."
+    effect: "키세팅에 마법을 1개만 넣으면 최대 4번까지 충전해 연속으로 쓸 수 있음. 재사용 대기 30초 이하 마법만 가능하며, 지능 -50%, 그 마법의 재사용 대기 2배, 대기가 끝나면 충전이 모두 찬다."
     icon: "magiccodex:textures/artifact/the_only_tome.png"
     order: 550
     enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)

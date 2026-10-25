@@ -1,7 +1,7 @@
 id: guiding_star
 name: 길잡이 별
 category: light
-description: 웅크린 상태로 시전하면 현재 위치를 저장합니다. 일반 시전 시 머리 위에 저장 위치를 가리키는 방향 화살표가 10초 동안 나타납니다.
+description: 진행 중인 이야기의 목표 지점을 가리키는 화살표가 머리 위에 나타납니다. 목표 10블록 안에 들어가면 사라지고, 다시 시전하면 끕니다.
 icon: magiccodex:textures/spells/novice/guiding_star.png
 permission: magic.learned.guiding_star
 discovery:
@@ -9,6 +9,6 @@ discovery:
 research: 길을 잃은 아이에게 별 하나가 집으로 가는 방향을 알려 주었다.
 cast:
   command: 마법 guiding_star
-  cooldown-seconds: 10
+  cooldown-seconds: 0
   mana-cost: 8
 order: 132

@@ -8,6 +8,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
@@ -39,12 +40,16 @@ import school.magiccodex.protocol.KyudichiQueueProtocol.*;
  *  - 모두 수락하면 경기장 서버로 이동, 경기가 끝나면 원래 있던 서버로 돌아간다 (위치는 그 서버가 저장한 자리).
  *  - 경기 중 접속이 끊겼다가 다시 들어오면 경기장 서버로 바로 보낸다 (60초 재접속은 경기장 서버가 판정).
  * 결투장 (2026-10-18): 모드 0 큐디치 · 1 1:1 대전. 1:1은 혼자만 신청(파티에 있어도 각자), 팀 1명. 대기열·경기장·레이팅은 모드별로 따로.
+ * 2026-10-25: 커스텀 경기 (/큐디치관리 경기 커스텀, 경기장 서버가 {@link Custom} 으로 요청) — 대기열 없이 정한 두 팀에 수락 확인 → ASSIGN rated=0.
+ *  경기장 서버가 경기를 더 이상 알리지 않으면 (서버 오류·재시작) {@link #VOID_MS} 뒤 경기 무효: 선수는 원래 서버로, 레이팅 변동 없음.
+ *  (경기장의 60초 재접속 시간보다 길게: 모두가 한꺼번에 끊겨 LIVE 를 보낼 사람이 없는 동안에도 돌아올 수 있게)
+ *  경기 중 경기장에서 튕겨 다른 서버로 옮겨진 선수는 경기장으로 다시 보낸다 (60초 재접속 판정은 경기장 서버).
  * All state lives on the party plugin's single worker thread.
  */
 final class KyudichiQueue {
     static final MinecraftChannelIdentifier QUEUE = MinecraftChannelIdentifier.from(KyudichiQueueProtocol.QUEUE);
     static final MinecraftChannelIdentifier LINK = MinecraftChannelIdentifier.from(KyudichiQueueProtocol.LINK);
-    static final long OFFER_MS = 10_000, UNSEEN_MS = 120_000, LIVE_FRESH_MS = 10_000;
+    static final long OFFER_MS = 10_000, UNSEEN_MS = 120_000, LIVE_FRESH_MS = 10_000, VOID_MS = 75_000, REJOIN_RETRY_MS = 60_000;
 
     interface Host {
         boolean enqueue(Runnable task);
@@ -77,19 +82,25 @@ final class KyudichiQueue {
     private final Set<UUID> joining = new HashSet<>();                    // DB lookup in flight
     private static final class Offer {
         final UUID id = UUID.randomUUID(); final KyudichiMatchmaker.Pair pair; final long deadline; final int mode; final Set<UUID> accepted = new HashSet<>();
-        Offer(KyudichiMatchmaker.Pair pair, long deadline, int mode) { this.pair = pair; this.deadline = deadline; this.mode = mode; }
+        /** false = 커스텀 경기 (대기열에서 온 게 아님: 실패해도 대기열로 돌아가지 않고, 레이팅 없음). */
+        final boolean rated;
+        Offer(KyudichiMatchmaker.Pair pair, long deadline, int mode, boolean rated) { this.pair = pair; this.deadline = deadline; this.mode = mode; this.rated = rated; }
         List<UUID> everyone() { var l = new ArrayList<>(pair.a().members()); l.addAll(pair.b().members()); return l; }
         List<KyudichiMatchmaker.Entry> entries() { var l = new ArrayList<>(pair.a().parts()); l.addAll(pair.b().parts()); return l; }
     }
     private final Map<UUID, Offer> offerOf = new HashMap<>();
-    /** lastSeen: assignment time, then every LIVE report that still lists the match. Unseen for 2 minutes = gone. */
-    private static final class Assigned { final Assign assign; long lastSeen; Assigned(Assign a, long t) { assign = a; lastSeen = t; } }
+    /**
+     * lastSeen: assignment time, then every LIVE report that still lists the match. Unseen for 2 minutes = gone.
+     * seenLive: the arena reported it running at least once — after that, {@link #VOID_MS} unseen = the arena lost it (server error) → void.
+     */
+    private static final class Assigned { final Assign assign; long lastSeen; boolean seenLive; Assigned(Assign a, long t) { assign = a; lastSeen = t; } }
     private final Map<UUID, Assigned> matches = new HashMap<>();          // match id → assignment
     private final Map<UUID, UUID> playing = new ConcurrentHashMap<>();    // player → match id (also read by initialServer)
     private final Map<UUID, String> origin = new HashMap<>();             // player → server to go back to
     private final Map<UUID, String> pendingSpectate = new HashMap<>();
     private final Set<UUID> pendingPractice = new HashSet<>();
     private final Set<UUID> modded = new HashSet<>();
+    private final Map<UUID, Long> rejoinAt = new HashMap<>();             // player → last time we sent them back to a running match
     private List<LiveMatch> live = List.of(); private int liveFree = -1, liveFreeDuel = -1; private long liveAt;
 
     KyudichiQueue(ProxyServer proxy, Logger log, Host host, Object plugin) { this.proxy = proxy; this.log = log; this.host = host; this.plugin = plugin; }
@@ -178,7 +189,7 @@ final class KyudichiQueue {
         UUID me = p.getUniqueId();
         if (queuedBy.containsKey(me) || joining.contains(me)) { host.notice(p, "이미 " + modeName(modeOf(me)) + " 대기열에 있어요. 창에서 취소할 수 있어요."); return; }
         if (offerOf.containsKey(me)) { host.notice(p, "매칭 수락 확인 중이에요."); return; }
-        if (playing.containsKey(me)) { host.notice(p, "이미 큐디치 경기 중이에요."); return; }
+        if (playing.containsKey(me)) { host.notice(p, "이미 " + modeName(modeOf(me)) + " 경기 중이에요."); return; }
         var party = host.party(me);
         List<UUID> members;
         if (md == KyudichiQueueProtocol.MODE_DUEL) members = List.of(me); // 1:1 is always solo, party or not
@@ -232,13 +243,14 @@ final class KyudichiQueue {
     private static Status idle() { return new Status(KyudichiQueueProtocol.S_NONE, 0, 0, 0, 0, false, 0, 0); }
 
     // =============================================================== offers
-    private void offer(KyudichiMatchmaker.Pair pair, long now, int mode) {
-        var o = new Offer(pair, now + OFFER_MS, mode);
+    private void offer(KyudichiMatchmaker.Pair pair, long now, int mode, boolean rated) {
+        var o = new Offer(pair, now + OFFER_MS, mode, rated);
         for (var e : o.entries()) { queue.remove(e.id()); for (UUID m : e.members()) queuedBy.remove(m); }
         for (UUID m : o.everyone()) {
             offerOf.put(m, o);
             var p = online(m); if (p == null) continue;
-            host.notice(p, modeName(mode) + " 경기를 찾았어요! 10초 안에 수락해 주세요.");
+            host.notice(p, rated ? modeName(mode) + " 경기를 찾았어요! 10초 안에 수락해 주세요."
+                    : modeName(mode) + " 커스텀 경기에 초대됐어요 (레이팅 미반영). 10초 안에 수락해 주세요.");
         }
         status(now);
     }
@@ -260,6 +272,12 @@ final class KyudichiQueue {
     /** Entries with anyone in `out` leave the queue; the rest go back with their original waiting time. */
     private void failOffer(Offer o, Set<UUID> out, String why) {
         for (UUID m : o.everyone()) offerOf.remove(m);
+        if (!o.rated) {   // 커스텀 경기: 아무도 대기열로 돌아가지 않는다
+            for (UUID m : o.everyone()) { var mp = online(m); if (mp != null) toClient(mp, idle()); }
+            sayAll(o.everyone(), why + " 커스텀 경기가 취소됐어요.");
+            status(System.currentTimeMillis());
+            return;
+        }
         for (var e : o.entries()) {
             boolean drop = e.members().stream().anyMatch(out::contains);
             if (drop) {
@@ -279,9 +297,17 @@ final class KyudichiQueue {
 
     private void transfer(Offer o, long now) {
         for (UUID m : o.everyone()) offerOf.remove(m);
-        var assign = new Assign(UUID.randomUUID(), true, o.pair.a().members(), o.pair.b().members(), o.mode);
-        matches.put(assign.match(), new Assigned(assign, now));
         RegisteredServer arena = proxy.getServer(arenaServer).orElse(null);
+        if (arena == null) {
+            // no arena server registered: nobody can play — don't leave six people "in a match" for two minutes
+            log.error("큐디치: Velocity 에 경기장 서버 '" + arenaServer + "' 가 없어요 (kyudichi.properties arena-server · velocity.toml 확인)");
+            for (UUID m : o.everyone()) { var mp = online(m); if (mp != null) toClient(mp, idle()); }
+            sayAll(o.everyone(), "경기장 서버(" + arenaServer + ")를 찾을 수 없어 경기가 취소됐어요. 관리자에게 알려 주세요.");
+            status(now);
+            return;
+        }
+        var assign = new Assign(UUID.randomUUID(), o.rated, o.pair.a().members(), o.pair.b().members(), o.mode);
+        matches.put(assign.match(), new Assigned(assign, now));
         for (UUID m : o.everyone()) {
             playing.put(m, assign.match());
             pendingSpectate.remove(m); pendingPractice.remove(m);
@@ -290,7 +316,6 @@ final class KyudichiQueue {
             toClient(p, new Status(KyudichiQueueProtocol.S_MOVING, 0, 0, n, n, true, parties(o.mode), o.mode));
             if (onArena(p)) { toArena(p, assign); continue; }
             origin.put(m, serverOf(p));
-            if (arena == null) { host.notice(p, "경기장 서버(" + arenaServer + ")를 찾을 수 없어요. 관리자에게 알려 주세요."); continue; }
             host.notice(p, modeName(o.mode) + " 경기장으로 이동해요.");
             p.createConnectionRequest(arena).connect().whenComplete((r, err) -> host.enqueue(() -> {
                 if (err == null && r.isSuccessful()) return;
@@ -323,6 +348,9 @@ final class KyudichiQueue {
             var out = new HashSet<UUID>(); for (UUID m : o.everyone()) if (!o.accepted.contains(m)) out.add(m);
             failOffer(o, out, "수락하지 않은 사람이 있어서");
         }
+        // server error (crash · restart · lost connection): a match the arena reported running and then stopped reporting is void
+        for (var e : List.copyOf(matches.entrySet()))
+            if (e.getValue().seenLive && now - e.getValue().lastSeen > VOID_MS) voidMatch(e.getKey(), "경기장 서버 오류로 경기가 무효 처리됐어요 (레이팅 변동 없음).");
         matches.values().removeIf(a -> now - a.lastSeen > UNSEEN_MS);
         playing.values().removeIf(id -> !matches.containsKey(id));
         for (int mode = 0; mode < KyudichiQueueProtocol.MODES; mode++) {
@@ -331,7 +359,7 @@ final class KyudichiQueue {
             while (free > 0) {
                 var pair = KyudichiMatchmaker.find(queue.values().stream().filter(q -> q.mode() == md).map(Queued::entry).toList(), now, teamSize(mode));
                 if (pair == null) break;
-                offer(pair, now, mode); free--;
+                offer(pair, now, mode, true); free--;
             }
         }
         status(now);
@@ -395,6 +423,21 @@ final class KyudichiQueue {
         String home = to != null && !to.equals(arenaServer) ? to : fallbackServer;
         // origin server, once more 2 s later, then the fallback (lobby) server — one failed connect never leaves them on the arena
         connectHome(p, home.equals(fallbackServer) ? List.of(home, home) : List.of(home, home, fallbackServer), 0);
+    }
+
+    /** The arena lost a running match: everyone in it is out of the match (back home if on the arena), nothing is recorded. */
+    private void voidMatch(UUID match, String why) {
+        var a = matches.remove(match);
+        if (a == null) return;
+        log.warn("큐디치 경기 무효: 경기장 서버가 " + (VOID_MS / 1000) + "초 넘게 경기를 알리지 않음 (" + match + ")");
+        var all = new ArrayList<>(a.assign.teamA()); all.addAll(a.assign.teamB());
+        for (UUID m : all) {
+            if (!match.equals(playing.get(m))) continue;
+            var p = online(m);
+            if (p != null) { say(m, why); toClient(p, idle()); }
+            if (p != null && onArena(p)) sendHome(m); // removes playing · origin
+            else { playing.remove(m); origin.remove(m); }
+        }
     }
 
     private void connectHome(Player p, List<String> targets, int i) {
@@ -627,13 +670,18 @@ final class KyudichiQueue {
                     if (!h.player().equals(via.getUniqueId())) return;
                     UUID me = via.getUniqueId();
                     UUID match = playing.get(me);
-                    if (match != null && matches.containsKey(match)) toArena(via, matches.get(match).assign);
+                    var a = match == null ? null : matches.get(match);
+                    // a match the arena already ran: its own rejoin (Matches.joined) puts them back; never re-assign it
+                    // (after an arena restart that would start the lost match again as a new one — the tick voids it instead)
+                    if (a != null) { if (!a.seenLive) toArena(via, a.assign); }
                     else if (pendingSpectate.containsKey(me)) toArena(via, new Spectate(me, pendingSpectate.remove(me)));
-                    else if (pendingPractice.remove(me)) toArena(via, new Practice(me, practiceMode.getOrDefault(me, 0)));
+                    else if (pendingPractice.remove(me)) { Integer pm = practiceMode.remove(me); toArena(via, new Practice(me, pm == null ? 0 : pm)); }
                 }
                 case LiveList l -> {
                     live = l.matches(); liveFree = l.freeArenas(); liveFreeDuel = l.freeDuelArenas(); liveAt = System.currentTimeMillis();
-                    for (var lm : live) { var a = matches.get(lm.match()); if (a != null) a.lastSeen = liveAt; }
+                    for (var lm : live) { var a = matches.get(lm.match()); if (a != null) { a.lastSeen = liveAt; a.seenLive = true; } }
+                    // the arena lists at most 16: when full, an unlisted match may still be running — don't let it go stale
+                    if (live.size() >= 16) for (var a : matches.values()) if (a.seenLive) a.lastSeen = liveAt;
                 }
                 case Return r -> { for (UUID id : r.players()) sendHome(id); }
                 case Ended e -> {
@@ -648,11 +696,54 @@ final class KyudichiQueue {
                         log.error("큐디치·파티 관리 요청 실패 (" + r.action() + " " + r.target() + ")", e);
                         reply = new AdminReply(r.request(), false, "명령어 사용에 실패했습니다", List.of());
                     }
-                    try { source.sendPluginMessage(LINK, KyudichiQueueProtocol.encode(reply)); }
-                    catch (RuntimeException e) { log.warn("관리 요청 답을 보내지 못함: " + e); }
+                    reply(source, reply);
+                }
+                case Custom c -> {
+                    AdminReply reply;
+                    try { reply = new AdminReply(c.request(), true, custom(c), List.of()); }
+                    catch (IllegalArgumentException e) { reply = new AdminReply(c.request(), false, e.getMessage(), List.of()); }
+                    catch (RuntimeException e) {
+                        log.error("큐디치 커스텀 경기 요청 실패", e);
+                        reply = new AdminReply(c.request(), false, "명령어 사용에 실패했습니다", List.of());
+                    }
+                    reply(source, reply);
                 }
             }
         });
+    }
+
+    private void reply(ServerConnection source, AdminReply reply) {
+        try { source.sendPluginMessage(LINK, KyudichiQueueProtocol.encode(reply)); }
+        catch (RuntimeException e) { log.warn("관리 요청 답을 보내지 못함: " + e); }
+    }
+
+    // =============================================================== custom match (/큐디치관리 경기 커스텀 on the arena server)
+    /**
+     * 커스텀 경기 (#62, 2026-10-25): the two teams the admin named, no queue, no rating. Same accept check (10 s) and
+     * transfer as a found match. @return message for the admin; IllegalArgumentException = refusal shown to the admin.
+     */
+    private String custom(Custom c) {
+        int md = clampMode(c.mode()), size = teamSize(md);
+        if (c.teamA().size() > size || c.teamB().size() > size) throw new IllegalArgumentException(modeName(md) + " 커스텀 경기는 팀마다 " + size + "명까지예요");
+        var all = new ArrayList<UUID>(c.teamA()); all.addAll(c.teamB());
+        if (new HashSet<>(all).size() != all.size()) throw new IllegalArgumentException("같은 사람이 두 번 들어 있어요");
+        for (UUID m : all) {
+            Player mp = online(m);
+            if (mp == null) throw new IllegalArgumentException(host.name(m) + " 님이 접속 중이 아니에요");
+            String s = serverOf(mp);
+            if (!host.trusted(s) && !s.equals(arenaServer)) throw new IllegalArgumentException(host.name(m) + " 님이 있는 곳에서는 경기에 부를 수 없어요");
+            if (queuedBy.containsKey(m) || offerOf.containsKey(m) || playing.containsKey(m) || joining.contains(m))
+                throw new IllegalArgumentException(host.name(m) + " 님은 대기열·매칭·경기 중이에요 (/유저관리 " + host.name(m) + " " + (md == KyudichiQueueProtocol.MODE_DUEL ? "결투" : "큐디치") + " 매칭상태초기화)");
+            if (pendingSpectate.containsKey(m) || pendingPractice.contains(m)) throw new IllegalArgumentException(host.name(m) + " 님이 경기장으로 이동하는 중이에요");
+        }
+        long now = System.currentTimeMillis();
+        if (proxy.getServer(arenaServer).isEmpty()) throw new IllegalArgumentException("Velocity 에 경기장 서버 '" + arenaServer + "' 가 없어요");
+        if (freeArenas(now, md) <= 0) throw new IllegalArgumentException("비어 있는 " + (md == KyudichiQueueProtocol.MODE_DUEL ? "1:1 결투장" : "큐디치 경기장") + "이 없어요");
+        var a = new KyudichiMatchmaker.Entry(UUID.randomUUID(), List.copyOf(c.teamA()), 0, now);
+        var b = new KyudichiMatchmaker.Entry(UUID.randomUUID(), List.copyOf(c.teamB()), 0, now);
+        offer(new KyudichiMatchmaker.Pair(KyudichiMatchmaker.Team.of(List.of(a), size), KyudichiMatchmaker.Team.of(List.of(b), size)), now, md, false);
+        log.info(modeName(md) + " 커스텀 경기 초대: " + all.stream().map(host::name).toList());
+        return modeName(md) + " 커스텀 경기에 " + all.size() + "명을 초대했어요 · 모두 수락하면 경기장으로 와요 (레이팅 미반영)";
     }
 
     // =============================================================== admin (/유저관리 <닉네임> 큐디치|결투|파티 on the arena server)
@@ -708,10 +799,37 @@ final class KyudichiQueue {
         if (playing.containsKey(event.getPlayer().getUniqueId())) proxy.getServer(arenaServer).ifPresent(event::setInitialServer);
     }
 
+    /**
+     * #75 (2026-10-25): a match player who lands on another server while their match is still on (kicked off the arena by a
+     * connection problem — Velocity moves them to the fallback server) is sent back once a minute at most; the arena's
+     * 60 s reconnect window decides whether they still play. A full reconnect is handled by initialServer.
+     */
+    @Subscribe public void serverConnected(ServerPostConnectEvent event) {
+        Player p = event.getPlayer(); UUID me = p.getUniqueId();
+        if (!playing.containsKey(me)) return; // concurrent read; the worker re-checks
+        host.enqueue(() -> {
+            if (online(me) != p || onArena(p)) return;
+            UUID match = playing.get(me);
+            var a = match == null ? null : matches.get(match);
+            long now = System.currentTimeMillis();
+            if (a == null || a.seenLive && now - a.lastSeen > LIVE_FRESH_MS) return; // not running on the arena now (the tick voids it)
+            if (now - rejoinAt.getOrDefault(me, 0L) < REJOIN_RETRY_MS) return;
+            var arena = proxy.getServer(arenaServer).orElse(null);
+            if (arena == null) return;
+            rejoinAt.put(me, now);
+            host.notice(p, modeName(a.assign.mode()) + " 경기가 아직 진행 중이에요. 경기장으로 다시 들어가요.");
+            p.createConnectionRequest(arena).connect().whenComplete((r, err) -> host.enqueue(() -> {
+                if (err == null && r.isSuccessful()) return;
+                log.warn("큐디치 경기장 재입장 실패: " + p.getUsername() + (err != null ? " " + err : " " + r.getStatus()));
+                host.notice(p, "경기장으로 돌아가지 못했어요. 다시 접속하면 경기장으로 들어가요.");
+            }));
+        });
+    }
+
     @Subscribe public void disconnect(DisconnectEvent event) {
         Player p = event.getPlayer(); UUID me = p.getUniqueId();
         host.enqueue(() -> {
-            modded.remove(me);
+            modded.remove(me); rejoinAt.remove(me);
             if (queuedBy.containsKey(me)) leave(p, host.name(me) + " 님이 접속을 끊어서 " + modeName(modeOf(me)) + " 매칭이 취소됐어요.");
             var o = offerOf.get(me);
             if (o != null) failOffer(o, Set.of(me), host.name(me) + " 님이 접속을 끊었어요.");

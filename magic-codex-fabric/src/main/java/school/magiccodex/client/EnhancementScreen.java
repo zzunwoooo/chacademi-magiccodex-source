@@ -42,7 +42,7 @@ public final class EnhancementScreen extends Screen {
   text(c,data.nodes()+"코어",166,220,13,0xFFDFE9F0,true);text(c,"‹",82,153,21,0xFFE1C88E,true);text(c,"›",251,153,21,0xFFE1C88E,true);
   // Equipment icon intentionally remains blank as requested. Live item name and values only.
   fitText(c,data.name(),80,365,13,172,0xFFE9D19B,false);text(c,"강화 횟수 "+data.attempts()+" / "+data.limit(),165,391,12,0xFFCCD8DF,true);
-  String[] labels={"마력","마나 최대치","마법 가속"};for(int i=0;i<3;i++){int sy=412+i*23;sprite(c,ICONS[i],73,sy-7,24,24,1254,1254,0xFFFFFFFF);text(c,labels[i],99,sy+4,11,0xFFDEE6EF,false);fitText(c,num(data.before().get(i))+" → "+num(data.before().get(i)+data.gains().get(i)),259,sy+4,11,90,0xFF8EE5EB,true);}
+  String[] labels={"지능","마나 최대치","마법 가속"};for(int i=0;i<3;i++){int sy=412+i*23;sprite(c,ICONS[i],73,sy-7,24,24,1254,1254,0xFFFFFFFF);text(c,labels[i],99,sy+4,11,0xFFDEE6EF,false);fitText(c,num(data.before().get(i))+" → "+num(data.before().get(i)+data.gains().get(i)),259,sy+4,11,90,0xFF8EE5EB,true);}
   double elapsed=elapsed();int active=0;while(active<data.nodes()&&elapsed>data.targets().get(active)+data.window())active++;
   int travel=0;while(travel<data.nodes()-1&&elapsed>data.targets().get(travel))travel++;
 

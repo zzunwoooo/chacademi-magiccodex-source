@@ -15,6 +15,26 @@ default-daily-cap: 5
 # NPC 하나에게 하루 선물 횟수
 gift-daily-count: 1
 
+# 하루 기준: 위 timezone 의 자정(00:00)에 선물·대화 호감도 하루 횟수가 초기화됨 (ChacaNPC 하루 대화 60회·의뢰 일일 주기와 같음).
+# 횟수는 공유 DB(codex_affinity_daily)에 날짜별로 남아 서버 이동·재접속·재시작으로 초기화되지 않음.
+
+# 호의적 AI 대화 보상 (메모 #83, 2026-10-25): NPC 가 이번 대화를 마음에 들어 하면(ChacaNPC AI 대답의 liked=true) 소량 지급.
+# 유저별·NPC별 하루 daily-count 번, 한 번에 amount. 상한(30·60·90, 그 NPC 퀘스트 미완료)이면 오르지 않고 횟수도 안 씀.
+# 판정 기준 문구는 ChacaNPC config.yml affinity.chat-reward-criteria
+chat-reward:
+  amount: 1
+  daily-count: 3
+
+# 호감도 퀘스트 연결 (메모 #39·#100): NPC 별 30·60·90 상한 퀘스트 ID (퀘스트 내용·보상은 quests.yml 에서, 오너 결정 대기).
+# 상한에 닿으면 그 퀘스트를 자동으로 줌(이미 받았거나 깼으면 안 줌) → 완료(보상 받기)하면 다음 상한이 열림.
+# 비어 있으면 아무 일 없음 (지금처럼 고정 대화 custom heart 나 관리 명령으로만 상한 해제).
+# 예)
+#  ella:
+#    30: ella_affinity_1
+#    60: ella_affinity_2
+#    90: ella_affinity_3
+gate-quests: {}
+
 # (2026-10-21부터 쓰지 않음) 선물 도중 멈춘 기록은 시작 때 일괄 확정하지 않고,
 # 유저가 선물을 시작한 서버에 접속할 때 아이템 차감 영수증으로 확정·취소한다. 옛 기록은 /유저관리 <닉네임> 호감도 선물기록
 recover-pending-gift-minutes: 10

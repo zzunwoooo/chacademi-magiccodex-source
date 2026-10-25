@@ -75,4 +75,44 @@ public final class QuestPackets {
 
         @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
+
+    public static final int MAX_POINTS = 16;
+
+    public record Point(String world, double x, double y, double z) {}
+
+    /**
+     * 목표 지점 여러 개 (2026-10-25, 예: 이론서 세 권): 아직 안 누른 상호작용 블록 위 자리. 같은 session 의 단계에만 적용, 개수 0 = 지우기.
+     * 플러그인 QuestCodec.points 와 같은 형식.
+     */
+    public record PointsS2C(int session, List<Point> points) implements CustomPacketPayload {
+        public static final Type<PointsS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("chacademy", "quest_points"));
+        public static final PointsS2C INVALID = new PointsS2C(-1, List.of());
+        public static final StreamCodec<RegistryFriendlyByteBuf, PointsS2C> CODEC = SafeCodec.failSafe("quest_points", StreamCodec.of((buf, v) -> {
+            buf.writeVarInt(v.session()); buf.writeVarInt(v.points().size());
+            for (Point p : v.points()) { buf.writeUtf(p.world()); buf.writeDouble(p.x()); buf.writeDouble(p.y()); buf.writeDouble(p.z()); }
+        }, buf -> {
+            int session = buf.readVarInt();
+            int n = buf.readVarInt();
+            if (n < 0 || n > MAX_POINTS) throw new IllegalArgumentException("too many quest points: " + n);
+            List<Point> points = new ArrayList<>(n);
+            for (int i = 0; i < n; i++) points.add(new Point(buf.readUtf(256), buf.readDouble(), buf.readDouble(), buf.readDouble()));
+            return new PointsS2C(session, List.copyOf(points));
+        }), INVALID);
+
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
+    /**
+     * 길잡이 별: 이 session 의 단계 목표를 화살표로 가리키기 시작. session 0 = 끄기 (다시 시전).
+     * 목표 10블록 안·단계 변경·다른 세계면 클라가 스스로 끈다.
+     */
+    public record GuideS2C(int session) implements CustomPacketPayload {
+        public static final Type<GuideS2C> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath("chacademy", "quest_guide"));
+        /** 깨진 패킷 (핸들러가 무시). */
+        public static final GuideS2C INVALID = new GuideS2C(-1);
+        public static final StreamCodec<RegistryFriendlyByteBuf, GuideS2C> CODEC = SafeCodec.failSafe("quest_guide", StreamCodec.of(
+                (buf, v) -> buf.writeVarInt(v.session()), buf -> new GuideS2C(buf.readVarInt())), INVALID);
+
+        @Override public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
 }

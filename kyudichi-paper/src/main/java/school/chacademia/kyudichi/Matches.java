@@ -33,7 +33,18 @@ final class Matches {
             catch (RuntimeException e) {
                 plugin.getLogger().severe("큐디치 경기 오류, 경기 무효 처리 (" + m.arena.name + "): " + e);
                 e.printStackTrace();
-                try { m.end(null, Match.EndReason.VOID); } catch (RuntimeException ignored) { byArena.remove(m.arena.name); }
+                try { m.end(null, Match.EndReason.VOID); }
+                catch (RuntimeException again) {
+                    // end() itself failed: drop the match and still tell the proxy (players go home, nothing recorded)
+                    plugin.getLogger().severe("큐디치 경기 무효 처리도 실패 (" + m.arena.name + "): " + again);
+                    byArena.remove(m.arena.name);
+                    try { m.cleanupWorld(); } catch (RuntimeException ignored) { }
+                    for (var mp : m.players.values()) {
+                        Player p = Bukkit.getPlayer(mp.id);
+                        if (p != null && p.isOnline() && mp.online && !mp.left) try { m.restore(p, mp); } catch (RuntimeException ignored) { }
+                    }
+                    try { plugin.link().matchEnded(m); } catch (RuntimeException ignored) { }
+                }
             }
         }
     }

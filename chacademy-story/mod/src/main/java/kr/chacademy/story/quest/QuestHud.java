@@ -36,8 +36,10 @@ final class QuestHud {
         if (a <= 2) return;
 
         float sw = g.guiWidth(), sh = g.guiHeight();
-        float right = sw - 8, x0 = right - WIDTH, y0 = Math.round(sh * 0.30f);
+        float right = sw - 8, x0 = right - WIDTH;
         float estimatedHeight=TOGGLE+12;if(!QuestClient.collapsed){estimatedHeight+=wrap(g,v.description,DESC_SIZE,WIDTH-TOGGLE-5).size()*DESC_SIZE*1.32f+5;for(var condition:v.conds)estimatedHeight+=(wrap(g,condition.label()+" "+condition.current()+"/"+condition.required(),COND_SIZE,WIDTH-TOGGLE-5).size()+.3f)*COND_SIZE*1.55f;}
+        // 기본 자리(오른쪽 30%)가 MagicCodex 파티 HUD(오른쪽 가운데)와 겹치면 파티 위로, 자리가 없으면 아래로 비킨다 (사용자가 옮긴 위치는 그대로)
+        float y0 = QuestHudPlacement.defaultTop(Math.round(sh * 0.30f), x0, right, estimatedHeight, HudEditing.box("party"));
         try(var customization=HudEditing.begin(g,x0,y0-9,WIDTH,estimatedHeight)){
         toggleX = x0; toggleY = y0;
 
@@ -96,8 +98,12 @@ final class QuestHud {
                 QuestArt.image(g, "check", textX, y + ch / 2f - icon / 2f, icon, icon, argb(a, 0xFFFFFF));
                 tx += icon + 3;
             }
-            QuestArt.textLeft(g, text, tx, y + ch / 2f, COND_SIZE, argb(a, done ? COND_DONE : COND));
-            y += ch;
+            // 긴 조건은 HUD 폭 안에서 줄바꿈 (예전: 한 줄로 그려 화면 오른쪽 밖으로 잘림, 높이 추정은 이미 줄바꿈 기준)
+            var lines = wrap(g, text, COND_SIZE, right - tx);
+            for (String line : lines) {
+                QuestArt.textLeft(g, line, tx, y + ch / 2f, COND_SIZE, argb(a, done ? COND_DONE : COND));
+                y += ch;
+            }
         }
 
         }

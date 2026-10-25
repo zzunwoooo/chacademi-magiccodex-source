@@ -69,6 +69,15 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     private ManaBridge mana;
     /** Discovery state key: number of distinct public points this player has unlocked (shared DB, every server). */
     static final String DISCOVERY_KEY = "state.travel_waypoints";
+    /** 귀환권 (2026-10-25, 메모 #14): ticket point of a return move — arrival = that world's spawn, like 야생 스폰. */
+    static final String RETURN_ID = "~return";
+    /** Return moves started on this server whose ticket is still ours to refund (cleared on success / refund / leaving for the destination). */
+    private final Set<UUID> returning = new HashSet<>();
+    /** The return-ticket item hook: gives the used ticket back when a return move fails (online → inventory, offline → mail). */
+    interface ReturnTickets { void refund(UUID player, String why); void arrived(Player player); }
+    private ReturnTickets returnTickets;
+    void returnTickets(ReturnTickets hook) { returnTickets = hook; }
+    private void returnFailed(UUID id, String why) { if (returning.remove(id) && returnTickets != null) returnTickets.refund(id, why); }
 
     TravelBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
@@ -143,7 +152,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     /** Arrival spot: a spawn point is the world spawn right now (Multiverse setspawn), anything else the ticket's place. */
     private Location destination(World w, TravelStore.Ticket t) {
         var d = config.points().get(t.point());
-        if (d != null && d.spawn()) return w.getSpawnLocation().clone();
+        if (d != null && d.spawn() || RETURN_ID.equals(t.point())) return w.getSpawnLocation().clone();
         return new Location(w, t.x(), t.y(), t.z(), t.yaw(), t.pitch());
     }
     private void heartbeat() {
@@ -185,14 +194,14 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
             if (set == null) { unlockRetryAt.put(id, System.currentTimeMillis() + 10_000); return; }
             unlocked.put(id, set);
             sendMarkers(p);
-            discovery(p, 0);   // re-check on every load: players who already had 3+ get 공간 도약 too
+            discovery(p, 0);   // re-check on every load: players who already have 1+ get 공간 도약 too
         });
     }
 
     /**
-     * 공간 도약 획득 조건 (owner 2026-10-23): distinct PUBLIC points unlocked, counted from the shared DB rows (uuid, point)
+     * 공간 도약 획득 조건 (owner 2026-10-24: 1곳, 예전 3곳): distinct PUBLIC points unlocked, counted from the shared DB rows (uuid, point)
      * — revisits, reconnects and server changes add nothing; the personal point is a separate table and never counts.
-     * Sent as an idempotent state value to the existing discovery system (requirement state.travel_waypoints: 3 in
+     * Sent as an idempotent state value to the existing discovery system (requirement state.travel_waypoints: 1 in
      * discoveries.yml), which grants the spell once and shows its usual "새로운 마법 발견" notice. The discovery session
      * may still be loading right after join: retried every 2 s, 10 times.
      */
@@ -215,6 +224,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         // a move in progress keeps its ticket: the destination finishes it (or it expires as FAILED)
         Move m = moves.remove(id);
         if (m != null && m.timeout() != null) m.timeout().cancel();
+        if (m != null && m.remote()) returning.remove(id);   // 귀환권 on the way: the destination (or ticket expiry) settles it
     }
     @EventHandler public void onWorld(PlayerChangedWorldEvent e) { sendMarkers(e.getPlayer()); }
 
@@ -243,6 +253,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
                         CmdKit.notify(p, "system", "travel-unlock-" + point.id(), "웨이포인트 등록", point.name(), 0);
                         p.playSound(p.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, .8f, 1.2f);
                         plugin.getLogger().info("이동 지점 해금: " + p.getName() + " → " + point.id());
+                        StoryProgressEvent.fire(p, StoryProgressEvent.WAYPOINT);
                     }
                     sendMarkers(p);
                     // owner: the map shows the same notice when it is open
@@ -281,6 +292,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         viewers.add(p.getUniqueId());
         sendMarkers(p);   // also repairs a minimap key lost at join
         send(p, TravelProtocol.KIND_OPEN, "");
+        StoryProgressEvent.fire(p, StoryProgressEvent.MAP_OPEN);
         return true;
     }
 
@@ -417,7 +429,26 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     private void abort(Player p, long op, String why) {
         Move m = moves.remove(p.getUniqueId());
         if (m != null && m.charged()) refund(p);
+        returnFailed(p.getUniqueId(), why);
         if (p.isOnline()) result(p, op, TravelProtocol.STAGE_FAILED, why);
+    }
+
+    /**
+     * 귀환권 (메모 #14): the same move as the map (ticket, proxy transfer, arrival checks, existing limits), to the spawn
+     * of `world` on `server`. No window: op 0, the item hook tells the player. null = started (a failure later calls
+     * the hook's refund once), otherwise the refusal and nothing was started.
+     */
+    String travelReturn(Player p, String server, String world) {
+        UUID id = p.getUniqueId();
+        if (moves.containsKey(id) || returning.contains(id)) return "이미 이동하는 중이에요";
+        String refusal = refusal(p);
+        if (refusal != null) return refusal;
+        var verdict = TravelModel.destination(config, server, world, "", status, localWorlds(), System.currentTimeMillis());
+        if (verdict.state() != TravelProtocol.UNLOCKED) return verdict.reason();
+        returning.add(id);
+        moves.put(id, new Move(0, 0, false, null, false));
+        go(p, 0, RETURN_ID, server, world, "", 0, 64, 0, 0, 0, verdict);
+        return null;
     }
     private void refund(Player p) { if (mana != null && p.isOnline()) mana.refundPersonalTravel(p, config.rules().personalMana()); }
 
@@ -438,7 +469,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     private void go(Player p, long op, String point, String server, String world, String worldUid, double x, double y, double z, float yaw, float pitch,
                     TravelModel.Verdict verdict) {
         UUID id = p.getUniqueId();
-        if (!p.isOnline()) { moves.remove(id); return; }
+        if (!p.isOnline()) { moves.remove(id); returnFailed(id, "출발 전에 접속이 끊겼어요"); return; }
         if (verdict.state() != TravelProtocol.UNLOCKED) { abort(p, op, verdict.reason()); return; }
         var pdef = config.points().get(point);
         String again = refusal(p, pdef != null && pdef.spawn());
@@ -471,7 +502,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         boolean chargedNow = charged;
         store.openTicket(id, t, opened -> {
             if (!opened) { abort(p, op, "이미 진행 중인 이동이 있어요. 잠시 후 다시 시도해 주세요"); return; }
-            if (!p.isOnline()) { store.finish(id, t, t.state(), TravelStore.FAILED, "출발 전에 접속이 끊겼어요", null); moves.remove(id); return; }
+            if (!p.isOnline()) { store.finish(id, t, t.state(), TravelStore.FAILED, "출발 전에 접속이 끊겼어요", null); moves.remove(id); returnFailed(id, "출발 전에 접속이 끊겼어요"); return; }
             if (!remote) { local(p, op, t); return; }
             var def = config.server(server);
             var timeout = Bukkit.getScheduler().runTaskLater(plugin, () -> originTimeout(p, op, tk), ORIGIN_TIMEOUT_TICKS);
@@ -497,6 +528,8 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
                     store.finish(id, t, TravelStore.ARRIVING, done ? TravelStore.DONE : TravelStore.FAILED, done ? "" : "이동이 막혔어요", null);
                     Move m = moves.remove(id);
                     if (!done && m != null && m.charged()) refund(p);
+                    if (done) { if (returning.remove(id) && returnTickets != null && p.isOnline()) returnTickets.arrived(p); }
+                    else returnFailed(id, "이동이 막혔어요");
                     if (!p.isOnline()) return;
                     if (done) { p.setFallDistance(0); if (!isSpawn(t.point())) lastTravel.put(id, System.currentTimeMillis()); arrivedEffect(p); }
                     result(p, op, done ? TravelProtocol.STAGE_DONE : TravelProtocol.STAGE_FAILED, done ? "도착했어요" : "이동이 막혔어요 (이 구역에서는 이동할 수 없어요)");
@@ -513,8 +546,10 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         UUID id = p.getUniqueId();
         Move m = moves.get(id);
         boolean charged = m != null && m.ticket() == ticket && m.charged();
+        boolean ret = m != null && m.ticket() == ticket && returning.remove(id);
         if (m != null && m.ticket() == ticket) { if (m.timeout() != null) m.timeout().cancel(); moves.remove(id); }
         store.fail(id, ticket, why, done -> {
+            if (done && ret && returnTickets != null) returnTickets.refund(id, why);   // this call failed it: the 귀환권 comes back once
             if (!done || !p.isOnline()) return;   // already finished (e.g. it did arrive) — never overwrite
             if (charged) refund(p);
             result(p, op, TravelProtocol.STAGE_FAILED, why);
@@ -557,6 +592,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         UUID id = p.getUniqueId();
         store.claimArrival(id, config.self(), arrival -> {
             if (arrival.ticket() != null) arrive(p, arrival.ticket());
+            else if (arrival.expired() != null && RETURN_ID.equals(arrival.expired().point()) && returnTickets != null) returnTickets.refund(id, "이동 시간이 지났어요");
             else if (arrival.expired() != null && TravelProtocol.PERSONAL_ID.equals(arrival.expired().point()) && p.isOnline()) {
                 refund(p);   // a move to the personal point that never arrived: mana and cooldown back
                 CmdKit.notify(p, "warning", "travel-arrive", "개인 지점 이동이 끝나지 않았어요", "마나·재사용 대기는 돌려받았어요", 0);
@@ -565,12 +601,17 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
     }
     private void arrive(Player p, TravelStore.Ticket t) {
         UUID id = p.getUniqueId();
-        if (!p.isOnline()) { store.finish(id, t, TravelStore.ARRIVING, TravelStore.FAILED, "도착 전에 접속이 끊겼어요", null); return; }
+        if (!p.isOnline()) {
+            store.finish(id, t, TravelStore.ARRIVING, TravelStore.FAILED, "도착 전에 접속이 끊겼어요", null);
+            if (RETURN_ID.equals(t.point()) && returnTickets != null) returnTickets.refund(id, "도착 전에 접속이 끊겼어요");
+            return;
+        }
         World w = Bukkit.getWorld(t.world());
         String why = w == null ? "도착할 세계가 없어요" : !t.worldUid().isEmpty() && !t.worldUid().equals(w.getUID().toString()) ? "세계가 초기화되어 그 지점은 쓸 수 없어요" : null;
         if (why != null) {
             store.finish(id, t, TravelStore.ARRIVING, TravelStore.FAILED, why, null);
             if (TravelProtocol.PERSONAL_ID.equals(t.point())) refund(p);
+            if (RETURN_ID.equals(t.point()) && returnTickets != null) returnTickets.refund(id, why);
             CmdKit.notify(p, "error", "travel-arrive", "목적지에 도착하지 못했어요", why, 0);
             return;
         }
@@ -580,10 +621,11 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
                     boolean done = err == null && Boolean.TRUE.equals(ok) && p.isOnline();
                     store.finish(id, t, TravelStore.ARRIVING, done ? TravelStore.DONE : TravelStore.FAILED, done ? "" : "도착 위치로 옮기지 못했어요", null);
                     plugin.getLogger().info("지도 이동 " + (done ? "도착" : "도착 실패") + ": " + p.getName() + " ← " + t.from() + " (" + t.point() + ", 표 " + Long.toHexString(t.ticket()) + ")");
+                    if (!done && RETURN_ID.equals(t.point()) && returnTickets != null) returnTickets.refund(id, "도착 위치로 옮기지 못했어요");
                     if (!p.isOnline()) return;
                     if (done) {
                         p.setFallDistance(0); if (!isSpawn(t.point())) lastTravel.put(id, System.currentTimeMillis()); arrivedEffect(p);
-                        CmdKit.notify(p, "system", "travel-arrive", "도착했어요", t.point().equals(TravelProtocol.PERSONAL_ID) ? "개인 지점" : nameOf(t.point()), 0);
+                        CmdKit.notify(p, "system", "travel-arrive", "도착했어요", t.point().equals(TravelProtocol.PERSONAL_ID) ? "개인 지점" : RETURN_ID.equals(t.point()) ? "귀환 지점" : nameOf(t.point()), 0);
                     } else {
                         if (TravelProtocol.PERSONAL_ID.equals(t.point())) refund(p);
                         CmdKit.notify(p, "error", "travel-arrive", "목적지에 도착하지 못했어요", "이 서버의 처음 위치에 있어요", 0);

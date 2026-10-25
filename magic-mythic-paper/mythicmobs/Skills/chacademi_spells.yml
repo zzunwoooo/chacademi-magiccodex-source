@@ -756,11 +756,11 @@ CHA_primordial_stone:
   Skills:
   - chautil{type=core;ticks=6000;speed=0.7;range=22;radius=0.8;aoe=2.5;aoemult=0.5;mana=500;element=earth;spell=primordial_stone} @self
 
-# 132 길잡이 별 - 웅크려 시전 = 위치 저장, 일반 시전 = 10초 방향 표시
+# 132 길잡이 별 - 스토리 단계 목표를 화살표로 가리킴 (10블록 안이면 사라짐), 다시 시전 = 끄기 (2026-10-23)
 CHA_guiding_star:
   Cooldown: 0
   Skills:
-  - chautil{type=star;ticks=200;element=light;spell=guiding_star} @self
+  - chautil{type=star;element=light;spell=guiding_star} @self
 
 # 133 작은 치유 - 자신 체력 하트 1칸 회복
 CHA_minor_heal:

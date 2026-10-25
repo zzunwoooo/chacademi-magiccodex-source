@@ -35,7 +35,19 @@ public final class Defs {
         }
     }
 
-    /** 대화 추천 버튼. */
-    public record Button(String id, String label) {
+    /**
+     * 대화 추천 버튼. action 이 비어 있으면 AI 대사 버튼(기존), "shop:<상점ID>" 면 대사 대신 그 상점을 연다 (2026-10-25, 피피 "물건 좀 볼 수 있어요?").
+     */
+    public record Button(String id, String label, String action) {
+        public Button(String id, String label) { this(id, label, ""); }
+        public Button { action = action == null ? "" : action.strip(); }
+        /** "shop:<상점ID>" 이면 상점 ID, 아니면 null. */
+        public String shop() {
+            if (!action.startsWith("shop:")) return null;
+            String id = action.substring(5).strip();
+            if (id.equals("물고기판매소") || id.equals("@fish_shop")) return "물고기판매소"; // 물고기 판매소 (셀마 등)
+            return id.matches("[A-Za-z0-9_:.-]{1,64}") ? id : null;
+        }
+        public boolean aiReply() { return action.isEmpty(); }
     }
 }

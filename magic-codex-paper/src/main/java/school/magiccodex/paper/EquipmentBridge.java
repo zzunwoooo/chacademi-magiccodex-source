@@ -122,7 +122,7 @@ final class EquipmentBridge implements PluginMessageListener,Listener,AutoClosea
         var response=new Response(seq,rev,Math.clamp(plugin.circle(p),1,9),plugin.names().name(p),notice,b[0],b[1],b[2],b[3],Arrays.stream(eq).map(EquipmentBridge::preview).toList(),candidates,b[4]);
         p.sendPluginMessage(plugin,EquipmentProtocol.RESPONSE,EquipmentProtocol.response(response));
     }
-    private static final String[] BONUS_NAMES={"마력","체력","최대마나","마나회복","마법가속"};
+    private static final String[] BONUS_NAMES={"지능","체력","최대마나","마나회복","마법가속"};
     private void commands(){
         var kind=CmdKit.word("종류",()->SLOT_NAMES);
         var last=CmdKit.argument(BONUS_NAMES[3],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000)).executes(CmdKit.run(ctx->registerHeld(ctx,false)))
@@ -151,7 +151,7 @@ final class EquipmentBridge implements PluginMessageListener,Listener,AutoClosea
         var out=new ArrayList<String>();out.add("── "+plugin.names().name(p)+" 장신구 ──");
         for(int i=0;i<4;i++){ItemStack item=accessory(p,i);out.add(SLOT_NAMES.get(i)+": "+(empty(item)?"(비어 있음)":itemName(item)));}
         double[] t=totals.getOrDefault(p.getUniqueId(),new double[5]);
-        out.add("장비 합계: 마력 "+AdminCommandRules.number(t[0])+" · 체력 "+AdminCommandRules.number(t[1])+" · 최대마나 "+AdminCommandRules.number(t[2])+" · 마나회복 "+AdminCommandRules.number(t[3])+" · 마법가속 "+AdminCommandRules.number(t[4]));
+        out.add("장비 합계: 지능 "+AdminCommandRules.number(t[0])+" · 체력 "+AdminCommandRules.number(t[1])+" · 최대마나 "+AdminCommandRules.number(t[2])+" · 마나회복 "+AdminCommandRules.number(t[3])+" · 마법가속 "+AdminCommandRules.number(t[4]));
         CmdKit.lines(CmdKit.sender(ctx),out);
     }
     /** 장신구 한 칸을 인벤토리로 돌려주거나(giveBack) 지운다. */

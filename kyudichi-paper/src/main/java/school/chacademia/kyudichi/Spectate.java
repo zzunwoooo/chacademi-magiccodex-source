@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 
 /**
  * 관전: vanilla spectator mode (invisible, no collision, no interaction), kept inside the arena bounds, own chat,
- * left-click a player to see through their eyes (vanilla). Limit per match from config (default 20).
+ * left-click a player to see through their eyes (vanilla). Limit per match {@link #LIMIT} (커스텀 경기는 제한 없음).
  */
 final class Spectate {
     static final int LIMIT = 20;
@@ -25,7 +25,8 @@ final class Spectate {
         Match cur = plugin.matches().spectating(p.getUniqueId());
         if (cur == m) return "이미 관전 중이에요.";
         if (cur != null) leave(p);
-        if (m.spectators.size() >= LIMIT) return "관전 인원이 가득 찼어요 (" + LIMIT + "명).";
+        // #62: 커스텀 경기만 관전 인원 제한 없음 (일반 경기는 그대로 LIMIT)
+        if (!m.custom() && m.spectators.size() >= LIMIT) return "관전 인원이 가득 찼어요 (" + LIMIT + "명).";
         back.put(p.getUniqueId(), new Matches.Pending(p.getLocation(), p.getGameMode()));
         m.spectators.add(p.getUniqueId());
         p.setGameMode(GameMode.SPECTATOR);

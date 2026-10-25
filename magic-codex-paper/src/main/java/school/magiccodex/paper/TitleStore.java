@@ -17,8 +17,25 @@ final class TitleStore implements AutoCloseable {
         try(var s=db().createStatement()){String tail=maria?" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4":"";
             s.execute("CREATE TABLE IF NOT EXISTS codex_title_player(player VARCHAR(36) PRIMARY KEY,revision BIGINT NOT NULL,prefix_id VARCHAR(48) NOT NULL,suffix_id VARCHAR(48) NOT NULL)"+tail);
             s.execute("CREATE TABLE IF NOT EXISTS codex_title_owned(player VARCHAR(36) NOT NULL,title_id VARCHAR(48) NOT NULL,PRIMARY KEY(player,title_id))"+tail);
+            // 획득 경로 장부 (2026-10-25): 같은 획득 경로(마법 발견·호감도·낚시·사전 설정)는 학교·야생 어디서든 한 번만. 회수 뒤에도 다시 주지 않는다.
+            s.execute("CREATE TABLE IF NOT EXISTS codex_title_awards(player VARCHAR(36) NOT NULL,award_key VARCHAR(191) NOT NULL,PRIMARY KEY(player,award_key))"+tail);
         }
     }
+    record Awarded(List<String> granted,State state){Awarded{granted=List.copyOf(granted);}}
+    private boolean insertLedger(UUID player,String key)throws SQLException{try(var s=db().prepareStatement("INSERT "+(maria?"IGNORE":"OR IGNORE")+" INTO codex_title_awards(player,award_key) VALUES(?,?)")){s.setString(1,player.toString());s.setString(2,key);return s.executeUpdate()>0;}}
+    /** 장부 키 → 칭호 ID. 장부에 처음 적힌 키의 칭호만 보유 목록에 넣는다. granted = 이번에 새로 보유하게 된 칭호. */
+    Awarded award(UUID p,Map<String,String> awards,Set<String> defaults)throws Exception{return transaction(p,defaults,()->{
+        var granted=new ArrayList<String>();
+        for(var e:awards.entrySet())if(insertLedger(p,e.getKey())&&insertOwned(p,e.getValue())&&!granted.contains(e.getValue()))granted.add(e.getValue());
+        if(!granted.isEmpty())bump(p);return new Awarded(granted,read(p));
+    });}
+    /** 아직 장부에 없는 키 (사전 설정 기숙사·마법처럼 다른 저장소에 적용한 뒤 mark 하는 것). */
+    Set<String> unmarked(UUID p,Collection<String> keys)throws SQLException{
+        var out=new LinkedHashSet<String>(keys);if(out.isEmpty())return out;
+        try(var s=db().prepareStatement("SELECT award_key FROM codex_title_awards WHERE player=?")){s.setString(1,p.toString());try(var r=s.executeQuery()){while(r.next())out.remove(r.getString(1));}}
+        return out;
+    }
+    void mark(UUID p,String key)throws SQLException{insertLedger(p,key);}
     private interface Tx<T>{T run()throws Exception;}
     private <T>T transaction(UUID player,Set<String> defaults,Tx<T> action)throws Exception{
         for(int attempt=0;;attempt++){holder.begin();try{

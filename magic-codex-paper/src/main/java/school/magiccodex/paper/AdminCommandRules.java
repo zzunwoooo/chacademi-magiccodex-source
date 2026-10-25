@@ -31,7 +31,8 @@ final class AdminCommandRules {
         if(subtract)return -amount;
         return switch(action){case "보기","조회","설정","추가"->amount;default->throw new IllegalArgumentException("보기, 설정, 추가, 빼기 중 선택해 주세요.");};
     }
-    static int affinity(String value){return switch(value){case "마력"->0;case "마나"->1;case "마법가속"->2;default->throw new IllegalArgumentException("성향은 마력, 마나, 마법가속 중 선택해 주세요.");};}
+    /** 코어 성향 이름 → 번호. 스탯 이름이 마력→지능으로 바뀌었으므로(2026-10-25) 예전 이름 "마력"도 받는다. */
+    static int affinity(String value){return switch(value){case "지능","마력"->0;case "마나"->1;case "마법가속"->2;default->throw new IllegalArgumentException("성향은 지능, 마나, 마법가속 중 선택해 주세요.");};}
     static void validateCore(int nodes,double success,double bonus,double gain,int affinity){
         if(nodes<1||nodes>10)throw new IllegalArgumentException("코어 수는 1~10입니다.");
         for(double percent:new double[]{success,bonus})if(!Double.isFinite(percent)||percent<0||percent>100)throw new IllegalArgumentException("성공률과 별잡기 보너스는 0~100%입니다.");

@@ -90,7 +90,7 @@ public final class StatsScreen extends Screen {
             // Full-height rows: consistent text baseline, optical icon size and value alignment.
             int[] separators={250,328,406,526,604,682,760,880,958};
             for(int line:separators)HudMesh.line(ctx,708,line,1342,line,1,0x50798894);
-            StatIcons.draw(ctx,0,745,289,50);row(ctx,"마력",StatsValues.number(v.power()),289);
+            StatIcons.draw(ctx,0,745,289,50);row(ctx,"지능",StatsValues.number(v.power()),289);
             StatIcons.draw(ctx,1,745,367,50);row(ctx,"체력",StatsValues.number(v.health()),367);
             StatIcons.draw(ctx,2,745,466,50);row(ctx,"마나 최대치",StatsValues.number(v.maxMana()),440);
             gaugeTrack(ctx,477);gauge(ctx,StatsValues.fraction(v.mana(),v.maxMana()),477,0xFF22C7E3,0xFF9CF8F1);

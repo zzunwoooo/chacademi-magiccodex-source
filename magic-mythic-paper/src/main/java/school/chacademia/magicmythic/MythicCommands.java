@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
  * /테스트 몹 예고 &lt;종류&gt; [초]
  * /테스트 몹 예고효과 &lt;효과&gt; &lt;모양&gt; &lt;크기&gt; [각도·폭] [틱] [선행] [배율]
  * /테스트 몹 상태이상 &lt;종류|해제|목록&gt; [초] [대상] [세기]
+ * /컨텐츠관리 연습장 허수아비 &lt;설치|제거|목록&gt;
  * /서버관리 새로고침 몹마법 · /서버관리 상태 (몹마법)
  * </pre>
  */
@@ -35,6 +36,8 @@ final class MythicCommands {
             "마나·쿨타임 없이 마법의 미몹 스킬만 실행", "마법 시전 ");
         ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("몹").then(telegraph()).then(telegraphFx()).then(status()),
             "몹 예고 장판·예고 효과·상태이상 시험", "몹 예고 전부");
+        if (plugin.dummies() != null)
+            ChacaLink.branch(plugin, ChacaLink.컨텐츠관리, plugin.dummies().command(), "마법 연습장 훈련 허수아비 설치(서 있는 곳)·제거(3칸 안)·목록", "연습장 허수아비 설치");
         ChacaLink.reload(plugin, "몹마법", "config.yml (대상·원소 반응·상태이상·예고 장판). 스킬 YAML은 /mm reload", plugin::reloadAll);
         ChacaLink.status(plugin, "몹마법", plugin::statusLine);
     }

@@ -119,6 +119,15 @@ public final class CatalogVisualEngine {
     }
     /** null means this catalogue does not own the ID; false means owned but unavailable. */
     public Boolean cast(Player player,String id){return castEvent(player,id,"cast");}
+    /**
+     * #77 (2026-10-25): gameplay already chose and validated the target (client aim + server range/sight/protection).
+     * Use it instead of this engine's own thin eye ray, which missed small/moving targets (players, broom flight) and
+     * then refused target-attached spells ("requires living target") so the whole cast failed. null = old behaviour.
+     */
+    public Boolean cast(Player player,String id,LivingEntity chosen){
+        Cast c=beginCast(player,id,"cast",null,false,chosen);
+        return c!=null?Boolean.TRUE:plans.containsKey(id)?Boolean.FALSE:null;
+    }
     /** Operator preview only; normal gameplay must use cast() and the mana owner. */
     public Boolean previewEvent(Player player,String id,String event){return castEvent(player,id,event);}
     private Boolean castEvent(Player player,String id,String initialEvent){
@@ -130,7 +139,12 @@ public final class CatalogVisualEngine {
         Cast c=beginCast(player,id,"cast",target,true);
         return c==null?null:c.id;
     }
-    private Cast beginCast(Player player,String id,String initialEvent,LivingEntity validatedTarget,boolean serverControlled){
+    private Cast beginCast(Player player,String id,String initialEvent,LivingEntity validatedTarget,boolean serverControlled){return beginCast(player,id,initialEvent,validatedTarget,serverControlled,null);}
+    /** Slack for a gameplay-chosen target (server/client eye difference while moving; same as Bridge AimCheck air slack). */
+    static final double CHOSEN_SLACK=6;
+    /** #77: the gameplay target may stand in for the eye ray when it is alive, in this world and within range + slack. */
+    static boolean chosenUsable(double distanceSquared,double range){double r=range+CHOSEN_SLACK;return Double.isFinite(distanceSquared)&&distanceSquared<=r*r;}
+    private Cast beginCast(Player player,String id,String initialEvent,LivingEntity validatedTarget,boolean serverControlled,LivingEntity chosen){
         lastFailure="";
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Catalog casts require the server thread");
         if(player==null)return null;
@@ -151,8 +165,18 @@ public final class CatalogVisualEngine {
             Vector towards=c.aim.toVector().subtract(player.getEyeLocation().toVector());
             if(towards.lengthSquared()>1e-8)c.direction=towards.normalize();
         }else{
+            if(chosen!=null&&!plan.trajectory().equals("targeted-meteor")&&chosen.isValid()&&!chosen.isDead()&&!chosen.getUniqueId().equals(c.owner)
+                    &&chosen.getWorld().getUID().equals(c.world)&&chosenUsable(chosen.getLocation().distanceSquared(player.getEyeLocation()),plan.range())){
+                Location centre=chosen.getBoundingBox().getCenter().toLocation(chosen.getWorld());
+                if(validPoint(c,centre)){
+                    c.target=chosen.getUniqueId();c.aim=centre;
+                    Vector towards=centre.toVector().subtract(player.getEyeLocation().toVector());
+                    if(towards.lengthSquared()>1e-8)c.direction=towards.normalize();
+                }
+            }
             double safeRange=safeRange(player.getEyeLocation(),c.direction,plan.range());if(safeRange<.1)return rejected(pid,"safe aim range below0.1");
-            RayTraceResult hit=player.getWorld().rayTrace(player.getEyeLocation(),c.direction,safeRange,FluidCollisionMode.NEVER,true,.3,e->targetable(player,e));
+            RayTraceResult hit=c.target!=null?null:player.getWorld().rayTrace(player.getEyeLocation(),c.direction,safeRange,FluidCollisionMode.NEVER,true,.3,e->targetable(player,e));
+            if(c.target==null){
             c.aim=hit==null?player.getEyeLocation().add(c.direction.clone().multiply(safeRange)):hit.getHitPosition().toLocation(player.getWorld());
             if(plan.trajectory().equals("targeted-meteor")) {
                 // The aim ray selects X/Z; this spell always fixes a ground point, even when looking at air or a wall.
@@ -163,6 +187,7 @@ public final class CatalogVisualEngine {
             } else if(hit!=null&&hit.getHitEntity()!=null)c.target=hit.getHitEntity().getUniqueId();
             if(c.target==null&&plan.phases().stream().anyMatch(ph->ph.trigger().equals(initialEvent)&&ph.anchor().equals("target")&&ph.role().equals("attached")))return rejected(pid,"requires living target");
             if(!plan.trajectory().equals("targeted-meteor")&&hit!=null&&hit.getHitBlockFace()!=null)c.normal=hit.getHitBlockFace().getDirection();
+            }
         }
         if(plan.phases().stream().anyMatch(p->(!plan.trajectory().equals("server-events")||p.trigger().equals(initialEvent))&&(p.scaleInput()==-1||p.linkSource().equals("target-chest")||p.linkTarget().equals("target-chest")))){
             try{c.scaleTargetHeight=c.lastTargetHeight=measureTargetHeight(targetEntity(c));}
@@ -530,7 +555,8 @@ public final class CatalogVisualEngine {
             return true;
         }
         if(c.plan.phases().stream().noneMatch(p->p.trigger().equals(event)))return false;
-        if(event.equals("external:trigger")){if(c.expired)return false;c.expired=true;}
+        // #79: a server "expire" (zone removed early) counts as the end too, so the timed expire does not play it again.
+        if(event.equals("external:trigger")||event.equals("expire")){if(c.expired)return false;c.expired=true;c.expireAt=-1;}
         // A16: the server landing ends a falling body that has not arrived yet (impact VFX follows the server tick).
         if(event.equals("external:impact")&&c.plan.trajectory().equals("targeted-meteor"))
             for(Active active:c.active)if(!active.finished&&active.phase.anchor().equals("projectile"))finish(active,true);
@@ -541,7 +567,15 @@ public final class CatalogVisualEngine {
     public int trigger(UUID owner,String spellId,String event,Location point,UUID target){
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Visual events require server thread");
         int delivered=0;
-        for(Cast c:List.copyOf(casts.values()))if(!c.serverControlled&&c.owner.equals(owner)&&c.plan.id().equals(spellId)){
+        List<Cast> mine=new ArrayList<>();
+        for(Cast c:casts.values())if(!c.serverControlled&&c.owner.equals(owner)&&c.plan.id().equals(spellId))mine.add(c);
+        // #79: a terminal event with a point ends only the cast placed there (two ember traps: one explodes, the other stays armed).
+        if(mine.size()>1&&point!=null&&terminalEvent(event)){
+            Cast nearest=null;double best=Double.MAX_VALUE;
+            for(Cast c:mine){if(c.aim==null||!c.aim.getWorld().equals(point.getWorld()))continue;double d=c.aim.distanceSquared(point);if(d<best){best=d;nearest=c;}}
+            if(nearest!=null)mine=List.of(nearest);
+        }
+        for(Cast c:mine){
             // A16: chameteor fixes the landing point at cast; the mark and the falling body use it (not this engine's own ray).
             if(event.equals("external:land_at")){
                 if(!c.plan.trajectory().equals("targeted-meteor")||point==null||!validPoint(c,point))continue;

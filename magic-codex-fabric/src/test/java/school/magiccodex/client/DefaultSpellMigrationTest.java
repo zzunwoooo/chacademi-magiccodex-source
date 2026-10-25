@@ -63,6 +63,16 @@ class DefaultSpellMigrationTest {
   assertFalse(DefaultSpellMigration.managedHistoryName("239_bubble_brand.yml"));
   assertTrue(DefaultSpellMigration.allHistory("a.yml\th1\r\nb.yml\th2\n").get("a.yml").contains("h1"));
  }
+ @Test void intelligenceRenameReachesShipped157And176()throws Exception {
+  var history=DefaultSpellMigration.allHistory(new String(DefaultSpellMigration.resource("known-hashes.tsv"),java.nio.charset.StandardCharsets.UTF_8));
+  for(String name:List.of("157_mana_conduit.yml","176_misfortune_whisper.yml")){
+   assertTrue(DefaultSpellMigration.managedHistoryName(name),name);
+   String text=new String(DefaultSpellMigration.resource(name),java.nio.charset.StandardCharsets.UTF_8);
+   assertTrue(text.contains("지능"),name);
+   String old=text.replace("지능 계수","마력 계수").replace("공격력과 지능","공격력과 마력");
+   assertTrue(history.get(name).contains(DefaultSpellMigration.hash(old.getBytes(java.nio.charset.StandardCharsets.UTF_8))),"previous shipped "+name+" hash must be known");
+  }
+ }
  @Test void fishTrapRenameReachesShippedCopiesButNotEdits()throws Exception {
   assertTrue(DefaultSpellMigration.managedHistoryName("324_fish_trap.yml"));assertFalse(DefaultSpellMigration.managedHistoryName("324_other.yml"));
   byte[] next=DefaultSpellMigration.resource("324_fish_trap.yml");String text=new String(next,java.nio.charset.StandardCharsets.UTF_8);

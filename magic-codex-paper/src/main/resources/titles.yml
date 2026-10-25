@@ -34,3 +34,16 @@ titles:
     side: suffix
     name: 탐험가
     color: '#DEC58E'
+  # NPC 호감도 칭호 (오너 결정 2026-10-24): 아무 NPC와 처음 30·60·90 달성 시 한 번. 지급 규칙은 title-awards.yml affinity.first-any
+  suffix_affinity_friend:
+    side: suffix
+    name: 친구
+    color: '#DEC58E'
+  suffix_affinity_bestie:
+    side: suffix
+    name: 단짝
+    color: '#DEC58E'
+  suffix_affinity_lover:
+    side: suffix
+    name: 연인
+    color: '#DEC58E'

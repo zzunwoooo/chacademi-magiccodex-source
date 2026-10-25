@@ -82,6 +82,7 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
         plugin.getServer().getPluginManager().registerEvents(this,plugin);
         plugin.getServer().getServicesManager().register(ManaService.class,mana,plugin,ServicePriority.Normal);
         registerAdmin();
+        if(ChacaApi.ready()){review=new SpellReviewRunner(plugin,this);CmdKit.register(plugin,"/테스트 마법 자동시전",review::register);}
         for(Player p:Bukkit.getOnlinePlayers())mana.join(p);
         if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")){
             // 닉네임 확장이 이미 "magiccodex" 식별자를 소유하면 그쪽에 위임한다. 같은 식별자를 다시 등록하면 PlaceholderAPI가 기존 확장을 내린다.
@@ -131,6 +132,12 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
     boolean isCatalogMode(){return spells.catalogMode;}
     boolean requiresCatalogVisual(String id){return spells.catalogMode&&!TamingSpell.matches(id)&&spells.byId.containsKey(id);}
     ManaSpells.Spell tamingSpell(){return spells.forCast(TamingSpell.ID);}
+    /** /테스트 마법 자동시전: 활성 마법 ID (mana-spells.yml 순서), 그 항목, 같은 시전 경로의 결과 상태(알림·전송 포함). */
+    List<String> reviewOrder(){return spells.order;}
+    ManaSpells.Spell reviewSpell(String id){return spells.forCast(id);}
+    int castForReview(Player player,String id){
+        var response=cast(player,0,spells.forCast(id));send(player,response);return response.status();
+    }
     boolean castRegistered(Player player,String id){
         var spell=spells.forCast(id);var response=cast(player,0,spell);send(player,response);
         if(response.status()!=ManaProtocol.OK&&response.status()!=ManaProtocol.UNAVAILABLE&&!TamingSpell.matches(id))CodexCommands.warn(player,"magic-fail",message(response.status()));
@@ -259,5 +266,6 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
             })),"마법 쿨타임 보기·초기화","마법쿨타임 보기");
     }
     private String spellName(String id){var info=spells.registeredCatalog.get(id);return info==null?id:info.getOrDefault("name",id);}
-    public void close(){presets.close();if(expansion!=null){if(expansionRegistered)expansion.unregister();else if(plugin.names()!=null)plugin.names().delegatePlaceholders(null);}mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
+    private SpellReviewRunner review;
+    public void close(){if(review!=null)review.close();presets.close();if(expansion!=null){if(expansionRegistered)expansion.unregister();else if(plugin.names()!=null)plugin.names().delegatePlaceholders(null);}mana.close();Bukkit.getServicesManager().unregister(ManaService.class,mana);sessions.clear();}
 }

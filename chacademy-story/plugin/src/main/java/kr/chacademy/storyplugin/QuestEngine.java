@@ -113,6 +113,12 @@ final class QuestEngine implements Listener {
     private final Map<UUID, ItemScan> itemScans = new HashMap<>();
     /** 위치 포탈 대화를 중간에 닫은 유저: 포탈 밖으로 나가야 다시 호출된다 (메모리 전용 — 단계 변경·재접속·초기화 때 지움). */
     private final Set<UUID> mustLeave = new HashSet<>();
+    /** 장 공개 제한 (config.yml chapter-release). */
+    private ChapterGate gate = ChapterGate.defaults();
+    /** 잠긴 장의 단계에서 멈춰 있는 접속자 (장이 열리면 바로 HUD·시작명령을 다시 보내려고). 메모리 전용. */
+    private final Set<UUID> heldByGate = new HashSet<>();
+    /** 길잡이 별이 켜져 있는 접속자 → 켠 단계 session (다시 시전하면 끈다). 단계가 바뀌거나 목표 10블록 안이면 지운다. 메모리 전용. */
+    private final Map<UUID, Integer> guiding = new HashMap<>();
 
     private Class<?> npcIface, registryIface;
     private Object registry;
@@ -131,13 +137,14 @@ final class QuestEngine implements Listener {
         progFile = new File(plugin.getDataFolder(), "quest-progress.yml");
         if (!defsFile.isFile()) plugin.saveResource("steps.yml", false);
         loadDefs(null);
+        loadGate();
         loadProgress();
         progStore = new StoryStore(text -> StorySafety.atomicWrite(progFile.toPath(), text), StoryStore.newWorker(),
                 r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
         defsStore = new StoryStore(text -> StorySafety.atomicWrite(defsFile.toPath(), text), StoryStore.newWorker(),
                 r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
         ready = true;
-        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
+        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE, QuestCodec.GUIDE, QuestCodec.POINTS)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, TICK_CHECK);
         Bukkit.getScheduler().runTask(plugin, this::hookCitizens);
@@ -162,6 +169,7 @@ final class QuestEngine implements Listener {
     /** /서버관리 새로고침 스토리: steps.yml 다시 읽기 (진행 기록은 그대로). */
     void reload() {
         loadDefs(null);
+        loadGate();
         for (Player p : Bukkit.getOnlinePlayers()) needStep.add(p.getUniqueId());
         scheduleSend();
     }
@@ -177,6 +185,43 @@ final class QuestEngine implements Listener {
         }
         for (String w : warnings) plugin.getLogger().warning("[스토리 단계] " + w);
         plugin.getLogger().info("[스토리 단계] " + defs.steps.size() + "개 (시작 " + (defs.startStep.isEmpty() ? "-" : defs.startStep) + ")");
+    }
+
+    // ================================================================ 장 공개 제한
+
+    static final java.time.ZoneId KST = java.time.ZoneId.of("Asia/Seoul");
+
+    /** config.yml chapter-release 읽기. 없으면 2장까지 공개·3장부터 잠금. */
+    private void loadGate() {
+        var c = plugin.getConfig();
+        List<String> warnings = new ArrayList<>();
+        Map<Integer, ChapterGate.Release> chapters = new HashMap<>();
+        var sec = c.getConfigurationSection("chapter-release.chapters");
+        if (sec != null) for (String key : sec.getKeys(false)) {
+            int n;
+            try { n = Integer.parseInt(key.strip()); } catch (NumberFormatException e) { warnings.add("chapter-release.chapters 의 키는 장 번호(숫자)여야 함: " + key); continue; }
+            chapters.put(n, new ChapterGate.Release(sec.getBoolean(key + ".open", false), ChapterGate.parseTime(sec.getString(key + ".open-at", ""), KST, warnings, n)));
+        }
+        gate = new ChapterGate(c.getInt("chapter-release.open-through", 2), chapters,
+                c.getString("chapter-release.locked-title", ChapterGate.DEFAULT_TITLE), c.getString("chapter-release.locked-body", ChapterGate.DEFAULT_BODY));
+        for (String w : warnings) plugin.getLogger().warning("[스토리 장 공개] " + w);
+        plugin.getLogger().info("[스토리 장 공개] " + gate.openThrough + "장까지 공개" + (chapters.isEmpty() ? "" : " · 설정된 장 " + chapters.keySet()));
+    }
+
+    /** 이 단계가 아직 공개되지 않은 장인지. */
+    boolean chapterLocked(Step s) {
+        return s != null && gate.locked(ChapterGate.chapterOf(s.id, s.chapter), System.currentTimeMillis());
+    }
+
+    /** 대화·컷신 ID 가 공개 전인 장의 것인지 ("ch3-1", "ch3_intro" 처럼 ch<번호> 로 시작하는 ID 만 판단). /대화관리 재생 이 쓴다. */
+    boolean idLocked(String id) {
+        return gate.locked(ChapterGate.chapterOf(id, null), System.currentTimeMillis());
+    }
+
+    String lockedTitle() { return gate.title; }
+
+    private void tellLocked(Player p, long cooldownMs) {
+        ChacaLink.notify(p, "system", "story-chapter-locked", gate.title, gate.body, cooldownMs);
     }
 
     private void loadProgress() {
@@ -351,6 +396,8 @@ final class QuestEngine implements Listener {
         UUID uuid = p.getUniqueId();
         st.enter(stepId);
         mustLeave.remove(uuid);
+        guiding.remove(uuid);
+        heldByGate.remove(uuid);   // 잠긴 장 → 열린 단계로 옮겨지면 tick 이 시작명령을 한 번 더 돌리지 않게
         readySince.remove(uuid);
         readyCache.remove(uuid);
         retryAt.remove(uuid);
@@ -359,6 +406,12 @@ final class QuestEngine implements Listener {
         needStep.add(uuid);
         scheduleSend();
         Step s = defs.get(stepId);
+        if (chapterLocked(s)) {
+            // 공개 전인 장: 목표 알림·시작명령 없이 멈춘다 (장이 열리면 tick 이 이어 준다)
+            heldByGate.add(uuid);
+            if (tell) tellLocked(p, 0);
+            return;
+        }
         if (tell && s != null && !s.description.isBlank()) ChacaLink.notify(p, "system", "story-step-" + st.run, "새 목표", s.description, 0);
         if (s != null && !s.startCommands.isEmpty()) {
             int run = st.run;
@@ -376,6 +429,7 @@ final class QuestEngine implements Listener {
         if (!ready || !p.isOnline() || st.run != run || st.phase != Phase.ACTIVE) return;
         Step s = defs.get(st.step);
         if (s == null) return;
+        if (chapterLocked(s)) { heldByGate.add(p.getUniqueId()); return; }
         if (!manual && s.startOnce()) {
             if (st.startedRun == run) return;
             st.startedRun = run;
@@ -425,6 +479,12 @@ final class QuestEngine implements Listener {
     private void fire(Player p, P st, Step s, String why) {
         UUID uuid = p.getUniqueId();
         if (st.phase != Phase.ACTIVE) return;
+        if (chapterLocked(s)) {
+            // 공개 전인 장의 단계: 어떤 호출 경로(포탈·NPC·자동·컷신·관리자 강제 진행)로도 열지 않는다
+            heldByGate.add(uuid);
+            if (!why.equals("자동") && !why.equals("컷신")) tellLocked(p, why.equals("위치") ? 10_000 : 3_000);
+            return;
+        }
         long now = System.currentTimeMillis();
         if (now < retryAt.getOrDefault(uuid, 0L)) return;
         if (!st.submitted && hasSubmit(s)) {
@@ -595,6 +655,24 @@ final class QuestEngine implements Listener {
             if (st == null || st.step.isEmpty()) continue;
             Step s = defs.get(st.step);
             if (s == null) continue;
+            // 길잡이 별: 목표 10블록 안에 오면 클라가 화살표를 끈다 → 서버도 꺼진 것으로 (다음 시전은 다시 켜기)
+            if (guiding.containsKey(uuid)) {
+                Location gt = guideTarget(s);
+                if (gt == null || !gt.getWorld().equals(p.getWorld()) || flatNear(gt, p.getLocation())) guiding.remove(uuid);
+            }
+            // 잠겨 있던 장이 열렸다 (관리자 명령·공개 시각): HUD 를 다시 보내고 시작명령을 실행한다
+            if (heldByGate.contains(uuid) && !chapterLocked(s)) {
+                heldByGate.remove(uuid);
+                needStep.add(uuid);
+                scheduleSend();
+                if (st.phase == Phase.ACTIVE && !s.description.isBlank()) ChacaLink.notify(p, "system", "story-step-" + st.run, "새 목표", s.description, 0);
+                if (st.phase == Phase.ACTIVE && !s.startCommands.isEmpty()) runStartCommands(p, st, st.run, false);
+            } else if (!heldByGate.contains(uuid) && chapterLocked(s)) {
+                heldByGate.add(uuid);   // 관리자가 다시 잠금
+                needStep.add(uuid);
+                scheduleSend();
+            }
+            if (st.phase == Phase.ACTIVE && heldByGate.contains(uuid)) continue;   // 잠긴 장: 조건 확인·자동 호출 안 함
             // 포탈 밖으로 나갔으면 (또는 호출 방식이 위치가 아니게 바뀌었으면) 다시 들어올 때 호출되게
             if (mustLeave.contains(uuid) && (s.trigger.type != TrigType.LOCATION || !inside(p, s.trigger))) mustLeave.remove(uuid);
             try {
@@ -653,6 +731,7 @@ final class QuestEngine implements Listener {
         UUID uuid = p.getUniqueId();
         sessions.remove(uuid);
         sentKey.remove(uuid);
+        sentPoints.remove(uuid);
         P st = prog.players.get(uuid);
         if (st == null && !defs.startStep.isEmpty() && defs.startAfterDialogue.isEmpty()) {
             st = prog.of(uuid);
@@ -687,10 +766,12 @@ final class QuestEngine implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
-        sessions.remove(uuid); sentKey.remove(uuid); readyCache.remove(uuid); readySince.remove(uuid);
+        sessions.remove(uuid); sentKey.remove(uuid); sentPoints.remove(uuid); readyCache.remove(uuid); readySince.remove(uuid);
         hintAt.remove(uuid); clickGate.remove(uuid); picks.remove(uuid); previewing.remove(uuid);
         needStep.remove(uuid); needUpdate.remove(uuid); itemScans.remove(uuid);
         mustLeave.remove(uuid);
+        heldByGate.remove(uuid);
+        guiding.remove(uuid);
     }
 
     // 아이템 조건 캐시 무효화 (가벼운 표시만, 실제 세기는 다음 주기 확인 때)
@@ -858,10 +939,19 @@ final class QuestEngine implements Listener {
         }
         P st = prog.players.get(uuid);
         Step s = st == null ? null : defs.get(st.step);
-        if (s == null || s.trigger.type != TrigType.NPC || s.trigger.npc != id) return;
-        if (!s.trigger.server.isEmpty() && !s.trigger.server.equals(serverId())) return;
+        if (s == null) return;
+        String waitDialogue = s.waiting.get(id);
+        boolean called = s.trigger.type == TrigType.NPC && s.trigger.npc == id
+                && (s.trigger.server.isEmpty() || s.trigger.server.equals(serverId()));
+        if (!called) {
+            // 이 단계의 호출 NPC 는 아니지만 대기대화가 있는 NPC (예: 낚시 단계의 올레): 조건을 못 채웠을 때만 짧은 고정 대화
+            if (waitDialogue != null && st.phase == Phase.ACTIVE && !chapterLocked(s) && !isReady(p, st, s))
+                showWaiting(event, p, s, id, waitDialogue);
+            return;
+        }
         long now = System.currentTimeMillis();
         if (st.phase == Phase.PLAYING) { ((Cancellable) event).setCancelled(true); return; }
+        if (chapterLocked(s)) { tellLocked(p, 3_000); return; }   // 막지 않는다 (평소 NPC 대화는 그대로)
         if (isReady(p, st, s)) {
             ((Cancellable) event).setCancelled(true);
             Long last = clickGate.get(uuid);
@@ -870,7 +960,9 @@ final class QuestEngine implements Listener {
             fire(p, st, s, "NPC클릭");
             return;
         }
-        // 아직 준비가 안 됨: 막지 않는다 (평소대로 선물 → 고정 대화 → AI 대화). 할 일만 한 번 알려 준다
+        // 아직 준비가 안 됨: 대기대화가 있으면 그 NPC 의 짧은 고정 대화 (같은 NPC 를 곧바로 다시 누르면 평소 대화로)
+        if (waitDialogue != null && showWaiting(event, p, s, id, waitDialogue)) return;
+        // 대기대화가 없으면 막지 않는다 (평소대로 선물 → 고정 대화 → AI 대화). 할 일만 한 번 알려 준다
         if (now - hintAt.getOrDefault(uuid, 0L) > 5000) {
             hintAt.put(uuid, now);
             int[] cur = currents(p, st, s);
@@ -880,11 +972,38 @@ final class QuestEngine implements Listener {
         }
     }
 
+    /** 대기대화를 마지막으로 보여 준 때: "플레이어|단계|NPC" → 시각. 메모리 전용 (재시작·재접속이면 다시 한 번 보여 줌). */
+    private final Map<String, Long> waitingShown = new HashMap<>();
+
+    /**
+     * 대기대화 (2026-10-25 오너): 조건을 못 채운 채 NPC 를 누르면 AI 대화 대신 짧은 고정 대화 (예: 올레 "아직도 못 잡았나?").
+     * 보여 준 뒤 waiting-dialogue-cooldown-seconds(기본 60) 안에 같은 NPC 를 다시 누르면 막지 않고 평소 대화(고정 대화 → AI 대화창)로
+     * 넘긴다 — 피피처럼 대화창에 상점 버튼이 있는 NPC 를 대기 중에도 쓸 수 있게. 단계 진행·완료 판정에는 영향 없음.
+     * @return true = 이번 클릭을 대기대화가 가져감 (이벤트 취소)
+     */
+    private boolean showWaiting(Event event, Player p, Step s, int npc, String dialogue) {
+        long now = System.currentTimeMillis();
+        long cooldown = Math.max(0, plugin.getConfig().getLong("waiting-dialogue-cooldown-seconds", 60)) * 1000L;
+        String key = p.getUniqueId() + "|" + s.id + "|" + npc;
+        Long last = waitingShown.get(key);
+        if (last != null && now - last < cooldown) return false;
+        if (waitingShown.size() > 4096) waitingShown.values().removeIf(t -> now - t > cooldown);
+        waitingShown.put(key, now);
+        ((Cancellable) event).setCancelled(true);
+        plugin.requestNicknameDialogue(p, dialogue).thenAccept(ok -> {
+            if (!Boolean.TRUE.equals(ok)) {
+                waitingShown.remove(key); // 못 열었으면 다음 클릭에 다시 시도 (그 사이엔 평소 대화가 열린 게 아니라 아무것도 안 열림)
+                plugin.getLogger().warning("[스토리 단계] " + p.getName() + ": " + s.id + " 대기대화 " + dialogue + " 을(를) 열지 못했습니다");
+            }
+        });
+        return true;
+    }
+
     // ================================================================ 다른 기능의 성공 신호 (Bukkit 이벤트, 리플렉션)
 
     /** 플러그인 이름 → 성공 이벤트 클래스. 각 기능이 저장·지급이 끝난 뒤에만 부른다 (getPlayer/getKey/getAmount). */
     private static final String[][] PROGRESS_EVENTS = {
-            {"MagicCodexBridge", "school.magiccodex.paper.StoryProgressEvent"},   // 교화성공 · 낚시성공 · 연금술성공
+            {"MagicCodexBridge", "school.magiccodex.paper.StoryProgressEvent"},   // 교화성공 · 낚시성공 · 물고기판매 · 연금술성공 · 지도열기 · 웨이포인트등록 · 튜토리얼재료구매
             {"ChacaHousing", "school.chacademia.housing.StoryProgressEvent"},     // 내방열기
     };
     private final List<String> progressHooks = new ArrayList<>();
@@ -975,9 +1094,57 @@ final class QuestEngine implements Listener {
             return;
         }
         int[] cur = currents(p, st, s, true);
-        boolean r = isReadyFrom(s, cur) && st.phase == Phase.ACTIVE;
+        boolean r = isReadyFrom(s, cur) && st.phase == Phase.ACTIVE && !chapterLocked(s);
         p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(view(session, s, st.run, cur, r)));
         sentKey.put(uuid, st.run + ":" + isReadyFrom(s, cur) + ":" + java.util.Arrays.toString(cur));
+        sendPoints(p, session, st, s, true);
+    }
+
+    /** 마지막으로 보낸 목표 지점 (플레이어 → "session|블록키…"). 같으면 다시 보내지 않는다. 메모리 전용. */
+    private final Map<UUID, String> sentPoints = new HashMap<>();
+
+    /**
+     * 아직 안 누른 상호작용 조건 블록들을 목표 지점으로 보낸다 (예: 이론서 세 권 = 조건 3개 × 블록 1개 → 징표 3개).
+     * 숨김 조건·다 채운 조건·이미 누른 블록·공개 전인 장은 빼고, 조건 순서대로 최대 16개.
+     */
+    private void sendPoints(Player p, int session, P st, Step s, boolean force) {
+        if (!p.getListeningPluginChannels().contains(QuestCodec.POINTS)) return;
+        UUID uuid = p.getUniqueId();
+        List<QuestCodec.Point> points = st.phase == Phase.ACTIVE && !chapterLocked(s) ? pendingPoints(st, s) : List.of();
+        StringBuilder key = new StringBuilder().append(session);
+        for (QuestCodec.Point pt : points) key.append('|').append(pt.world()).append(',').append(pt.x()).append(',').append(pt.y()).append(',').append(pt.z());
+        String k = key.toString();
+        if (!force && k.equals(sentPoints.get(uuid))) return;
+        if (force && points.isEmpty() && !sentPoints.containsKey(uuid)) return; // 처음부터 없음: 보낼 것 없음
+        sentPoints.put(uuid, k);
+        p.sendPluginMessage(plugin, QuestCodec.POINTS, QuestCodec.points(session, points));
+    }
+
+    private List<QuestCodec.Point> pendingPoints(P st, Step s) {
+        List<QuestCodec.Point> out = new ArrayList<>();
+        for (int i = 0; i < s.conds.size() && out.size() < QuestCodec.MAX_POINTS; i++) {
+            Cond c = s.conds.get(i);
+            if (c.type() != CondType.INTERACT || c.hidden()) continue;
+            Set<String> hit = st.hits.getOrDefault(i, Set.of());
+            if (hit.size() >= c.required()) continue;
+            for (String b : c.blocks()) {
+                if (out.size() >= QuestCodec.MAX_POINTS) break;
+                if (hit.contains(b)) continue;
+                Location l = blockCenter(b);
+                if (l != null) out.add(new QuestCodec.Point(l.getWorld().getKey().toString(), l.getX(), l.getY(), l.getZ()));
+            }
+        }
+        return out;
+    }
+
+    /** blockKey("세계,x,y,z") → 블록 가운데 위 (징표 자리). 세계가 없거나 형식이 틀리면 null. */
+    private static Location blockCenter(String key) {
+        String[] a = key.split(",");
+        if (a.length != 4) return null;
+        World w = Bukkit.getWorld(a[0]);
+        if (w == null) return null;
+        try { return new Location(w, Integer.parseInt(a[1]) + 0.5, Integer.parseInt(a[2]) + 1.0, Integer.parseInt(a[3]) + 0.5); }
+        catch (NumberFormatException e) { return null; }
     }
 
     private void sendUpdate(Player p) {
@@ -989,8 +1156,9 @@ final class QuestEngine implements Listener {
         int[] cur = currents(p, st, s, true);
         boolean full = isReadyFrom(s, cur);
         int[] visible = visible(s, cur);
-        p.sendPluginMessage(plugin, QuestCodec.UPDATE, QuestCodec.update(session, s.id, st.run, full && st.phase == Phase.ACTIVE, visible));
+        p.sendPluginMessage(plugin, QuestCodec.UPDATE, QuestCodec.update(session, s.id, st.run, full && st.phase == Phase.ACTIVE && !chapterLocked(s), visible));
         sentKey.put(uuid, st.run + ":" + full + ":" + java.util.Arrays.toString(cur));
+        sendPoints(p, session, st, s, false);
     }
 
     private static boolean isReadyFrom(Step s, int[] cur) {
@@ -1007,7 +1175,14 @@ final class QuestEngine implements Listener {
         return out;
     }
 
-    private QuestCodec.StepView view(int session, Step s, int run, int[] cur, boolean readyFlag) {
+    private QuestCodec.StepView view(int session, Step s, int run, int[] cur, boolean readyFlag) { return view(session, s, run, cur, readyFlag, true); }
+
+    /** gated = false: 운영자 미리보기 (잠긴 장의 포탈·NPC 위치도 보여 준다). */
+    private QuestCodec.StepView view(int session, Step s, int run, int[] cur, boolean readyFlag, boolean gated) {
+        if (gated && chapterLocked(s)) {
+            // 공개 전인 장: 장 이름·설명·목표 위치를 보내지 않는다 (미리 보이지 않게, 포탈·징표 없음)
+            return new QuestCodec.StepView(session, s.id, run, "스토리", gate.title, false, List.of(), QuestCodec.TARGET_NONE, "", 0, 0, 0, 0, "");
+        }
         List<QuestCodec.CondView> conds = new ArrayList<>();
         for (int i = 0; i < s.conds.size(); i++) {
             Cond c = s.conds.get(i);
@@ -1032,6 +1207,69 @@ final class QuestEngine implements Listener {
         return new QuestCodec.StepView(session, s.id, run, chapter, s.description, readyFlag, conds, type, world, x, y, z, radius, entity);
     }
 
+    /** 길잡이 별 결과 (MagicMythic 132 guiding_star 가 리플렉션으로 부른다). OFF = 켜져 있던 화살표를 끔 (다시 시전). */
+    static final int GUIDE_NONE = 0, GUIDE_OK = 1, GUIDE_OTHER_WORLD = 2, GUIDE_NEAR = 3, GUIDE_OFF = 4;
+    /** 이 안이면 화살표를 띄우지 않는다 (클라 QuestWorld.GUIDE_NEAR 와 같은 값). */
+    static final double GUIDE_NEAR_DISTANCE = 10;
+
+    /** 단계 목표 위치 (위치 포탈 / 이 서버의 NPC클릭 NPC). 없으면 null (자동·컷신·미지정·다른 서버 NPC). */
+    private Location guideTarget(Step s) {
+        Trigger t = s.trigger;
+        if (t.type == TrigType.LOCATION) {
+            World w = Bukkit.getWorld(t.world);
+            return w == null ? null : new Location(w, t.x, t.y, t.z);
+        }
+        if (t.type == TrigType.NPC && (t.server.isEmpty() || t.server.equals(serverId()))) {
+            Object npc = npcById(t.npc);
+            Location l = npc == null ? null : npcLocation(npc);
+            return l == null || l.getWorld() == null ? null : l;
+        }
+        return null;
+    }
+
+    private static boolean flatNear(Location a, Location b) {
+        double dx = a.getX() - b.getX(), dz = a.getZ() - b.getZ();
+        return dx * dx + dz * dz <= GUIDE_NEAR_DISTANCE * GUIDE_NEAR_DISTANCE;
+    }
+
+    /**
+     * 길잡이 별 (오너 2026-10-20·10-23): 지금 단계의 목표(위치 포탈 / 말 걸 NPC)를 화살표로 가리킨다. 조건을 아직 못 채운 단계도
+     * 가리킨다. 켜져 있을 때 다시 시전하면 끈다. 목표 10블록 안에서는 클라가 스스로 끈다. 공개 전인 장·미리보기 중·목표 없는 단계 = NONE.
+     */
+    int guide(Player p) {
+        if (!ready || p == null || !p.isOnline() || !p.getListeningPluginChannels().contains(QuestCodec.GUIDE)) return GUIDE_NONE;
+        UUID uuid = p.getUniqueId();
+        P st = prog.players.get(uuid);
+        Step s = st == null ? null : defs.get(st.step);
+        Integer session = sessions.get(uuid);
+        if (s == null || session == null || previewing.contains(uuid) || chapterLocked(s)) return GUIDE_NONE;
+        Integer on = guiding.get(uuid);
+        if (on != null && on.equals(session)) {
+            guiding.remove(uuid);
+            p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(0));
+            return GUIDE_OFF;
+        }
+        Location target = guideTarget(s);
+        if (target == null && st.phase == Phase.ACTIVE) {
+            // 호출 목표가 없는 단계(예: 이론서 세 권, 호출 자동): 아직 안 누른 목표 블록 중 같은 세계의 가장 가까운 것
+            double best = Double.MAX_VALUE;
+            for (QuestCodec.Point pt : pendingPoints(st, s)) {
+                org.bukkit.NamespacedKey wk = org.bukkit.NamespacedKey.fromString(pt.world());
+                World w = wk == null ? null : Bukkit.getWorld(wk);
+                if (w == null) continue;
+                Location l = new Location(w, pt.x(), pt.y(), pt.z());
+                double d = w.equals(p.getWorld()) ? l.distanceSquared(p.getLocation()) : Double.MAX_VALUE / 2;
+                if (d < best) { best = d; target = l; }
+            }
+        }
+        if (target == null) return GUIDE_NONE;
+        if (!target.getWorld().equals(p.getWorld())) return GUIDE_OTHER_WORLD;
+        if (flatNear(target, p.getLocation())) return GUIDE_NEAR;
+        guiding.put(uuid, session);
+        p.sendPluginMessage(plugin, QuestCodec.GUIDE, QuestCodec.guide(session));
+        return GUIDE_OK;
+    }
+
     /** 운영자 화면에 이 단계를 "준비 완료" 상태로 보여 준다 (포탈·징표 위치 확인용). 진행 기록은 건드리지 않는다. */
     private void preview(Player p, Step s) {
         if (!hasMod(p)) { ChacaLink.ok(p, "스토리 모드가 없어 미리보기를 보여 줄 수 없어요"); return; }
@@ -1039,7 +1277,7 @@ final class QuestEngine implements Listener {
         int session = sessions.merge(p.getUniqueId(), 1, Integer::sum);
         int[] cur = new int[s.conds.size()];
         for (int i = 0; i < cur.length; i++) cur[i] = s.conds.get(i).required();
-        p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(view(session, s, 0, cur, true)));
+        p.sendPluginMessage(plugin, QuestCodec.STEP, QuestCodec.step(view(session, s, 0, cur, true, false)));
     }
 
     private void endPreview(Player p) {
@@ -1051,8 +1289,8 @@ final class QuestEngine implements Listener {
     // ================================================================ 명령어
 
     private static final String ID = "단계ID";
-    /** 기숙사 분류 6문항 대화 ID (SchoolBridge 가 띄움). */
-    static final String SORTING_DIALOGUE = "ch1-14";
+    /** 기숙사 분류 6문항 대화 ID (SchoolBridge 가 띄움 — SchoolBridge 의 "ch1-15"·"ch1-15r/m/f-" 와 같아야 함, 2026-10-25 ch1-14 → ch1-15). */
+    static final String SORTING_DIALOGUE = "ch1-15";
 
     void registerCommands() {
         if (!ChacaLink.ready()) return;
@@ -1119,6 +1357,28 @@ final class QuestEngine implements Listener {
                     s.startCommands.add(c);
                 }, "시작명령"))))
                 .then(Commands.literal("비우기").executes(ctx -> edit(ctx, s -> s.startCommands.clear(), "시작명령"))));
+        one.then(Commands.literal("대기대화")
+                .then(Commands.literal("추가").then(Commands.argument("NPC번호", IntegerArgumentType.integer(0, 1_000_000))
+                        .then(Commands.argument("대화", StringArgumentType.word()).executes(ctx -> edit(ctx, s -> {
+                            String d = ctx.getArgument("대화", String.class).strip();
+                            if (!StorySafety.validId(d)) throw ChacaLink.error("대화 ID 형식이 아니에요");
+                            int npc = ctx.getArgument("NPC번호", Integer.class);
+                            if (!s.waiting.containsKey(npc) && s.waiting.size() >= QuestDefs.MAX_WAITING) throw ChacaLink.error("대기대화는 단계마다 " + QuestDefs.MAX_WAITING + "개까지예요");
+                            s.waiting.put(npc, d);
+                        }, "대기대화")))))
+                .then(Commands.literal("삭제").then(Commands.argument("NPC번호", IntegerArgumentType.integer(0, 1_000_000)).executes(ctx -> edit(ctx, s -> {
+                    if (s.waiting.remove(ctx.getArgument("NPC번호", Integer.class)) == null) throw ChacaLink.error("그 NPC 의 대기대화가 없어요");
+                }, "대기대화"))))
+                .then(Commands.literal("비우기").executes(ctx -> edit(ctx, s -> s.waiting.clear(), "대기대화")))
+                .then(Commands.literal("목록").executes(ctx -> {
+                    Step s = step(ctx);
+                    var out = new ArrayList<String>();
+                    out.add(s.id + " 대기대화 (조건을 못 채운 채 그 NPC 를 누르면)");
+                    if (s.waiting.isEmpty()) out.add("(없음)");
+                    s.waiting.forEach((npc, d) -> out.add("NPC " + npc + " → " + d));
+                    ChacaLink.lines(ctx.getSource().getSender(), out);
+                    return 1;
+                })));
         one.then(Commands.literal("이동").executes(this::cmdGoto));
         one.then(Commands.literal("미리보기").executes(ctx -> { Player p = self(ctx); preview(p, step(ctx)); ChacaLink.ok(p, "미리보기 중 · 끝내려면 /대화관리 단계 미리보기끝"); return 1; }));
         root.then(one);
@@ -1126,11 +1386,17 @@ final class QuestEngine implements Listener {
 
         ChacaLink.branch(plugin, ChacaLink.대화관리, Commands.literal("신호")
                 .then(Commands.argument("닉네임", ChacaLink.player())
-                        .then(Commands.argument("키", ChacaLink.word(() -> List.of("교화성공", "낚시성공", "연금술성공", "기숙사배정", "내방열기")))
+                        .then(Commands.argument("키", ChacaLink.word(() -> List.of("교화성공", "낚시성공", "물고기판매", "연금술성공", "기숙사배정", "내방열기", "지도열기", "웨이포인트등록", "튜토리얼재료구매")))
                                 .executes(ctx -> cmdSignal(ctx, 1))
                                 .then(Commands.argument("개수", IntegerArgumentType.integer(1, 10000))
                                         .executes(ctx -> cmdSignal(ctx, ctx.getArgument("개수", Integer.class)))))),
                 "스토리 단계 신호 조건 채우기 (다른 기능·Skript 연결용, 콘솔 가능)", "신호 ");
+
+        ChacaLink.branch(plugin, ChacaLink.대화관리, Commands.literal("장공개")
+                .then(Commands.literal("목록").executes(this::cmdGateList))
+                .then(Commands.literal("열기").then(Commands.argument("장", IntegerArgumentType.integer(0, 999)).executes(ctx -> cmdGateSet(ctx, true))))
+                .then(Commands.literal("잠그기").then(Commands.argument("장", IntegerArgumentType.integer(0, 999)).executes(ctx -> cmdGateSet(ctx, false)))),
+                "스토리 장 공개 상태 보기·즉시 공개·다시 잠그기 (config.yml chapter-release)", "장공개 목록");
 
         ChacaLink.branch(plugin, ChacaLink.유저관리, Commands.literal("스토리진행")
                 .then(Commands.literal("보기").executes(this::cmdUserView))
@@ -1488,6 +1754,8 @@ final class QuestEngine implements Listener {
         P st = prog.players.get(p.getUniqueId());
         Step s = st == null ? null : defs.get(st.step);
         if (s == null) throw ChacaLink.error(ChacaLink.name(p.getUniqueId()) + " 님은 진행 중인 스토리 단계가 없어요");
+        if (st.phase == Phase.ACTIVE && chapterLocked(s))
+            throw ChacaLink.error(s.id + " 은(는) 아직 공개되지 않은 장이에요 (먼저 /대화관리 장공개 열기 " + ChapterGate.chapterOf(s.id, s.chapter) + ")");
         if (st.phase == Phase.PLAYING) {
             advance(p, st, s);
             ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 다음 단계로 넘겼어요 (기다리던 " + st.waiting + " 건너뜀)");
@@ -1519,7 +1787,8 @@ final class QuestEngine implements Listener {
         String id = ctx.getArgument("이동단계", String.class);
         if (defs.get(id) == null) throw ChacaLink.error("단계 " + id + " 이(가) 없어요");
         enter(p, prog.of(p.getUniqueId()), id, true);
-        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 단계 " + id + " (으)로 옮겼어요");
+        ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(p.getUniqueId()) + " 님을 단계 " + id + " (으)로 옮겼어요"
+                + (chapterLocked(defs.get(id)) ? " (공개 전인 장이라 장이 열릴 때까지 멈춰 있어요)" : ""));
         return 1;
     }
 
@@ -1531,6 +1800,35 @@ final class QuestEngine implements Listener {
         Player p = Bukkit.getPlayer(uuid);
         if (p != null) { onJoin(p); needStep.add(uuid); scheduleSend(); }
         ChacaLink.ok(ctx.getSource().getSender(), ChacaLink.name(uuid) + " 님의 스토리 단계 기록을 지웠어요");
+        return 1;
+    }
+
+    private int cmdGateList(CommandContext<CommandSourceStack> ctx) {
+        long now = System.currentTimeMillis();
+        java.util.TreeSet<Integer> seen = new java.util.TreeSet<>(gate.chapters.keySet());
+        for (Step s : defs.steps.values()) { int n = ChapterGate.chapterOf(s.id, s.chapter); if (n >= 0) seen.add(n); }
+        List<String> out = new ArrayList<>();
+        out.add("스토리 장 공개 · " + gate.openThrough + "장까지 항상 공개 · 잠김 안내: " + gate.title);
+        for (int n : seen) out.add(" " + gate.describe(n, now, KST));
+        int held = 0;
+        for (Player p : Bukkit.getOnlinePlayers()) if (heldByGate.contains(p.getUniqueId())) held++;
+        out.add(" 잠긴 장 앞에서 기다리는 접속자 " + held + "명");
+        ChacaLink.lines(ctx.getSource().getSender(), out);
+        return 1;
+    }
+
+    /** 즉시 공개(open: true) / 다시 잠그기(open: false, 공개 시각도 지움). config.yml 에 저장하고 바로 적용. */
+    private int cmdGateSet(CommandContext<CommandSourceStack> ctx, boolean open) throws CommandSyntaxException {
+        int n = ctx.getArgument("장", Integer.class);
+        if (n <= gate.openThrough) throw ChacaLink.error(n + "장은 open-through(" + gate.openThrough + ") 이하라 항상 공개예요 (config.yml chapter-release.open-through)");
+        var c = plugin.getConfig();
+        c.set("chapter-release.chapters." + n + ".open", open);
+        if (!open) c.set("chapter-release.chapters." + n + ".open-at", "");
+        try { plugin.saveConfig(); }
+        catch (RuntimeException e) { plugin.getLogger().log(Level.SEVERE, "[스토리 장 공개] config.yml 저장 실패", e); throw ChacaLink.error("config.yml 을 저장하지 못했어요 (콘솔 확인)"); }
+        loadGate();
+        plugin.getLogger().info("[스토리 장 공개] " + n + "장 " + (open ? "공개" : "잠금") + " (" + ctx.getSource().getSender().getName() + ")");
+        ChacaLink.ok(ctx.getSource().getSender(), n + "장을 " + (open ? "공개했어요 — 기다리던 접속자는 0.5초 안에 이어서 진행돼요" : "다시 잠갔어요 (공개 시각도 지움)"));
         return 1;
     }
 

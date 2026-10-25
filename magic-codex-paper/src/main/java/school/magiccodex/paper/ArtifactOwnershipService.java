@@ -13,10 +13,14 @@ final class ArtifactOwnershipService implements AutoCloseable {
  }
  boolean ready(UUID player){return !closed&&System.currentTimeMillis()-healthyAt<6000&&snapshots.containsKey(player)&&!purchasing.contains(player);}
  boolean owns(UUID player,String id){return !closed&&System.currentTimeMillis()-healthyAt<6000&&snapshots.getOrDefault(player,Set.of()).contains(id);}
- void forget(UUID player){snapshots.remove(player);}
+ void forget(UUID player){snapshots.remove(player);pityCounts.remove(player);}
+ /** 천장(#98) 카운터: 2초 주기 공유 DB 조회 값 (뽑기 결과 반영 뒤 갱신). 아직 모르면 -1. */
+ private final Map<UUID,Integer> pityCounts=new ConcurrentHashMap<>();
+ int pityCount(UUID player){return pityCounts.getOrDefault(player,-1);}
  /** The receipt is persisted before debit, then marked paid before any DB submission. Ambiguous disk failures are quarantined. */
- boolean purchase(UUID player,List<ArtifactOwnershipStore.Choice> choices,String shardItem,BooleanSupplier debit,Consumer<List<ArtifactOwnershipStore.Pull>> done){
-  if(!ready(player))return false;String operation=UUID.randomUUID().toString();var p=new ArtifactPurchaseJournal.Purchase(operation,player,List.copyOf(choices),shardItem);
+ boolean purchase(UUID player,List<ArtifactOwnershipStore.Choice> choices,String shardItem,BooleanSupplier debit,Consumer<List<ArtifactOwnershipStore.Pull>> done){return purchase(player,choices,shardItem,ArtifactOwnershipStore.Pity.NONE,debit,done);}
+ boolean purchase(UUID player,List<ArtifactOwnershipStore.Choice> choices,String shardItem,ArtifactOwnershipStore.Pity pity,BooleanSupplier debit,Consumer<List<ArtifactOwnershipStore.Pull>> done){
+  if(!ready(player))return false;String operation=UUID.randomUUID().toString();var p=new ArtifactPurchaseJournal.Purchase(operation,player,List.copyOf(choices),shardItem,pity);
   try{journal.prepare(p);if(!debit.getAsBoolean()){journal.remove(operation);return false;}journal.paid(p);purchasing.add(player);callbacks.put(operation,done);pending.put(operation,p);tick();return true;}
   catch(Exception e){healthyAt=0;plugin.getLogger().severe("Artifact receipt persistence failed; operation quarantined for reconciliation. No ownership was silently discarded.");return false;}
  }
@@ -39,11 +43,12 @@ final class ArtifactOwnershipService implements AutoCloseable {
  private void tick(){if(closed||working)return;working=true;var players=Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).toList();io.execute(()->{
   try{
    if(!store.migrationComplete())throw new IllegalStateException("Artifact migration not complete");
+   store.ensurePityTable();
    var completed=completedResults;
-   for(var p:List.copyOf(pending.values())){var result=store.purchase(p.operation(),p.player(),p.choices(),p.shardItem());journal.remove(p.operation());pending.remove(p.operation());completed.put(p.operation(),result);}
+   for(var p:List.copyOf(pending.values())){var result=store.purchase(p.operation(),p.player(),p.choices(),p.shardItem(),p.pity());journal.remove(p.operation());pending.remove(p.operation());completed.put(p.operation(),result);}
    // 접속자마다 새 연결을 열던 N+1 조회 대신, 주기마다 연결 하나 + IN 묶음 조회 (보유 목록·미지급 우편)
-   var poll=store.poll(players);var fresh=poll.owned();var mail=poll.deliveries();
-   main(()->{working=false;healthyAt=System.currentTimeMillis();if(!announced){announced=true;plugin.getLogger().info("Shared artifact ownership ready; both migration markers verified; local LP ownership fallback disabled.");}if(warned){plugin.getLogger().info("Shared artifact database recovered; pending receipts replayed safely.");warned=false;}for(var e:fresh.entrySet()){var old=snapshots.put(e.getKey(),e.getValue());if(!e.getValue().equals(old)){Player p=Bukkit.getPlayer(e.getKey());if(p!=null&&plugin.playerStateReady(p))changed.accept(p);}}snapshots.keySet().retainAll(new HashSet<>(players));for(var e:List.copyOf(completed.entrySet())){var callback=callbacks.remove(e.getKey());completed.remove(e.getKey());if(callback!=null)try{callback.accept(e.getValue());}catch(RuntimeException ignored){plugin.getLogger().warning("Artifact result UI delivery failed; committed ownership remains available on reconnect.");}}purchasing.removeIf(id->pending.values().stream().noneMatch(p->p.player().equals(id)));for(var row:mail)deliver(row);working=false;});
+   var poll=store.poll(players);var fresh=poll.owned();var mail=poll.deliveries();var pity=poll.pity();
+   main(()->{working=false;healthyAt=System.currentTimeMillis();if(!announced){announced=true;plugin.getLogger().info("Shared artifact ownership ready; both migration markers verified; local LP ownership fallback disabled.");}if(warned){plugin.getLogger().info("Shared artifact database recovered; pending receipts replayed safely.");warned=false;}for(var e:fresh.entrySet()){var old=snapshots.put(e.getKey(),e.getValue());if(!e.getValue().equals(old)){Player p=Bukkit.getPlayer(e.getKey());if(p!=null&&plugin.playerStateReady(p))changed.accept(p);}}snapshots.keySet().retainAll(new HashSet<>(players));pityCounts.putAll(pity);pityCounts.keySet().retainAll(new HashSet<>(players));for(var e:List.copyOf(completed.entrySet())){var callback=callbacks.remove(e.getKey());completed.remove(e.getKey());if(callback!=null)try{callback.accept(e.getValue());}catch(RuntimeException ignored){plugin.getLogger().warning("Artifact result UI delivery failed; committed ownership remains available on reconnect.");}}purchasing.removeIf(id->pending.values().stream().noneMatch(p->p.player().equals(id)));for(var row:mail)deliver(row);working=false;});
   }catch(Exception error){main(()->{healthyAt=0;working=false;if(!warned){warned=true;plugin.getLogger().warning("Shared artifact database unavailable or migration incomplete; spending disabled, paid receipts retained for retry.");}});}
  });}
  private void deliver(ArtifactOwnershipStore.Delivery row){

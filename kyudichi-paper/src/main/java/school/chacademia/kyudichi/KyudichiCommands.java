@@ -161,8 +161,9 @@ final class KyudichiCommands {
                 .then(lit("시작").then(arg("경기장", arenaWord()).then(arg("파랑팀", ChacaLink.word(this::onlineNames)).suggests(this::teamSuggest)
                         .then(arg("빨강팀", ChacaLink.word(this::onlineNames)).suggests(this::teamSuggest).executes(this::matchStart)))))
                 .then(lit("종료").executes(ctx -> { end(ctx, null); return 1; })
-                        .then(arg("경기장", matchWord()).executes(ctx -> { end(ctx, ctx.getArgument("경기장", String.class)); return 1; }))),
-                "진행 중인 경기 목록·시작·종료", "경기 목록");
+                        .then(arg("경기장", matchWord()).executes(ctx -> { end(ctx, ctx.getArgument("경기장", String.class)); return 1; })))
+                .then(customNode()),
+                "진행 중인 경기 목록·시작·종료·커스텀 (커스텀·시작 = 레이팅 미반영, 관전 인원 제한 없음)", "경기 커스텀 큐디치 ");
         var season = lit("시즌");
         var start = lit("시작"); var reset = lit("초기화");
         for (String[] m : new String[][]{{"큐디치", RatingStore.MODE}, {"결투", RatingStore.DUEL}}) {
@@ -429,7 +430,7 @@ final class KyudichiCommands {
             var names = new EnumMap<Team, List<String>>(Team.class);
             for (var mp : m.players.values()) names.computeIfAbsent(mp.team, k -> new ArrayList<>()).add(mp.nick);
             lines.add(m.arena.name + " · " + m.phase + " · " + m.score[0] + ":" + m.score[1] + " · " + names.getOrDefault(Team.A, List.of()) + " vs "
-                    + names.getOrDefault(Team.B, List.of()) + (m.opt.test() ? " [테스트]" : m.opt.rated() ? "" : " [비레이팅]") + " · 관전 " + m.spectators.size());
+                    + names.getOrDefault(Team.B, List.of()) + (m.opt.test() ? " [테스트]" : m.opt.rated() ? "" : " [커스텀]") + " · 관전 " + m.spectators.size() + (m.custom() ? "" : "/" + Spectate.LIMIT));
         }
         ChacaLink.lines(s, lines);
     }
@@ -468,8 +469,48 @@ final class KyudichiCommands {
                 ? new Match.Options(false, false, r.duelPrepareTicks, r.duelRoundTicks, r.snitchAtTicks, false, Set.of())
                 : new Match.Options(false, false, r.prepareTicks, r.playTicks, r.snitchAtTicks, true, Set.of()));
         if (e != null) throw ChacaLink.error(e);
-        ChacaLink.ok(sender(ctx), ar.name + " 경기를 시작했어요 (레이팅 미반영)");
+        ChacaLink.ok(sender(ctx), ar.name + " 커스텀 경기를 시작했어요 (레이팅 미반영 · 관전 인원 제한 없음)");
         return 1;
+    }
+
+    /**
+     * 커스텀 경기 (#62, 2026-10-25): 경기 커스텀 &lt;큐디치|결투&gt; &lt;파랑팀&gt; &lt;빨강팀&gt; — players anywhere on the network (school·wild…).
+     * The proxy checks them, asks everyone to accept (same 10 s popup as matchmaking) and sends them here; rating unchanged,
+     * no spectator limit, back to their own server afterwards. Players already on this server: 경기 시작 (no accept step).
+     */
+    private LiteralArgumentBuilder<CommandSourceStack> customNode() {
+        var node = lit("커스텀");
+        for (String[] m : new String[][]{{"큐디치", "0"}, {"결투", "1"}}) {
+            int mode = Integer.parseInt(m[1]);
+            node.then(lit(m[0]).then(arg("파랑팀", ChacaLink.word(this::onlineNames)).suggests(this::teamSuggest)
+                    .then(arg("빨강팀", ChacaLink.word(this::onlineNames)).suggests(this::teamSuggest).executes(ctx -> customStart(ctx, mode)))));
+        }
+        return node;
+    }
+
+    private int customStart(CommandContext<CommandSourceStack> ctx, int mode) throws CommandSyntaxException {
+        boolean duel = mode == KyudichiQueueProtocol.MODE_DUEL;
+        var a = networkTeam(ctx.getArgument("파랑팀", String.class)); var b = networkTeam(ctx.getArgument("빨강팀", String.class));
+        for (UUID id : a) if (b.contains(id)) throw ChacaLink.error(ChacaLink.name(id) + " 님이 두 팀에 모두 있어요");
+        if (duel && (a.size() != 1 || b.size() != 1)) throw ChacaLink.error("1:1 커스텀 경기는 팀마다 한 명이에요");
+        for (UUID id : a) if (plugin.matches().of(id) != null) throw ChacaLink.error(ChacaLink.name(id) + " 님은 이미 경기 중이에요");
+        for (UUID id : b) if (plugin.matches().of(id) != null) throw ChacaLink.error(ChacaLink.name(id) + " 님은 이미 경기 중이에요");
+        plugin.link().custom(sender(ctx), mode, a, b);
+        return 1;
+    }
+
+    /** 닉+닉+닉 → UUIDs (anyone with a known nickname; whether they are online on the network is checked by the proxy). */
+    private List<UUID> networkTeam(String list) throws CommandSyntaxException {
+        var out = new ArrayList<UUID>();
+        for (String n : list.split("[+,]")) {
+            if (n.isBlank()) continue;
+            UUID id = ChacaLink.find(n.strip());
+            if (id == null) throw ChacaLink.error(n.strip() + " 님을 찾을 수 없어요");
+            if (out.contains(id)) throw ChacaLink.error(ChacaLink.name(id) + " 님을 두 번 적었어요");
+            out.add(id);
+        }
+        if (out.isEmpty() || out.size() > 3) throw ChacaLink.error("팀은 1~3명이에요 (닉+닉+닉)");
+        return out;
     }
 
     /** 경기 종료 [경기장] · 테스트 큐디치 종료: test and real matches alike (a real one ends void: no rating, no record). */

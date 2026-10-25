@@ -16,6 +16,16 @@ import java.util.List;
 final class QuestCodec {
     static final String STEP = "chacademy:quest_step";
     static final String UPDATE = "chacademy:quest_update";
+    /** 길잡이 별: 지금 단계(session)의 목표를 머리 위 화살표로 가리키기 시작 (목표 10블록 안 / 단계가 바뀌면 클라가 스스로 끈다). */
+    static final String GUIDE = "chacademy:quest_guide";
+    /**
+     * 목표 지점 여러 개 (2026-10-25, 예: 이론서 세 권): 아직 안 누른 "상호작용" 조건 블록들. 클라가 각 블록 위에 징표를 띄우고
+     * 길잡이 별은 (단계 호출 목표가 없을 때) 가장 가까운 것을 가리킨다. 형식: session, 개수, (세계키, x, y, z)… 개수 0 = 지우기.
+     */
+    static final String POINTS = "chacademy:quest_points";
+    static final int MAX_POINTS = 16;
+
+    record Point(String world, double x, double y, double z) {}
 
     static final int TARGET_NONE = 0, TARGET_LOCATION = 1, TARGET_NPC = 2;
 
@@ -59,6 +69,27 @@ final class QuestCodec {
         writeBool(out, ready);
         StoryCodec.writeVarInt(out, current.length);
         for (int c : current) StoryCodec.writeVarInt(out, Math.max(0, c));
+        return out.toByteArray();
+    }
+
+    static byte[] points(int session, List<Point> points) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StoryCodec.writeVarInt(out, session);
+        int n = Math.min(MAX_POINTS, points.size());
+        StoryCodec.writeVarInt(out, n);
+        for (int i = 0; i < n; i++) {
+            Point p = points.get(i);
+            StoryCodec.writeString(out, p.world());
+            writeDouble(out, p.x());
+            writeDouble(out, p.y());
+            writeDouble(out, p.z());
+        }
+        return out.toByteArray();
+    }
+
+    static byte[] guide(int session) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        StoryCodec.writeVarInt(out, session);
         return out.toByteArray();
     }
 

@@ -167,6 +167,9 @@ final class Marks implements Listener {
                 }
             } else if (m.type == Type.WEDGE && melee) {
                 m.done = true;
+                // #79: the wedge VFX (30 s loop) only ends on its external:melee_hit branch; nothing sent it, so it stayed after the burst.
+                if (m.caster instanceof Player pl && !m.p.s("spell", "").isBlank())
+                    Links.vfx(pl, m.p.s("spell", ""), "external:melee_hit", victim.getLocation(), victim.getUniqueId());
                 Bukkit.getScheduler().runTask(plugin, () -> burstWedge(m));
             }
         }

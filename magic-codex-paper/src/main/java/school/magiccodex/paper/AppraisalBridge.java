@@ -47,8 +47,12 @@ final class AppraisalBridge implements PluginMessageListener,Listener,AutoClosea
   for(int i=1;i<=10;i++){double p=fresh.getDouble("formation."+i,-1);if(!Double.isFinite(p)||p<0||p>1)throw new IllegalArgumentException("formation."+i+" must be 0..1");}
   for(String s:new String[]{"appraisal-cost","break-chance"}){double p=fresh.getDouble(s,-1);if(!Double.isFinite(p)||p<0||(s.equals("break-chance")&&p>1))throw new IllegalArgumentException(s);}
   for(int i=0;i<=10;i++)for(String s:new String[]{"base-success","starcatch-bonus","stat-gain"}){double v=fresh.getDouble("profiles."+i+"."+s,-1);if(!Double.isFinite(v)||v<0||(!s.equals("stat-gain")&&v>1))throw new IllegalArgumentException("profiles."+i+"."+s);}
+  AppraisalRoll.affinity(affinityWeights(fresh),()->0);
   config=fresh;offers.clear();
  }
+ private static final String[] AFFINITY_KEYS={"power","mana","haste"};
+ /** affinity-weights.power/mana/haste (없으면 각 1 = 같은 확률). */
+ private static double[] affinityWeights(YamlConfiguration c){double[] w=new double[3];for(int i=0;i<3;i++)w[i]=c.getDouble("affinity-weights."+AFFINITY_KEYS[i],1);return w;}
  private ItemStack make(){ItemStack item=new ItemStack(Material.AMETHYST_SHARD);var m=item.getItemMeta();m.getPersistentDataContainer().set(key("core_id"),PersistentDataType.STRING,UUID.randomUUID().toString());item.setItemMeta(m);return update(item,0,0);}
  private ItemStack update(ItemStack input,int state,int nodes){
   ItemStack item=input.clone();var m=item.getItemMeta();var p=m.getPersistentDataContainer();p.set(key("core_state"),PersistentDataType.INTEGER,state);p.set(key("core_nodes"),PersistentDataType.INTEGER,nodes);
@@ -89,6 +93,7 @@ final class AppraisalBridge implements PluginMessageListener,Listener,AutoClosea
   ItemStack result;int nodes=0,newState=0;
   {double[] chances=new double[10];for(int i=0;i<10;i++)chances[i]=config.getDouble("formation."+(i+1));var r=AppraisalRoll.roll(chances,config.getDouble("break-chance"),()->ThreadLocalRandom.current().nextDouble());nodes=r.nodes();newState=r.broken()?2:1;}
   result=update(held,newState,nodes);
+  if(newState==1){var m=result.getItemMeta();m.getPersistentDataContainer().set(key("core_affinity"),PersistentDataType.INTEGER,AppraisalRoll.affinity(affinityWeights(config),()->ThreadLocalRandom.current().nextDouble()));result.setItemMeta(m);}
   if(!withdraw(p,o.cost())){deny(p,o,"돈이 부족합니다.");return;}
   // Entire transaction executes on the main thread. Commit before animation, never trust client outcome.
   p.getInventory().setItem(o.slot(),result);p.saveData();

@@ -24,8 +24,10 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
     private final Map<UUID,Session> sessions=new HashMap<>();private final Map<UUID,Long> limits=new HashMap<>();
     private final Map<UUID,ViewRequest> deferred=new HashMap<>();
     private final Set<UUID> busy=new HashSet<>();private int pending;private volatile boolean closing;private TitleExpansion expansion;
+    /** 획득 경로 설정 (title-awards.yml·player-presets.yml). settled: 이번 접속에서 장부 확인을 마친 키 (같은 키로 DB를 다시 부르지 않게). */
+    private volatile TitleAwards awards=TitleAwards.EMPTY;private final Map<UUID,Set<String>> settled=new HashMap<>();
     TitleBridge(MagicCodexBridge plugin)throws Exception{
-        this.plugin=plugin;if(!new File(plugin.getDataFolder(),"titles.yml").exists())plugin.saveResource("titles.yml",false);reload();
+        this.plugin=plugin;for(String f:List.of("titles.yml","title-awards.yml","player-presets.yml"))if(!new File(plugin.getDataFolder(),f).exists())plugin.saveResource(f,false);reload();
         try{var settings=GenericDatabaseFile.load(plugin.getDataFolder().toPath());store=io.submit(()->new TitleStore(settings,plugin.getDataFolder().toPath().resolve("titles.db"))).get(15,TimeUnit.SECONDS);}catch(Exception e){io.shutdownNow();throw e;}
         Bukkit.getPluginManager().registerEvents(this,plugin);Bukkit.getMessenger().registerIncomingPluginChannel(plugin,TitleProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(plugin,TitleProtocol.RESPONSE);
         CmdKit.register(plugin,"/칭호·/유저관리 칭호·/컨텐츠관리 칭호",this::commands);
@@ -38,7 +40,16 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
     private void reload()throws Exception{
         var y=new YamlConfiguration();y.load(new File(plugin.getDataFolder(),"titles.yml"));var root=y.getConfigurationSection("titles");if(root==null||root.getKeys(false).size()>TitleProtocol.MAX_TITLES)throw new IllegalArgumentException("칭호 최대 96개");var next=new LinkedHashMap<String,TitleDefinition>();
         for(String id:root.getKeys(false)){var s=root.getConfigurationSection(id);if(s==null)throw new IllegalArgumentException(id);int side=switch(s.getString("side","")){case "prefix"->0;case "suffix"->1;default->throw new IllegalArgumentException("칭호 side 확인: "+id);};String hex=s.getString("color",side==0?"#96E4EC":"#DEC58E");if(!hex.matches("#[a-fA-F0-9]{6}"))throw new IllegalArgumentException("칭호 color 확인: "+id);next.put(id,new TitleDefinition(id,side,s.getString("name",id),Integer.parseInt(hex.substring(1),16),s.getBoolean("enabled",true),s.getBoolean("initial",false)));}
-        catalog=Collections.unmodifiableMap(next);
+        TitleAwards nextAwards;
+        try{var awardsFile=new YamlConfiguration();awardsFile.load(new File(plugin.getDataFolder(),"title-awards.yml"));var presetFile=new YamlConfiguration();presetFile.load(new File(plugin.getDataFolder(),"player-presets.yml"));nextAwards=TitleAwards.parse(awardsFile,presetFile);}
+        catch(Exception error){
+            // 시작할 때 획득 경로 파일 오류로 칭호(와 플러그인 전체)가 꺼지지 않게: 지급만 멈추고 알린다. 새로고침 때는 실패로 돌려 이전 설정을 유지.
+            if(catalog.isEmpty()){plugin.getLogger().severe("title-awards.yml·player-presets.yml 읽기 실패 — 칭호 자동 지급·사전 설정을 멈춥니다: "+error.getMessage());nextAwards=TitleAwards.EMPTY;}
+            else throw error;
+        }
+        catalog=Collections.unmodifiableMap(next);awards=nextAwards;settled.clear();
+        var missing=new TreeSet<String>();for(String id:nextAwards.referencedTitles())if(!next.containsKey(id))missing.add(id);
+        if(!missing.isEmpty())plugin.getLogger().warning("title-awards.yml·player-presets.yml 이 titles.yml 에 없는 칭호를 가리켜요 (지급 안 함): "+missing);
     }
     private boolean current(Player p){return !closing&&p.isOnline()&&Bukkit.getPlayer(p.getUniqueId())==p;}
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,r);}
@@ -50,8 +61,8 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
         UUID id=p.getUniqueId();if(!current(p))return;if(busy.contains(id)){if(reply)deferred.put(id,new ViewRequest(p,open,sequence));return;}busy.add(id);var defaults=defaults();
         work(()->store.load(id,defaults),state->{if(current(p)){busy.remove(id);cache.put(id,new Cached(state,plugin.names().name(p)));var next=deferred.remove(id);if(next!=null&&next.player()==p)reply(p,next.open(),next.sequence(),"");else if(reply)reply(p,open,sequence,"");}},()->{if(current(p)){busy.remove(id);var next=deferred.remove(id);if(reply||next!=null)CmdKit.notify(p,"warning","title-load","칭호 정보를 불러오지 못했어요","잠시 뒤 다시 열어 주세요",3000);}});
     }
-    @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer(),false,0,false);}
-    @EventHandler public void quit(PlayerQuitEvent e){UUID id=e.getPlayer().getUniqueId();cache.remove(id);busy.remove(id);sessions.remove(id);limits.remove(id);deferred.remove(id);}
+    @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer(),false,0,false);var p=e.getPlayer();Bukkit.getScheduler().runTaskLater(plugin,()->{if(current(p))applyPreset(p);},60);}
+    @EventHandler public void quit(PlayerQuitEvent e){UUID id=e.getPlayer().getUniqueId();cache.remove(id);settled.remove(id);busy.remove(id);sessions.remove(id);limits.remove(id);deferred.remove(id);}
     @Override public void onPluginMessageReceived(String channel,Player p,byte[] bytes){
         if(!TitleProtocol.REQUEST.equals(channel)||!current(p)||!p.hasPermission("magiccodex.titles"))return;
         TitleProtocol.Request r;try{r=TitleProtocol.request(bytes);}catch(IllegalArgumentException e){return;}
@@ -86,6 +97,48 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
         if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Use server thread");if(!AdminCommandRules.titleAllowed(catalog.get(title),remove)){done.accept(false);return;}var defaults=defaults();
         work(()->remove?store.revoke(id,title,defaults):store.grant(id,title,defaults),state->{Player p=Bukkit.getPlayer(id);if(p!=null&&current(p)){cache.put(id,new Cached(state,plugin.names().name(p)));if(sessions.containsKey(id))reply(p,false,0,remove?"칭호가 회수되었습니다.":"새 칭호를 획득했습니다.");}done.accept(true);},()->done.accept(false));
     }
+    // ------------------------------------------------------------------ 획득 경로 (2026-10-25, 메모 #21·#89)
+    /** 서버 스레드. 마법 발견(MagicDiscovery가 발견 직후·접속 로드 때 부름). 설정에 없는 마법은 DB를 부르지 않는다. */
+    void discovered(UUID id,Collection<String> spells){award(id,awards.discoveryKeys(spells));}
+    /** 서버 스레드. NPC 호감도가 바뀌었거나 접속 때 불러온 점수. */
+    void affinity(UUID id,Map<String,Integer> scores){award(id,awards.affinityKeys(scores));}
+    /** 서버 스레드. 물고기를 잡아 수조로 보냈을 때. */
+    void fish(UUID id,String fish,double cm){award(id,awards.fishKeys(fish,cm));}
+    /**
+     * 장부(codex_title_awards)에 처음 적힌 키의 칭호만 준다: 학교·야생이 같은 DB면 어디서 받든 한 번, 회수한 칭호도 다시 주지 않는다.
+     * 오프라인이어도 UUID로 저장한다 (알림만 생략). 실패한 키는 settled 에 넣지 않아 다음 사건·다음 접속 때 다시 시도한다.
+     */
+    private void award(UUID id,Map<String,String> keyed){
+        // 다른 기능(낚시·호감도) 처리 중에 예외를 던지지 않는다: 서버 스레드가 아니면 지급을 건너뛰고 다음 사건·접속 때 다시 맞춘다.
+        if(!Bukkit.isPrimaryThread()||closing||keyed.isEmpty())return;
+        var done=settled.get(id);var wanted=new LinkedHashMap<String,String>();var snapshot=catalog;
+        keyed.forEach((key,title)->{var d=snapshot.get(title);if(d!=null&&d.enabled()&&(done==null||!done.contains(key)))wanted.put(key,title);});
+        if(wanted.isEmpty())return;var defaults=defaults();
+        work(()->store.award(id,wanted,defaults),result->{
+            Player p=Bukkit.getPlayer(id);
+            if(p!=null&&current(p)){settled.computeIfAbsent(id,k->new HashSet<>()).addAll(wanted.keySet());cache.put(id,new Cached(result.state(),plugin.names().name(p)));
+                for(String t:result.granted()){var d=snapshot.get(t);CmdKit.notify(p,"shop","title-award:"+t,"새 칭호를 얻었어요",d==null?t:d.name(),0);}
+                if(!result.granted().isEmpty()){if(sessions.containsKey(id))reply(p,false,0,"새 칭호를 획득했습니다.");p.playSound(p.getLocation(),Sound.BLOCK_AMETHYST_BLOCK_CHIME,.35f,1.3f);}}
+            if(!result.granted().isEmpty())plugin.getLogger().info("칭호 획득: "+id+" "+result.granted()+" ← "+wanted.keySet());
+        },()->{});
+    }
+    /**
+     * player-presets.yml (메모 #89): 접속 3초 뒤 한 번. 기숙사(미리 정함 = 분류 거울 창시자 연출)·사전 해금 마법은 적용이 끝난 뒤 장부에 적고,
+     * 칭호는 장부와 함께 준다. 적용 중 서버가 꺼져도 다음 접속 때 같은 값으로 다시 적용(멱등)하고, 적용이 끝난 항목은 다시 하지 않는다.
+     */
+    private void applyPreset(Player p){
+        var preset=awards.preset(p.getUniqueId(),p.getName());if(preset==null)return;UUID id=p.getUniqueId();
+        var titleKeys=new LinkedHashMap<String,String>();for(String t:preset.titles())titleKeys.put("preset.title."+t,t);award(id,titleKeys);
+        var keys=new ArrayList<String>();if(preset.house()>=0)keys.add("preset.house");for(String s:preset.spells())keys.add("preset.spell."+s);if(keys.isEmpty())return;
+        work(()->store.unmarked(id,keys),todo->{
+            if(!current(p))return;
+            if(todo.contains("preset.house")){var school=plugin.schoolBridge();
+                if(school==null)plugin.getLogger().warning("사전 설정 기숙사: 학교 기능이 꺼져 있어 "+p.getName()+" 님에게 적용하지 못했어요 (다음 접속 때 다시 시도)");
+                else school.adminHouse(p,preset.house(),error->{if(error==null)mark(id,"preset.house");else plugin.getLogger().warning("사전 설정 기숙사 적용 실패 ("+p.getName()+"): "+error);});}
+            for(String s:preset.spells())if(todo.contains("preset.spell."+s))DiscoveryLink.adminSetLearned(id,s,true,error->{if(error==null)mark(id,"preset.spell."+s);else plugin.getLogger().warning("사전 해금 마법 "+s+" 적용 실패 ("+p.getName()+"): "+error);});
+        },()->{});
+    }
+    private void mark(UUID id,String key){work(()->{store.mark(id,key);return true;},ok->plugin.getLogger().info("사전 설정 적용: "+id+" "+key),()->plugin.getLogger().warning("사전 설정 적용 기록 실패 (다음 접속 때 같은 값으로 다시 적용): "+id+" "+key));}
     Map<String,String> registeredTitles(boolean remove){
         var result=new LinkedHashMap<String,String>();catalog.values().stream().filter(d->AdminCommandRules.titleAllowed(d,remove)).forEach(d->result.put(d.id(),d.name()));return Map.copyOf(result);
     }
@@ -114,7 +167,7 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
             for(var d:catalog.values())out.add((d.side()==0?"[앞] ":"[뒤] ")+d.name()+"  ("+d.id()+")"+(d.enabled()?"":" · 꺼짐")+(d.initial()?" · 기본 지급":""));
             CmdKit.lines(CmdKit.sender(ctx),out);
         }))),"등록된 칭호 목록","칭호 목록");
-        ChacaApi.reload(plugin,"칭호","titles.yml (칭호 목록)",()->{reload();for(Player p:Bukkit.getOnlinePlayers())if(sessions.containsKey(p.getUniqueId()))reply(p,false,0,"");});
+        ChacaApi.reload(plugin,"칭호","titles.yml (칭호 목록)·title-awards.yml (획득 경로)·player-presets.yml (사전 설정)",()->{reload();for(Player p:Bukkit.getOnlinePlayers())if(sessions.containsKey(p.getUniqueId()))reply(p,false,0,"");});
         ChacaApi.summary(plugin,"칭호",id->{var c=cache.get(id);if(c==null)return "";var st=c.state();var a=catalog.get(selected(st,st.prefix(),0));var b=catalog.get(selected(st,st.suffix(),1));return "보유 "+st.owned().size()+"개 · 앞 "+(a==null?"없음":a.name())+" · 뒤 "+(b==null?"없음":b.name());});
     }
     /** /칭호 수령: MagicDiscovery 플러그인의 public claimTitles(Player)를 부른다. */
@@ -155,5 +208,5 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
             var d=snapshot.get(title);CmdKit.ok(sender,who+" 님 "+(side==0?"앞":"뒤")+" 칭호 "+(d==null?"비움":"= "+d.name()));
         },()->CmdKit.fail(sender,"칭호를 저장하지 못했어요",null));
     }
-    @Override public void close(){closing=true;if(expansion!=null)expansion.unregister();io.execute(()->{try{store.close();}catch(Exception e){plugin.getLogger().warning("칭호 저장소 종료 실패");}});io.shutdown();try{if(!io.awaitTermination(20,TimeUnit.SECONDS))plugin.getLogger().severe("칭호 DB 종료 대기 초과");}catch(InterruptedException e){Thread.currentThread().interrupt();}cache.clear();sessions.clear();busy.clear();}
+    @Override public void close(){closing=true;if(expansion!=null)expansion.unregister();io.execute(()->{try{store.close();}catch(Exception e){plugin.getLogger().warning("칭호 저장소 종료 실패");}});io.shutdown();try{if(!io.awaitTermination(20,TimeUnit.SECONDS))plugin.getLogger().severe("칭호 DB 종료 대기 초과");}catch(InterruptedException e){Thread.currentThread().interrupt();}cache.clear();sessions.clear();busy.clear();settled.clear();}
 }

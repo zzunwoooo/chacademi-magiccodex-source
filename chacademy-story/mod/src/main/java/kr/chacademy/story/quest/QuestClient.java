@@ -43,11 +43,16 @@ public final class QuestClient {
         /** 화면 시계(ms): 단계를 받은 때 / 준비 완료가 된 때. */
         long shownAt, readyAt;
         int[] doneAt = new int[0];
+        /** 목표 지점 여러 개 (상호작용 블록, PointsS2C). 호출 목표와 따로 그린다. */
+        final List<QuestPackets.Point> points = new ArrayList<>();
 
         boolean active() { return !step.isEmpty(); }
     }
 
     static View view = new View();
+    /** 길잡이 별 화살표: 켜진 단계 session (0 = 꺼짐), 켠 시각, 끄기 시작한 시각 (0 = 켜져 있음). */
+    static int guideSession;
+    static long guideAt, guideEndAt;
     /** 방금 끝난 포탈 (들어가는 연출용). */
     static View vanishing;
     static long vanishAt;
@@ -60,7 +65,17 @@ public final class QuestClient {
         PayloadTypeRegistry.playS2C().register(QuestPackets.UpdateS2C.TYPE, QuestPackets.UpdateS2C.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.StepS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.StepS2C.INVALID) ctx.client().execute(() -> onStep(p)); });
         ClientPlayNetworking.registerGlobalReceiver(QuestPackets.UpdateS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.UpdateS2C.INVALID) ctx.client().execute(() -> onUpdate(p)); });
-        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; QuestWorld.reset(); }));
+        PayloadTypeRegistry.playS2C().register(QuestPackets.GuideS2C.TYPE, QuestPackets.GuideS2C.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.GuideS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.GuideS2C.INVALID) ctx.client().execute(() -> onGuide(p)); });
+        PayloadTypeRegistry.playS2C().register(QuestPackets.PointsS2C.TYPE, QuestPackets.PointsS2C.CODEC);
+        ClientPlayNetworking.registerGlobalReceiver(QuestPackets.PointsS2C.TYPE, (p, ctx) -> { if (p != QuestPackets.PointsS2C.INVALID) ctx.client().execute(() -> onPoints(p)); });
+        ClientPlayConnectionEvents.DISCONNECT.register((h, c) -> c.execute(() -> { view = new View(); vanishing = null; guideSession = 0; QuestWorld.reset(); }));
+        // 프록시로 서버를 옮길 때 (학교 → 야생, 둘 다 minecraft:overworld): 예전 서버 좌표의 포탈·징표·화살표가 새 서버 세계에 그려지지 않게
+        // 목표만 지운다 (HUD 글은 남김 — 스토리 서버로 돌아오면 서버가 단계를 다시 보낸다). TravelClient 와 같은 JOIN 시점.
+        ClientPlayConnectionEvents.JOIN.register((h, s, c) -> c.execute(() -> {
+            view.targetType = QuestPackets.TARGET_NONE; view.ready = false; view.npc = null; view.points.clear();
+            vanishing = null; guideSession = 0; QuestWorld.reset();
+        }));
         HudRenderCallback.EVENT.register(QuestHud::render);
         // 물·유리·반투명 블록을 다 그린 뒤에 그린다 (AFTER_ENTITIES 면 뒤의 물·유리가 글자·포탈 위에 덮여 흐려 보였음)
         WorldRenderEvents.AFTER_TRANSLUCENT.register(QuestWorld::render);
@@ -91,6 +106,25 @@ public final class QuestClient {
     }
 
     static long now() { return net.minecraft.Util.getMillis(); }
+
+    /** 길잡이 별: session 0 = 끄기 (서서히 사라짐), 지금 단계 session = 켜기. 다른 session 은 무시. */
+    private static void onGuide(QuestPackets.GuideS2C g) {
+        if (g.session() == 0) {
+            if (guideSession != 0 && guideEndAt == 0) guideEndAt = now();
+            return;
+        }
+        if (!view.active() || g.session() != view.session) return;
+        guideSession = g.session();
+        guideAt = now();
+        guideEndAt = 0;
+    }
+
+    /** 목표 지점: 지금 단계 session 것만 (단계 패킷 바로 뒤에 온다). */
+    private static void onPoints(QuestPackets.PointsS2C p) {
+        if (!view.active() || p.session() != view.session) return;
+        view.points.clear();
+        view.points.addAll(p.points());
+    }
 
     private static void onStep(QuestPackets.StepS2C p) {
         View old = view;

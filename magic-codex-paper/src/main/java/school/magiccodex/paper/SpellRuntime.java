@@ -66,9 +66,9 @@ final class SpellRuntime implements AutoCloseable {
                 else target=null;
             }
             }
-            if(r.target()!=SpellRules.Target.AIM&&target==null){CodexCommands.warn(p,"magic-target","시야 안의 몬스터를 바라봐 주세요");return REFUSED;}
-            if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){CodexCommands.warn(p,"magic-target","공중에 있는 몬스터에게 써 주세요");return REFUSED;}
-            if(r.target()==SpellRules.Target.BURNING_ENTITY&&!(target instanceof LivingEntity burning&&MagicProtectionLink.status(burning,"burn"))){CodexCommands.warn(p,"magic-target","화상 상태인 몬스터에게 써 주세요");return REFUSED;}
+            if(r.target()!=SpellRules.Target.AIM&&target==null){CodexCommands.warn(p,"magic-target","시야 안의 대상을 바라봐 주세요");return REFUSED;}
+            if(r.target()==SpellRules.Target.AIR_ENTITY&&((LivingEntity)target).isOnGround()){CodexCommands.warn(p,"magic-target","공중에 있는 대상에게 써 주세요");return REFUSED;}
+            if(r.target()==SpellRules.Target.BURNING_ENTITY&&!(target instanceof LivingEntity burning&&MagicProtectionLink.status(burning,"burn"))){CodexCommands.warn(p,"magic-target","화상 상태인 대상에게 써 주세요");return REFUSED;}
             // 1-6 #6: ground zones cast in the air land on the ground below (20 blocks); no ground = the zone stays at the aim height.
             if(r.ground()&&target==null&&!air)location=groundBelow(location);
         }

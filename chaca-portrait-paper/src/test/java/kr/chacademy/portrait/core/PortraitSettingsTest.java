@@ -72,6 +72,24 @@ class PortraitSettingsTest {
         c.set("server-id", "school"); c.set("auto.first-join", true); c.set("enabled", false);
         assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
     }
+    @Test void automaticGenerationServerListDefaultsToSchoolAndTutorialServers() {
+        var c = new YamlConfiguration();
+        c.set("auto.first-join", true);
+        c.set("server-id", "tutorial_2");
+        assertEquals(java.util.List.of("school", "tutorial_1", "tutorial_2"), new PortraitSettings(c, name -> null).autoServerIds);
+        assertTrue(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+        c.set("server-id", "tutorial1");
+        assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+        c.set("auto.server-ids", java.util.List.of("school", " tutorial1 ", "bad id!"));
+        var tutorial = new PortraitSettings(c, name -> null);
+        assertEquals(java.util.List.of("school", "tutorial1"), tutorial.autoServerIds);
+        assertTrue(tutorial.automaticGenerationAllowed());
+        c.set("server-id", "wild");
+        assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+        c.set("auto.server-ids", java.util.List.of());
+        c.set("server-id", "school");
+        assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
+    }
     @Test void blankServerIdFallsBackToSchoolButIsReportedAsUnset() {
         var c = new YamlConfiguration();
         var unset = new PortraitSettings(c, name -> null);

@@ -413,6 +413,14 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         return ps != null && ps.has(dialogue ? Kind.DIALOGUE : Kind.CUTSCENE, id);
     }
 
+    /**
+     * 길잡이 별 (MagicMythic 가 리플렉션으로 부른다): 0 = 가리킬 퀘스트 목표 없음, 1 = 화살표 표시 시작,
+     * 2 = 목표가 다른 세계, 3 = 이미 목표 근처 (10블록), 4 = 켜져 있던 화살표를 끔 (다시 시전).
+     */
+    public int questGuide(Player p) {
+        return quests == null ? 0 : quests.guide(p);
+    }
+
     public boolean hasMod(Player p) {
         return p.getListeningPluginChannels().contains(StoryCodec.CUTSCENE_PLAY);
     }
@@ -1485,6 +1493,12 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     /** 대화 재생 (예전 storydialogue &lt;플레이어&gt; &lt;id&gt; 와 같은 경로: 클라이언트 대화 파일 + 서버 끝 명령 세션). */
     private int playDialogueCommand(CommandContext<CommandSourceStack> ctx, Targets targets) throws CommandSyntaxException {
         String id = id(ctx, true);
+        // 공개 전인 장의 대화는 명령(끝 명령의 연결 포함)으로도 열지 않는다. 미리 보기는 /테스트 스토리 대화 (보상 없음)
+        if (quests != null && quests.idLocked(id)) {
+            getLogger().info("[스토리 장 공개] 공개 전인 장의 대화 " + id + " 재생 요청을 막았습니다 (/대화관리 장공개 목록)");
+            for (Player p : targets.get(ctx)) ChacaLink.notify(p, "system", "story-chapter-locked", quests.lockedTitle(), "", 3_000);
+            throw ChacaLink.error("대화 " + id + " 은(는) 아직 공개되지 않은 장이에요 (/대화관리 장공개 목록 · 미리보기는 /테스트 스토리 대화)");
+        }
         List<Player> t = targets.get(ctx);
         int n = 0;
         for (Player p : t) if (p.getListeningPluginChannels().contains(StoryCodec.DIALOGUE_VIEW)) { requestNicknameDialogue(p, id); n++; }
@@ -1495,6 +1509,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
 
     private int playCutsceneCommand(CommandContext<CommandSourceStack> ctx, Targets targets, int mode) throws CommandSyntaxException {
         String id = id(ctx, false);
+        if (quests != null && quests.idLocked(id)) {
+            getLogger().info("[스토리 장 공개] 공개 전인 장의 컷신 " + id + " 재생 요청을 막았습니다 (/대화관리 장공개 목록)");
+            throw ChacaLink.error("컷신 " + id + " 은(는) 아직 공개되지 않은 장이에요 (/대화관리 장공개 목록 · 미리보기는 /테스트 스토리 컷신)");
+        }
         List<Player> t = targets.get(ctx);
         int n = 0;
         for (Player p : t) if (requestCutscene(null, p, id, mode)) n++;

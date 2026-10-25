@@ -32,7 +32,7 @@ final class AdminCommandRulesTest {
         assertThrows(IllegalArgumentException.class,()->AdminCommandRules.validateCore(1,50,Double.NaN,1,0));
         assertThrows(IllegalArgumentException.class,()->AdminCommandRules.validateCore(1,50,10,0,0));
         assertThrows(IllegalArgumentException.class,()->AdminCommandRules.validateCore(1,50,10,1,3));
-        assertEquals(2,AdminCommandRules.affinity("마법가속"));assertThrows(IllegalArgumentException.class,()->AdminCommandRules.affinity("임의성향"));
+        assertEquals(2,AdminCommandRules.affinity("마법가속"));assertEquals(0,AdminCommandRules.affinity("지능"));assertEquals(0,AdminCommandRules.affinity("마력"));assertThrows(IllegalArgumentException.class,()->AdminCommandRules.affinity("임의성향"));
     }
     @Test void onlyRegisteredEnabledTitlesCanBeGranted(){
         var enabled=new TitleDefinition("good",0,"별빛",1,true,false);var disabled=new TitleDefinition("old",0,"옛 칭호",1,false,false);

@@ -15,13 +15,15 @@ final class ShopStore implements AutoCloseable {
  }
  /** origin: 거래를 시작한 서버(mailbox-origin.txt). 빈 값은 이 열이 생기기 전의 기록이며 자동 복구 대상에서 제외한다. */
  record Order(String id,UUID owner,String state,String mode,String product,int quantity,String total,byte[] bytes,String title,String origin,long created){}
- private final ConnectionHolder holder;private final String shops,products,orders,bindings,version;
- ShopStore(DatabaseSettings settings,Path path)throws Exception{holder=settings.holder(path);shops=settings.table("shops","shops");products=settings.table("shop_products","shop_products");orders=settings.table("shop_orders","shop_orders");bindings=settings.table("shop_bindings","shop_bindings");version=settings.table("shop_version","shop_version");String tail=settings.mariaDb()?" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4":"";try(var s=db().createStatement()){
+ private final ConnectionHolder holder;private final String shops,products,orders,bindings,version,tutorial;
+ ShopStore(DatabaseSettings settings,Path path)throws Exception{holder=settings.holder(path);shops=settings.table("shops","shops");products=settings.table("shop_products","shop_products");orders=settings.table("shop_orders","shop_orders");bindings=settings.table("shop_bindings","shop_bindings");version=settings.table("shop_version","shop_version");tutorial=settings.table("shop_tutorial","shop_tutorial");String tail=settings.mariaDb()?" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4":"";try(var s=db().createStatement()){
  s.execute("CREATE TABLE IF NOT EXISTS "+shops+"(id VARCHAR(48) PRIMARY KEY,title VARCHAR(80) NOT NULL,portrait VARCHAR(120) NOT NULL,revision BIGINT NOT NULL)"+tail);
  s.execute("CREATE TABLE IF NOT EXISTS "+products+"(id VARCHAR(36) PRIMARY KEY,shop VARCHAR(48) NOT NULL,name VARCHAR(120) NOT NULL,payload BLOB NOT NULL,buy VARCHAR(32) NOT NULL,sell VARCHAR(32) NOT NULL)"+tail);
  s.execute("CREATE TABLE IF NOT EXISTS "+orders+"(id VARCHAR(36) PRIMARY KEY,owner VARCHAR(36) NOT NULL,request_key VARCHAR(36) NOT NULL UNIQUE,state VARCHAR(20) NOT NULL,mode VARCHAR(8) NOT NULL,product VARCHAR(36) NOT NULL,quantity INTEGER NOT NULL,total VARCHAR(32) NOT NULL,payload BLOB NOT NULL,title VARCHAR(80) NOT NULL,created BIGINT NOT NULL)"+tail);
  s.execute("CREATE TABLE IF NOT EXISTS "+bindings+"(origin VARCHAR(36) NOT NULL,npc VARCHAR(80) NOT NULL,shop VARCHAR(48) NOT NULL,PRIMARY KEY(origin,npc))"+tail);
  s.execute("CREATE TABLE IF NOT EXISTS "+version+"(id INTEGER PRIMARY KEY,revision BIGINT NOT NULL)"+tail);
+ // 튜토리얼 전용 재료 상점 대상 유저 (2026-10-25, 메모 #12). started = 구매를 세기 시작한 시각.
+ s.execute("CREATE TABLE IF NOT EXISTS "+tutorial+"(owner VARCHAR(36) PRIMARY KEY,started BIGINT NOT NULL)"+tail);
  }
  // 추가 전용 스키마 변경: 이미 있으면 건너뛴다 (SQLite·MariaDB 공통).
  boolean hasOrigin=true;try(var s=db().createStatement();var r=s.executeQuery("SELECT origin FROM "+orders+" WHERE 1=0")){r.next();}catch(SQLException e){hasOrigin=false;}
@@ -108,5 +110,17 @@ final class ShopStore implements AutoCloseable {
  List<Order> paid(UUID owner)throws SQLException{return open(owner).stream().filter(o->o.state.equals("paid")&&o.mode.equals("buy")).toList();}
  /** 서버 시작 시: 이 서버가 만든 구매 기록 중 출금 전(prepared)인 것은 부작용이 없으므로 실패로 닫는다. */
  int failPrepared(String origin)throws SQLException{if(origin.isEmpty())return 0;try(var s=db().prepareStatement("UPDATE "+orders+" SET state='failed' WHERE state='prepared' AND mode='buy' AND origin=?")){s.setString(1,origin);return s.executeUpdate();}}
+ // ------------------------------------------------------------------ 튜토리얼 전용 재료 상점 (2026-10-25, 메모 #12)
+ /** 튜토리얼 상점 대상이면 구매를 세기 시작한 시각, 아니면 0. */
+ long tutorialStarted(UUID owner)throws SQLException{try(var s=db().prepareStatement("SELECT started FROM "+tutorial+" WHERE owner=?")){s.setString(1,owner.toString());try(var r=s.executeQuery()){return r.next()?Math.max(1,r.getLong(1)):0;}}}
+ /** 대상으로 지정. 이미 대상이면 그대로 둔다(스토리 시작명령이 여러 번 실행돼도 구매 기록 유지). reset = 지금부터 다시 센다. 시작 시각을 돌려준다. */
+ long tutorialStart(UUID owner,boolean reset)throws Exception{return tx(false,()->{long now=System.currentTimeMillis();
+  if(reset)try(var s=db().prepareStatement("UPDATE "+tutorial+" SET started=? WHERE owner=?")){s.setLong(1,now);s.setString(2,owner.toString());if(s.executeUpdate()==1)return now;}
+  long had=tutorialStarted(owner);if(had>0)return had;
+  try(var s=db().prepareStatement("INSERT INTO "+tutorial+"(owner,started) VALUES(?,?)")){s.setString(1,owner.toString());s.setLong(2,now);s.executeUpdate();}return now;});}
+ boolean tutorialEnd(UUID owner)throws Exception{return tx(false,()->{try(var s=db().prepareStatement("DELETE FROM "+tutorial+" WHERE owner=?")){s.setString(1,owner.toString());return s.executeUpdate()==1;}});}
+ /** since 이후 이 유저가 결제를 마친(paid·done) 구매 수량, 상품 ID별. productIds 밖의 상품은 세지 않는다. */
+ Map<String,Integer> bought(UUID owner,Collection<String> productIds,long since)throws SQLException{var out=new HashMap<String,Integer>();if(productIds.isEmpty())return out;
+  try(var s=db().prepareStatement("SELECT product,SUM(quantity) FROM "+orders+" WHERE owner=? AND mode='buy' AND state IN ('paid','done') AND created>=? GROUP BY product")){s.setString(1,owner.toString());s.setLong(2,since);try(var r=s.executeQuery()){while(r.next())if(productIds.contains(r.getString(1)))out.put(r.getString(1),r.getInt(2));}}return out;}
  @Override public void close()throws Exception{holder.close();}
 }

@@ -180,8 +180,15 @@ final class HousingStore {
         }, done);
     }
 
-    /** 방 전체. viewer 가 주인이 아니고 countVisit 이면 오늘 방문을 한 번 센다. 방이 없으면 null. */
-    void load(UUID owner, UUID viewer, boolean countVisit, Consumer<RoomData> done) {
+    /** 평생 한 번 방문 기록 (visits.count-once-per: ever) 에 쓰는 day 값. 하루 기록 정리(heartbeat)에서 지우지 않는다. */
+    static final int EVER_DAY = 0;
+
+    /**
+     * 방 전체. viewer 가 주인이 아니고 countVisit 이면 방문을 센다: 오늘 방문(today)은 방문자별 하루 한 번,
+     * 누적 방문(visits)은 onceEver=false 면 방문자별 하루 한 번, true 면 방문자별 평생 한 번 (#51). 방이 없으면 null.
+     */
+    void load(UUID owner, UUID viewer, boolean countVisit, Consumer<RoomData> done) { load(owner, viewer, countVisit, false, done); }
+    void load(UUID owner, UUID viewer, boolean countVisit, boolean onceEver, Consumer<RoomData> done) {
         async("방 읽기", c -> {
             if (room(c, owner) == null) return null;
             int day = today();
@@ -189,6 +196,7 @@ final class HousingStore {
                 int added;
                 try (var s = c.prepareStatement(insertIgnore() + tVisit + "(owner,visitor,day) VALUES(?,?,?)")) {
                     s.setString(1, owner.toString()); s.setString(2, viewer.toString()); s.setInt(3, day); added = s.executeUpdate();
+                    if (onceEver) { s.setInt(3, EVER_DAY); added = s.executeUpdate(); }
                 }
                 if (added > 0) try (var s = c.prepareStatement("UPDATE " + tRoom + " SET visits=visits+1,rev=rev+1 WHERE owner=?")) { s.setString(1, owner.toString()); s.executeUpdate(); }
             }
@@ -268,20 +276,45 @@ final class HousingStore {
         }), done);
     }
 
-    /** 좋아요 켜기/끄기. @return 새 상태 (true = 좋아요) */
-    void like(UUID owner, UUID liker, Consumer<Boolean> done) {
+    static final String LIKE_OK = "", LIKE_ALREADY = "이미 좋아요를 누른 방이에요.", LIKE_USED = "좋아요는 한 번만 누를 수 있어요. 이미 다른 방에 눌렀어요.";
+    /**
+     * 좋아요(추천) — 한 번 누르면 취소·다시 누르기 없음 (#78, 2026-10-25. 예전에는 켜기/끄기 토글이라 끄고 다시 켜면 몇 번이든 됐음).
+     * global = true 면 모든 방을 통틀어 한 사람 한 번 (like.limit: global). 기록은 공용 DB codex_housing_like (학교·야생 공유).
+     * @return LIKE_OK = 눌림, 그 밖 = 이유 문구, null = DB 오류
+     */
+    void like(UUID owner, UUID liker, boolean global, Consumer<String> done) {
         async("좋아요", c -> tx(t -> {
-            boolean had;
-            try (var s = t.prepareStatement("SELECT 1 FROM " + tLike + " WHERE owner=? AND liker=?")) {
-                s.setString(1, owner.toString()); s.setString(2, liker.toString()); try (var r = s.executeQuery()) { had = r.next(); }
+            try (var s = t.prepareStatement("SELECT owner FROM " + tLike + " WHERE liker=?" + (global ? "" : " AND owner=?") + " LIMIT 1")) {
+                s.setString(1, liker.toString()); if (!global) s.setString(2, owner.toString());
+                try (var r = s.executeQuery()) { if (r.next()) return owner.toString().equals(r.getString(1)) ? LIKE_ALREADY : LIKE_USED; }
             }
-            if (had) try (var s = t.prepareStatement("DELETE FROM " + tLike + " WHERE owner=? AND liker=?")) { s.setString(1, owner.toString()); s.setString(2, liker.toString()); s.executeUpdate(); }
-            else try (var s = t.prepareStatement("INSERT INTO " + tLike + "(owner,liker,created) VALUES(?,?,?)")) { s.setString(1, owner.toString()); s.setString(2, liker.toString()); s.setLong(3, System.currentTimeMillis()); s.executeUpdate(); }
-            try (var s = t.prepareStatement("UPDATE " + tRoom + " SET likes=" + (had ? "CASE WHEN likes>0 THEN likes-1 ELSE 0 END" : "likes+1") + ",rev=rev+1 WHERE owner=?")) {
-                s.setString(1, owner.toString()); s.executeUpdate();
+            int added;
+            try (var s = t.prepareStatement(insertIgnore() + tLike + "(owner,liker,created) VALUES(?,?,?)")) {
+                s.setString(1, owner.toString()); s.setString(2, liker.toString()); s.setLong(3, System.currentTimeMillis()); added = s.executeUpdate();
             }
-            return !had;
+            if (added == 0) return LIKE_ALREADY; // 다른 서버에서 같은 순간에 눌림 (방별 기본키)
+            try (var s = t.prepareStatement("UPDATE " + tRoom + " SET likes=likes+1,rev=rev+1 WHERE owner=?")) { s.setString(1, owner.toString()); s.executeUpdate(); }
+            return LIKE_OK;
         }), done);
+    }
+
+    /**
+     * 누적 방문 순위 (#51): 방 누적 방문 수(codex_housing_room.visits) 많은 순 상위 limit 개 (같으면 UUID 순). 이름은 MagicCodex 등록 닉네임.
+     * 요청할 때만 읽는다 (주기 순회 없음). @return 목록, null = DB 오류
+     */
+    void topVisited(int limit, Consumer<List<RoomRow>> done) {
+        int n = Math.clamp(limit, 1, 100);
+        async("방문 순위", c -> {
+            var rows = new ArrayList<RoomRow>();
+            try (var s = c.prepareStatement("SELECT * FROM " + tRoom + " WHERE visits>0 ORDER BY visits DESC, owner LIMIT ?")) {
+                s.setInt(1, n);
+                try (var r = s.executeQuery()) { while (r.next()) { try { rows.add(row(r)); } catch (RuntimeException bad) { /* 깨진 줄은 건너뜀 */ } } }
+            }
+            var names = displayNames.read(rows.stream().map(RoomRow::owner).toList());
+            var out = new ArrayList<RoomRow>();
+            for (var row : rows) out.add(new RoomRow(row.owner(), HousingNames.shown(names.get(row.owner())), row.house(), row.skin(), row.slim(), row.size(), row.active(), row.likes(), row.visits(), row.rev()));
+            return List.copyOf(out);
+        }, done);
     }
 
     /** 관리자: 방 정보 한 줄 (요약·보기용). 방이 없으면 null. */
@@ -475,7 +508,7 @@ final class HousingStore {
                 s.executeBatch();
             }
             try (var s = c.prepareStatement("DELETE FROM " + tOnline + " WHERE seen<?")) { s.setLong(1, now - ONLINE_TTL * 4); s.executeUpdate(); }
-            try (var s = c.prepareStatement("DELETE FROM " + tVisit + " WHERE day<?")) { s.setInt(1, today() - 1); s.executeUpdate(); }
+            try (var s = c.prepareStatement("DELETE FROM " + tVisit + " WHERE day<? AND day<>" + EVER_DAY)) { s.setInt(1, today() - 1); s.executeUpdate(); }
             return null;
         }, null);
     }

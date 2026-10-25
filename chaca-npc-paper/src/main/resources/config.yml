@@ -107,6 +107,10 @@ hints:
 affinity:
   # MagicCodexBridge 연결이 없을 때만 쓰는 임시 점수 (0~100, 10 이상 아는 사이 · 30 친한 사이 · 60 단짝 · 90 특별)
   default-score: 10
+  # 호의적 AI 대화 보상 (메모 #83): AI 가 대답마다 liked(마음에 들었는지)를 함께 정함 — 그 판정 기준 문구.
+  # liked=true 면 MagicCodexBridge 가 유저별·NPC별 하루 횟수 안에서 소량 지급 (지급량·횟수는 Bridge affinity.yml chat-reward).
+  # 비우면("") 대화 호감도 보상을 쓰지 않음. 버튼 미리 만든 대답·관리자 테스트는 지급 안 함.
+  chat-reward-criteria: "학생의 이번 말이 너의 성격·좋아하는 것에 잘 맞아 정말 기분이 좋아졌다(진심 어린 칭찬·공감·네가 좋아하는 이야기 등). 평범한 인사·질문·부탁, 무례하거나 억지스러운 말은 해당하지 않는다."
 
 # 선물 (대화 버튼 3번 "선물 줄 거 있어" → 선물 창). 하루 횟수 한도는 MagicCodexBridge affinity.yml 의 gift-daily-count
 # 선물 아이템 = lore 첫 줄 "선물", 둘째 줄 등급 (색 코드 무시). 캐릭터 파일 gift_likes.liked 에 있으면 등급 점수, 없으면 not-liked.

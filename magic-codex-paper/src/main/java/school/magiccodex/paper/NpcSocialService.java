@@ -52,6 +52,14 @@ final class NpcSocialService implements Listener, AutoCloseable {
     private final int defaultCap;
     private final int giftDailyCount;
     private final ZoneId zone;
+    /** #83 호의적 AI 대화 보상: 한 번에 오르는 양 · NPC 하나당 하루 횟수 (affinity.yml chat-reward). */
+    private final int chatRewardAmount;
+    private final int chatRewardCount;
+    /** #39 호감도 퀘스트 연결 (affinity.yml gate-quests): NPC → (상한 30·60·90 → 퀘스트 ID). 비어 있으면 아무 일 없음. */
+    private final Map<String, Map<Integer, String>> gateQuests = new java.util.HashMap<>();
+    /** 퀘스트 ID → {NPC, 완료 시 올릴 하트 단계(1·2·3)} */
+    private final Map<String, String[]> questGates = new java.util.HashMap<>();
+    private final java.util.Set<String> gateOffering = ConcurrentHashMap.newKeySet();
     private volatile boolean closing;
     private boolean catalogFailureReported;
     private NpcSocialFacade facade;
@@ -74,6 +82,9 @@ final class NpcSocialService implements Listener, AutoCloseable {
         defaultCap = Math.max(0, cfg.getInt("default-daily-cap", 5));
         giftDailyCount = Math.max(1, cfg.getInt("gift-daily-count", 1));
         zone = ZoneId.of(cfg.getString("timezone", "Asia/Seoul"));
+        chatRewardAmount = Math.max(0, cfg.getInt("chat-reward.amount", 1));
+        chatRewardCount = Math.max(0, cfg.getInt("chat-reward.daily-count", 3));
+        loadGateQuests(cfg.getConfigurationSection("gate-quests"));
         origin = serverOrigin(folder);
 
         var settings = DatabaseSettings.load(folder.resolve("database.properties"));
@@ -96,6 +107,10 @@ final class NpcSocialService implements Listener, AutoCloseable {
             resolveGifts(p);
         }
         registerDialogueHooks();
+        QuestBridge questBridge = plugin.questBridge();
+        if (questBridge != null) {
+            questBridge.onCompleted(this::questCompleted);
+        }
         facade = new NpcSocialFacade(this);
         Bukkit.getServicesManager().register(NpcSocialFacade.class, facade, plugin, org.bukkit.plugin.ServicePriority.Normal);
     }
@@ -150,6 +165,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         }
     }
 
+    /** 하루 기준 = timezone 의 자정 (ChacaNPC 하루 대화 횟수·의뢰 일일 주기와 같은 기준). 날짜 문자열로 공유 DB 에 기록. */
     String today() {
         return LocalDate.now(zone).toString();
     }
@@ -160,12 +176,22 @@ final class NpcSocialService implements Listener, AutoCloseable {
 
     private void remember(UUID player, String npc, AffinityStore.Row row) {
         cache.computeIfAbsent(player, k -> new ConcurrentHashMap<>()).put(npc, row);
+        titleHook(player, Map.of(npc, row.score()));
+    }
+
+    /** 칭호 지급 훅 (메모 #21): 호감도 칭호는 title-awards.yml, 중복은 칭호 장부가 막는다. 서버 스레드에서만. */
+    private void titleHook(UUID player, Map<String, Integer> scores) {
+        var titles = plugin.titleService();
+        if (titles != null && Bukkit.isPrimaryThread()) titles.affinity(player, scores);
     }
 
     private void load(UUID player) {
         work(() -> store.loadAll(player)).thenAccept(map -> {
             if (Bukkit.getPlayer(player) != null) {
                 cache.put(player, new ConcurrentHashMap<>(map));
+                var scores = new LinkedHashMap<String, Integer>();
+                map.forEach((npc, row) -> scores.put(npc, row.score()));
+                titleHook(player, scores);
             }
         });
     }
@@ -387,6 +413,8 @@ final class NpcSocialService implements Listener, AutoCloseable {
     CompletableFuture<AffinityStore.Row> affinity(UUID player, String npc) {
         return work(() -> store.load(player, npc)).thenApply(row -> {
             remember(player, npc, row);
+            // 대화를 열 때도 확인: 설정을 나중에 넣었거나 다른 서버에서 상한에 닿은 경우 (이미 받았으면 아무 일 없음)
+            offerGateQuest(player, npc, row);
             return row;
         });
     }
@@ -416,7 +444,136 @@ final class NpcSocialService implements Listener, AutoCloseable {
         long now = System.currentTimeMillis();
         return work(() -> store.add(player, npc, source, value, cap, day, now)).thenApply(r -> {
             remember(player, npc, r.row());
+            reachedGate(player, npc, r);
             return r;
+        });
+    }
+
+    /**
+     * #83 호의적 AI 대화 보상 (NPC가 이번 대화를 마음에 들어 했다). NPC 하나당 하루 chat-reward.daily-count 번,
+     * 한 번에 chat-reward.amount. 상한(30·60·90, 퀘스트 미완료)이면 오르지 않고 횟수도 쓰지 않는다.
+     * 횟수는 공유 DB(codex_affinity_daily, source "chat_reward")에 날짜별로 남아 서버 이동·재접속으로 초기화되지 않는다.
+     */
+    CompletableFuture<AffinityStore.AddResult> chatReward(UUID player, String npc) {
+        final int value = modified(player, chatRewardAmount);
+        String day = today();
+        int count = chatRewardCount;
+        long now = System.currentTimeMillis();
+        return work(() -> store.addCounted(player, npc, "chat_reward", value, count, day, now)).thenApply(r -> {
+            remember(player, npc, r.row());
+            reachedGate(player, npc, r);
+            return r;
+        });
+    }
+
+    // ------------------------------------------------------------------ 호감도 퀘스트 연결 (#39, #100)
+
+    /**
+     * affinity.yml gate-quests:
+     * <pre>
+     * gate-quests:
+     *   ella:
+     *     30: ella_affinity_1
+     *     60: ella_affinity_2
+     *     90: ella_affinity_3
+     * </pre>
+     * 상한(30·60·90)에 닿으면 그 퀘스트를 기존 의뢰 수락 경로로 자동으로 준다. 그 퀘스트를 완료(보상 받기)하면
+     * 하트 단계가 올라 다음 상한이 열린다 (custom heart 동작과 같음). 비어 있으면 아무 일 없음.
+     */
+    private void loadGateQuests(org.bukkit.configuration.ConfigurationSection root) {
+        if (root == null) {
+            return;
+        }
+        for (String npc : root.getKeys(false)) {
+            var section = root.getConfigurationSection(npc);
+            if (section == null || !npc.matches("[a-z0-9_-]{1,48}")) {
+                continue;
+            }
+            Map<Integer, String> byGate = new java.util.TreeMap<>();
+            for (String key : section.getKeys(false)) {
+                String quest = section.getString(key, "").trim();
+                int level = gateLevel(key);
+                if (level < 1 || quest.isEmpty()) {
+                    if (!quest.isEmpty()) plugin.getLogger().warning("affinity.yml gate-quests." + npc + "." + key + ": 30 / 60 / 90 중 하나여야 해요");
+                    continue;
+                }
+                if (questGates.containsKey(quest)) {
+                    plugin.getLogger().warning("affinity.yml gate-quests: 퀘스트 " + quest + " 가 두 번 적혀 있어요 (처음 것만 씀)");
+                    continue;
+                }
+                byGate.put(level * 30, quest);
+                questGates.put(quest, new String[]{npc, String.valueOf(level)});
+            }
+            if (!byGate.isEmpty()) {
+                gateQuests.put(npc, byGate);
+            }
+        }
+    }
+
+    /** "30" → 1, "60" → 2, "90" → 3 (깬 뒤의 하트 단계), 그 밖은 0. */
+    static int gateLevel(String key) {
+        return switch (key == null ? "" : key.trim()) {
+            case "30" -> 1;
+            case "60" -> 2;
+            case "90" -> 3;
+            default -> 0;
+        };
+    }
+
+    /** 지금 상한에 닿아 있으면 그 상한의 퀘스트 ID (설정 없으면 null). */
+    static String gateQuest(Map<Integer, String> byGate, AffinityStore.Row row) {
+        if (byGate == null || row == null || row.heart() >= 3) {
+            return null;
+        }
+        int gate = AffinityStore.gate(row.heart());
+        return row.score() >= gate ? byGate.get(gate) : null;
+    }
+
+    private void reachedGate(UUID player, String npc, AffinityStore.AddResult r) {
+        if (r != null && r.applied() > 0) {
+            offerGateQuest(player, npc, r.row());
+        }
+    }
+
+    /** 상한에 닿아 있고 그 상한 퀘스트가 설정돼 있으며 아직 받지도 깨지도 않았으면 자동으로 준다. 메인 스레드. */
+    private void offerGateQuest(UUID player, String npc, AffinityStore.Row row) {
+        String quest = gateQuest(gateQuests.get(npc), row);
+        QuestBridge q = plugin.questBridge();
+        Player p = Bukkit.getPlayer(player);
+        if (quest == null || q == null || p == null || !q.npcOfferable(p, quest)) {
+            return;   // 이미 진행 중·완료, 권한 없음, 공개 전 → 다음 대화·선물 때 다시 확인
+        }
+        String key = player + "|" + quest;
+        if (!gateOffering.add(key)) {
+            return;   // 같은 지급이 처리 중
+        }
+        q.acceptFromDialogue(p, quest, ok -> {
+            gateOffering.remove(key);
+            if (Boolean.TRUE.equals(ok)) {
+                plugin.getLogger().info("NPC 호감도 퀘스트 지급 player=" + player + " npc=" + npc + " quest=" + quest + " (호감도 " + row.score() + ")");
+            }
+        });
+    }
+
+    /** QuestBridge: 퀘스트 보상까지 끝남. 호감도 퀘스트면 하트 단계를 올려 다음 상한을 연다. 메인 스레드. */
+    private void questCompleted(UUID player, String questId) {
+        String[] gate = questGates.get(questId);
+        if (gate == null || closing) {
+            return;
+        }
+        String npc = gate[0];
+        int level = Integer.parseInt(gate[1]);
+        setHeart(player, npc, level).thenAccept(row -> {
+            plugin.getLogger().info("NPC 호감도 퀘스트 완료 player=" + player + " npc=" + npc + " quest=" + questId + " → 하트 " + row.heart() + " (상한 " + AffinityStore.gate(row.heart()) + ")");
+            Player p = Bukkit.getPlayer(player);
+            if (p != null) {
+                notify(p, npc, "heart", String.valueOf(level));
+                offerGateQuest(player, npc, row);   // 이미 다음 상한에도 닿아 있는 경우 (관리자 변경 등)
+            }
+        }).exceptionally(error -> {
+            plugin.getLogger().severe("NPC 호감도 퀘스트 완료 반영 실패 player=" + player + " npc=" + npc + " quest=" + questId
+                    + " — /유저관리 <닉네임> 호감도 " + npc + " 하트 설정 " + level + " 로 직접 열어 주세요");
+            return null;
         });
     }
 
@@ -448,6 +605,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
         return work(() -> store.commitGift(token, now)).thenApply(r -> {
             if (r != null) {
                 remember(player, npc, r.row());
+                reachedGate(player, npc, r);
             }
             // 확정됐거나(이번 또는 이전에) 이미 처리된 토큰: 영수증은 더 필요 없다.
             Player online = Bukkit.getPlayer(player);

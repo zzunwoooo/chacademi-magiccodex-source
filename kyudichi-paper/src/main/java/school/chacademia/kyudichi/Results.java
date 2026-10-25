@@ -135,7 +135,7 @@ final class Results {
         }
         if (match.opt.rated() && !voided)
             p.sendMessage(Component.text("레이팅 " + (int) m.ratingBefore + " → " + ratingAfter + " (" + (delta >= 0 ? "+" : "") + delta + ")  " + after.label, NamedTextColor.AQUA));
-        else if (!voided) p.sendMessage(Component.text("테스트 경기라 레이팅은 바뀌지 않았어요.", NamedTextColor.GRAY));
+        else if (!voided) p.sendMessage(Component.text((match.custom() ? "커스텀" : "테스트") + " 경기라 레이팅은 바뀌지 않았어요.", NamedTextColor.GRAY));
     }
 
     static List<String> describeTiers(RatingMath r) {

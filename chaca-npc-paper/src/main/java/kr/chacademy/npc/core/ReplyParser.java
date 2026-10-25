@@ -12,9 +12,12 @@ public final class ReplyParser {
     private ReplyParser() {
     }
 
-    /** 검사를 통과한 NPC 대답. hint 는 참고용이다 (힌트 횟수는 서버가 프롬프트에 넣은 시점 기준으로 센다). */
+    /**
+     * 검사를 통과한 NPC 대답. hint 는 참고용이다 (힌트 횟수는 서버가 프롬프트에 넣은 시점 기준으로 센다).
+     * liked = NPC가 이번 대화를 마음에 들어 했다 (#83 호의적 대화 호감도 보상, 하루 횟수는 MagicCodexBridge 가 센다).
+     */
     public record AiReply(String line, int mood, String quest, String hint, String memo,
-                          String promise, Long rumorId, boolean end) {
+                          String promise, Long rumorId, boolean end, boolean liked) {
     }
 
     public record Limits(int lineMax, int memoMax, Set<String> allowedQuests, Set<String> allowedHints,
@@ -35,7 +38,7 @@ public final class ReplyParser {
             // 출력이 잘린 경우: 대사만이라도 건진다
             String partial = StreamingLineExtractor.decodeLine(raw);
             String line = cleanLine(partial, limits.lineMax());
-            return line == null ? null : new AiReply(line, 0, null, null, null, null, null, false);
+            return line == null ? null : new AiReply(line, 0, null, null, null, null, null, false, false);
         }
         String line = cleanLine(Json.str(m, "line"), limits.lineMax());
         if (line == null) {
@@ -67,7 +70,8 @@ public final class ReplyParser {
             }
         }
         boolean end = Boolean.TRUE.equals(m.get("end"));
-        return new AiReply(line, mood, quest, hint, memo, promise, rumorId, end);
+        boolean liked = Boolean.TRUE.equals(m.get("liked"));
+        return new AiReply(line, mood, quest, hint, memo, promise, rumorId, end, liked);
     }
 
     /** 대사 정리: 제어문자·§ 색 코드 제거, 공백 정리, 길이 제한(가능하면 문장 끝에서 자름). */

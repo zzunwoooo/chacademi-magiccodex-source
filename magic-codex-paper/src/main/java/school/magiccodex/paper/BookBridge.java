@@ -42,10 +42,11 @@ import school.magiccodex.protocol.BookProtocol;
  * returns it, and a token is consumed by its first CLOSE.
  */
 final class BookBridge implements Listener, PluginMessageListener, AutoCloseable {
-    record Book(String id, String title, List<BookProtocol.Page> pages, List<String> commands) {}
+    /** requiredIntelligence: 펼치는 데 필요한 지능 (0 = 제한 없음). books.&lt;id&gt;.required-intelligence */
+    record Book(String id, String title, List<BookProtocol.Page> pages, List<String> commands, int requiredIntelligence) {}
     private record Session(long token, String book) {}
 
-    static final int MAX_COMMANDS = 20, MAX_COMMAND_LENGTH = 256;
+    static final int MAX_COMMANDS = 20, MAX_COMMAND_LENGTH = 256, MAX_REQUIRED_INTELLIGENCE = 1_000_000;
     private final MagicCodexBridge plugin;
     private final File file, blockFile;
     private final BookReadStore store;
@@ -100,7 +101,7 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         links = Collections.unmodifiableMap(nextLinks);
     }
 
-    private static Book parse(String id, ConfigurationSection s) {
+    static Book parse(String id, ConfigurationSection s) {
         if (!BookProtocol.validId(id)) throw new IllegalArgumentException("책 ID는 영문 소문자·숫자·_·- 1~48자: " + id);
         if (s == null) throw new IllegalArgumentException("books." + id + " 형식 확인");
         String title = s.getString("title", "").strip();
@@ -125,7 +126,9 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
             commands.add(line);
         }
         if (commands.size() > MAX_COMMANDS) throw new IllegalArgumentException("books." + id + ".commands 는 " + MAX_COMMANDS + "줄까지");
-        return new Book(id, title, List.copyOf(pages), List.copyOf(commands));
+        int required = s.getInt("required-intelligence", 0);
+        if (required < 0 || required > MAX_REQUIRED_INTELLIGENCE) throw new IllegalArgumentException("books." + id + ".required-intelligence 는 0~" + MAX_REQUIRED_INTELLIGENCE + " 정수 (0 = 제한 없음)");
+        return new Book(id, title, List.copyOf(pages), List.copyOf(commands), required);
     }
     private static String text(Object o) { return o == null ? "" : String.valueOf(o).replace("\r\n", "\n").stripTrailing(); }
 
@@ -153,6 +156,10 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         Book book = books.get(id);
         if (book == null) { CmdKit.notify(p, "warning", "book-missing", "책을 펼칠 수 없어요", "관리자에게 알려 주세요", 3000); return false; }
         if (!modded(p)) { CmdKit.notify(p, "warning", "book-mod", "책을 펼칠 수 없어요", "차카데미 모드를 업데이트해 주세요", 3000); return false; }
+        if (!intelligenceMet(book.requiredIntelligence(), book.requiredIntelligence() > 0 ? plugin.magicPower(p) : 0)) {
+            CmdKit.notify(p, "warning", "book-intelligence", "이 책은 아직 읽을 조건이 충족되지 않았어요", "필요 지능 " + book.requiredIntelligence(), 3000);
+            return false;
+        }
         long token;
         do token = random.nextLong(); while (token == 0);
         byte[] bytes;
@@ -166,6 +173,9 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         p.sendPluginMessage(plugin, BookProtocol.RESPONSE, bytes);
         return true;
     }
+
+    /** 지능 = 스탯창과 같은 값 (MagicCodexBridge.magicPower: 기본 + 장신구 + 손에 든 마법봉). 0 이하 요구치는 제한 없음. */
+    static boolean intelligenceMet(int required, double intelligence) { return required <= 0 || intelligence >= required; }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onInteract(PlayerInteractEvent e) {
@@ -262,7 +272,7 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
         var counts = new HashMap<String, Integer>();
         links.values().forEach(b -> counts.merge(b, 1, Integer::sum));
         for (Book b : books.values())
-            out.add(" " + b.id() + " · " + b.title() + " · " + b.pages().size() + "페이지 · 명령 " + b.commands().size() + "개 · 연결 블록 " + counts.getOrDefault(b.id(), 0) + "개");
+            out.add(" " + b.id() + " · " + b.title() + " · " + b.pages().size() + "페이지 · 명령 " + b.commands().size() + "개 · 연결 블록 " + counts.getOrDefault(b.id(), 0) + "개" + (b.requiredIntelligence() > 0 ? " · 필요 지능 " + b.requiredIntelligence() : ""));
         if (books.isEmpty()) out.add(" (books.yml 에 책이 없어요)");
         CmdKit.lines(sender, out);
     }

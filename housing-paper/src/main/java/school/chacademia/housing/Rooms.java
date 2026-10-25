@@ -110,7 +110,7 @@ final class Rooms {
     /** @param previous 방을 못 찾았을 때 되돌릴 이전 창 (친구 방으로 가다가 실패하면 보던 방에 그대로 남는다) */
     private void load(Player p, Session s, boolean open, boolean guestbook, Session previous) {
         UUID id = p.getUniqueId();
-        plugin.store().load(s.owner(), id, open && !s.owner().equals(id), data -> {
+        plugin.store().load(s.owner(), id, open && !s.owner().equals(id), plugin.settings().visitOnceEver(), data -> {
             if (!p.isOnline() || sessions.get(id) != s) return;
             if (data == null) {
                 if (previous != null) sessions.put(id, previous); else sessions.remove(id);
@@ -178,9 +178,11 @@ final class Rooms {
             case Like like -> {
                 if (!like.owner().equals(s.owner())) return;
                 if (like.owner().equals(id)) { plugin.net().result(p, false, "내 방에는 좋아요를 누를 수 없어요."); return; }
-                plugin.store().like(s.owner(), id, liked -> {
-                    if (liked == null) { plugin.net().result(p, false, "좋아요를 누르지 못했어요."); return; }
-                    refresh(s.owner());
+                // #78: 한 번만 (취소 없음). like.limit 이 global 이면 모든 방 통틀어 한 번.
+                plugin.store().like(s.owner(), id, plugin.settings().likeGlobal(), why -> {
+                    if (why == null) { plugin.net().result(p, false, "좋아요를 누르지 못했어요."); return; }
+                    plugin.net().result(p, why.isEmpty(), why.isEmpty() ? "좋아요를 눌렀어요." : why);
+                    if (why.isEmpty()) refresh(s.owner());
                 });
             }
             case Post post -> post(p, s, post);

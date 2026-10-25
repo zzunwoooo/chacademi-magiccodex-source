@@ -12,7 +12,9 @@ final class ManaSpells {
     final Map<String,String> aliases;
     final Map<String,Map<String,String>> registeredCatalog;
     final boolean catalogMode;
-    private ManaSpells(Map<String,Spell> ids,Map<String,Spell> commands,List<String> permissions,Map<String,String> aliases,Map<String,Map<String,String>> registeredCatalog,boolean catalogMode){this.registeredCatalog=Map.copyOf(registeredCatalog);this.catalogMode=catalogMode;this.aliases=Map.copyOf(aliases);byId=Map.copyOf(ids);byCommand=Map.copyOf(commands);discoveryPermissions=List.copyOf(permissions);}
+    /** Enabled spell IDs in mana-spells.yml file order (byId is a Map.copyOf and has no order). /테스트 마법 자동시전 walks this. */
+    final List<String> order;
+    private ManaSpells(Map<String,Spell> ids,Map<String,Spell> commands,List<String> permissions,Map<String,String> aliases,Map<String,Map<String,String>> registeredCatalog,boolean catalogMode){this.registeredCatalog=Map.copyOf(registeredCatalog);this.catalogMode=catalogMode;this.aliases=Map.copyOf(aliases);byId=Map.copyOf(ids);byCommand=Map.copyOf(commands);discoveryPermissions=List.copyOf(permissions);order=List.copyOf(ids.keySet());}
     Spell forCast(String id){return byId.get(TamingSpell.canonicalId(id));}
     String resolve(String input){String key=aliasKey(input);if(TamingSpell.matches(key))return forCast(key)==null?null:TamingSpell.ID;if(byId.containsKey(key))return key;return aliases.get(key);}
     private static String aliasKey(String input){return input.strip().replaceAll("\\s+", "").toLowerCase(Locale.ROOT);}
@@ -25,7 +27,7 @@ final class ManaSpells {
     static ManaSpells load(File file)throws Exception{
         var y=new YamlConfiguration();y.load(file);var root=y.getConfigurationSection("spells");
         if(root==null||root.getKeys(false).size()>school.magiccodex.protocol.PermissionProtocol.MAX_PERMISSIONS)throw new IllegalArgumentException("Expected up to "+school.magiccodex.protocol.PermissionProtocol.MAX_PERMISSIONS+" spells");
-        Map<String,Spell> ids=new HashMap<>(),commands=new HashMap<>();
+        Map<String,Spell> ids=new LinkedHashMap<>(),commands=new HashMap<>();
         Map<String,String> aliases=new HashMap<>();Set<String> ambiguous=new HashSet<>();
         Map<String,Map<String,String>> registeredCatalog=new LinkedHashMap<>();
         List<String> permissions=new ArrayList<>();

@@ -362,7 +362,7 @@ final class StatusEffects implements Listener, AutoCloseable {
         bursting = true;
         try {
             if (src instanceof LivingEntity caster && caster.isValid() && !caster.equals(t) && plugin.targets().enemy(caster, t)) plugin.protection().damage(caster, t, amount);
-            else t.damage(amount);
+            else if (!friendlySource(src, t)) t.damage(amount); // #23: 그사이 같은 파티가 된 시전자의 화상은 터지지 않음
         } finally { bursting = false; }
     }
 
@@ -474,7 +474,13 @@ final class StatusEffects implements Listener, AutoCloseable {
         if (poisonDamage <= 0) return;
         double amount = poisonLethal ? poisonDamage : Math.min(poisonDamage, t.getHealth() - 1);
         if (amount <= 0) return;
+        if (friendlySource(e.source == null ? null : Bukkit.getEntity(e.source), t)) return; // #23 독 틱: 아군이 건 독은 피해 없음
         t.damage(amount);
+    }
+
+    /** #23: the status came from another player who is now on the same side (party / match team). */
+    private boolean friendlySource(Entity src, LivingEntity t) {
+        return src instanceof Player a && t instanceof Player b && !a.equals(b) && plugin.allies() != null && plugin.allies().allied(a, b);
     }
 
     // ================================================================== display

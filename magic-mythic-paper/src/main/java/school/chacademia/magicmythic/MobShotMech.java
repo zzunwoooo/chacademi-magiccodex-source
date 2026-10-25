@@ -70,12 +70,23 @@ final class MobShotMech extends Mech {
         if (dir.lengthSquared() < 1e-4) dir = flat.clone();
         dir.normalize();
         if (yawOffset != 0) dir.rotateAroundY(Math.toRadians(yawOffset));
-        plugin.ticker().add(new Shot(c, start, dir, dmg));
+        // #35: a player on a broom - same CarrierShot rule as chabolt (start ahead by flight speed x ping, inherit forward speed),
+        // otherwise the shot leaves from where the server last saw the rider and looks like it comes out behind them.
+        double extra = 0;
+        Vector lead = p.i("orbit", 0) > 0 ? null : CarrierShot.lead(caster);
+        if (lead != null) {
+            double len = lead.length();
+            var wall = start.getWorld().rayTraceBlocks(start, lead.clone().multiply(1 / len), len, org.bukkit.FluidCollisionMode.NEVER, true);
+            double go = wall == null ? len : Math.max(0, wall.getHitPosition().distance(start.toVector()) - 0.3);
+            start.add(lead.clone().multiply(go / len));
+            extra = CarrierShot.extra(caster, dir);
+        }
+        plugin.ticker().add(new Shot(c, start, dir, dmg, extra));
     }
 
     private final class Shot implements Ticker.Tick {
         final Ctx c; final Location pos; Vector vel; final double dmg;
-        final double speed = Math.clamp(p.d("speed", 0.8), 0.1, 3), range = Math.clamp(p.d("range", 20), 2, 48),
+        final double speed, range = Math.clamp(p.d("range", 20), 2, 48),
             radius = Math.clamp(p.d("radius", 0.7), 0.2, 3), homing = Math.clamp(p.d("homing", 0), 0, 0.5), rise = Math.clamp(p.d("rise", 0), 0, 1);
         final boolean playersOnly = !p.s("hits", "players").toLowerCase(Locale.ROOT).startsWith("e");
         final double burst = Math.clamp(p.d("burst", 0), 0, 6); final int orbit = Math.clamp(p.i("orbit", 0), 0, 60);
@@ -83,7 +94,8 @@ final class MobShotMech extends Mech {
         /** Player AIM spells have no entity target: home on the aimed point instead (until the shot reaches it). */
         final Location aimPoint; boolean aimReached;
 
-        Shot(Ctx c, Location start, Vector dir, double dmg) {
+        Shot(Ctx c, Location start, Vector dir, double dmg, double carrierSpeed) {
+            this.speed = Math.min(Math.clamp(p.d("speed", 0.8), 0.1, 3) + Math.max(0, carrierSpeed), 4);
             this.c = c; this.pos = start.clone(); this.dmg = dmg; this.orbitPhase = Math.atan2(dir.getX(), dir.getZ());
             Location at = aimed(c) instanceof LivingEntity ? null : c.at();
             this.aimPoint = at != null && at.getWorld() == start.getWorld() && at.distanceSquared(c.caster().getLocation()) > 4 ? at.clone().add(0, burst > 0 ? 0 : 1.0, 0) : null;   // a ground aim point: fly at chest height over it

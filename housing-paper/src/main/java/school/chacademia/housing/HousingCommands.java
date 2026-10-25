@@ -44,6 +44,11 @@ final class HousingCommands {
         ChacaLink.branch(plugin, ChacaLink.하우징관리, doorBranch(), "기숙사실 문 등록·삭제·목록 (바라보는 블록)", "문 목록");
         ChacaLink.branch(plugin, ChacaLink.하우징관리, Commands.literal("가구목록").executes(ctx -> { furnitureList(ctx.getSource().getSender()); return 1; }),
                 "가구 ID·이름·최대 개수", "가구목록");
+        // #51 (2026-10-25): 누적 방문 순위 (서버 집계·조회만, 유저 화면은 레퍼런스 나온 뒤)
+        ChacaLink.branch(plugin, ChacaLink.하우징관리, Commands.literal("방문순위")
+                        .executes(ctx -> { visitRanking(ctx.getSource().getSender(), 10); return 1; })
+                        .then(Commands.argument("개수", IntegerArgumentType.integer(1, 100)).executes(ctx -> { visitRanking(ctx.getSource().getSender(), IntegerArgumentType.getInteger(ctx, "개수")); return 1; })),
+                "누적 방문 많은 방 순위 (기본 10개)", "방문순위 10");
         ChacaLink.branch(plugin, ChacaLink.유저관리, roomBranch(), "방 크기·구경·배치·방명록·좋아요", "방 구경");
         ChacaLink.branch(plugin, ChacaLink.유저관리, furnitureBranch(), "가구 보유 보기·주기·회수", "가구 보기");
         ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("하우징").then(Commands.literal("내방").executes(ctx -> {
@@ -122,6 +127,17 @@ final class HousingCommands {
         var block = p.getTargetBlockExact(6);
         if (block == null || block.getType().isAir()) throw ChacaLink.error("6칸 안의 블록을 바라봐 주세요");
         return block;
+    }
+
+    private void visitRanking(CommandSender s, int limit) {
+        plugin.store().topVisited(limit, rows -> {
+            if (rows == null) { dbFail(s, "방문 순위를 읽지 못했어요"); return; }
+            var lines = new ArrayList<String>();
+            lines.add("방 누적 방문 순위 (상위 " + rows.size() + "개 · " + (plugin.settings().visitOnceEver() ? "방문자별 한 번" : "방문자별 하루 한 번") + " 집계)");
+            if (rows.isEmpty()) lines.add(" 아직 방문 기록이 없어요");
+            for (int i = 0; i < rows.size(); i++) { var r = rows.get(i); lines.add(" " + (i + 1) + ". " + r.name() + " · 방문 " + r.visits() + " · 좋아요 " + r.likes()); }
+            ChacaLink.lines(s, lines);
+        });
     }
 
     private void furnitureList(CommandSender s) {

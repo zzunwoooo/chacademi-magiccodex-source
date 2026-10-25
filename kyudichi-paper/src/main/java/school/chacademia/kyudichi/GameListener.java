@@ -29,7 +29,11 @@ final class GameListener implements Listener {
     private final KyudichiPlugin plugin;
     GameListener(KyudichiPlugin plugin) { this.plugin = plugin; }
 
-    private Match match(Player p) { return plugin.matches().of(p.getUniqueId()); }
+    /**
+     * The match this player is still playing in. A player counted as left (back after the 60 s window) is no longer in it:
+     * no teleport guard, no blocked casts / F key / food, not anyone's ally (#75, 2026-10-25).
+     */
+    private Match match(Player p) { Match m = plugin.matches().of(p.getUniqueId()); return m != null && m.playing(p.getUniqueId()) ? m : null; }
 
     // ------------------------------------------------------------------ F key (vanilla swap-hands = F, works without the client mod)
     @EventHandler(priority = EventPriority.LOWEST)
@@ -96,8 +100,10 @@ final class GameListener implements Listener {
         m.damaged(mp, ma != null && !ma.id.equals(mp.id) ? ma : null, push);
     }
 
-    /** Safety net (e.g. /kill): never drop items in a match; respawn at the team point. */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    /** Safety net (e.g. /kill): never drop items in a match; respawn at the team point.
+     *  HIGH (not HIGHEST) so keepInventory is set before MagicCodexBridge's HIGHEST accessory-drop handler,
+     *  which skips keepInventory deaths — otherwise accessories were moved into drops and then cleared here (lost). */
+    @EventHandler(priority = EventPriority.HIGH)
     public void death(PlayerDeathEvent e) {
         Match m = match(e.getPlayer());
         if (m == null) return;
@@ -162,7 +168,7 @@ final class GameListener implements Listener {
         if (m != null) m.quit(p);
         if (plugin.spectate().spectating(p.getUniqueId())) plugin.spectate().leave(p);
         plugin.pings().forget(p.getUniqueId());
-        if (m == null) plugin.store().forget(p.getUniqueId());
+        if (plugin.matches().of(p.getUniqueId()) == null) plugin.store().forget(p.getUniqueId());
         plugin.link().quit(p);
     }
 

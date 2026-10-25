@@ -343,7 +343,9 @@ final class ArcanaMech extends Mech {
             int age;
             @Override public boolean tick() {
                 if (!m.isValid() || m.isDead() || ++age > ticks || st.discord.get(m.getUniqueId()) != mine) {
-                    if (!st.discord.remove(m.getUniqueId(), mine)) return false;   // a newer cast took over if (m.isValid()) { m.setTarget(null); if (pl.isOnline()) vfx(pl, "discord_end", m.getLocation(), m.getUniqueId()); }
+                    if (!st.discord.remove(m.getUniqueId(), mine)) return false;   // a newer cast took over
+                    // #79: this line had been swallowed by the comment above, so the mark VFX never got its end phase.
+                    if (m.isValid()) { m.setTarget(null); if (pl.isOnline()) vfx(pl, "discord_end", m.getLocation(), m.getUniqueId()); }
                     return false;
                 }
                 if (age % 10 == 1 && (m.getTarget() == null || !m.getTarget().isValid() || m.getTarget() instanceof Player)) {

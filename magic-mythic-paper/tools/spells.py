@@ -139,7 +139,7 @@ S = [
  ('forest_throne','CHA_forest_throne','SELF',12,6,0.4,False,['chabuff{type=root;ticks=160} @self','chazone{center=caster;r=6;ticks=160;period=10;max=2;pick=random;mult=0.35;knock=0.8;up=0.3} @self'],'8초 제자리, 주변 6블록 뿌리 순차 공격·넉백'),
  ('primordial_stone','CHA_primordial_stone','SELF',22,20,1.0,False,['chautil{type=core;ticks=6000;speed=0.7;range=22;radius=0.8;aoe=2.5;aoemult=0.5;mana=500} @self'],'돌핵 생성 -> 다시 사용 시 발사 (Bridge 쿨타임 API 없으면 자동 발사, 확률·피해 미정)'),
  # light
- ('guiding_star','CHA_guiding_star','SELF',12,0,0,False,['chautil{type=star;ticks=200} @self'],'웅크려 시전 = 위치 저장, 일반 시전 = 10초 방향 표시'),
+ ('guiding_star','CHA_guiding_star','SELF',12,0,0,False,['chautil{type=star} @self'],'스토리 단계 목표를 화살표로 가리킴 (10블록 안이면 사라짐), 다시 시전 = 끄기 (2026-10-23)'),
  ('minor_heal','CHA_minor_heal','SELF',12,0,0,False,['chaally{type=heal;amount=2} @self'],'자신 체력 하트 1칸 회복'),
  ('light_mark','CHA_light_mark','ENTITY',20,2,0.25,False,['chabolt{speed=1.2;range=20;radius=0.5;homing=true}'],'조준한 적에게 유도 빛 탄 (피해·사거리 임시, VFX 없음)'),
  ('true_sight','CHA_true_sight','SELF',12,0,0,False,['chautil{type=truesight;r=16;ticks=300} @self'],'15초 근처 투명한 적 윤곽 + 숨은 단서 이벤트 (범위 임시)'),

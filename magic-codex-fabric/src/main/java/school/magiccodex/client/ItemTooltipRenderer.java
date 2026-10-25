@@ -69,7 +69,7 @@ public final class ItemTooltipRenderer {
                 if(rarityBadge)rest.remove(lifted.index()+1);
                 rest.remove(lifted.index());
             }
-            if(WandTooltip.matches(stack))rest.removeIf(line->line.getString().startsWith("[강화] 사용 횟수 ")||line.getString().startsWith("[강화] 마력 "));
+            if(WandTooltip.matches(stack))rest.removeIf(line->line.getString().startsWith("[강화] 사용 횟수 ")||line.getString().startsWith("[강화] 마력 ")||line.getString().startsWith("[강화] 지능 ")); // 2026-10-25 스탯 이름 마력→지능: 예전 lore도 숨김
             var wrapped=new ArrayList<OrderedText>();
             for(Text line:rest){if(line.getString().isEmpty())wrapped.add(OrderedText.EMPTY);else wrapped.addAll(font.wrapLines(styled(line,"tooltip"),textWidth));}
             body=List.copyOf(wrapped);

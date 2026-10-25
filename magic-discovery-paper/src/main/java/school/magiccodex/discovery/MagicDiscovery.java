@@ -77,6 +77,8 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             for(String id:definitions.manual.keySet())wanted.put(Definitions.conditionPermission(id),s.progress.getOrDefault(Definitions.conditionKey(id),0d)>0);
             syncPermissions(s.id,wanted);
             nativeConditions.join(p);restoreServerState(p,s,0);checkMeta(s);if(s.noticeReady)sendPending(p,s);rewards.claim(p,s,false);
+            // 마법 발견 칭호 (메모 #21): 예전에 발견한 마법·지급 도중 끊긴 칭호도 접속 때 맞춘다 (칭호 장부가 중복을 막음).
+            discoveryTitles(s.id,s.acquired.keySet());
             // 서버 이동 직후에는 이전 서버의 마지막 저장이 아직 안 끝났을 수 있다. 몇 초 뒤 한 번 더 읽어 큰 값으로 합친다.
             if(crossServer)Bukkit.getScheduler().runTaskLater(this,()->{if(sessions.get(s.id)==s)refresh(s);},60);
         }));
@@ -219,6 +221,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
                 if(permissionError!=null){done.accept("DB 저장 완료, 권한 동기화 실패. 재접속 또는 동일 명령으로 복구하세요.");return;}
                 if(!Objects.equals(learnedVersions.get(key),version)){done.accept("더 최근 관리자 변경이 우선합니다.");return;}
                 if(grant&&award.created()&&online!=null&&online.isOnline()&&current!=null){if(current.noticeReady)sendPending(online,current);else ChacaLink.notify(online,"shop","discovery:"+spellId,"새로운 마법 발견",spell.name(),0);rewards.claim(online,current,false);}
+                if(grant&&award.acquisition()!=null)discoveryTitles(id,List.of(spellId));
                 if(grant&&current!=null)checkMeta(current,true);
                 done.accept(action+" 완료: "+spell.name()+" ("+node+")"+(grant&&!award.created()?" · 기존 발견 기록 유지, 알림·최초보상 추가 없음":""));
             }));
@@ -263,8 +266,16 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             s.learned.set(spell.id(),true,Map.of());syncPermission(s.id,spell.permission(),true);
             if(award.created()){if(s.noticeReady)sendPending(p,s);else ChacaLink.notify(p,"shop","discovery:"+spell.id(),"새로운 마법 발견",spell.name(),0);rewards.claim(p,s,false);}
             else ChacaLink.notify(p,"system","discovery-relearn:"+spell.id(),"마법을 다시 습득했어요",spell.name(),0);
+            discoveryTitles(s.id,List.of(spell.id()));
             checkMeta(s,true);
         }));
+    }
+    /** MagicCodexBridge.discoveryTitles(UUID,Collection): 발견한 마법의 칭호 (title-awards.yml). 브리지가 없거나 옛 버전이면 조용히 건너뛴다. */
+    private void discoveryTitles(UUID id,Collection<String> spells){
+        if(spells.isEmpty())return;var bridge=Bukkit.getPluginManager().getPlugin("MagicCodexBridge");if(bridge==null||!bridge.isEnabled())return;
+        try{bridge.getClass().getMethod("discoveryTitles",UUID.class,Collection.class).invoke(bridge,id,List.copyOf(spells));}
+        catch(NoSuchMethodException old){/* 칭호 획득 경로가 없는 옛 MagicCodexBridge */}
+        catch(ReflectiveOperationException|RuntimeException error){getLogger().warning("마법 발견 칭호 연결 실패: "+error.getClass().getSimpleName());}
     }
     private CompletableFuture<Void> syncPermission(UUID id,String permission,boolean learned){return syncPermissions(id,Map.of(permission,learned));}
     /** 여러 권한을 한 번에 맞춘다: 이미 같은 값인 첨부 쓰기는 생략하고, LuckPerms는 바뀔 노드가 있을 때만 플레이어당 한 번 저장한다. */

@@ -95,6 +95,8 @@ final class Match {
     List<Player> onlinePlayers() { var out = new ArrayList<Player>(); for (var m : players.values()) { Player p = online(m); if (p != null) out.add(p); } return out; }
     MatchPlayer get(UUID id) { return players.get(id); }
     boolean frozen() { return phase == Phase.PREPARE || phase == Phase.COUNTDOWN; }
+    /** 커스텀 경기 (#62): 관리자가 정한 레이팅 없는 경기 (테스트·연습 제외). 관전 인원 제한이 없다. */
+    boolean custom() { return !opt.rated() && !opt.test(); }
     boolean live() { return phase == Phase.PLAY; }
 
     // ================================================================== lifecycle
@@ -739,7 +741,8 @@ final class Match {
 
     /** Lethal damage: no vanilla death; spectate in place, respawn after the delay. */
     void kill(MatchPlayer victim, Player p, MatchPlayer killer) {
-        if (victim.dead(now)) return;
+        // a vanilla death handled a tick later (GameListener.death) can land after the end: never put a restored player in spectator
+        if (phase == Phase.ENDED || victim.left || victim.dead(now)) return;
         if (killer == null && victim.lastDamager != null && now - victim.lastDamagedAt <= rules.killCreditTicks) killer = players.get(victim.lastDamager);
         if (duel) {
             // 1:1: a kill ends the round — no spectator time, both go back to their spawn points
@@ -847,7 +850,9 @@ final class Match {
     boolean rejoin(Player p) {
         MatchPlayer m = players.get(p.getUniqueId());
         if (m == null || m.left || m.online) return false;
-        m.online = true; m.leftAt = -1; m.neverArrived = false;
+        m.online = true; m.leftAt = -1; m.neverArrived = false; m.deadUntil = -1;
+        // a late arrival (network match) gets the same restore point as everyone else
+        if (m.returnTo == null) { m.returnTo = p.getLocation(); m.returnMode = p.getGameMode(); }
         m.house = plugin.hooks().house(p); m.broom = plugin.hooks().broomId(p);
         p.showBossBar(bar);
         prepare(p, m);

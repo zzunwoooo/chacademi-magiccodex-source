@@ -291,6 +291,9 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         ItemStack one = item.clone(); one.setAmount(1);
         item.setAmount(item.getAmount() - 1);
         p.getInventory().setItem(hand, item.getAmount() <= 0 ? null : item);
+        // 2026-10-25 (#101): the taken ticket is on disk before the shared unlock is written — a crash after the DB
+        // commit can no longer leave the ticket in the saved inventory (one ticket = one page, never two).
+        try { p.saveData(); } catch (RuntimeException ex) { failure("save before unlock", ex); }
         io.execute(() -> {
             int pages = -2;
             try { pages = db().unlockOne(id, PAGES); } catch (Exception ex) { failure("unlock", ex); }
@@ -315,9 +318,23 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
                     CmdKit.notify(online, result == -1 ? "warning" : "error", "bag-unlock",
                             result == -1 ? "모든 공간이 이미 열려 있어요" : "공간을 열지 못했어요",
                             result == -1 ? unlockName + "을 돌려 드렸어요" : unlockName + "을 돌려 드렸어요. 잠시 뒤 다시 해 주세요", 0);
-                } else plugin.getLogger().warning("BAG PAGES unlock failed for offline " + id + "; ticket not returned (" + unlockItem + " x1)");
+                } else mailBack(id, one);
             });
         });
+    }
+
+    /** The player left before the unlock answered and it was not used: the ticket goes back by mail (one mail per use). */
+    private void mailBack(UUID id, ItemStack one) {
+        MailService mail = Bukkit.getServicesManager().load(MailService.class);
+        String what = unlockItem + " x1";
+        if (mail == null) { plugin.getLogger().severe("BAG PAGES unlock not used for offline " + id + "; mail unavailable, ticket not returned (" + what + ")"); return; }
+        try {
+            mail.sendSystem("bag-unlock-refund:" + id + ":" + UUID.randomUUID(), id, unlockName + " 반환", "공간을 열지 못해 " + unlockName + "을 돌려드려요.", List.of(one))
+                    .whenComplete((mailId, error) -> {
+                        if (error != null) plugin.getLogger().severe("BAG PAGES refund mail failed for " + id + " (" + what + "): " + error);
+                        else plugin.getLogger().info("BAG PAGES unlock not used for offline " + id + "; ticket mailed back (" + mailId + ")");
+                    });
+        } catch (RuntimeException ex) { plugin.getLogger().severe("BAG PAGES refund mail failed for " + id + " (" + what + "): " + ex); }
     }
 
     // ------------------------------------------------------------------ /유저관리 <닉네임> 배낭

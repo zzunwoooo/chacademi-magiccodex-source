@@ -919,11 +919,12 @@ spells:
     cooldown-seconds: 120
   guiding_star:
     name: 길잡이 별
+    # 2026-10-23 오너: 퀘스트 목표를 화살표로 가리킴(10블록 안이면 사라짐), 웅크림 위치 저장 삭제, 쿨타임 없음, 다시 시전 = 끄기
     enabled: true
     command: 마법 guiding_star
     permission: magic.learned.guiding_star
     mana-cost: 8
-    cooldown-seconds: 10
+    cooldown-seconds: 0
   minor_heal:
     name: 작은 치유
     enabled: true

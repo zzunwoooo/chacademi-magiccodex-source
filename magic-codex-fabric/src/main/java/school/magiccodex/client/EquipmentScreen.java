@@ -85,7 +85,7 @@ public final class EquipmentScreen extends Screen {
             if(selected>=0)picker(c,mx,my);
             else if(hovered==ARTIFACT_SLOT){var a=ArtifactClient.equipped().isEmpty()?null:ArtifactClient.find(ArtifactClient.equipped().get(0));tooltip(c,a==null?"아티팩트 · 클릭하여 도감 열기":a.name()+" · 클릭하여 도감 열기",(float)mx,(float)my);}
             else if(hovered>=0){ItemStack item=hovered<EquipmentClient.equipped.size()?EquipmentClient.equipped.get(hovered):ItemStack.EMPTY;tooltip(c,item.isEmpty()?NAMES[hovered]+" · 클릭하여 장착":item.getName().getString()+" · 클릭 교체 / 우클릭 해제",(float)mx,(float)my);}
-            else if(hit(mx,my,176,781+extra(),1290,75))tooltip(c,"추가 장비 효과 · 마력 / 체력 / 최대 마나 / 마나 회복 / 마법 가속",836,770+extra());
+            else if(hit(mx,my,176,781+extra(),1290,75))tooltip(c,"추가 장비 효과 · 지능 / 체력 / 최대 마나 / 마나 회복 / 마법 가속",836,770+extra());
             c.getMatrices().pop();
         }finally{c.getMatrices().pop();images.endFrame();}
         entrance.draw(c,width,height);

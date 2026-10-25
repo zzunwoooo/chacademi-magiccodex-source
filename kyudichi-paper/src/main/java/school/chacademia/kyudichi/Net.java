@@ -34,7 +34,7 @@ final class Net implements PluginMessageListener {
         // 관전 화면의 나가기 버튼 (예전 /큐디치 관전 나가기)
         if (r instanceof KyudichiProtocol.SpectateLeave) { if (plugin.spectate().spectating(p.getUniqueId())) plugin.spectate().leave(p); return; }
         Match m = plugin.matches().of(p.getUniqueId());
-        if (m == null) return;
+        if (m == null || !m.playing(p.getUniqueId())) return; // counted as left (back after 60 s): no votes, pings or ready
         switch (r) {
             case KyudichiProtocol.PingRequest ping -> m.ping(p, ping);
             case KyudichiProtocol.Forfeit f -> Link.notice(p, "system", "경기 포기", m.forfeit(p, f.yes()));

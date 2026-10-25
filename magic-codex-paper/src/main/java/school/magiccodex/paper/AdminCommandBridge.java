@@ -43,6 +43,7 @@ final class AdminCommandBridge {
             ChacaApi.branch(plugin, ChacaApi.아이템관리, wand(), "마법봉 주기·만들기·등록·원본설정", "마법봉 주기");
             ChacaApi.branch(plugin, ChacaApi.아이템관리, core(), "마력코어 주기·만들기", "마력코어 주기");
         });
+        new OperatorCommands(plugin); // #95 게임모드·찾아가기·불러오기·좌표이동·비행·회복
     }
 
     // ------------------------------------------------------------------ /유저관리 <닉네임> 스탯
@@ -266,7 +267,7 @@ final class AdminCommandBridge {
 
     // ------------------------------------------------------------------ /아이템관리 마법봉 · 마력코어
 
-    private static final String[] WAND_STATS = {"마력", "추가마나", "마법가속"};
+    private static final String[] WAND_STATS = {"지능", "추가마나", "마법가속"};
 
     private LiteralArgumentBuilder<CommandSourceStack> wand() {
         var give = literal("주기").executes(run(ctx -> giveWand(ctx, self(ctx))))
@@ -277,7 +278,7 @@ final class AdminCommandBridge {
         return literal("마법봉").then(give).then(make).then(register).then(base);
     }
 
-    /** &lt;마력&gt; &lt;추가마나&gt; &lt;마법가속&gt; [닉네임] */
+    /** &lt;지능&gt; &lt;추가마나&gt; &lt;마법가속&gt; [닉네임] */
     private static com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, Double> wandStats(com.mojang.brigadier.Command<CommandSourceStack> done, com.mojang.brigadier.Command<CommandSourceStack> withPlayer) {
         var last = argument(WAND_STATS[2], DoubleArgumentType.doubleArg(0, 100_000)).executes(done);
         if (withPlayer != null) last.then(player("닉네임").executes(withPlayer));
@@ -333,7 +334,7 @@ final class AdminCommandBridge {
         var give = literal("주기").executes(run(ctx -> giveCores(ctx, self(ctx), 1)))
                 .then(player("닉네임").executes(run(ctx -> giveCores(ctx, ChacaApi.resolveOnline(ctx, "닉네임"), 1)))
                         .then(argument("개수", IntegerArgumentType.integer(1, 36)).executes(run(ctx -> giveCores(ctx, ChacaApi.resolveOnline(ctx, "닉네임"), IntegerArgumentType.getInteger(ctx, "개수"))))));
-        var tendency = word("성향", () -> List.of("마력", "마나", "마법가속"))
+        var tendency = word("성향", () -> List.of("지능", "마나", "마법가속"))
                 .executes(run(ctx -> makeCore(ctx, self(ctx))))
                 .then(player("닉네임").executes(run(ctx -> makeCore(ctx, ChacaApi.resolveOnline(ctx, "닉네임")))));
         var make = literal("만들기").then(argument("코어수", IntegerArgumentType.integer(1, 10))
