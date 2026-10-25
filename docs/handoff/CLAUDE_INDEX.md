@@ -1,3 +1,5 @@
+> Claude 2026-10-25 밤 (not built): [오픈 최종 통합 — 운영본 c96c5ae3 + 검수 승인분 + 스토리 일지·올레 길잡이·낚싯대 설명](CLAUDE_OPENING_FINAL_20261025.md). Branch claude/opening-final-20261025. **빌드·전체 테스트 필수**, 1장 대화 번호 ch1-15→ch1-17 운영 파일 같이.
+
 > 현재 운영 기준: [LIVE_SOURCE_HANDOFF_20261025](LIVE_SOURCE_HANDOFF_20261025.md) — 운영 상태와 재현 한계를 먼저 확인하세요.
 
 > Claude 2026-10-25 (not built, NOT committed): [오픈 전 메모 1차 개선 — 마법 자동시전 검수·지능 명칭·감정 성향·책 지능·칭호 지급·사전 설정·AI 대화 호감도·천장·파티 아군·대상 마법·허수아비·하우징 좋아요·장 잠금·길잡이·커스텀 경기·재접속·설정창·귀환권·튜토리얼 상점 등](CLAUDE_OPENING_PREP_20261025.md). Local branch work/opening-prep-20261025 (merge of latest claude/* branches).
