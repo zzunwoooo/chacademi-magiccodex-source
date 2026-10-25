@@ -107,7 +107,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 
 ### 06-housing
 #78 좋아요 토글→평생 1회(공용 DB codex_housing_like, INSERT IGNORE), like.limit room(기본)/global. 클라 HousingScreen 안내. 예전 취소자는 1회 더 가능.
-#51 방문 수 집계는 이미 있음(하루 1회). visits.count-once-per day/ever, topVisited, /하우징관리 방문순위 [개수]. UI 없음.
+#51 방문 수 집계는 이미 있음(하루 1회). visits.count-once-per day/ever, topVisited, /하우징관리 방문순위 [개수]. UI 없음. → **하우징 랭킹 구현 (오너 레퍼런스 "하우징_랭킹" ZIP, 2026-10-25)**: 새 채널 chacademi:housing_rank (HousingRankProtocol), 서버 HousingStore.ranking + HousingRankServer, 유저 명령 /하우징랭킹 (별칭 /방랭킹), 클라 HousingRankClient·HousingRankScreen, 리소스 textures/gui/housing_rank/*.png 11장(분리 PNG 그대로). 탭 일일 방문(KST 오늘 owner/visitor/day 고유, 본인 제외)·누적 방문(room.visits)·하트(room.likes) — 측정 정의 그대로, 값 0 인 방 제외, 같은 값 같은 순위(1,1,3), 6줄/쪽. 방 이동 = /방구경 과 같은 규칙(내 방·OP 바로, 친구만, Rooms.open 이 다시 확인), 버튼은 내 방/방 이동/친구 전용. 기존 하우징 창·패킷 변경 없음. **housing-paper·Bridge(프로토콜)·클라 모드 같이 배포.** 테스트 HousingRankProtocolTest.
 #108 기숙사 점수판→SchoolScreen, 내 정보 액자→/스탯창 주인UUID(주인이 같은 서버 접속 중일 때만). 빗자루·아티팩트·트로피는 화면 없음(레퍼런스 필요). 랭크 티어 가구 없음.
 #94 하우징은 이미 한글 닉네임. 다른 곳 계정명 노출: SocialBridge:83,309 / CmdKit:145 / QuestBridge:206(로그) / kyudichi Hooks:142, ChacaLink:115 / 클라 일부 초기 표시.
 배포: chaca-housing jar + fabric 모드, config 키 손으로 추가(like.limit, visits.count-once-per)

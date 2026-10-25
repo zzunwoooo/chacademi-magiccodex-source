@@ -317,6 +317,67 @@ final class HousingStore {
         }, done);
     }
 
+    // ------------------------------------------------------------ 하우징 랭킹 (#51, 승인 레퍼런스 2026-10-25)
+    record RankRow(UUID owner, String name, int today, int total, int hearts, int rank, int visit) {}
+    record RankPage(int page, int pages, List<RankRow> rows) {}
+
+    /**
+     * 랭킹 한 쪽 (6줄). metric 0 = 일일 방문 (KST 오늘, 주인별 고유 방문자 수 — 본인 방문은 처음부터 기록 안 됨),
+     * 1 = 누적 방문 (codex_housing_room.visits), 2 = 하트 (codex_housing_room.likes, 좋아요 토글 값). 측정 정의는 기존 그대로.
+     * 그 값이 0 인 방은 빠진다. 같은 값이면 같은 순위 (1,1,3 …), 표시 순서는 값 → 누적 → 하트 → 오늘 → UUID.
+     * visit: 내 방 2 · 운영자 또는 친구 1 · 그 밖 0 (친구 전용). 친구 정보를 못 읽으면 0 — 실제 이동은 기존 방문 규칙이 다시 판단.
+     * 요청할 때만 읽는다 (주기 순회 없음). DB 오류면 null.
+     */
+    void ranking(int metric, int page, UUID viewer, boolean operator, Consumer<RankPage> done) {
+        async("하우징 랭킹", c -> {
+            int day = today();
+            String daily = "(SELECT owner, COUNT(*) AS c FROM " + tVisit + " WHERE day=? GROUP BY owner)";
+            String from, where, order, value, rankSql;
+            switch (metric) {
+                case 0 -> { from = tRoom + " r JOIN " + daily + " v ON v.owner=r.owner"; where = ""; value = "v.c";
+                    order = "v.c DESC, r.visits DESC, r.likes DESC, r.owner"; rankSql = "SELECT COUNT(*) FROM " + tRoom + " r JOIN " + daily + " v ON v.owner=r.owner WHERE v.c>?"; }
+                case 1 -> { from = tRoom + " r LEFT JOIN " + daily + " v ON v.owner=r.owner"; where = " WHERE r.visits>0"; value = "r.visits";
+                    order = "r.visits DESC, r.likes DESC, COALESCE(v.c,0) DESC, r.owner"; rankSql = "SELECT COUNT(*) FROM " + tRoom + " WHERE visits>?"; }
+                default -> { from = tRoom + " r LEFT JOIN " + daily + " v ON v.owner=r.owner"; where = " WHERE r.likes>0"; value = "r.likes";
+                    order = "r.likes DESC, r.visits DESC, COALESCE(v.c,0) DESC, r.owner"; rankSql = "SELECT COUNT(*) FROM " + tRoom + " WHERE likes>?"; }
+            }
+            int count;
+            try (var s = c.prepareStatement("SELECT COUNT(*) FROM " + from + where)) { s.setInt(1, day); try (var r = s.executeQuery()) { count = r.next() ? r.getInt(1) : 0; } }
+            int pages = Math.max(1, Math.min(school.magiccodex.protocol.HousingRankProtocol.MAX_PAGE + 1, (count + 5) / 6));
+            int p = Math.clamp(page, 0, pages - 1);
+            record Raw(UUID owner, int today, int total, int hearts, int value) {}
+            var raw = new ArrayList<Raw>();
+            try (var s = c.prepareStatement("SELECT r.owner, r.visits, r.likes, COALESCE(v.c,0) AS today, " + value + " AS val FROM " + from + where + " ORDER BY " + order + " LIMIT ? OFFSET ?")) {
+                s.setInt(1, day); s.setInt(2, 6); s.setInt(3, p * 6);
+                try (var r = s.executeQuery()) {
+                    while (r.next()) {
+                        try { raw.add(new Raw(UUID.fromString(r.getString(1)), Math.max(0, r.getInt(4)), Math.max(0, r.getInt(2)), Math.max(0, r.getInt(3)), r.getInt(5))); }
+                        catch (IllegalArgumentException bad) { /* 깨진 줄은 건너뜀 */ }
+                    }
+                }
+            }
+            var ranks = new HashMap<Integer, Integer>();
+            for (var x : raw) {
+                if (ranks.containsKey(x.value())) continue;
+                try (var s = c.prepareStatement(rankSql)) {
+                    int i = 1; if (metric == 0) s.setInt(i++, day); s.setInt(i, x.value());
+                    try (var r = s.executeQuery()) { ranks.put(x.value(), 1 + (r.next() ? r.getInt(1) : 0)); }
+                }
+            }
+            Set<UUID> friends;
+            try { friends = operator ? Set.of() : directory.friends(viewer); } catch (Exception unknown) { friends = Set.of(); }
+            var names = displayNames.read(raw.stream().map(Raw::owner).toList());
+            var out = new ArrayList<RankRow>();
+            for (var x : raw) {
+                int visit = x.owner().equals(viewer) ? 2 : operator || friends.contains(x.owner()) ? 1 : 0;
+                String name = HousingNames.shown(names.get(x.owner()));
+                if (name.length() > 32) name = name.substring(0, 32);
+                out.add(new RankRow(x.owner(), name, x.today(), x.total(), x.hearts(), ranks.getOrDefault(x.value(), 1), visit));
+            }
+            return new RankPage(p, pages, List.copyOf(out));
+        }, done);
+    }
+
     /** 관리자: 방 정보 한 줄 (요약·보기용). 방이 없으면 null. */
     void row(UUID owner, Consumer<RoomRow> done) { async("방 정보", c -> display(room(c, owner)), done); }
 
