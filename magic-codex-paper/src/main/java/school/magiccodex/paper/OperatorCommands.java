@@ -86,7 +86,8 @@ final class OperatorCommands {
 
     // ------------------------------------------------------------------ 순간이동
 
-    private void goTo(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    /** 편의 명령 /텔포 · /소환 도 같이 쓴다 (칸 이름 "닉네임"). */
+    void goTo(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player me = self(ctx);
         UUID id = ChacaApi.target(ctx);
         if (id.equals(me.getUniqueId())) throw ChacaApi.error("자기 자신에게는 갈 수 없어요");
@@ -96,7 +97,8 @@ final class OperatorCommands {
         teleport(ctx, me, target.getLocation(), plugin.names().name(target) + " 님 옆으로 왔어요");
     }
 
-    private void bring(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    /** 편의 명령 /텔포 · /소환 도 같이 쓴다 (칸 이름 "닉네임"). */
+    void bring(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player me = self(ctx);
         UUID id = ChacaApi.target(ctx);
         if (id.equals(me.getUniqueId())) throw ChacaApi.error("자기 자신은 불러올 수 없어요");
