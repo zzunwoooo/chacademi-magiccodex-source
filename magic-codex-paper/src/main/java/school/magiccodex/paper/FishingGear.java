@@ -210,12 +210,7 @@ final class FishingGear {
             if (!g.description().isBlank()) lore.add(plain(g.description(), 0x8D9AAD));
         }
         if (rod) {
-            var l = read(item);
-            for (int k = 1; k <= 3; k++) {
-                var p = l.part(k);
-                String v = p.fallback() ? "기본 " + p.gear().name() : p.gear().name() + (k == 3 ? " ×" + p.value() : " (" + p.value() + "/" + p.gear().durability() + ")");
-                lore.add(plain(FishingProtocol.KIND_LABELS[k] + ": " + v, 0x9AA8BB));
-            }
+            // 오너 2026-10-25: 낚싯대 설명은 낚싯대 자체 성능·설명만. 찌·낚싯줄·미끼는 낚시 장비 창에서 본다.
             meta.setUnbreakable(true);
             meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         } else if (g.kind() != 3) {
