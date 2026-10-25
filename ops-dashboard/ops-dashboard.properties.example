@@ -1,0 +1,175 @@
+# ============================================================
+#  차카데미 운영 대시보드 설정 (메모 #92) — UTF-8 로 저장
+#  복사 위치(권장): C:/Chacademi/ops-dashboard/ops-dashboard.properties
+#  ※ 경로는 / 로 적는다 (이 형식에서 \ 는 특수 문자라 사라짐). \ 를 꼭 쓰려면 \\ 두 번.
+#  ★ 표시 = GPT 가 호스팅에서 실제 값으로 채울 것. 이 파일(실제 값)은 저장소에 올리지 않는다.
+#  바꾼 뒤에는 대시보드를 다시 시작해야 적용된다.
+# ============================================================
+
+# ---------- 웹 ----------
+http.bind=0.0.0.0
+# ★ 외부에서 열 포트 (방화벽·공유기 포트포워딩 같이)
+http.port=8470
+# 비밀번호: 환경변수 CHACA_OPS_PASSWORD 가 있으면 그것을 쓴다 (권장).
+# 파일에 둘 거면 password= (8자 이상) 또는 password.sha256= (java -jar <jar> --hash 비밀번호 로 만든 값)
+password=
+password.sha256=
+session.hours=12
+login.max-failures=5
+login.lock-minutes=15
+# 앞에 리버스 프록시(nginx 등)를 둘 때만 true
+http.trust-forwarded-for=false
+# HTTPS (선택): PKCS12 인증서. 비우면 HTTP. 비밀번호는 환경변수 CHACA_OPS_TLS_PASSWORD 도 됨
+tls.keystore=
+tls.password=
+# 작업 기록(ops-actions.log) 폴더. 상대 경로면 이 설정 파일 옆
+data-dir=data
+timezone=Asia/Seoul
+host.disk-path=C:/Chacademi
+
+# ---------- 공유 DB (하트비트 codex_server_status · 운영 기록 codex_audit_log) ----------
+# 게임 서버의 database.properties 를 그대로 읽는 것이 제일 간단 (비밀번호를 두 번 안 적음)
+# ★ 실제 경로 확인
+db.properties-file=C:/Chacademi/network/school/plugins/MagicCodexBridge/database.properties
+# 위를 비우면 아래 값 사용 (비밀번호는 환경변수 CHACA_OPS_DB_PASSWORD 도 됨). 읽기 전용 계정이면 더 좋다.
+db.host=127.0.0.1
+db.port=3306
+db.name=
+db.user=
+db.password=
+db.status-table=codex_server_status
+
+# ---------- 서버 목록 ----------
+# 순서대로 화면에 나온다. 튜토리얼 서버는 만든 뒤에 추가 (없는 서버를 넣으면 늘 "꺼짐" 빨간 표시)
+servers=proxy,school,wild,arena
+
+# 공통 키 (server.<id>.):
+#   label        화면 이름
+#   type         paper | proxy (proxy/velocity 라는 id 는 자동 proxy)
+#   host, port   상태 핑을 보낼 주소 (게임 접속 포트)
+#   log          latest.log 경로 (콘솔 탭·오류 급증 경보·spark 링크 찾기)
+#   heartbeat-id 하트비트 server_id (기본 = id). MagicCodexBridge server-heartbeat.yml 의 server-id 와 같아야 함
+#   console      rcon | script | none  (명령 보내기 방법)
+#   rcon.port / rcon.password   (비밀번호는 환경변수 CHACA_OPS_RCON_<ID 대문자> 도 됨, 예 CHACA_OPS_RCON_SCHOOL)
+#   console.script  console=script 일 때 실행할 명령. {server} {command} 가 바뀜
+#   start / stop / restart   조작 버튼이 실행할 Windows 명령. restart 를 비우면 stop → 꺼짐 확인 → start
+#   spark-command   spark 60초 버튼이 보내는 명령
+#
+# ★ 정지는 반드시 Stop-Network.ps1 -Server <id> (Control.ps1 -Action Stop 은 -Server 를 무시하고 프록시까지 전부 끈다!)
+
+server.proxy.label=프록시 (Velocity)
+server.proxy.type=proxy
+server.proxy.host=127.0.0.1
+server.proxy.port=25565
+# ★ Velocity 로그 경로 확인
+server.proxy.log=C:/Chacademi/network/velocity/logs/latest.log
+# Velocity 는 RCON 이 없다. 감독 스크립트로 콘솔 명령을 넣을 수 있으면 script 로 (★ -Server 이름 확인)
+server.proxy.console=none
+server.proxy.console.script=
+# ★ 프록시만 시작/정지하는 명령이 있으면 채우기 (없으면 비워 두면 버튼이 안 나옴)
+server.proxy.start=
+server.proxy.stop=
+server.proxy.restart=
+server.proxy.spark-command=sparkv profiler start --timeout 60
+
+server.school.label=학교
+server.school.host=127.0.0.1
+server.school.port=25566
+server.school.log=C:/Chacademi/network/school/logs/latest.log
+server.school.console=rcon
+# ★ school server.properties 의 rcon.port 와 같게 (enable-rcon=true)
+server.school.rcon.port=25576
+# ★ 환경변수 CHACA_OPS_RCON_SCHOOL 권장
+server.school.rcon.password=
+# RCON 대신 기존 감독 콘솔을 쓰려면: console=script 와 아래 줄
+server.school.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
+server.school.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
+server.school.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
+server.school.restart=
+
+server.wild.label=야생
+server.wild.host=127.0.0.1
+server.wild.port=25567
+server.wild.log=C:/Chacademi/network/wild/logs/latest.log
+server.wild.console=rcon
+server.wild.rcon.port=25577
+server.wild.rcon.password=
+server.wild.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
+server.wild.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
+server.wild.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
+
+server.arena.label=아레나
+server.arena.host=127.0.0.1
+# ★ 아레나 게임 포트 (network.json / server.properties server-port)
+server.arena.port=25568
+server.arena.log=C:/Chacademi/network/arena/logs/latest.log
+server.arena.console=rcon
+server.arena.rcon.port=25578
+server.arena.rcon.password=
+server.arena.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
+server.arena.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
+server.arena.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
+
+# 튜토리얼 서버를 만들면 servers= 에 tutorial_1,tutorial_2 를 넣고 아래 주석을 풀기 (★ 포트)
+#server.tutorial_1.label=튜토리얼 1
+#server.tutorial_1.port=25569
+#server.tutorial_1.log=C:/Chacademi/network/tutorial_1/logs/latest.log
+#server.tutorial_1.console=rcon
+#server.tutorial_1.rcon.port=25579
+#server.tutorial_1.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
+#server.tutorial_1.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
+#server.tutorial_2.label=튜토리얼 2
+#server.tutorial_2.port=25570
+#server.tutorial_2.log=C:/Chacademi/network/tutorial_2/logs/latest.log
+#server.tutorial_2.console=rcon
+#server.tutorial_2.rcon.port=25580
+
+# ---------- 조작 ----------
+control.script-timeout-seconds=180
+control.stop-wait-seconds=180
+control.start-wait-seconds=300
+# 스크립트 출력 글자 인코딩 (비우면 Windows 기본, 한글 Windows = MS949). 글자가 깨지면 UTF-8 로
+control.output-charset=
+# 모든 명령 앞에 붙일 것 (보통 비움)
+control.shell=
+
+# ---------- 규칙 경보 (AI 없이 바로 빨간 표시) ----------
+alarm.tps-below=15
+alarm.mspt-above=50
+alarm.heap-above-percent=90
+alarm.heartbeat-stale-seconds=30
+alarm.errors-per-minute=10
+alarm.host-cpu-above-percent=95
+alarm.host-memory-above-percent=95
+
+# ---------- AI 분석 (OpenAI, ChacaNPC 와 같은 키) ----------
+ai.enabled=true
+# ★ 키: 환경변수 CHACA_OPS_OPENAI_KEY → 없으면 CHACANPC_OPENAI_KEY → 없으면 아래 값
+ai.api-key=
+ai.base-url=https://api.openai.com/v1
+# ChacaNPC config.yml openai.model 과 같은 모델 (★ 확인)
+ai.model=gpt-6-luna
+ai.reasoning-effort=low
+ai.max-output-tokens=900
+# 하루 최대 횟수 (버튼 + 자동 합계)
+ai.max-per-day=40
+# true 면 새 빨간 경보가 생길 때 자동으로 한 번 (최소 간격 지킴). 기본 꺼짐 = 버튼만
+ai.auto-on-alarm=false
+ai.auto-min-interval-minutes=15
+
+# ---------- 운영 기록 검색 (codex_audit_log — 다른 작업이 만드는 표) ----------
+# 실제 표(AuditStore): id·at_ms(ms)·server·player(UUID)·player_name·kind·summary·detail
+audit.table=codex_audit_log
+audit.col.time=at_ms
+audit.col.server=server
+audit.col.uuid=player
+audit.col.name=player_name
+audit.col.kind=kind
+audit.col.message=summary
+audit.col.detail=detail
+# auto | millis | seconds | datetime (auto = 열 형식을 보고 정함)
+audit.time-unit=millis
+audit.max-rows=300
+
+# spark 결과 링크를 로그에서 찾는 정규식
+spark.link-pattern=https://spark\\.lucko\\.me/[A-Za-z0-9]+

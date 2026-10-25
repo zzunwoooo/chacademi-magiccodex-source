@@ -381,3 +381,22 @@ Essentials 비슷한 한글 명령. 새 파일 `ConvenienceCommands.java`(등록
 5. 유저(야생): `/도움 길을 잃었어요` → 학교 OP 에게 알림창+벨 소리+채팅 줄(누르면 `/텔포 <닉>` 입력), 유저에게 "운영자에게 보냈어요". 바로 다시 → "조금 뒤에 다시 보낼 수 있어요 · N초". OP 가 아무도 없을 때 → "지금 접속한 운영자가 없어요…", 그 서버에 OP 가 들어오면 3초 뒤 채팅으로 보임. `/도움기록` 으로 목록.
 6. 유저: `/쓰레기통` → 흙 넣고 닫기 → "아이템 N개를 버렸어요", 다시 열면 비어 있음.
 7. OP: `/메모리` → 메모리·TPS·MSPT·접속자·청크·엔티티 줄.
+## 21. 운영 대시보드 하트비트 (2026-10-26, 메모 #92)
+- 새 모듈 `ops-dashboard` (게임과 따로 도는 웹 앱, `java -jar`) — 설치·설정·자동 시작은 [CLAUDE_OPS_DASHBOARD](CLAUDE_OPS_DASHBOARD.md). 루트 `settings.gradle` 에 `include 'ops-dashboard'` 한 줄.
+- **MagicCodexBridge 변경**: `ServerHeartbeat`·`SparkProbe` 추가, `MagicCodexBridge` 에 필드·시작·종료 3줄. 10초마다(메인 스레드는 숫자만 읽음) 전용 스레드가 공유 DB 표 `codex_server_status` 에 서버별 한 줄을 덮어씀. spark API 를 리플렉션으로 (없으면 Bukkit TPS·평균 틱·JVM CPU). 끌 때 `state=stopped` 를 한 번 씀. `/서버관리 상태` 에 "하트비트" 줄. 실패해도 게임은 계속 (경고 한 줄).
+- 새 설정 파일 `plugins/MagicCodexBridge/server-heartbeat.yml` (jar 가 처음에 만듦): `enabled: true`, `server-id: ""`(= 서버 폴더 이름), `interval-seconds: 10`(5~60), `world-counts: true`. `database.properties` 가 MariaDB 가 아니면 자동으로 꺼짐.
+
+| `codex_server_status` 열 | 형식 | 뜻 |
+|---|---|---|
+| server_id (PK) | VARCHAR(48) | school·wild·arena·tutorial_1… |
+| state | VARCHAR(12) | running / stopped |
+| updated_at · started_at | BIGINT | epoch ms |
+| source | VARCHAR(8) | spark / bukkit |
+| tps_10s · tps_1m · tps_5m · tps_15m | DOUBLE | TPS |
+| mspt_mean · mspt_max · mspt_p95 | DOUBLE | ms (-1 = 모름) |
+| cpu_process · cpu_system | DOUBLE | % |
+| heap_used_mb · heap_max_mb | INT | 힙 |
+| online · max_players · worlds · chunks · entities | INT | 개수 (-1 = 안 셈) |
+| version | VARCHAR(96) | 서버 이름·버전 |
+
+- 배포: Bridge jar 를 학교·야생·아레나 `plugins/` (튜토리얼 서버도 만들면). 대시보드 `servers=` 이름 = 하트비트 server_id. 테스트 `ServerHeartbeatTest`(+대시보드 `OpsLogicTest`).

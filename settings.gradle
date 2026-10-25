@@ -13,3 +13,6 @@ include "housing-paper"
 include 'pet-interactions-paper'
 
 include 'housing-presence-velocity'
+
+// 운영 대시보드 (메모 #92): 게임과 따로 도는 웹 앱
+include 'ops-dashboard'
