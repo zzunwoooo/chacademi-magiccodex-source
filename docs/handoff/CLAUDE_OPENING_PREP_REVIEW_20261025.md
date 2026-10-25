@@ -114,3 +114,4 @@ buttons:
 | 89 | 특정 유저 기숙사·칭호·마법 사전 설정 | (전날) player-presets.yml players: {} (UUID/계정명 → house/titles/spells), 접속 3초 뒤 항목별 1회 | 나중에 (대상 목록 대기) | 보류 |
 | 90 | 일일 제한 초기화·재접속 유지 | 선물·AI 대화 호감도 = 공유 DB 날짜별(Asia/Seoul 자정), 서버 이동·재접속 유지 OK. 마음 읽기(383)만 서버 메모리였음 | 마음 읽기도 공유 DB 로 고침 + `/유저관리 <닉> 일일제한 보기·초기화 <종류|전체>` 추가. 배포 때 DB·시간대 확인 | 완료 |
 | 91 | 전투 중 이동 막기 | 귀환권·지도 이동에 전투 제한 없었음 (travel.yml block-in-combat 기본 꺼짐) | 오너 2안: 전투(때리거나 맞은 뒤 10초) 중 귀환권·지도 이동·HuskHomes 명령(/home·/spawn·/warp·/tpa·/back·한글 별칭)·동행 귀환 막기, 공간 도약·빗자루·리스폰·경기·관리자 허용. 공용 CombatTag + combat-lock.yml, 알림창 "N초 뒤 가능", 소모 없음 ([FINAL_PATCHES §15](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 완료 (빌드 전) |
+| 94 | 각 화면 한글 닉네임 표시 일관성 | 하우징은 이미 한글. 친구 목록(자리 표시자가 계정 이름 반환)·CmdKit/ChacaLink 허브 전 폴백·파티 오프라인 UUID·NPC 선물 기억·일러스트 보고·스토리 관리 알림·클라 첫 1.5초 계정 이름 | 표시 문구만 한글 닉(없으면 계정 이름), 입력·자동완성·로그는 그대로. 바닐라 입장/사망 메시지·탭 목록은 운영 플러그인 설정 확인 ([FINAL_PATCHES §16](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 완료 (빌드 전) |

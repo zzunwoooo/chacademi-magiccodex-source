@@ -229,3 +229,16 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 - 바꾼 파일: `CombatTag.java`·`CombatLockRules.java`(새), `CombatLockRulesTest.java`(새), `combat-lock.yml`(새), `MagicCodexBridge.java`(등록 3줄), `TravelBridge.java`, `ReturnTicketBridge.java`, `plugin.yml`(권한 1개), `travel.yml`·`return-ticket.yml`(주석).
 - 그대로 둔 것: travel.yml `rules.block-in-combat`(아티팩트 5초 판정, 기본 꺼짐) — 켜면 이것도 같이 막음. 동행 펫(PetCompanions)의 자체 전투 판정은 상대 엔티티·8초 설정(combat-seconds)이 따로 있어 바꾸면 동작이 달라지므로 안 바꿈.
 - 확인 필요: HuskHomes 실제 명령·한글 별칭 이름(서버 HuskHomes config·commands.yml 별칭과 맞추기). 상대가 /tpa 를 나중에 수락해 내가 끌려가는 경우·HuskHomes 창 클릭 이동은 명령을 거치지 않아 못 막음. 옛 MCPets 소환 펫이 때린 건 주인 전투로 안 셈.
+
+## 16. 한글 닉네임 표시 일관성 (2026-10-26, 메모 #94)
+훑은 범위: 하우징·방명록(이미 한글, HousingNames)·랭킹·친구·우편·퀘스트·큐디치/결투 결과·관전·파티·귓속말/통합채팅·알림·정보창·거래·칭호 알림 — 서버(MagicCodexBridge·Kyudichi·ChacaNPC·ChacaPortrait·스토리 등)·Velocity(party·housing-presence)·클라. 대부분은 이미 `plugin.names().name(...)` / `ChacaLink.name` / `hooks().nick` / 클라 `NicknameClient.display` 를 씀. 계정 이름이 새던 곳만 고침 (명령 자동완성·입력·서버 로그는 그대로):
+- `DisplayNames.name(offline, 저장된이름)` (MagicCodexBridge, 모든 표시 이름의 공통 길): 닉네임 자리 표시자가 계정 이름을 돌려주면 호출한 쪽이 저장해 둔 이름(친구 목록의 닉 등)을 먼저 씀 → SocialBridge 83(친구·신청 목록)·309(관리 친구 보기) 해결. 접속하지 않은(다른 서버) 사람은 캐시에 없으면 공유 DB 에서 한 번 읽어 둠(`requestStored`, 표시 전용·5초 제한).
+- `CmdKit.name` 145: 명령 허브가 준비되기 전에도 계정 이름 대신 `nicknameOf`.
+- 모든 플러그인의 `ChacaLink.name` 115 (12개 같은 파일: kyudichi·housing·gimmick·wildlife·tornado·mythic·discovery·story·motion·portrait·npc·vfx): 허브 호출 실패 때 브리지 `nicknameOf` → 그래도 없으면 계정 이름 (`nicknameFallback`).
+- 파티(Velocity) `PartyPlugin.name`: 오프라인 파티원이 `/파티 목록` 등에 UUID 로 보이던 것, 닉 응답 전 계정 이름 → 기억해 둔 닉네임(PartyHud) 먼저, 없으면 "파티원".
+- ChacaNPC 선물 기억 문장(`GiftService`) 계정 이름 → `link().playerName`. 잡담 필터(`SocialService`)가 접속자 한글 닉이 들어간 줄도 거름.
+- ChacaPortrait 일러스트 완성·실패 보고("OO 님 일러스트 완성") 계정 이름 → 닉네임 (`PortraitService.jobFor`).
+- 스토리 관리 알림 5곳(이미 재생 중·대기열 가득 등) `p.getName()` → `nick(p)`.
+- 클라 `NicknameClient.display`: 접속·서버 이동 직후 닉 응답(약 1.5초)이 오기 전 계정 이름이 잠깐 보이던 것 → 같은 계정이면 마지막으로 받은 닉네임, 처음 접속이면 이름표 자료(`NameplateClient.nickname`)의 내 등록 닉네임. 정보창·큐디치 대기실·일러스트·스토리 대화 `{player}` 등이 다 이 함수를 씀.
+- 그대로: kyudichi `Hooks.nick` 142 (브리지가 없을 때만 계정 이름 — 정상 폴백, 브리지 쪽 개선이 그대로 적용), `QuestBridge` 206 (서버 로그), 각종 `{player}` 명령 치환(콘솔 명령 인자라 계정 이름이어야 함).
+- 못 고친 것: 바닐라 입장·퇴장·사망 메시지와 탭 목록은 이 저장소 코드가 아니라 서버 쪽 플러그인 설정(채팅/TAB 등) 몫 — 운영 설정에서 `%magiccodex_nickname%` 를 쓰는지 확인 필요.

@@ -998,7 +998,18 @@ public final class PortraitService {
 
     /** 메인 스레드: 플레이어 스킨을 읽어 작업을 만든다. */
     public static Job jobFor(Kind kind, Player p, String request, String token, List<String> models, CommandSender reporter) {
-        return new Job(kind, p.getUniqueId(), p.getName(), SkinFetcher.refOf(p), request, token, models, reporter);
+        return new Job(kind, p.getUniqueId(), nickname(p), SkinFetcher.refOf(p), request, token, models, reporter);
+    }
+
+    /** 메인 스레드: 완성·실패 알림에 쓸 한글 닉네임 (MagicCodexBridge.nicknameOf). 브리지가 없거나 낮으면 계정 이름 (#94). */
+    private static String nickname(Player p) {
+        var bridge = org.bukkit.Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
+        if (bridge != null && bridge.isEnabled()) {
+            try {
+                if (bridge.getClass().getMethod("nicknameOf", org.bukkit.OfflinePlayer.class).invoke(bridge, p) instanceof String n && !n.isBlank()) return n;
+            } catch (ReflectiveOperationException | LinkageError | RuntimeException ignored) { }
+        }
+        return p.getName();
     }
 
     /** 비동기 완료 후 메인 스레드에서 이어서. */

@@ -112,7 +112,17 @@ final class ChacaLink {
 
     static String name(UUID id) {
         try { return (String) call("name", new Class<?>[]{UUID.class}, id); }
-        catch (RuntimeException e) { var p = Bukkit.getOfflinePlayer(id); return p.getName() == null ? id.toString() : p.getName(); }
+        catch (RuntimeException e) { return nicknameFallback(id); }
+    }
+
+    /** 허브가 아직 없을 때(켜지는 중 등): 브리지의 한글 닉네임(nicknameOf), 그것도 없으면 계정 이름 (#94). */
+    private static String nicknameFallback(UUID id) {
+        var p = Bukkit.getOfflinePlayer(id);
+        String account = p.getName() == null ? id.toString() : p.getName();
+        Plugin bridge = Bukkit.getPluginManager().getPlugin("MagicCodexBridge");
+        if (bridge == null || !bridge.isEnabled()) return account;
+        try { return bridge.getClass().getMethod("nicknameOf", org.bukkit.OfflinePlayer.class).invoke(bridge, p) instanceof String n && !n.isBlank() ? n : account; }
+        catch (ReflectiveOperationException | LinkageError | RuntimeException ignored) { return account; }
     }
 
     static UUID find(String input) { return (UUID) call("find", new Class<?>[]{String.class}, input); }
