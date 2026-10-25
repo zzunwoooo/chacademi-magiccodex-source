@@ -41,7 +41,7 @@ class LayoutStateTest {
         state.schemaVersion = -1;
         state.windows = Arrays.asList(first, null, second);
         state.sanitize();
-        assertEquals(2, state.schemaVersion);
+        assertEquals(3, state.schemaVersion);
         assertEquals(2, state.windows.size());
         assertSame(first, state.windows.get(0));
         assertSame(second, state.windows.get(1));

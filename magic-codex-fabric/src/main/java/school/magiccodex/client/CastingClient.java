@@ -24,17 +24,17 @@ public final class CastingClient {
     private static final CastingState STATE=new CastingState();
     private static final NormalSpellPresets PRESETS=new NormalSpellPresets(FabricLoader.getInstance().getConfigDir().resolve("magiccodex"));
     static void validatePreset(int index)throws java.io.IOException{PRESETS.prepare(index);}
-    public static Path activePath(){return PRESETS.path();} public static int preset(){return PRESETS.selected();} static int preferredPreset(){return PRESETS.preferred();}
+    public static Path activePath(){return PRESETS.path();} public static int preset(){return PRESETS.selected();} public static String presetLabel(){return matchLoadout?Integer.toString(PRESETS.editing()):NormalPresetMode.label(preset());} static int editingPreset(){return PRESETS.editing();} static int preferredPreset(){return PRESETS.preferred();}
     static void resetPresetSession(){PRESETS.resetSession();reloadBindings();}
     static void confirmPreset(int index)throws java.io.IOException{base=PRESETS.confirmed(index);refreshBindings();TamingClient.bindingsChanged();if(PRESETS.saveFailure()!=null)org.slf4j.LoggerFactory.getLogger("magiccodex").warn("Confirmed normal preset applied; preference persistence failed",PRESETS.saveFailure());STATE.releaseInputs();AimTargeting.cancel(false);}
-    public static void switchPreset(Runnable callback){GeneralPresetClient.request(preset()==1?2:1,callback);}
+    public static void switchPreset(Runnable callback){GeneralPresetClient.request(NormalPresetMode.next(preset()),callback);}
     private static KeyBinding toggleKey;
     private static SkillHudRenderer hud;
     private static long lastNotice;
     /** The saved normal six. During a 큐디치 match the HUD shows {@link KyudichiLoadout} on the same keys instead. */
     private static SpellKeySettings base=new SpellKeySettings();
     private static boolean matchLoadout;
-    public static CastingState state() { STATE.catalog(CodexCatalog.spells()); return STATE; }
+    public static CastingState state() { STATE.catalog(CodexCatalog.spells());STATE.inputAllowed(NormalPresetMode.inputAllowed(preset(),matchLoadout)); return STATE; }
     public static boolean enabled() { return STATE.enabled(); }
     static KeyBinding binding() { return toggleKey; }
     /** GLFW code of the magic-mode key (Z by default), or -1. */
@@ -77,6 +77,7 @@ public final class CastingClient {
     static SpellKeySettings legacyCombatSeed(){try{return SpellKeySettings.load(PRESETS.path(1));}catch(java.io.IOException e){return new SpellKeySettings();}}
     private static java.util.List<SpellKeySettings.Binding> combatKeys(){return legacyCombatSeed().orderedSlots();}
     public static void refreshBindings() {
+        STATE.inputAllowed(NormalPresetMode.inputAllowed(preset(),matchLoadout));
         if(matchLoadout){var combat=KyudichiLoadout.get();var initialKeys=combatKeys();if(combat.freezeNormalKeys(initialKeys))combat.save();STATE.setBindingsDirect(combat.bindings(initialKeys));}
         else STATE.setBindings(base);
     }
@@ -101,14 +102,16 @@ public final class CastingClient {
                 && client.currentScreen==null && client.getOverlay()==null && client.isWindowFocused();
     }
     public static boolean handleMouse(MinecraftClient client,int button,int action){
+        state();if(!NormalPresetMode.inputAllowed(preset(),matchLoadout))return false;
         if(BroomClientLink.reserve(client,client.options.sneakKey.matchesMouse(button),action)){STATE.releaseInputs();return false;}
         int code=KeySettingsLayout.mouseCode(button);
         return code>=0 && handleKey(client,code,0,action);
     }
     public static boolean handleKey(MinecraftClient client,int key,int scan,int action) {
-        if(BroomClientLink.reserve(client,client.options.sneakKey.matchesKey(key,scan),action)){STATE.releaseInputs();return false;}
         state();
         boolean toggle=toggleKey!=null && toggleKey.matchesKey(key,scan);
+        if(!NormalPresetMode.inputAllowed(preset(),matchLoadout)&&!toggle){STATE.releaseInputs();return false;}
+        if(BroomClientLink.reserve(client,client.options.sneakKey.matchesKey(key,scan),action)){STATE.releaseInputs();return false;}
         if(toggle){if(action==GLFW.GLFW_PRESS&&gameplay(client))switchPreset(null);return gameplay(client);}
         CastingState.Result result;
         try {
@@ -120,12 +123,12 @@ public final class CastingClient {
             return true;
         }
         report(client,result);
-        return false;
+        return result.consumed();
     }
     /** Cast confirmed from the aim preview (left click). Same checks and messages as a key press. */
     public static void fire(CodexData.Spell spell) {
         var client=MinecraftClient.getInstance();
-        if(spell==null || !gameplay(client) || client.getNetworkHandler()==null) return;
+        if(spell==null || !gameplay(client) || client.getNetworkHandler()==null || !NormalPresetMode.inputAllowed(preset(),matchLoadout)) return;
         state();
         // Taming traces the creature on the server from the eyes; aim that ray at the shoulder crosshair's creature.
         boolean aimed=(spell.id().equals("taming")||spell.id().equals("rainbow_collar"))&&CrosshairAim.aim(client,25);
@@ -168,7 +171,19 @@ public final class CastingClient {
         }
     }
     /** Covers vanilla continuous inputs and queued actions, including focus/GUI-close key resampling. */
-    public static boolean suppressed(KeyBinding key) { return false; }
+    public static boolean suppressed(KeyBinding key) {
+        var client=MinecraftClient.getInstance();
+        if(!STATE.enabled() || !gameplay(client) || key==toggleKey) return false;
+        if(key==client.options.sneakKey && BroomClientLink.reserved()) return false;
+        for(var binding:STATE.bindings()) {
+            int code=binding.keyCode();
+            if(binding.empty() || !KeySettingsLayout.allowed(code)) continue;
+            if(KeySettingsLayout.mouse(code)) {
+                if(key.matchesMouse(KeySettingsLayout.mouseButton(code))) return true;
+            } else if(!KyudichiClient.reservesKey(client,code,0) && key.matchesKey(code,0)) return true;
+        }
+        return false;
+    }
     public static void tick(MinecraftClient client) {
         GeneralPresetClient.tick();
         if(toggleKey!=null) while(toggleKey.wasPressed()) { }

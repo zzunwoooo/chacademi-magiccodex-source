@@ -45,7 +45,11 @@ public final class ChatLayout {
     private static boolean renderingHeaderTabs;
     private static ChatWindow gestureWindow,tabDragWindow;
     private static DragSession drag;
-    private static ResizeSession resize;
+    private static EdgeResizeSession resize;
+    private static boolean editHeld(){
+        return EditGesturePolicy.held(net.minecraft.client.gui.screens.Screen.hasControlDown(),
+                net.minecraft.client.gui.screens.Screen.hasShiftDown());
+    }
     private static ChatTab tabDrag;
     private static double tabStartX,tabStartY,tabDragCenter,lastMouseX,lastMouseY;
     private static boolean tabMoved,consumedPress;
@@ -199,6 +203,7 @@ public final class ChatLayout {
 
     public static void beforeRender(GuiGraphics graphics){
         PrivateConversations.tick();
+        if((drag!=null||resize!=null)&&!editHeld())finishGesture();
         if(!InteractionMode.interactionAllowed(Minecraft.getInstance().screen)&&(drag!=null||resize!=null||tabDrag!=null))finishGesture();
         refresh();
     }
@@ -281,12 +286,11 @@ public final class ChatLayout {
         WindowState saved=states.get(selected);
         if(saved!=null&&!selected.getGeneralSettings().getDisabled()){
             if(restoreSelected){
-                boolean changed=saved.mode==UiState.Mode.CLOSED||saved.mode==UiState.Mode.MINIMIZED;
+                boolean changed=saved.mode==UiState.Mode.CLOSED;
                 if(saved.mode==UiState.Mode.CLOSED)saved.open();
-                if(saved.mode==UiState.Mode.MINIMIZED)saved.minimize();
                 if(changed){refresh();save();}
             }
-            if(saved.mode==UiState.Mode.NORMAL||saved.mode==UiState.Mode.MAXIMIZED)return;
+            if(saved.mode==UiState.Mode.NORMAL)return;
         }
         var windows=Config.INSTANCE.getValues().getChatWindows();
         for(int index=windows.size()-1;index>=0;index--){
@@ -389,9 +393,15 @@ public final class ChatLayout {
     }
 
     public static boolean handleClick(double mx,double my,int button){
-        if(button!=0||!InteractionMode.interactionAllowed(Minecraft.getInstance().screen)||!refresh())return false;
+        if(!InteractionMode.interactionAllowed(Minecraft.getInstance().screen)||!refresh())return false;
+        // Consume right clicks before ChatPlus can open its Edit/context menu.
+        if(ChatPointerPolicy.block(button,true,frontWindow(mx,my)!=null))return true;
+        if(button!=0)return false;
         ChatWindow window=frontWindow(mx,my);
         if(window==null)return false;
+        if(editHeld()&&panels.get(window).nativeBodyVisible()){
+            ChatWindowsManager.INSTANCE.selectWindow(window);refresh();
+        }
         if(clickPanel(window,panels.get(window),mx,my)){
             if(tabDrag==null&&Config.INSTANCE.getValues().getChatWindows().contains(window))ChatWindowsManager.INSTANCE.selectWindow(window);
             consumedPress=true;
@@ -422,52 +432,63 @@ public final class ChatLayout {
             if(peer.equals(PrivateConversations.peer(tab))){
                 if(create){
                     tab.getCurrentSettings().setName(name);
-                    var saved=states.get(window);
-                    if(saved.mode==UiState.Mode.CLOSED)saved.open();
                     refresh();ConfigKt.setQueueUpdateConfig(true);
                 }
                 return tab;
             }
         }
         if(!create||windows.isEmpty())return null;
-        var source=ChatManager.INSTANCE.getSelectedWindow();
-        var window=source.clone();window.updateWindowReference();
-        window.getRenderer().setScale(source.getRenderer().getScale());
-        window.getRenderer().updateCachedDimension();
+        // Receive into the existing category host. Only an explicit user drag creates a window.
+        var window=PrivateCategoryPolicy.host(windows,w->w.getTabSettings().getTabs(),
+                t->PrivateConversations.peer(t)!=null);
         var settings=new com.ebicep.chatplus.features.chattabs.ServerChatTabSettings();
         settings.setName(name);settings.setPattern("(?!)");settings.updateRegex();
         settings.setAutoPrefix(peer.marker());settings.setCommandsOverrideAutoPrefix(false);
         settings.setAlwaysAdd(false);settings.setSkipOthers(false);
         var tab=new ChatTab(window,settings);tab.setCurrentSettings(settings);settings.setChatTab(tab);
-        window.getTabSettings().getTabs().clear();window.getTabSettings().getTabs().add(tab);
-        window.getTabSettings().setSelectedTabIndex(0);window.getTabSettings().setStartRenderTabIndex(0);
-        window.updateWindowReference();window.getTabSettings().resetSortedChatTabs(false);
-        var saved=new WindowState();saved.x=Math.min(0.65,0.04+windows.size()*0.025);
-        saved.y=Math.min(0.65,0.25+windows.size()*0.035);saved.width=0.32;saved.height=0.18;
-        saved.backgroundOpacity=states.get(source).backgroundOpacity;
-        states.put(window,saved);
-        // Keep the currently typed recipient selected while a new sender appears.
-        windows.add(Math.max(0,windows.size()-1),window);
+        var selected=window.getTabSettings().getSelectedTab();
+        var tabs=new ArrayList<>(window.getTabSettings().getTabs());tabs.add(tab);
+        replaceTabs(window,tabs,selected);
         ChatManager.INSTANCE.resetGlobalSortedTabs();ConfigKt.setQueueUpdateConfig(true);
         refresh();save();return tab;
     }
     private static boolean closePrivate(ChatWindow window){
         var tab=window.getTabSettings().getSelectedTab();
-        if(PrivateConversations.peer(tab)==null)return false;
+        var peer=PrivateConversations.peer(tab);
+        if(peer==null)return false;
         PrivateConversations.closed(tab);
-        // Keep the native tab object, history, scroll and unread state. New delivery reopens it.
-        // Its UUID/account/server scope marker still prevents replying through a different scope.
-        var saved=states.get(window);if(saved!=null)saved.close();
-        refresh();ensureInputOwner(false);save();return true;
+        var windows=Config.INSTANCE.getValues().getChatWindows();
+        var unread=unreadSnapshot();
+        // Delete this UI category only. No history/storage delete request is sent.
+        for(var owner:new ArrayList<>(windows)){
+            var selected=owner.getTabSettings().getSelectedTab();
+            var remaining=PrivateCategoryPolicy.without(owner.getTabSettings().getTabs(),
+                    t->peer.equals(PrivateConversations.peer(t)));
+            if(remaining.size()==owner.getTabSettings().getTabs().size())continue;
+            if(remaining.isEmpty()){
+                windows.remove(owner);states.remove(owner);panels.remove(owner);idle.remove(owner);
+            }else replaceTabs(owner,remaining,selected);
+        }
+        // Defensive fallback for a user configuration containing only this private category.
+        if(windows.isEmpty()){
+            var settings=new com.ebicep.chatplus.features.chattabs.ServerChatTabSettings();
+            settings.setName("전체");settings.setPattern("(?s).*");settings.updateRegex();
+            settings.setAlwaysAdd(true);settings.setSkipOthers(false);
+            var fallback=new ChatTab(window,settings);fallback.setCurrentSettings(settings);settings.setChatTab(fallback);
+            replaceTabs(window,List.of(fallback),fallback);windows.add(window);states.put(window,new WindowState());
+        }
+        ChatManager.INSTANCE.resetGlobalSortedTabs();ConfigKt.setQueueUpdateConfig(true);
+        restoreUnread(unread);refresh();ensureInputOwner(false);save();return true;
     }
     private static boolean clickPanel(ChatWindow window,LayoutMath.Panel panel,double mx,double my){
         WindowState saved=states.get(window);
         if(panel.mode()==UiState.Mode.CLOSED){saved.open();refresh();save();return true;}
-        for(int index=0;index<4;index++){
+        if(panel.nativeBodyVisible()&&editHeld()&&EdgeResizeSession.edges(panel.frame(),mx,my)!=0)
+            return beginEdit(window,panel,mx,my);
+        for(int index=0;index<2;index++){
             if(panel.control(index).contains(mx,my)){
                 switch(index){
-                    case 0->saved.toggleLock();case 1->saved.maximize();
-                    case 2->saved.minimize();case 3->{if(!closePrivate(window))saved.close();}default->throw new IllegalStateException();
+                    case 0->saved.toggleLock();case 1->{if(!closePrivate(window))saved.close();}default->throw new IllegalStateException();
                 }
                 refresh();save();return true;
             }
@@ -495,15 +516,7 @@ public final class ChatLayout {
                 refresh();save();return true;
             }
         }
-        if(panel.nativeBodyVisible()&&panel.resizeHandle().contains(mx,my)){
-            if(saved.locked)return true;
-            gestureWindow=window;
-            saved.anchor((double)panel.frame().x()/viewportWidth,(double)panel.frame().top()/viewportHeight);
-            if(saved.mode==UiState.Mode.MAXIMIZED)saved.maximize();
-            saved.resize((double)panel.body().width()/viewportWidth,(double)panel.body().height()/viewportHeight);
-            resize=ResizeSession.begin(panel.body().width(),panel.body().height(),mx,my,viewportWidth,viewportHeight);
-            refresh();return true;
-        }
+        if(panel.nativeBodyVisible()&&editHeld())return beginEdit(window,panel,mx,my);
         if(panel.tabs()>0&&HeaderLayout.tabs(panel).contains(mx,my)){
             ChatTab clicked=window.getTabSettings().getClickedTab(mx,my);
             if(clicked!=null){
@@ -513,17 +526,31 @@ public final class ChatLayout {
                 lastMouseX=mx;lastMouseY=my;tabMoved=false;return true;
             }
         }
-        if(!panel.header().contains(mx,my))return false;
+        return false;
+    }
+
+    private static boolean beginEdit(ChatWindow window,LayoutMath.Panel panel,double mx,double my){
+        WindowState saved=states.get(window);
         if(saved.locked)return true;
+        gestureWindow=window;
         double x=(double)panel.frame().x()/viewportWidth,y=(double)panel.frame().top()/viewportHeight;
-        if(saved.mode==UiState.Mode.MAXIMIZED)saved.maximize();
-        saved.anchor(x,y);gestureWindow=window;refresh();
-        drag=DragSession.begin(x,y,mx,my,viewportWidth,viewportHeight);
+        saved.anchor(x,y);
+        int edges=EdgeResizeSession.edges(panel.frame(),mx,my);
+        if(edges!=0){
+            int twoLines=(int)Math.ceil(2.0*window.getRenderer().getUpdatedLineHeight()*window.getRenderer().getUpdatedScale())+ContentInsets.BOTTOM;
+            int minimumHeight=Math.max(LayoutMath.MIN_HEIGHT,(twoLines+1)/2);
+            resize=EdgeResizeSession.begin(panel,mx,my,viewportWidth,viewportHeight,edges,minimumHeight);
+        }else drag=DragSession.begin(x,y,mx,my,viewportWidth,viewportHeight);
         return true;
+    }
+
+    public static void editModifierReleased(){
+        if(drag!=null||resize!=null)finishGesture();
     }
 
     public static boolean handleDrag(double mx,double my,int button){
         if(button!=0||!InteractionMode.interactionAllowed(Minecraft.getInstance().screen)||!refresh())return false;
+        if((drag!=null||resize!=null)&&!editHeld()){finishGesture();return true;}
         if(tabDrag!=null){
             lastMouseX=mx;lastMouseY=my;
             double dx=(mx/viewportWidth-tabStartX)*viewportWidth,dy=(my/viewportHeight-tabStartY)*viewportHeight;
@@ -534,9 +561,10 @@ public final class ChatLayout {
         }
         if(resize!=null){
             var size=resize.move(mx,my,viewportWidth,viewportHeight);
-            states.get(gestureWindow).resize(size.width(),size.height());refresh();return true;
+            var saved=states.get(gestureWindow);
+            saved.anchor(size.x(),size.y());saved.resize(size.width(),size.height());refresh();return true;
         }
-        if(drag==null)return false;
+        if(drag==null)return consumedPress;
         var anchor=drag.move(mx,my,viewportWidth,viewportHeight);
         states.get(gestureWindow).anchor(anchor.x(),anchor.y());refresh();return true;
     }
@@ -697,7 +725,7 @@ public final class ChatLayout {
     public static void handleRemoved(){finishGesture();consumedPress=false;}
     private static void finishGesture(){
         boolean changed=drag!=null||resize!=null;
-        if(drag!=null&&panels.containsKey(gestureWindow)){
+        if(changed&&panels.containsKey(gestureWindow)){
             var panel=panels.get(gestureWindow);
             states.get(gestureWindow).anchor((double)panel.frame().x()/viewportWidth,(double)panel.frame().top()/viewportHeight);
         }
@@ -722,22 +750,20 @@ public final class ChatLayout {
         if(bodyAlpha>0)border(graphics,panel.frame(),IdleFade.color(edge,bodyAlpha));
         var header=panel.header();
         border(graphics,header,edge);
-        // The header deliberately has no caption; its blank region remains a drag surface.
+        // Ctrl+Shift reserves the pane for editing; ordinary tab gestures retain their native path.
         String tooltip=null;
         WindowState saved=states.get(window);
-        for(int index=0;index<4;index++){
+        for(int index=0;index<2;index++){
             var button=panel.control(index);
             boolean hovered=interactive&&button.contains(mx,my);
             graphics.fill(button.x(),button.top(),button.right(),button.bottom(),IdleFade.color(hovered?HOVER:BUTTON,alpha));
             icon(graphics,button,index,saved.locked,alpha);
             if(hovered)tooltip=switch(index){
                 case 0->saved.locked?"이동·크기 잠금 해제":"이동·크기 잠금";
-                case 1->saved.locked?"잠금 중":panel.mode()==UiState.Mode.MAXIMIZED?"복원":"최대화";
-                case 2->panel.mode()==UiState.Mode.MINIMIZED?"본문 복원":"최소화";
                 default->"닫기";
             };
         }
-        if(panel.nativeBodyVisible()&&!saved.locked&&bodyAlpha>0){
+        if(panel.nativeBodyVisible()&&!saved.locked&&editHeld()&&bodyAlpha>0){
             var frame=panel.frame();int tint=IdleFade.color(interactive&&panel.resizeHandle().contains(mx,my)?ICON:edge,bodyAlpha);
             graphics.fill(frame.right()-5,frame.bottom()-2,frame.right()-1,frame.bottom()-1,tint);
             graphics.fill(frame.right()-2,frame.bottom()-5,frame.right()-1,frame.bottom()-1,tint);
@@ -809,9 +835,7 @@ public final class ChatLayout {
             border(graphics,new LayoutMath.Rect(x,y+2,5,4),tint);
             graphics.fill(x+1,y,x+2,y+3,tint);graphics.fill(x+1,y,x+4,y+1,tint);
             if(locked)graphics.fill(x+3,y,x+4,y+3,tint);else graphics.fill(x+4,y,x+5,y+2,tint);
-        }else if(kind==1)border(graphics,new LayoutMath.Rect(x,y,5,5),tint);
-        else if(kind==2)graphics.fill(x,y+4,x+5,y+5,tint);
-        else for(int i=0;i<5;i++){
+        }else for(int i=0;i<5;i++){
             graphics.fill(x+i,y+i,x+i+1,y+i+1,tint);
             graphics.fill(x+4-i,y+i,x+5-i,y+i+1,tint);
         }

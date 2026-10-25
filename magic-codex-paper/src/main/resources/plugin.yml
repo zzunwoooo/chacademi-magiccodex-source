@@ -3,7 +3,7 @@ version: '${version}'
 main: school.magiccodex.paper.MagicCodexBridge
 api-version: '1.21.4'
 description: Permission, balance, server-authoritative mana and spell casting for Magic Codex.
-softdepend: [LuckPerms, Vault, PlaceholderAPI, MCPets, MythicMobs, ModelEngine, Citizens]
+softdepend: [HuskSync, ItemsAdder, LuckPerms, Vault, PlaceholderAPI, MCPets, MythicMobs, ModelEngine, Citizens]
 commands:
   기숙사분류:
     description: Administrator house sorting and population balance.

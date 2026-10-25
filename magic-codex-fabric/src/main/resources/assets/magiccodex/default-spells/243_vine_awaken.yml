@@ -2,7 +2,7 @@ id: vine_awaken
 name: 덩굴 깨우기
 category: earth
 description: 씨앗 화분을 깨워 덩굴을 키웁니다. 자란 덩굴을 타고 높은 곳으로 오를 수 있습니다.
-icon: ''
+icon: magiccodex:textures/spells/gimmick/vine_awaken.png
 permission: magic.learned.vine_awaken
 discovery:
   description: 뼛가루로 묘목을 나무로 키우기 5회.

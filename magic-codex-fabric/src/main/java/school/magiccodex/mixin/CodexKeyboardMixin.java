@@ -17,13 +17,13 @@ public abstract class CodexKeyboardMixin {
     @Inject(method = "onKey", at = @At("HEAD"), cancellable = true)
     private void magiccodex$openShortcut(long window, int key, int scan, int action, int modifiers, CallbackInfo ci) {
         var client = MinecraftClient.getInstance();
-        if (window == client.getWindow().getHandle() && (PlayerHudClient.handleCursorKey(client, key, action)
+        if (window == client.getWindow().getHandle() && ((!school.magiccodex.client.KyudichiClient.reservesKey(client, key, scan) && CastingClient.handleKey(client, key, scan, action))
+                || PlayerHudClient.handleCursorKey(client, key, action)
                 || school.magiccodex.client.UiKeys.handleKey(client, key, scan, action)
                 || school.magiccodex.client.EquipmentClient.handleKey(client,key,scan,action)
                 || StatsClient.handleKey(client, key, scan, action)
                 || MagicCodexClient.handleOpenShortcut(client, key, scan, action)
-                || school.magiccodex.client.KyudichiClient.handleKey(client, key, scan, action)
-                || (!school.magiccodex.client.KyudichiClient.reservesKey(client, key, scan) && CastingClient.handleKey(client, key, scan, action))))
+                || school.magiccodex.client.KyudichiClient.handleKey(client, key, scan, action)))
             ci.cancel();
     }
 }

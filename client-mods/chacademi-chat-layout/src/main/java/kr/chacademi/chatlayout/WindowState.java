@@ -20,7 +20,8 @@ public final class WindowState {
             backgroundOpacity=Double.isFinite(backgroundOpacity)?Math.max(0,Math.min(1,backgroundOpacity)):null;
         width = size(width);
         height = size(height);
-        if (mode == null) mode = UiState.Mode.NORMAL;
+        if (mode == null || mode == UiState.Mode.MAXIMIZED || mode == UiState.Mode.MINIMIZED) mode = UiState.Mode.NORMAL;
+        restore = UiState.Mode.NORMAL;
         if (!restorable(restore)) restore = UiState.Mode.NORMAL;
     }
 

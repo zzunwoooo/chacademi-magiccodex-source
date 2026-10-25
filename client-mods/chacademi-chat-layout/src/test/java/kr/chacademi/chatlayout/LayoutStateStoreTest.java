@@ -57,7 +57,7 @@ class LayoutStateStoreTest {
         assertEquals(.4, a.height);
         assertFalse(a.locked);
         assertEquals(UiState.Mode.CLOSED, a.mode);
-        assertEquals(UiState.Mode.MAXIMIZED, a.restore);
+        assertEquals(UiState.Mode.NORMAL, a.restore);
         assertEquals(second.id, b.id);
         assertEquals(.4, b.x);
         assertEquals(.55, b.y);
@@ -65,7 +65,7 @@ class LayoutStateStoreTest {
         assertEquals(.12, b.height);
         assertTrue(b.locked);
         assertTrue(b.systemDefault);
-        assertEquals(UiState.Mode.MINIMIZED, b.mode);
+        assertEquals(UiState.Mode.NORMAL, b.mode);
         assertEquals(UiState.Mode.NORMAL, b.restore);
         assertEquals(.25, restored.backgroundOpacity);
         assertEquals(.75, restored.borderOpacity);
@@ -88,7 +88,7 @@ class LayoutStateStoreTest {
         Files.writeString(path, legacy);
         LayoutState migrated = new LayoutStateStore(path).load();
         assertEquals(legacy, Files.readString(path));
-        assertEquals(2, migrated.schemaVersion);
+        assertEquals(3, migrated.schemaVersion);
         assertEquals(2, migrated.windows.size());
         WindowState upper = migrated.windows.get(0), lower = migrated.windows.get(1);
         assertEquals(LayoutState.signature(List.of("전체", "기숙사", "파티", "귓말")), upper.signature);
@@ -98,8 +98,8 @@ class LayoutStateStoreTest {
         assertEquals(.6, upper.width);
         assertEquals(.4, upper.height);
         assertTrue(upper.locked);
-        assertEquals(UiState.Mode.MINIMIZED, upper.mode);
-        assertEquals(UiState.Mode.MAXIMIZED, upper.restore);
+        assertEquals(UiState.Mode.NORMAL, upper.mode);
+        assertEquals(UiState.Mode.NORMAL, upper.restore);
         assertFalse(upper.systemDefault);
         assertEquals(.4, lower.x);
         assertEquals(.55, lower.y);
@@ -107,7 +107,7 @@ class LayoutStateStoreTest {
         assertEquals(.12, lower.height);
         assertFalse(lower.locked);
         assertEquals(UiState.Mode.CLOSED, lower.mode);
-        assertEquals(UiState.Mode.MAXIMIZED, lower.restore);
+        assertEquals(UiState.Mode.NORMAL, lower.restore);
         assertTrue(lower.systemDefault);
         assertEquals(.50, migrated.backgroundOpacity);
         assertEquals(.85, migrated.borderOpacity);

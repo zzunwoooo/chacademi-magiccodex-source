@@ -62,6 +62,7 @@ final class EnhancementBridge implements Listener,PluginMessageListener,AutoClos
   var inv=p.getInventory();ItemStack w=inv.getItemInMainHand();if(!wand(w)){refuseOpen(p,"등록된 마법봉을 주 손에 들어 주세요");return;}
   int slot=-1;for(int j=1;j<=36;j++){int i=Math.floorMod(after+j,36);if(i!=inv.getHeldItemSlot()&&core(inv.getItem(i))){slot=i;break;}}
   if(slot<0){refuseOpen(p,"인벤토리에 감정된 마력코어가 필요해요");return;}
+  ItemStack oldCore=inv.getItem(slot),visualCore=plugin.coreAppearance(oldCore);if(visualCore!=oldCore)inv.setItem(slot,visualCore);
   Session s=new Session();s.token=ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE);s.created=now();s.slot=inv.getHeldItemSlot();s.coreSlot=slot;captureBase(w);s.wand=w.clone();s.core=inv.getItem(slot).clone();s.nodes=integer(s.core,"core_nodes",1);s.attempts=integer(w,"enhance_attempts",0);s.limit=config.getInt("maximum-attempts");if(s.attempts>=s.limit){refuseOpen(p,"이 마법봉의 강화 횟수를 모두 썼어요");return;}
   s.cost=config.getDouble("cost");s.consume=config.getBoolean("consume-attempt-on-failure",true);s.base=Math.min(1,number(s.core,"core_base_success"));s.bonus=Math.min(1,number(s.core,"core_starcatch_bonus"));if(config.getDouble("base-chance-override")>=0)s.base=config.getDouble("base-chance-override");if(config.getDouble("bonus-chance-override")>=0)s.bonus=config.getDouble("bonus-chance-override");
   s.window=Math.max(config.getInt("starcatch.minimum-window-ms"),config.getInt("starcatch.first-window-ms")-(s.nodes-1)*config.getInt("starcatch.window-decrease-ms"));

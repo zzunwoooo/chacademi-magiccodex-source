@@ -59,7 +59,7 @@ final class AppraisalBridge implements PluginMessageListener,Listener,AutoClosea
   for(String s:new String[]{"base-success","starcatch-bonus","stat-gain"})p.set(key("core_"+s.replace('-','_')),PersistentDataType.DOUBLE,config.getDouble("profiles."+nodes+"."+s));
   m.displayName(net.kyori.adventure.text.Component.text(state==2?"파괴된 마력코어":state==0?"미감정 마력코어":"마력코어").decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC,false));
   m.lore(List.of(net.kyori.adventure.text.Component.text("강화 재료"),net.kyori.adventure.text.Component.text(state==0?"아직 해독하지 못한 룬이 새겨져 있습니다.":state==2?"마력이 흩어져 더 이상 사용할 수 없습니다.":"해독된 룬이 마력 회로에 자리 잡았습니다.")));
-  item.setItemMeta(m);return item;
+  item.setItemMeta(m);return plugin.coreAppearance(item);
  }
  /** Creates one fully appraised core using the existing persistent item schema. */
  ItemStack adminCore(int nodes,double successPercent,double bonusPercent,double statGain,int affinity){
@@ -78,7 +78,7 @@ final class AppraisalBridge implements PluginMessageListener,Listener,AutoClosea
   if(!player.hasPermission("magiccodex.core.use")||player.isDead())return;
   if(!player.getListeningPluginChannels().contains(AppraisalProtocol.RESPONSE)){CmdKit.notify(player,"warning","appraisal-mod","감정 창을 열 수 없어요","차카데미 모드를 업데이트해 주세요",3000);return;}
   long now=System.currentTimeMillis();if(now<next.getOrDefault(player.getUniqueId(),0L))return;next.put(player.getUniqueId(),now+500);
-  int slot=player.getInventory().getHeldItemSlot();ItemStack item=player.getInventory().getItem(slot);
+  int slot=player.getInventory().getHeldItemSlot();ItemStack oldItem=player.getInventory().getItem(slot);ItemStack item=plugin.coreAppearance(oldItem);if(item!=oldItem)player.getInventory().setItem(slot,item);
   if(!core(item)||item.getAmount()!=1){CmdKit.notify(player,"warning","appraisal-open","감정할 수 없어요","마력코어 한 개를 주 손에 들고 사용해 주세요",1500);return;}
   int state=value(item,"core_state",0);double cost=state==0?config.getDouble("appraisal-cost"):0;
   long token=ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE);offers.put(player.getUniqueId(),new Offer(token,slot,item.clone(),now+60000,cost));

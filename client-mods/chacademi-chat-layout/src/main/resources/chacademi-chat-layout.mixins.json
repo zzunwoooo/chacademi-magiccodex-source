@@ -20,7 +20,8 @@
     "MinecraftChatInvoker",
     "MagicHudChatMixin",
     "ChatPresentationMixin",
-    "ChatImageSpacingMixin"
+    "ChatImageSpacingMixin",
+    "EditModifierKeyMixin"
   ],
   "injectors": {
     "defaultRequire": 1

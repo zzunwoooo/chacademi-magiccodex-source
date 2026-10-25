@@ -2,7 +2,7 @@ id: light_beam
 name: 빛줄기
 category: light
 description: 3초 동안 곧은 빛줄기를 내뿜습니다. 거울에서 꺾이고, 프리즘을 지나면 그 색으로 물듭니다. 쓰는 동안에는 움직일 수 없습니다.
-icon: ''
+icon: magiccodex:textures/spells/gimmick/light_beam.png
 permission: magic.learned.light_beam
 discovery:
   description: 유리판을 든 채 횃불 앞에 10초 서 있기.

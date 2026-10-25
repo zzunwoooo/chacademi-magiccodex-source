@@ -16,7 +16,12 @@ static boolean click(double x,double y,int button){
  /** A "shop" notice whose left icon is the given item (its resource-pack icon, else the item's own model). */
  public static void item(String id,String title,String body,net.minecraft.item.ItemStack icon){var stack=icon==null?net.minecraft.item.ItemStack.EMPTY:icon.copy();MinecraftClient.getInstance().execute(()->{if(!stack.isEmpty())ICONS.put(id,stack);QUEUE.offerIfAbsent(new NotificationQueue.Notice(id,"shop",school.magiccodex.protocol.JournalProtocol.cut(title,140),school.magiccodex.protocol.JournalProtocol.cut(body,500),4500));});}
  public static void unavailable(){enqueue(new NotificationQueue.Notice("broom:unavailable","warning","사용할 수 없는 마법","빗자루에서 내린 뒤 사용할 수 있어요.",2800));}
- private static void enqueue(NotificationQueue.Notice notice){MinecraftClient.getInstance().execute(()->QUEUE.offerIfAbsent(notice));}
+ private static void enqueue(NotificationQueue.Notice notice){MinecraftClient.getInstance().execute(()->{
+  var target=NotificationRouting.destination(notice.id(),notice.kind());
+  if(target==NotificationRouting.Destination.DISCOVERY_ONLY)return;
+  if(target==NotificationRouting.Destination.SYSTEM_CHAT){var c=MinecraftClient.getInstance();if(c.player!=null)c.inGameHud.getChatHud().addMessage(net.minecraft.text.Text.literal(NotificationRouting.message(notice.title(),notice.body())));return;}
+  QUEUE.offerIfAbsent(notice);
+ });}
  private static NotificationPresentation.Surface surface(MinecraftClient c){return c.currentScreen==null?NotificationPresentation.Surface.WORLD:c.currentScreen instanceof HudCursorScreen||c.currentScreen instanceof ShopScreen||c.currentScreen instanceof MileageScreen||c.currentScreen instanceof net.minecraft.client.gui.screen.ChatScreen?NotificationPresentation.Surface.CURSOR:dialogue(c.currentScreen)?NotificationPresentation.Surface.DIALOGUE:NotificationPresentation.Surface.HIDDEN;}
  private static boolean visible(MinecraftClient c){return c.world!=null&&c.player!=null&&c.player.isAlive()&&!c.options.hudHidden&&c.getOverlay()==null&&surface(c)!=NotificationPresentation.Surface.HIDDEN;}
  private static void closeResources(){CARDS.clear();if(images!=null)images.close();if(text!=null)text.close();images=null;text=null;resourceGeneration=-1;}

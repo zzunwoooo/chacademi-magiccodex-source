@@ -9,8 +9,8 @@ import java.util.*;
  *
  * A page is 27 slots; each slot is the Paper {@code ItemStack#serializeAsBytes()} bytes or empty for air.
  * The journal keeps the newest page state of a player on this server until the database has it, so a crash or a
- * database outage right after a page switch never loses or doubles items (the inventory itself is saved by
- * {@code Player#saveData()} in the same tick as the journal).
+ * database outage. Version 2 retains the target page and pairs it with a persistent player commit marker;
+ * sharing a tick does not make the journal and player file atomic.
  */
 final class BagPageCodec {
     private BagPageCodec() {}
@@ -66,7 +66,7 @@ final class BagPageCodec {
 
     // ------------------------------------------------------------------ journal
 
-    record Entry(UUID owner, String server, int active, long seq, byte[][] pages, Path file) {}
+    record Entry(UUID owner, String server, int active, long seq, byte[][] pages, byte[] incoming, Path file) { boolean recoverable() { return incoming != null; } }
 
     static final class Journal {
         private final Path root;
@@ -76,10 +76,19 @@ final class BagPageCodec {
 
         /** Durable before returning (fsync + atomic move). Main thread; a page is small. */
         synchronized void save(UUID owner, String server, int active, long seq, byte[][] pages) throws IOException {
+            save(owner, server, active, seq, pages, null);
+        }
+
+        /** Version 2 retains the incoming page until a later switch supersedes it. */
+        synchronized void save(UUID owner, String server, int active, long seq, byte[][] pages, byte[] incoming) throws IOException {
             var bytes = new ByteArrayOutputStream();
             try (var d = new DataOutputStream(bytes)) {
-                d.writeByte(1); d.writeUTF(owner.toString()); d.writeUTF(server); d.writeByte(active); d.writeLong(seq);
+                d.writeByte(incoming == null ? 1 : 2); d.writeUTF(owner.toString()); d.writeUTF(server); d.writeByte(active); d.writeLong(seq);
                 for (int i = 0; i < PAGES; i++) { byte[] p = pages[i] == null ? new byte[0] : pages[i]; d.writeInt(p.length); d.write(p); }
+            }
+            if (incoming != null) {
+                if (incoming.length > MAX_PAGE_BYTES) throw new IOException("Incoming page too large");
+                try (var d = new DataOutputStream(bytes)) { d.writeInt(incoming.length); d.write(incoming); }
             }
             Path target = file(owner, server), tmp = Files.createTempFile(root, "bag-", ".tmp");
             try {
@@ -96,9 +105,10 @@ final class BagPageCodec {
         }
 
         private Entry read(Path f) throws IOException {
-            if (Files.isSymbolicLink(f) || Files.size(f) > PAGES * (long) MAX_PAGE_BYTES + 512) throw new IOException("Invalid bag journal file");
+            if (Files.isSymbolicLink(f) || Files.size(f) > (PAGES + 1) * (long) MAX_PAGE_BYTES + 512) throw new IOException("Invalid bag journal file");
             try (var d = new DataInputStream(new ByteArrayInputStream(Files.readAllBytes(f)))) {
-                if (d.readUnsignedByte() != 1) throw new IOException("version");
+                int version = d.readUnsignedByte();
+                if (version != 1 && version != 2) throw new IOException("version");
                 UUID owner = UUID.fromString(d.readUTF());
                 String server = d.readUTF();
                 int active = d.readUnsignedByte();
@@ -106,7 +116,10 @@ final class BagPageCodec {
                 byte[][] pages = new byte[PAGES][];
                 for (int i = 0; i < PAGES; i++) { int n = d.readInt(); if (n < 0 || n > d.available()) throw new IOException("length"); pages[i] = d.readNBytes(n); }
                 if (active < 1 || active > PAGES || !f.getFileName().toString().equals(owner + "_" + server + ".bin")) throw new IOException("record");
-                return new Entry(owner, server, active, seq, pages, f);
+                byte[] incoming = null;
+                if (version == 2) { int n = d.readInt(); if (n < 0 || n > MAX_PAGE_BYTES || n > d.available()) throw new IOException("incoming length"); incoming = d.readNBytes(n); decodePage(incoming); }
+                if (d.available() != 0) throw new IOException("trailing");
+                return new Entry(owner, server, active, seq, pages, incoming, f);
             } catch (RuntimeException e) { throw new IOException("Invalid bag journal record", e); }
         }
 
@@ -119,7 +132,7 @@ final class BagPageCodec {
         /** Removes the record only when it is still the one that was stored (a newer switch keeps its own). */
         synchronized void acknowledge(UUID owner, String server, long seq) throws IOException {
             Entry e = read(owner, server);
-            if (e != null && e.seq() == seq) Files.deleteIfExists(e.file());
+            if (e != null && !e.recoverable() && e.seq() == seq) Files.deleteIfExists(e.file());
         }
     }
 }

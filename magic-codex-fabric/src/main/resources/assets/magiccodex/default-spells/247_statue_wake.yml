@@ -2,7 +2,7 @@ id: statue_wake
 name: 석상 깨우기
 category: dark
 description: 잠든 석상을 잠시 깨워 시선을 오른쪽으로 90도 돌리게 합니다.
-icon: ''
+icon: magiccodex:textures/spells/gimmick/statue_wake.png
 permission: magic.learned.statue_wake
 discovery:
   description: 밤에 갑옷 거치대 앞에 30초 서 있기.

@@ -11,7 +11,7 @@ class HeaderLayoutTest {
         assertEquals(p.header().bottom(),p.body().top());
         assertEquals(p.body().bottom(),p.frame().bottom());
         assertTrue(tabs.right()<p.control(0).x());
-        for(int i=0;i<4;i++){
+        for(int i=0;i<2;i++){
             var button=p.control(i);
             assertTrue(p.header().contains(button.x(),button.top()));
             assertTrue(p.header().contains(button.right()-1,button.bottom()-1));
@@ -36,12 +36,12 @@ class HeaderLayoutTest {
         var nativePanel=LayoutMath.window(480,270,s,18,205);
         assertSame(nativePanel,HeaderLayout.apply(nativePanel,205,480));
     }
-    @Test void savedNarrowWidthGrowsEnoughForTabsAndButtonsAndClampsAtRightEdge(){
+    @Test void savedNarrowWidthClipsTabsAndClampsAtRightEdge(){
         var s=new WindowState();s.width=0.1;s.x=1;
         var p=panel(s,480,270,205);
-        assertEquals(205,p.frame().width());
+        assertEquals(LayoutMath.MIN_WIDTH,p.frame().width());
         assertEquals(478,p.frame().right());
-        assertTrue(HeaderLayout.tabs(p).width()>=157);
+        assertTrue(HeaderLayout.tabs(p).width()>0);
     }
     @Test void normalBodySizeIsRetainedAndUnusedBottomTabSpaceIsRemoved(){
         var s=new WindowState();s.height=0.2;
@@ -49,7 +49,7 @@ class HeaderLayoutTest {
         var p=HeaderLayout.apply(old,205,480);
         assertEquals(old.body().height(),p.body().height());
         assertEquals(HeaderLayout.HEIGHT+p.body().height(),p.frame().height());
-        assertTrue(p.frame().height()<old.frame().height());
+        assertEquals(p.frame().height(),old.frame().height());
     }
     @Test void maximumWindowStillFillsTheViewportWhenTyping(){
         for(int[] size:new int[][]{{320,180},{480,270},{960,540}}){

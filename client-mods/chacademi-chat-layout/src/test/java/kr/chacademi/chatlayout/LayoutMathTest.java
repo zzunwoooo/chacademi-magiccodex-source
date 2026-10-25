@@ -49,7 +49,7 @@ class LayoutMathTest {
         UiState s=initialized();s.resize(false,.3,.12);
         var p=LayoutMath.calculate(960,540,s,18,true,false);
         assertEquals(65,p.lower().body().height());
-        for(int i=0;i<4;i++)assertTrue(p.upper().header().contains(p.upper().control(i).x(),p.upper().control(i).top()));
+        for(int i=0;i<2;i++)assertTrue(p.upper().header().contains(p.upper().control(i).x(),p.upper().control(i).top()));
         s.maximize(true);p=LayoutMath.calculate(960,540,s,18,true,false);
         assertEquals(2,p.upper().frame().x());assertTrue(p.upper().frame().bottom()<=520);
         s.minimize(true);p=LayoutMath.calculate(960,540,s,18,true,false);

@@ -2,6 +2,7 @@ package school.magiccodex.client;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -75,7 +76,8 @@ public final class SettingsScreen extends Screen {
             text(c,page==Page.HOME?"설정":page==Page.GUI?"GUI 비율":page==Page.EFFECT?"스킬 이펙트":"시점 · 조작",500,85,34,true,true);
             sprite(c,"close",915,37,47,45,106,100);
             if(page==Page.HOME){String[] labels={"스킬 이펙트","시점 · 조작","키세팅",HudCustomization.locked()?"HUD 잠금: 켜짐":"HUD 잠금: 꺼짐"};String[] icons={"effect_icon","camera_icon","keyboard_icon","effect_icon"};int[] iw={146,135,143,146},ih={149,120,125,149};
-                for(int i=0;i<4;i++){int yy=193+i*123;sprite(c,hit(155,yy,690,103)?"category_hover":"category",155,yy,690,103,665,hit(155,yy,690,103)?144:140);sprite(c,icons[i],191,yy+23,58,58,iw[i],ih[i]);text(c,labels[i],300,yy+52,28,false,false);}
+                for(int i=0;i<4;i++){int yy=193+i*108;sprite(c,hit(155,yy,690,103)?"category_hover":"category",155,yy,690,103,665,hit(155,yy,690,103)?144:140);sprite(c,icons[i],191,yy+23,58,58,iw[i],ih[i]);text(c,labels[i],300,yy+52,28,false,false);}
+                button(c,"HUD \uBC30\uCE58 \uCD08\uAE30\uD654",300,640,400,false);
             }else{
                 for(int i=0;i<rows();i++)slider(c,i);
                 if(page==Page.CAMERA){
@@ -86,6 +88,14 @@ public final class SettingsScreen extends Screen {
                 text(c,notice,500,603,18,false,true);button(c,"초기화",125,640,205,false);button(c,page==Page.GUI?"뒤로":"취소",397,640,205,false);button(c,page==Page.GUI?"완료":"저장",670,640,205,true);
             }
         }finally{c.getMatrices().pop();images.endFrame();}
+    }
+
+    private void confirmHudReset(){
+        client.setScreen(new ConfirmScreen(confirmed->{
+            boolean saved=HudCustomization.reset(confirmed);
+            client.setScreen(this);
+            if(confirmed)SharedNotifications.offer("hud:reset",saved?"system":"warning",saved?"HUD \uBC30\uCE58 \uCD08\uAE30\uD654 \uC644\uB8CC":"HUD \uBC30\uCE58 \uC800\uC7A5 \uC2E4\uD328",saved?"HUD \uC704\uCE58\uC640 \uD06C\uAE30\uB97C \uAE30\uBCF8\uAC12\uC73C\uB85C \uB418\uB3CC\uB838\uC2B5\uB2C8\uB2E4.":"\uD604\uC7AC \uD654\uBA74\uC5D0\uB9CC \uBC18\uC601\uB418\uC5C8\uC2B5\uB2C8\uB2E4.");
+        },Text.literal("HUD \uBC30\uCE58 \uCD08\uAE30\uD654"),Text.literal("HUD \uC704\uCE58\uC640 \uD06C\uAE30\uB9CC \uAE30\uBCF8\uAC12\uC73C\uB85C \uB418\uB3CC\uB9B4\uAE4C\uC694? \uCC44\uD305 \uBC30\uCE58\uC640 \uB2E4\uB978 \uC124\uC815\uC740 \uC720\uC9C0\uB429\uB2C8\uB2E4."),Text.literal("\uCD08\uAE30\uD654"),Text.literal("\uCDE8\uC18C")));
     }
 
     private void slider(DrawContext c,int row){
@@ -126,7 +136,7 @@ public final class SettingsScreen extends Screen {
     @Override public boolean mouseClicked(double x,double y,int button){if(button!=0)return true;fit(x,y);
         if(editing>=0&&!hit(boxX(editing),rowY(editing)-BOX_H/2,BOX_W,BOX_H))commitEdit();
         if(hit(915,37,47,45)){click();close();return true;}
-        if(page==Page.HOME){for(int i=0;i<4;i++)if(hit(155,193+i*123,690,103)){click();if(i==3){HudCustomization.toggle();return true;}client.setScreen(i==2?new KeySettingsScreen(this):new SettingsScreen(this,i==0?Page.EFFECT:i==3?Page.GUI:Page.CAMERA));return true;}return true;}
+        if(page==Page.HOME){if(hit(300,640,400,56)){click();confirmHudReset();return true;}for(int i=0;i<4;i++)if(hit(155,193+i*108,690,103)){click();if(i==3){HudCustomization.toggle();return true;}client.setScreen(i==2?new KeySettingsScreen(this):new SettingsScreen(this,i==0?Page.EFFECT:i==3?Page.GUI:Page.CAMERA));return true;}return true;}
         for(int i=0;i<rows();i++){
             if(hit(boxX(i),rowY(i)-BOX_H/2,BOX_W,BOX_H)){click();editing=i;buffer=(page==Page.EFFECT||page==Page.GUI)?Integer.toString(Math.round(value(i)*100)):format(i,value(i));return true;}
             if(hit(TRACK_X-19,rowY(i)+16,TRACK_W+38,44)){dragging=i;lastStep=Integer.MIN_VALUE;adjust();return true;}

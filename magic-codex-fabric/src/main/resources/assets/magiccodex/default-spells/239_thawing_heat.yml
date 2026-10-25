@@ -2,7 +2,7 @@ id: thawing_heat
 name: 해빙의 열기
 category: fire
 description: 얼음 봉인을 바라보고 3초 동안 열기를 불어넣어 녹입니다. 그사이 피해를 받으면 다시 얼어붙습니다.
-icon: ''
+icon: magiccodex:textures/spells/gimmick/thawing_heat.png
 permission: magic.learned.thawing_heat
 discovery:
   description: 얼음 위에 화로를 피워 둔 채로 30초 머무르기.

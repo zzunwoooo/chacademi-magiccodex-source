@@ -1,20 +1,30 @@
+## 1.6.3: Ctrl+Shift editing (build only)
+
+Hold Ctrl+Shift and left-drag inside a pane to move it. Drag any edge or corner with Ctrl+Shift held to resize width and height independently. Either modifier release immediately ends editing; mouse release is still consumed until the same press ends. The existing per-pane lock remains; the global HUD lock does not govern chat. No maximum/minimum window buttons or actions remain. X, opacity and text-size buttons are retained.
+
+Normal text selection, scrolling, links and category reorder/detach/dock use their existing paths without the edit chord. Incoming private messages add categories to the existing host; X on a selected private category removes that user's categories, including a detached private pane. Right-click Edit remains blocked.
+
+Schema 3 preserves positions, body sizes, opacity and per-pane lock, normalizes legacy MAXIMIZED/MINIMIZED/restore values to NORMAL, and preserves CLOSED. Explicit sizes no longer expand for long category strips; the native tab viewport clips them. Input space is reserved during placement so opening chat does not push the window off-screen. Viewport clamping does not overwrite saved dimensions.
+
+The current MagicCodex cursor binding is configurable (default left Ctrl). Hold Shift as well for pane editing; in ChatScreen either Ctrl key works. No MagicCodex source/JAR or key conflict policy is changed. In-game pointer/IME/mixin integration validation remains pending; do not deploy without a separate release step.
+
 ## 1.6.0 staging update
 
 Aggregate displays locally received messages, including party/private deliveries. General is added adjacent to aggregate without duplicating an existing general tab; both send through the existing public route. House, party, private and slash-command routing remain unchanged. Client deployment is held by user request.
 
-# Chacademi Chat Layout 1.5.0
+# Chacademi Chat Layout 1.6.3
 
 Fabric client addon for Minecraft 1.21.4 and ChatPlus 2.8.1 (Java 21). Compile dependency only; no Fabric API or MagicCodex hard dependency.
 
-Open chat using the current chat key (Enter/T). The original Minecraft edit box moves into the selected pane, below its messages, with tabs sharing the top header with the window controls. A 20 GUI-unit input row is added while that pane is selected: messages, including a default two-line System pane, retain their body height. Native typing, text selection, history and command completion remain available. A minimized or closed selected pane is restored when chat opens. Closing/minimizing it while typing switches input to another open pane; if none remain, chat input closes.
+Open chat using the current chat key (Enter/T). The original Minecraft edit box moves into the selected pane, below its messages, with tabs sharing the top header with the window controls. A 20 GUI-unit input row is added while that pane is selected: messages, including a default two-line System pane, retain their body height. Native typing, text selection, history and command completion remain available. A closed selected pane is restored when chat opens. Closing it while typing switches input to another open pane; if none remain, chat input closes.
 
-With MagicCodex's school.magiccodex.client.HudCursorScreen active (Alt held), the same controls, resizing and tab drag gestures work without opening chat. Clicking a pane body selects the pane used by the next chat input. Outside clicks follow MagicCodex's original handling. Releasing Alt cleans up unfinished gestures and pending cursor movement.
+With MagicCodex's school.magiccodex.client.HudCursorScreen active (current pointer binding held; default left Ctrl), the same controls, resizing and tab drag gestures work without opening chat. Clicking a pane body selects the pane used by the next chat input. Outside clicks follow MagicCodex's original handling. Releasing the pointer binding cleans up unfinished gestures and pending cursor movement.
 
 Drag a tab within its strip to reorder, onto another open frame to merge, or onto empty HUD space to detach. A last remaining tab moves its existing pane. Tab objects and message history are retained. Moving tabs does not send chat or reset unread counts. Active native search/bookmark display follows ChatPlus rewrap behavior; stored bookmarks remain untouched.
 
-Each pane has lock, maximize/restore, minimize and close buttons. Drag blank header space to move, and the lower-right grip to resize. Lock blocks pane movement/resize/maximize, while tab movements remain available. Closed panes retain incoming history and show a small 열기 button. Private category badges use native unread counts.
+Each pane has lock and close buttons. Hold Ctrl+Shift and drag to move, or drag any edge/corner to resize. Lock blocks pane movement/resize, while tab movements remain available. Closed panes retain incoming history and show a small 열기 button. Private category badges use native unread counts.
 
-Layout state: config/chacademi-chat-layout.json, schemaVersion 2. Each pane has an id, tab signature, normalized x/y, optional normalized width/height, lock and mode. The previous two-pane state is migrated. backgroundOpacity defaults to 0.50 and borderOpacity to 0.85; edit these between 0 and 1 with the game closed. Delete only this addon state file with the game closed to reset placement. It stores no messages or credentials.
+Layout state: config/chacademi-chat-layout.json, schemaVersion 3. Each pane has an id, tab signature, normalized x/y, optional normalized width/height, lock and mode. The previous two-pane state is migrated. backgroundOpacity defaults to 0.50 and borderOpacity to 0.85; edit these between 0 and 1 with the game closed. Delete only this addon state file with the game closed to reset placement. It stores no messages or credentials.
 
 Replace an older chacademi-chat-layout JAR; do not keep duplicate versions. Keep the separately installed ChatPlus 2.8.1 mod. The canonical ChatPlus preset uses transparent native backgrounds, tabs visible in HUD, disabled native movable-chat handles, and disabled round notification badges; this addon paints its own theme and rectangular badges. Optional native bottom-bar icons and the input-length counter are disabled in the matching preset.
 

@@ -55,6 +55,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private PartyIdentityBridge partyIdentity;
     private PartyVitalsBridge partyVitals;
     private AscensionBridge ascension;
+    private CoreVisualBridge coreVisuals;
+    org.bukkit.inventory.ItemStack coreAppearance(org.bukkit.inventory.ItemStack item){return coreVisuals==null?item:coreVisuals.appearance(item);}
+    boolean coreSimilar(org.bukkit.inventory.ItemStack a,org.bukkit.inventory.ItemStack b){return coreVisuals==null?a!=null&&b!=null&&a.isSimilar(b):coreVisuals.similar(a,b);}
     private AppraisalBridge appraisal;
     private EnhancementBridge enhancement;
     /** Server-thread API for future scroll items/NPC scripts. mode: 0 reset, 1 restore, 2 affinity. */
@@ -203,7 +206,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
             catch (RuntimeException | LinkageError error) { getLogger().warning("LuckPerms 알림 연결 실패: 보조 권한 확인을 사용합니다."); }
         }
         getServer().getScheduler().runTaskTimer(this, this::process, 1L, 20L);
-        try { mana=new ManaBridge(this);stats2=new PlayerStats(this,mana.mana);stats2.register("equipment",this::refreshEquipment);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(java.nio.file.Files.exists(getDataFolder().toPath().resolve("player-state-database.properties"))?getDataFolder().toPath().resolve("player-state-database.properties"):getDataFolder().toPath().resolve("database.properties"))); }
+        try { mana=new ManaBridge(this);stats2=new PlayerStats(this,mana.mana);stats2.register("equipment",this::refreshEquipment);stats=new StatsBridge(this,mana);school=new SchoolBridge(this,stats.service());social=new SocialBridge(this,mana,stats.service());partyIdentity=new PartyIdentityBridge(this);partyVitals=new PartyVitalsBridge(this,mana.mana);ascension=new AscensionBridge(this,stats.service());temperature=new TemperatureBridge(this);pets=new PetBridge(this);climate=new ClimateService(this,mana.mana,temperature.service());equipment=new EquipmentBridge(this,mana.mana);coreVisuals=new CoreVisualBridge(this);appraisal=new AppraisalBridge(this);enhancement=new EnhancementBridge(this);reconfiguration=new ReconfigurationBridge(this,enhancement);playerState=new PlayerStateBridge(this,mana.mana,DatabaseSettings.load(java.nio.file.Files.exists(getDataFolder().toPath().resolve("player-state-database.properties"))?getDataFolder().toPath().resolve("player-state-database.properties"):getDataFolder().toPath().resolve("database.properties"))); }
         catch(Exception error) {
             getLogger().severe("마나 초기화 실패: "+error.getMessage());
             getServer().getPluginManager().disablePlugin(this);return;

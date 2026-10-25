@@ -38,7 +38,7 @@ public final class SkillHudRenderer implements AutoCloseable {
             text(ctx,fitKey(modeKey),319.5f,-20.5f,14,0xFFE1DFD6);
             ctx.fill(338,-32,382,-9,0x880C161D);
             diamond(ctx,346,-20,3,state.enabled()?0xFF81D8C9:0xFF6E7D84);
-            text(ctx,Integer.toString(CastingClient.preset()),366,-20,14,state.enabled()?0xFF80D8C5:0xFF97A2AE);
+            text(ctx,CastingClient.presetLabel(),366,-20,14,state.enabled()?0xFF80D8C5:0xFF97A2AE);
             var bindings=state.bindings();
             for(int i=0;i<6;i++) {
                 int x=i*65; var b=bindings.get(i); var spell=state.spell(b.spellId());

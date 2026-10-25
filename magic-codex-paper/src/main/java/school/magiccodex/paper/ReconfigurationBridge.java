@@ -74,6 +74,7 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
         if(!target(item,mode)){slot=-1;for(int j=0;j<36;j++)if(target(p.getInventory().getItem(j),mode)){slot=j;break;}item=slot<0?null:p.getInventory().getItem(slot);}
         String message="",name="대상 없음";int attempts=0,successes=0,limit=10,nodes=0,affinity=0,nextAttempts=0;
         List<Double> before=List.of(0d,0d,0d),after=before;
+        if(item!=null){ItemStack visual=plugin.coreAppearance(item);if(visual!=item){item=visual;p.getInventory().setItem(slot,item);}}
         if(item==null)message=mode==2?"인벤토리에 감정된 마력코어가 필요합니다.":"인벤토리에 등록된 마법봉이 필요합니다.";
         else {
             name=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(item.getItemMeta().displayName()!=null?item.getItemMeta().displayName():item.displayName());if(name.length()>80)name=name.substring(0,80);
@@ -110,7 +111,7 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
             d.set(key("enhance_attempts"),PersistentDataType.INTEGER,r.nextAttempts());
             if(r.mode()==0){d.set(key("enhance_successes"),PersistentDataType.INTEGER,0);for(int j=0;j<3;j++)d.set(key("wand_"+STATS[j]),PersistentDataType.DOUBLE,r.after().get(j));}
         }
-        result.setItemMeta(m);if(r.mode()!=2)enhancement.lore(result);
+        result.setItemMeta(m);result=plugin.coreAppearance(result);if(r.mode()!=2)enhancement.lore(result);
         // The inventory mutation and credit debit persist in the same player data save. Duplicate packets have no offer.
         p.getInventory().setItem(r.slot(),result);p.getPersistentDataContainer().set(key("reconfig_credit_"+r.mode()),PersistentDataType.INTEGER,credits(p,r.mode())-1);p.saveData();plugin.savePlayerState(p);plugin.refreshEquipment(p);
         reply(p,r,1,r.mode()==0?"강화를 초기화했습니다.":r.mode()==1?"실패 횟수 "+(r.attempts()-r.nextAttempts())+"회를 복구했습니다.":"코어 성향을 변경했습니다.",next);

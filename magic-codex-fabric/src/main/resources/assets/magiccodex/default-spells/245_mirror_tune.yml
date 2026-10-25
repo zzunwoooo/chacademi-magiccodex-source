@@ -2,7 +2,7 @@ id: mirror_tune
 name: 반사 조율
 category: light
 description: 멀리 있는 반사 거울이나 회전 다이얼을 90도 돌립니다.
-icon: ''
+icon: magiccodex:textures/spells/gimmick/mirror_tune.png
 permission: magic.learned.mirror_tune
 discovery:
   description: 아이템 액자 속 물건을 8번 돌려 처음 모양으로 되돌리기.

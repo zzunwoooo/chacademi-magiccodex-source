@@ -31,15 +31,10 @@ import school.magiccodex.protocol.BagProtocol;
  * 아이템이 나오게, 핫바는 그대로").
  *
  * <p>Page 1 is open for everyone; each 가방 확장권 (ItemsAdder id in bag-pages.yml) opens the next page, up to 3. The
- * unlock count is one row per player shared by every server. Turning to page N swaps the 27 main inventory slots
- * (Bukkit slots 9..35) with page N stored for this player on this server-id; the hotbar, armour, offhand, cursor
- * and crafting grid never move. Stored pages are per server-id because vanilla inventories are per server (no
- * inventory sync): sharing pages between school and wild would let one server's page overwrite the other's.
- *
- * <p>Safety of a switch (main thread, one tick): read the target page (refuse if damaged) → write the new state to
- * the local journal (fsync) → swap the slots → {@code Player#saveData()} → the database write runs off-thread and
- * the journal entry is removed once it is stored. Journal entries left by a crash or a database outage are
- * replayed on start and every few seconds; a player's pages are read from the journal first when it is newer.
+ * unlock count is global. Inactive pages use a UUID-global, lease/CAS-guarded shared row. Active/seq and
+ * the inventory block are captured together through the version-pinned HuskSync LOCKSTEP extension.
+ * A durable local WAL is recovery evidence only; it cannot replay itself over central ownership.
+ * Shared schema/bootstrap is an explicit reviewed migration, never an automatic local-inventory fallback.
  */
 final class BagPagesBridge implements PluginMessageListener, Listener {
     static final int PAGES = BagProtocol.PAGES, FIRST_SLOT = 9;
@@ -56,29 +51,33 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
     private final MagicCodexBridge plugin;
     private final ItemsAdderItems itemsAdder;
     private final NamespacedKey unlockKey;
+    private final NamespacedKey commitKey;
     private final DatabaseSettings settings;
     private final java.nio.file.Path sqlite;
-    private final BagPageCodec.Journal journal;
+    private final BagHuskCoordinator coordinator;
     private final ScheduledExecutorService io = Executors.newSingleThreadScheduledExecutor(r -> { var t = new Thread(r, "MagicCodex-bag-pages"); t.setDaemon(true); return t; });
     private final Map<UUID, Entry> entries = new HashMap<>();
     private final Map<UUID, Long> lastSwitch = new HashMap<>();
     private final Set<UUID> unlocking = new HashSet<>();
     private Connection connection;
     private BagPagesSql storage;
+    private boolean allowCleanBootstrap;
     private String serverId = "school", unlockItem = "item:bag_expansion", unlockName = "가방 확장권";
 
     BagPagesBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
         this.itemsAdder = new ItemsAdderItems(plugin.getLogger());
         this.unlockKey = new NamespacedKey(plugin, "bag_unlock");
+        this.commitKey = new NamespacedKey(plugin, "bag_page_commit");
         loadConfig();
         var folder = plugin.getDataFolder().toPath();
         var dedicated = folder.resolve("player-state-database.properties");
         settings = DatabaseSettings.load(java.nio.file.Files.exists(dedicated) ? dedicated : folder.resolve("database.properties"));
         sqlite = folder.resolve("bag-pages.db");
-        journal = new BagPageCodec.Journal(folder.resolve("bag-pages-pending"));
-        io.execute(() -> { try { db(); } catch (Exception e) { failure("schema", e); } });
-        io.scheduleWithFixedDelay(this::replay, 2, 5, TimeUnit.SECONDS);
+        var huskPlugin = plugin.getServer().getPluginManager().getPlugin("HuskSync");
+        if (huskPlugin == null || !huskPlugin.isEnabled()) throw new IllegalStateException("Shared bag is unavailable until HuskSync is enabled; no local-inventory fallback");
+        coordinator = new BagHuskCoordinator(plugin, this, settings, folder, allowCleanBootstrap);
+        coordinator.install();
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, BagProtocol.REQUEST, this);
         Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, BagProtocol.RESPONSE);
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -101,11 +100,13 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         }
         if (!sid.matches("[a-z0-9_-]{1,48}")) throw new IllegalArgumentException("bag-pages.yml server-id (영문 소문자·숫자·_- 1~48자)");
         serverId = sid;
+        allowCleanBootstrap = y.getBoolean("allow-clean-bootstrap", false);
         unlockItem = y.getString("unlock-item", unlockItem).trim();
         unlockName = y.getString("unlock-item-name", unlockName).trim();
     }
 
     void close() {
+        coordinator.beforeBridgeDisable();
         io.shutdown();
         try { io.awaitTermination(10, TimeUnit.SECONDS); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
         try { if (connection != null) connection.close(); } catch (Exception ignored) {}
@@ -129,47 +130,17 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
 
     private void main(Runnable r) { if (plugin.isEnabled()) Bukkit.getScheduler().runTask(plugin, r); }
 
-    /** Journal entries not yet in the database (crash, outage). io thread. */
-    private void replay() {
-        try {
-            for (var e : journal.pending()) {
-                if (db().save(e.owner(), e.server(), new BagPagesSql.Saved(e.active(), e.seq(), e.pages())))
-                    journal.acknowledge(e.owner(), e.server(), e.seq());
-            }
-        } catch (Exception e) { failure("journal replay (records retained)", e); }
-    }
-
     // ------------------------------------------------------------------ state
 
     Entry entry(UUID id) { return entries.computeIfAbsent(id, k -> new Entry()); }
 
     private void load(UUID id, Runnable done) {
-        var e = entry(id);
-        if (done != null) e.waiting.add(done);
-        if (e.loading) return;
-        e.loading = true;
-        io.execute(() -> {
-            int unlocked = 1; BagPagesSql.Saved saved = null; boolean ok = false;
-            try {
-                unlocked = db().unlocked(id);
-                saved = db().load(id, serverId);
-                var pending = journal.read(id, serverId);
-                if (pending != null && (saved == null || pending.seq() > saved.seq())) saved = new BagPagesSql.Saved(pending.active(), pending.seq(), pending.pages());
-                ok = true;
-            } catch (Exception ex) { failure("read", ex); }
-            int u = unlocked; var s = saved; boolean success = ok;
-            main(() -> {
-                e.loading = false;
-                if (success) {
-                    e.loaded = true;
-                    e.unlocked = Math.clamp(u, 1, PAGES);
-                    if (s != null) { e.active = Math.clamp(s.active(), 1, PAGES); e.seq = s.seq(); e.pages = s.pages(); }
-                }
-                var callbacks = List.copyOf(e.waiting); e.waiting.clear();
-                for (var r : callbacks) r.run();
-            });
-        });
+        coordinator.requestStatus(id);
+        if(done!=null)done.run();
     }
+    void sharedBlocked(UUID id) { var e=entry(id);e.loaded=false;var p=Bukkit.getPlayer(id);if(p!=null)send(p); }
+    void sharedReady(UUID id,BagSharedSql.Row row,int unlocked) {var e=entry(id);e.active=row.active();e.seq=row.sequence();e.pages=row.pages();e.unlocked=unlocked;e.loaded=true;var p=Bukkit.getPlayer(id);if(p!=null)send(p);}
+    int sharedUnlocked(UUID id) {var e=entries.get(id);return e==null?1:e.unlocked;}
 
     private static boolean modded(Player p) { return p.getListeningPluginChannels().contains(BagProtocol.RESPONSE); }
 
@@ -179,7 +150,7 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         int unlocked = e == null ? 1 : Math.max(e.unlocked, e.active);
         try {
             p.sendPluginMessage(plugin, BagProtocol.RESPONSE, BagProtocol.encode(new BagProtocol.State(
-                    Math.clamp(unlocked, 1, PAGES), e == null ? 1 : e.active, e != null && e.loaded, "")));
+                    Math.clamp(unlocked, 1, PAGES), e == null ? 1 : e.active, e != null && e.loaded && coordinator.inputReady(p.getUniqueId()), "")));
         } catch (IllegalArgumentException ex) { plugin.getLogger().warning("아공간 배낭 패킷 실패: " + ex.getMessage()); }
     }
 
@@ -216,39 +187,10 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         if (p.isDead()) return "지금은 넘길 수 없어요";
         var top = p.getOpenInventory().getTopInventory().getType();
         if (top != InventoryType.CRAFTING && top != InventoryType.CREATIVE) return "다른 창을 닫고 다시 해 주세요";
-        // 1) Read the target page first; a damaged page is never swapped in (and nothing is touched).
-        ItemStack[] incoming;
-        try { incoming = items(e.pages[target - 1]); }
-        catch (RuntimeException ex) { failure("decode page " + target + " of " + p.getUniqueId(), ex); return "이 쪽을 읽지 못했어요. 관리자에게 알려 주세요"; }
-        // 2) Current 27 slots → bytes.
-        var inv = p.getInventory();
-        byte[] outgoing;
-        try { outgoing = page(inv, FIRST_SLOT); }
-        catch (RuntimeException ex) { failure("encode page of " + p.getUniqueId(), ex); return "지금 쪽을 저장하지 못했어요. 관리자에게 알려 주세요"; }
-        byte[][] next = e.pages.clone();
-        next[e.active - 1] = outgoing;
-        next[target - 1] = BagPageCodec.emptyPage();
-        long seq = Math.max(e.seq + 1, System.currentTimeMillis());
-        // 3) Journal before the inventory changes.
-        try { journal.save(p.getUniqueId(), serverId, target, seq, next); }
-        catch (Exception ex) { failure("journal", ex); return "저장 공간 문제로 넘기지 못했어요. 관리자에게 알려 주세요"; }
-        // 4) Swap and save the player file in the same tick.
-        for (int i = 0; i < BagPageCodec.SLOTS; i++) inv.setItem(FIRST_SLOT + i, incoming[i]);
-        e.pages = next; e.active = target; e.seq = seq;
-        p.saveData();
-        p.updateInventory();
-        // 5) Database (shared state for /유저관리 and the next join); journal entry dropped once stored.
-        UUID id = p.getUniqueId();
-        var saved = new BagPagesSql.Saved(target, seq, next);
-        io.execute(() -> {
-            try { if (db().save(id, serverId, saved)) journal.acknowledge(id, serverId, seq); }
-            catch (Exception ex) { failure("save (journal retained, replays automatically)", ex); }
-        });
-        p.playSound(p.getLocation(), org.bukkit.Sound.ITEM_BUNDLE_INSERT, 0.6f, 1.15f);
-        return null;
+        return coordinator.switchPage(p, target);
     }
 
-    private static byte[] page(org.bukkit.inventory.PlayerInventory inv, int first) {
+    static byte[] page(org.bukkit.inventory.PlayerInventory inv, int first) {
         var slots = new ArrayList<byte[]>(BagPageCodec.SLOTS);
         for (int i = 0; i < BagPageCodec.SLOTS; i++) {
             ItemStack it = inv.getItem(first + i);
@@ -257,7 +199,7 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         return BagPageCodec.encodePage(slots);
     }
 
-    private static ItemStack[] items(byte[] page) {
+    static ItemStack[] items(byte[] page) {
         var slots = BagPageCodec.decodePage(page);
         var out = new ItemStack[BagPageCodec.SLOTS];
         for (int i = 0; i < out.length; i++) out[i] = slots.get(i).length == 0 ? null : ItemStack.deserializeBytes(slots.get(i));
@@ -293,7 +235,14 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         p.getInventory().setItem(hand, item.getAmount() <= 0 ? null : item);
         // 2026-10-25 (#101): the taken ticket is on disk before the shared unlock is written — a crash after the DB
         // commit can no longer leave the ticket in the saved inventory (one ticket = one page, never two).
-        try { p.saveData(); } catch (RuntimeException ex) { failure("save before unlock", ex); }
+        try { p.saveData(); }
+        catch (RuntimeException ex) {
+            failure("save before unlock; database unlock cancelled", ex);
+            unlocking.remove(id);
+            for (var left : p.getInventory().addItem(one).values()) p.getWorld().dropItemNaturally(p.getLocation(), left);
+            CmdKit.notify(p, "error", "bag-unlock", "공간을 열지 못했어요", "확장권을 돌려 드렸어요. 잠시 뒤 다시 해 주세요", 0);
+            return;
+        }
         io.execute(() -> {
             int pages = -2;
             try { pages = db().unlockOne(id, PAGES); } catch (Exception ex) { failure("unlock", ex); }

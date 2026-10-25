@@ -8,6 +8,13 @@ repositories {
     maven { url = 'https://repo.papermc.io/repository/maven-public/' }
 }
 dependencies {
+    // Compile against the installed API only; never shade or fork HuskSync.
+    compileOnly files('../plugins/HuskSync-3.8.7.jar')
+    compileOnly files('../plugins/jedis-6.0.0.jar')
+    testImplementation files('../plugins/jedis-6.0.0.jar')
+    testRuntimeOnly files('../plugins/commons-pool2-2.12.1.jar')
+    testRuntimeOnly files('../plugins/redis-authx-core-0.1.1-beta2.jar')
+    testImplementation files('../plugins/HuskSync-3.8.7.jar')
     testImplementation files('../plugins/Citizens-2.0.37-b3725.jar')
     testImplementation "com.h2database:h2:2.3.232"
     compileOnly files('../plugins/ModelEngine-4.0.8.jar')

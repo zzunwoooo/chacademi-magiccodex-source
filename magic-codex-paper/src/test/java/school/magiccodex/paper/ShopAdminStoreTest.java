@@ -14,11 +14,11 @@ class ShopAdminStoreTest {
  @Test void wrongShopCannotEditOrDeleteAndTransactionRollsBack()throws Exception{store.create("b","다른 상점");long rev=store.catalog().get("b").revision(),version=store.version();assertThrows(Exception.class,()->store.adminEdit("b",rev,id,"오류","1","1"));assertThrows(Exception.class,()->store.adminDelete("b",rev,id));assertEquals(version,store.version());assertEquals(rev,store.catalog().get("b").revision());assertEquals("원본",product().name());}
  @Test void invalidNamesPayloadAndPricesCannotEnterStore()throws Exception{long rev=revision();assertThrows(Exception.class,()->store.adminAdd("a",rev,"",original,"1","1"));assertThrows(Exception.class,()->store.adminAdd("a",rev,"이름",new byte[32769],"1","1"));assertThrows(Exception.class,()->store.adminAdd("a",rev,"이름",original,"-1","1"));assertThrows(Exception.class,()->store.adminEdit("a",rev,id,"줄\n바꿈","1","1"));assertEquals(rev,revision());}
  @Test void categoryAndSortOrderTheCatalogueAndEditKeepsItem()throws Exception{
-  store.adminAdd("a",revision(),"나중",new byte[]{1},"1","off","광물",20);store.adminAdd("a",revision(),"먼저",new byte[]{2},"1","off","광물",10);
+  store.adminAdd("a",revision(),"나중",new byte[]{1},"1","","광물",20);store.adminAdd("a",revision(),"먼저",new byte[]{2},"1","","광물",10);
   var names=store.catalog().get("a").products().stream().map(ShopStore.Product::name).toList();assertEquals(List.of("원본","먼저","나중"),names);
   var first=store.catalog().get("a").products().get(1);store.adminEdit("a",revision(),first.id(),"먼저","2","1","나무",30);
   var edited=store.catalog().get("a").products().stream().filter(p->p.id().equals(first.id())).findFirst().orElseThrow();assertEquals("나무",edited.category());assertEquals(30,edited.sort());assertArrayEquals(new byte[]{2},edited.bytes());
-  assertThrows(IllegalArgumentException.class,()->store.adminAdd("a",revision(),"x",new byte[]{1},"1","off","광물",100000));assertThrows(IllegalArgumentException.class,()->store.adminAdd("a",revision(),"x",new byte[]{1},"1","off","a".repeat(41),0));}
+  assertThrows(IllegalArgumentException.class,()->store.adminAdd("a",revision(),"x",new byte[]{1},"1","","광물",100000));assertThrows(IllegalArgumentException.class,()->store.adminAdd("a",revision(),"x",new byte[]{1},"1","","a".repeat(41),0));}
  @Test void importCreatesShopUpdatesSameNameAndIsAllOrNothing()throws Exception{
   var rows=List.of(new ShopStore.ImportEntry("석탄",new byte[]{5},"100","20","광물",10),new ShopStore.ImportEntry("다이아몬드",new byte[]{6},"2000","","광물",20));
   var first=store.importProducts("pipi","피피의 잡화점","",rows);assertTrue(first.created());assertEquals(2,first.added());

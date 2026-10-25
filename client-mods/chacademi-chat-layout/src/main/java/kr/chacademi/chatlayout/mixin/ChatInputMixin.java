@@ -13,6 +13,10 @@ public abstract class ChatInputMixin {
     private void chacademi$privateInput(ChatScreen screen,String text,CallbackInfoReturnable<Boolean> cir){
         if(kr.chacademi.chatlayout.PrivateConversations.send(text)||kr.chacademi.chatlayout.PartyChatInput.send(text)||kr.chacademi.chatlayout.ChannelChatInput.send(text))cir.setReturnValue(true);
     }
+    @Inject(method="handleMouseClicked",at=@At("HEAD"),cancellable=true,remap=false,require=1)
+    private void chacademi$click(ChatScreen screen,double mx,double my,int button,CallbackInfoReturnable<Boolean> cir) {
+        if(button==1&&ChatLayout.handleClick(mx,my,button))cir.setReturnValue(true);
+    }
     @Inject(method="handleMouseDragged",at=@At("HEAD"),cancellable=true,remap=false,require=1)
     private void chacademi$drag(ChatScreen screen,double mx,double my,int button,double dx,double dy,CallbackInfo ci) {
         if(ChatLayout.handleDrag(mx,my,button))ci.cancel();

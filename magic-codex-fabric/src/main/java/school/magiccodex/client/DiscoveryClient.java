@@ -66,7 +66,7 @@ public final class DiscoveryClient {
         try{
             ctx.getMatrices().translate(width/2f-1040*scale,height*.025f-145*scale-(1-alpha)*12*scale,350);ctx.getMatrices().scale(scale,scale,1);
             images.drawTexture(ctx,PANEL,0,0,0,0,2048,768,2048,768,2048,768,tint);
-            images.drawCentered(ctx,MobSpellIcons.resolve(current.spell(),current.icon()),618,382,305,tint);
+            images.drawCentered(ctx,GimmickSpellIcons.resolve(current.spell(),MobSpellIcons.resolve(current.spell(),current.icon())),618,382,305,tint);
             String name=current.name();float size=Math.min(92,92*770/Math.max(1,text.width(name,92,FONT)));
             text.draw(ctx,current.first()?"최초로 발견한 마법":"새로운 마법 발견",1235,308,40,((int)(255*alpha)<<24)|0xEBD083,BODY,true);
             text.draw(ctx,name,1235,405,size,tint,FONT,true);

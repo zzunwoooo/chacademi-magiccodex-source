@@ -16,20 +16,22 @@ public final class CastingState {
     private final Set<Integer> captured = new HashSet<>();
     private final Map<String,Long> pending=new HashMap<>();
     private boolean enabled,alwaysActive;
+    private boolean inputAllowed=true;
+    public void inputAllowed(boolean value){if(inputAllowed!=value){inputAllowed=value;releaseInputs();}}
     public void alwaysActive(){alwaysActive=true;enabled=true;}
     /** Riding a broom (motion mod). The flight key then means "get off": no local cooldown or pending wait (owner 2026-10-19). */
     private java.util.function.BooleanSupplier riding = () -> false;
     public void ridingCheck(java.util.function.BooleanSupplier value) { riding = value == null ? () -> false : value; }
     private boolean dismount(String id) { return "flight".equals(id) && riding.getAsBoolean(); }
 
-    public boolean enabled() { return enabled; }
+    public boolean enabled() { return enabled && inputAllowed; }
     public void setBindings(SpellKeySettings value) { bindings = value.orderedSlots(); }
     /** 큐디치 경기 중 세팅: already in HUD order. */
     public void setBindingsDirect(List<SpellKeySettings.Binding> value) { bindings = List.copyOf(value); }
     public List<SpellKeySettings.Binding> bindings() { return bindings; }
     /** A saved slot with a usable key, independent of magic-mode and catalog discovery. */
     public boolean registered(String id) {
-        return bindings.stream().anyMatch(b -> id.equals(b.spellId()) && KeySettingsLayout.allowed(b.keyCode()));
+        return inputAllowed && bindings.stream().anyMatch(b -> id.equals(b.spellId()) && KeySettingsLayout.allowed(b.keyCode()));
     }
     public Spell spell(String id) { return spells.get(id); }
     public void catalog(List<Spell> value) {
@@ -40,7 +42,7 @@ public final class CastingState {
         return bindings.stream().filter(b -> !b.empty()).map(b -> spell(b.spellId()))
                 .filter(Objects::nonNull).map(Spell::permission).distinct().toList();
     }
-    public boolean bound(int key) { return bindings.stream().anyMatch(b -> !b.empty() && KeySettingsLayout.allowed(key) && b.keyCode() == key); }
+    public boolean bound(int key) { return inputAllowed && bindings.stream().anyMatch(b -> !b.empty() && KeySettingsLayout.allowed(key) && b.keyCode() == key); }
     public long remaining(String id, long now) { var c=cooldowns.get(id); return c==null?0:Math.max(0,c.until()-now); }
     public float fraction(String id,long now) { var c=cooldowns.get(id); return c==null?0:Math.clamp((float)remaining(id,now)/c.duration(),0,1); }
     public void clearCooldown(String id) { cooldowns.remove(id); pending.remove(id); }
@@ -66,7 +68,9 @@ public final class CastingState {
     }
     /** {@code aim} may take over a ready spell (LoL-style targeting); the later confirmation goes through {@link #fire}. */
     public Result input(int key,int action,boolean toggleKey,boolean gameplay,long now,boolean managed,java.util.function.Predicate<Spell> aim,Consumer<Spell> send) {
+        if(!inputAllowed){captured.clear();return result(Kind.PASS,"");}
         if(action==0) { captured.remove(key); return result(Kind.PASS,""); }
+        if(!gameplay) { captured.clear(); return result(Kind.PASS,""); }
         if(captured.contains(key)) return result(Kind.CONSUME,"");
         if(action!=1 || !gameplay || key<0) return result(Kind.PASS,"");
         if(toggleKey) { captured.add(key); if(alwaysActive)return result(Kind.CONSUME,"");enabled=!enabled; suspended=false; return result(Kind.MODE,""); }
@@ -82,7 +86,7 @@ public final class CastingState {
     }
     /** Confirms a spell chosen earlier (aim preview). Re-checks everything; magic mode must still be on. */
     public Result fire(String id,long now,boolean managed,Consumer<Spell> send) {
-        if(!enabled) return result(Kind.PASS,id);
+        if(!enabled()) return result(Kind.PASS,id);
         Result blocked=check(id,now,managed);
         return blocked!=null?blocked:send(id,now,managed,send);
     }

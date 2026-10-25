@@ -10,12 +10,12 @@ import java.util.UUID;
 
 /** Addon-only state for any number of independent native chat windows. */
 public final class LayoutState {
-    public int schemaVersion = 2;
+    public int schemaVersion = 3;
     public List<WindowState> windows = new ArrayList<>();
     public double backgroundOpacity = 0.50, borderOpacity = 0.85;
 
     public void sanitize() {
-        schemaVersion = 2;
+        schemaVersion = 3;
         backgroundOpacity = opacity(backgroundOpacity, 0.50);
         borderOpacity = opacity(borderOpacity, 0.85);
         List<WindowState> valid = new ArrayList<>();

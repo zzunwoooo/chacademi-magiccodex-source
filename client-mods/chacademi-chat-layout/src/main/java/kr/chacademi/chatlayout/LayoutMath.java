@@ -10,7 +10,7 @@ public final class LayoutMath {
         public boolean contains(double mx,double my){return mx>=x&&mx<right()&&my>=top&&my<bottom();}
     }
     public record Panel(Rect frame,Rect header,Rect body,int tabs,UiState.Mode mode) {
-        public Rect control(int index){return new Rect(frame.right()-3-(4-index)*(BUTTON_WIDTH+1),header.top()+(header.height()-10)/2,BUTTON_WIDTH,10);}
+        public Rect control(int index){return new Rect(frame.right()-3-(2-index)*(BUTTON_WIDTH+1),header.top()+(header.height()-10)/2,BUTTON_WIDTH,10);}
         public Rect resizeHandle(){return new Rect(frame.right()-6,frame.bottom()-6,6,6);}
         public boolean nativeBodyVisible(){return mode==UiState.Mode.NORMAL||mode==UiState.Mode.MAXIMIZED;}
     }
@@ -31,6 +31,15 @@ public final class LayoutMath {
         int minimumLine=Math.max(MIN_HEIGHT,(systemHeight+1)/2);
         double preferred=height!=null?h*height:s.systemDefault?systemHeight:h*0.22;
         if(preferred<minimumLine)height=(double)minimumLine/h;
+        if(s.mode==UiState.Mode.NORMAL){
+            int body=Math.min(h-4-HeaderLayout.HEIGHT-InputLayout.ROW_HEIGHT,
+                Math.max(minimumLine,round(height!=null?h*height:s.systemDefault?systemHeight:h*0.22)));
+            int bw=Math.min(w-4,Math.max(MIN_WIDTH,round(width!=null?w*width:w*0.23)));
+            int x=clamp(round(w*s.x),2,w-bw-2);
+            int y=clamp(round(h*s.y),2,h-2-HeaderLayout.HEIGHT-body-InputLayout.ROW_HEIGHT);
+            return new Panel(new Rect(x,y,bw,HeaderLayout.HEIGHT+body),
+                new Rect(x,y,bw,HeaderLayout.HEIGHT),new Rect(x,y+HeaderLayout.HEIGHT,bw,body),TAB_RESERVE,s.mode);
+        }
         Panel result=panel(w,h,s.x,s.y,width,height,s.mode,!s.systemDefault,systemHeight,true);
         if(s.mode==UiState.Mode.MINIMIZED){
             // Reserve room above the tab labels so unread badges cannot cover the header controls.

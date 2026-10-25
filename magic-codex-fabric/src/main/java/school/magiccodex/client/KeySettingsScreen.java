@@ -84,8 +84,8 @@ public final class KeySettingsScreen extends Screen {
             text(ctx,"화면의 키를 클릭해 마법(최대 6개)이나 UI 단축키를 등록하세요",836,140,19,GOLD,BODY);
             for(var key:KeySettingsLayout.KEYS) drawKey(ctx,key);
             drawMouse(ctx);
-            text(ctx,"현재 사용중인 프리셋에 적용됩니다.",836,166,17,GOLD,BODY);
-            if(catalogBacked){label(ctx,"프리셋 "+CastingClient.preset()+" · 변경",1270,139,19,TEAL);}
+            text(ctx,CastingClient.preset()==NormalPresetMode.OFF?"OFF · 프리셋 "+CastingClient.editingPreset()+"의 설정을 편집합니다.":"현재 사용중인 프리셋에 적용됩니다.",836,166,17,GOLD,BODY);
+            if(catalogBacked){label(ctx,"프리셋 "+CastingClient.presetLabel()+" · 변경",1270,139,19,TEAL);}
 
             text(ctx,waiting()?"서버에서 배운 마법을 확인하고 있습니다…":!notice.isEmpty()?notice:
                     "우클릭으로 등록 해제 · 처음 등록한 마법부터 왼쪽에 표시됩니다",836,567,17,GOLD,BODY);

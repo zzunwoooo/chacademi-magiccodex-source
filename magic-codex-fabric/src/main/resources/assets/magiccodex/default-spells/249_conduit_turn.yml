@@ -2,7 +2,7 @@ id: conduit_turn
 name: 도관 회전
 category: earth
 description: 설치된 마력 도관을 90도 돌려 마력이 흐르는 길을 바꿉니다.
-icon: ''
+icon: magiccodex:textures/spells/gimmick/conduit_turn.png
 permission: magic.learned.conduit_turn
 discovery:
   description: 레드스톤 가루를 30블록 이어 깔기.
