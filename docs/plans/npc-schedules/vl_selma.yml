@@ -1,0 +1,111 @@
+# 차카데미 ChacaNPC (Claude 작성, 일러스트 반영, 검토 필요)
+id: vl_selma
+name: 셀마
+type: sub
+gender: 여성
+skin: vamptis
+color: '#5DADE2'
+portrait: vl_selma-neutral
+romanceable: false
+open-on-right-click: true
+persona:
+  role: 항구 생선 장수
+  personality: 시원시원하고 입담 좋음. 뱃사람들 소식에 밝음
+  speech: 걸걸한 반말, 큰 목소리
+  likes:
+  - 갓 잡은 생선
+  - 바다 날씨
+  dislikes:
+  - 비린내 타박
+  - 흥정 너무 하는 손님
+  knows:
+  - 차카데미아는 100년 전 '잿빛 밤' 이후 쇠락한 마법학교
+  - '공식 역사: 배신자 모르디안이 악마를 불러냈고 대마법사가 봉인함'
+  - 마을 광장의 대마법사 동상
+  - '네 기숙사: 아르케온(불·땅), 루미나(빛·물), 베스티아즈(바람·야수), 노크세르(어둠)'
+  - 1년 전부터 숲의 동물들이 난폭해짐
+  - 발견한 마법은 학교에 기증하는 것이 미덕
+  - 항구와 정기선
+  - 브람 선장과 아는 사이
+  - 바다 날씨
+  - '내 겉모습: 묶어 올린 갈색 머리, 소매 걷은 블라우스와 방수 앞치마, 한 손에 든 큰 생선'
+  never_knows:
+  - 주인공의 전생
+  - 모르디안에 대한 진실
+  - 천사상
+  - 지하 던전 깊은 곳의 일
+  - 2장 이후 메인 스토리 사건
+  sample_lines:
+  - 싱싱한 고등어 있어! 학생은 하나 더 얹어 줄게!
+  - 브람 선장? 그 양반 무릎 아프다면서 맨날 배는 잘만 몰더라.
+  - 바다는 거짓말 안 해. 사람이 하지.
+sample_lines_by_stage:
+  2:
+  - 너 오면 제일 좋은 놈으로 빼 둔다!
+schedule:
+- time: '05:00'
+  place: harbor_pier
+  activity: 생선 받는 중
+- time: '07:00'
+  place: fish_market
+  activity: 생선 파는 중
+- time: '12:30'
+  place: main_plaza
+  activity: 점심 먹으며 수다 떠는 중
+- time: '13:30'
+  place: fish_market
+  activity: 오후 생선 파는 중
+- time: '19:00'
+  place: harbor_pier
+  activity: 그물 손질 중
+- time: '21:00'
+  place: fish_market
+  activity: 가게 뒷방에서 쉬는 중
+quests: []
+hint_topics: []
+gift_likes:
+  loved:
+  - cod
+  liked:
+  - salmon
+  - kelp
+  disliked:
+  - pufferfish
+relations:
+  vl_greta:
+    type: 이웃
+    gossip: 0.5
+  vl_jacob:
+    type: 동네 친구
+    gossip: 0.4
+fallback_lines:
+  greeting:
+  - 어이, 학생!
+  greeting_again:
+  - 또 왔네!
+  farewell:
+  - 잘 가! 또 와!
+  tired:
+  - 오늘 장사 끝!
+  busy:
+  - 잠깐, 손님 먼저!
+  stall:
+  - 어디 보자…
+  confused:
+  - 응? 크게 말해!
+  locked:
+  - 오늘은 가게 쉰다.
+  quest_thanks:
+  - 고마워!
+  quest_decline:
+  - 그래그래.
+  gift_loved:
+  - 오, 대구네! 뭘 좀 아는구먼!
+  gift_liked:
+  - 고마워!
+  gift_neutral:
+  - 받을게.
+  gift_disliked:
+  - …복어는 좀.
+  gift_cap:
+  - 오늘은 받았잖아!

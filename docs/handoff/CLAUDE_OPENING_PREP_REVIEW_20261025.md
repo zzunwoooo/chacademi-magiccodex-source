@@ -108,7 +108,7 @@ buttons:
 | 82 | 퀘스트 HUD | (전날 검수) MagicCodex 의뢰는 HUD 없음, 중복 수락은 서버가 막음. 스토리 HUD 긴 조건 줄바꿈·파티 HUD와 겹칠 때 자동 회피(QuestHudPlacement) 이미 고침 | 패스 | 보류 |
 | 83 | AI NPC 대화 호감도 | (전날) AI 응답에 liked → 호감도 +1, NPC별 하루 3회, 상한이면 안 오름·횟수 안 씀, 기준 문구 config affinity.chat-reward-criteria(비우면 끔) | 지금대로 (넘어감) | 완료 |
 | — | 꺼진 마법 12개·수업 (2026-10-26) | 12개를 서버 설정·발견 조건·칭호·효과음·생성기·패시브 코드·overlay 에서 전부 삭제, 수업 47마법 중 빛의 서고만 없어 빛 중급을 기억의 등불로 ([FINAL_PATCHES §12](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 오너: 기획에서 완전히 지우고 수업은 300개 기준 | 완료 (빌드 전) |
-| 84 | NPC 활동 구역·동선 | ChacaNPC 장소·일과표 기능 이미 있음 | 오너가 타운맵 34곳 지정 → 등록 명령 docs/plans/npc-places.md. 길목은 안 찍음(Citizens 길찾기, 실패 시 순간이동). 테스트 장소 정리 명령 `/NPC관리 장소관리 목록·삭제·전부삭제 확인` 추가. places.yml + NPC 85명 폴더 받으면 일과표 일괄 작성 | 오너(등록) → Claude(일과표) |
+| 84 | NPC 활동 구역·동선 | ChacaNPC 장소·일과표 기능 이미 있음 | 오너가 타운맵 34곳 지정 → 등록 명령 docs/plans/npc-places.md. 길목은 안 찍음(Citizens 길찾기, 실패 시 순간이동). 테스트 장소 정리 명령 `/NPC관리 장소관리 목록·삭제·전부삭제 확인` 추가. places.yml + NPC 85명 폴더 받으면 일과표 일괄 작성. **2026-10-26 일과표 반영**: 34곳 기준으로 75명 다시 기획(스토리 NPC 10명은 일과표 없음=Citizens 고정), 매핑표·인원표·설치 방법 [docs/plans/npc-schedules.md](../plans/npc-schedules.md), yml 85개 docs/plans/npc-schedules/ | 완료 (일과표 반영, places.yml 등록 후 적용) |
 | 85 | 기숙사 배정·재접속 유지 | (전날) 잠금 트랜잭션으로 동시 입장 경쟁 없음, 재접속 유지 OK | 패스 (게임 확인만) | 완료 |
 | 86 | 방송 클라 다중 효과 FPS | 설정 목록(투명도·빛번짐·load-limits·JVM·입자 상한) 정리됨. 오늘 성능 쪽: 잔류 입자 4초 상한, 동행 펫 클라 전용(캐시 24·64블록), 펫 마법진 입자 29 | 나중에 방송 PC 로 측정 후 결정 (그 전엔 기본값 안 바꿈) | 보류 |
 | 89 | 특정 유저 기숙사·칭호·마법 사전 설정 | (전날) player-presets.yml players: {} (UUID/계정명 → house/titles/spells), 접속 3초 뒤 항목별 1회 | 나중에 (대상 목록 대기) | 보류 |

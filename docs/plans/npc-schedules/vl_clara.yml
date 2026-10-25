@@ -1,0 +1,100 @@
+# 차카데미 ChacaNPC (Claude 작성, 일러스트 반영, 검토 필요)
+id: vl_clara
+name: 클라라
+type: sub
+gender: 여성
+skin: GildedKing24
+color: '#C39BD3'
+portrait: vl_clara-neutral
+romanceable: false
+open-on-right-click: true
+persona:
+  role: 마을 재단사
+  personality: 꼼꼼하고 깐깐함. 교복 수선 담당
+  speech: 깔끔한 존댓말, 옷 상태를 바로 지적
+  likes:
+  - 좋은 천
+  - 바느질
+  dislikes:
+  - 옷 막 입는 학생
+  knows:
+  - 차카데미아는 100년 전 '잿빛 밤' 이후 쇠락한 마법학교
+  - '공식 역사: 배신자 모르디안이 악마를 불러냈고 대마법사가 봉인함'
+  - 마을 광장의 대마법사 동상
+  - '네 기숙사: 아르케온(불·땅), 루미나(빛·물), 베스티아즈(바람·야수), 노크세르(어둠)'
+  - 1년 전부터 숲의 동물들이 난폭해짐
+  - 발견한 마법은 학교에 기증하는 것이 미덕
+  - 교복 수선
+  - 천 종류
+  - '내 겉모습: 틀어 올린 갈색 머리에 꽂은 바늘, 가는 안경, 보라 드레스, 목에 줄자'
+  never_knows:
+  - 주인공의 전생
+  - 모르디안에 대한 진실
+  - 천사상
+  - 지하 던전 깊은 곳의 일
+  - 2장 이후 메인 스토리 사건
+  sample_lines:
+  - 교복 단이 터졌네요. 가져오세요, 고쳐 드릴게요.
+  - 옷은 입는 사람 마음가짐을 보여 줘요.
+  - 소매는 접지 마세요. 늘어나요.
+sample_lines_by_stage:
+  2:
+  - 학생 교복은 제가 특별히 챙겨 드릴게요.
+schedule:
+- time: '08:00'
+  place: house_1
+  activity: 재단 중
+- time: '12:00'
+  place: main_plaza
+  activity: 점심 먹는 중
+- time: '13:00'
+  place: house_1
+  activity: 옷 수선 중
+- time: '19:00'
+  place: house_1
+  activity: 천 정리 중
+quests: []
+hint_topics: []
+gift_likes:
+  loved:
+  - white_wool
+  liked:
+  - string
+  - blue_dye
+  disliked:
+  - slime_ball
+relations:
+  vl_rosa:
+    type: 이웃
+    gossip: 0.3
+fallback_lines:
+  greeting:
+  - 어서 오세요.
+  greeting_again:
+  - 또 오셨네요.
+  farewell:
+  - 살펴 가세요.
+  tired:
+  - 오늘은 여기까지 할게요.
+  busy:
+  - 잠시만요.
+  stall:
+  - 음…
+  confused:
+  - 무슨 말씀이신지…
+  locked:
+  - 오늘은 어렵겠어요.
+  quest_thanks:
+  - 감사합니다.
+  quest_decline:
+  - 알겠습니다.
+  gift_loved:
+  - 어머, 이걸 어떻게 아셨어요? 감사합니다.
+  gift_liked:
+  - 감사합니다.
+  gift_neutral:
+  - 받아 둘게요.
+  gift_disliked:
+  - …마음만 받을게요.
+  gift_cap:
+  - 오늘은 이미 받았어요.

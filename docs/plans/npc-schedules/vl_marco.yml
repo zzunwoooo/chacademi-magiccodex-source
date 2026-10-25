@@ -1,0 +1,109 @@
+# 차카데미 ChacaNPC (Claude 작성, 일러스트 반영, 검토 필요)
+id: vl_marco
+name: 마르코
+type: sub
+gender: 남성
+skin: Strafeh
+color: '#D68910'
+portrait: vl_marco-neutral
+romanceable: false
+open-on-right-click: true
+persona:
+  role: 떠돌이 상인
+  personality: 말솜씨 좋은 허풍쟁이. 진짜와 가짜를 섞어 팖
+  speech: 능글맞은 존댓말
+  likes:
+  - 흥정
+  - 먼 나라 이야기
+  dislikes:
+  - 깎아 달라는 손님
+  knows:
+  - 차카데미아는 100년 전 '잿빛 밤' 이후 쇠락한 마법학교
+  - '공식 역사: 배신자 모르디안이 악마를 불러냈고 대마법사가 봉인함'
+  - 마을 광장의 대마법사 동상
+  - '네 기숙사: 아르케온(불·땅), 루미나(빛·물), 베스티아즈(바람·야수), 노크세르(어둠)'
+  - 1년 전부터 숲의 동물들이 난폭해짐
+  - 발견한 마법은 학교에 기증하는 것이 미덕
+  - 다른 마을 소식
+  - 항구 교역
+  - '내 겉모습: 까무잡잡한 피부에 노란 터번과 콧수염, 화려한 노란 조끼, 잡동사니가 매달린 큰 짐가방'
+  never_knows:
+  - 주인공의 전생
+  - 모르디안에 대한 진실
+  - 천사상
+  - 지하 던전 깊은 곳의 일
+  - 2장 이후 메인 스토리 사건
+  sample_lines:
+  - 이건 저 바다 건너에서만 나는 귀한 물건이랍니다, 아마도.
+  - 손님, 눈썰미가 좋으시네요! 싸게 드리죠.
+  - 숲길이 험해져서 물건 들여오기가 힘들어요.
+sample_lines_by_stage:
+  2:
+  - 단골이시니 진짜 좋은 건 손님께만 보여 드리죠.
+schedule:
+- time: '09:00'
+  place: harbor_pier
+  activity: 짐 내리는 중
+- time: '11:00'
+  place: main_plaza
+  activity: 좌판 펴는 중
+- time: '15:00'
+  place: quest_board
+  activity: 소문 모으는 중
+- time: '17:00'
+  place: main_plaza
+  activity: 좌판 접는 중
+- time: '19:00'
+  place: fountain_plaza
+  activity: 흥정하는 중
+- time: '21:00'
+  place: harbor_pier
+  activity: 배에서 쉬는 중
+quests: []
+hint_topics: []
+gift_likes:
+  loved:
+  - emerald
+  liked:
+  - gold_nugget
+  - compass
+  disliked:
+  - dirt
+relations:
+  vl_bernd:
+    type: 단골 여관
+    gossip: 0.5
+  vl_selma:
+    type: 항구 지인
+    gossip: 0.4
+fallback_lines:
+  greeting:
+  - 어서 오세요.
+  greeting_again:
+  - 또 오셨네요.
+  farewell:
+  - 살펴 가세요.
+  tired:
+  - 오늘은 여기까지 할게요.
+  busy:
+  - 잠시만요.
+  stall:
+  - 음…
+  confused:
+  - 무슨 말씀이신지…
+  locked:
+  - 오늘은 어렵겠어요.
+  quest_thanks:
+  - 감사합니다.
+  quest_decline:
+  - 알겠습니다.
+  gift_loved:
+  - 어머, 이걸 어떻게 아셨어요? 감사합니다.
+  gift_liked:
+  - 감사합니다.
+  gift_neutral:
+  - 받아 둘게요.
+  gift_disliked:
+  - …마음만 받을게요.
+  gift_cap:
+  - 오늘은 이미 받았어요.
