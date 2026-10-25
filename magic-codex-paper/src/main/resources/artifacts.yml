@@ -735,7 +735,6 @@ artifacts:
     effect: "어깨에 앵무새가 앉아 내 마지막 채팅을 말풍선으로 따라 함"
     icon: "magiccodex:textures/artifact/chatty_parrot.png"
     order: 370
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   wish_coin:
     name: "소원 동전"
     grade: rare
@@ -903,7 +902,6 @@ artifacts:
     use: true
     cooldown: 60
     order: 1370
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   war_horn:
     name: "함성 뿔피리"
     grade: rare
@@ -1055,7 +1053,6 @@ artifacts:
     effect: "키세팅이 전부 화염 마법이면 화염 정령이 따라다니며 내 화염 마법을 따라 씀 (정령의 피해는 내 피해의 20%)"
     icon: "magiccodex:textures/artifact/fire_spirit_lantern.png"
     order: 510
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   mirror_twin:
     name: "거울 쌍둥이"
     grade: legendary
@@ -1063,7 +1060,6 @@ artifacts:
     effect: "반투명한 분신이 0.5초 늦게 내 동작을 따라 하고 내 마법도 따라 씀 (피해 30%, 원소 반응 없음)"
     icon: "magiccodex:textures/artifact/mirror_twin.png"
     order: 520
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   rainbow_prism:
     name: "무지개 프리즘"
     grade: legendary
@@ -1110,7 +1106,6 @@ artifacts:
     effect: "처치한 몹이 검은 그림자로 일어나 10초간 함께 싸움. 그림자는 무적이고 나를 따라오며, 내가 공격하거나 나를 공격하는 적을 공격한다. 생전의 능력과 기술을 그대로 쓴다. 보스는 제외, 동시에 최대 10마리."
     icon: "magiccodex:textures/artifact/shadow_lord_mask.png"
     order: 580
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   philosopher_stone:
     name: "현자의 돌"
     grade: legendary

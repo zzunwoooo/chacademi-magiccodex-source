@@ -39,6 +39,12 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     public String detonateMark(org.bukkit.entity.Player caster,org.bukkit.entity.LivingEntity target,double damage){return reactions==null||!targets.enemy(caster,target)||!protection.pair(caster,target.getLocation())?null:reactions.detonate(caster,target,damage);}
     /** Moves `element`'s mark to the nearest unmarked enemy around `center`. */
     public boolean spreadMark(org.bukkit.entity.Player caster,org.bukkit.Location center,org.bukkit.entity.LivingEntity exclude,String element,double radius){return reactions!=null&&protection.pair(caster,center)&&reactions.spread(caster,center,exclude,element,radius);}
+    /** 아티팩트 API (화염 정령·거울 쌍둥이 따라 쓰기): 표식·원소 반응·패시브·MagicDamageEvent 없는 추가 피해 (재귀 없음). */
+    public boolean echoDamage(org.bukkit.entity.Player caster,org.bukkit.entity.LivingEntity target,double amount){return targets!=null&&caster!=null&&target!=null&&amount>0&&Double.isFinite(amount)&&targets.hurtProc(caster,target,amount);}
+    /** 아티팩트 API (그림자 군주의 가면): 보스 판정 (config boss-tags / boss-mythic-prefixes + 바닐라 보스). */
+    public boolean isBoss(org.bukkit.entity.LivingEntity entity){return targets!=null&&entity!=null&&targets.boss(entity);}
+    /** 아티팩트 API (화염 정령의 등불): 지금 키세팅(클라가 보고한 6칸, 배운 것만) 마법 ID. 모르면 빈 목록. */
+    public java.util.List<String> slotSpells(org.bukkit.entity.Player player){return slots==null||player==null?java.util.List.of():java.util.List.copyOf(slots.list(player));}
     private Ticker ticker;
     private TempBlocks tempBlocks;
     private Guards guards;

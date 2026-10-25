@@ -19,7 +19,7 @@ import org.joml.Vector3f;
 /**
  * Use-key artifacts (아티팩트 사용 키, default X). ArtifactBridge already checked ownership, equipment and the cooldown
  * and fires {@link ArtifactUseEvent}; here we do the effect and call setUsed(true) (only then the cooldown starts).
- * Not handled here (held, see the handoff doc): folding_spyglass (client zoom), shapeshift_mask (pet disguise).
+ * Not handled here (held, see the handoff doc): folding_spyglass (client zoom). shapeshift_mask → {@link ArtifactShapeshift}.
  */
 final class ArtifactActions implements Listener {
     private final ArtifactEffects fx;
@@ -50,6 +50,7 @@ final class ArtifactActions implements Listener {
             case "chant_candlestick" -> { fx.run(p).chantArmed = true; p.getWorld().playSound(p.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 1f, 1.2f); yield "다음 마법 1개는 마나를 쓰지 않습니다."; }
             case "rewind_hourglass" -> rewind(p);
             case "wish_coin" -> wishCoin(p);
+            case "shapeshift_mask" -> fx.shapeshift.use(p);          // 변신 가면 (ArtifactShapeshift)
             default -> null;
         };
         if (result == null) return;                       // not ours / held: ArtifactBridge shows "준비 중"

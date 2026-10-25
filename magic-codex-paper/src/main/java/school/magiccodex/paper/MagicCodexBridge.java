@@ -147,6 +147,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
     Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
     DisplayNames names(){return names;}
+    /** 아티팩트(그림자 군주의 가면·변신 가면)가 펫 판정에 쓴다. null 일 수 있음. */
+    PetBridge pets(){return pets;}
     TitleBridge titleService(){return titles;}
     SchoolBridge schoolBridge(){return school;}
     private CommandHub commandHub;

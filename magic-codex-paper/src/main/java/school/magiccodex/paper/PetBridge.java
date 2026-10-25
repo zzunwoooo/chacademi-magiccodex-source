@@ -130,6 +130,18 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
         catch(Exception|LinkageError e){plugin.getLogger().warning("MCPets 펫 목록 읽기 실패: "+e);}
         return out;
     }
+    /** 변신 가면 (ArtifactShapeshift): 이 플레이어가 보유한 펫 (권한 확인한 것만) — ID·이름·MythicMobs 몹 이름(모르면 null). 메인 스레드. */
+    record Owned(String id,String name,String mythic){}
+    List<Owned> owned(Player player){
+        var out=new ArrayList<Owned>();if(!connect())return out;
+        try{for(Object pet:(List<?>)hook.list.invoke(null)){
+            String id=hook.idOf(pet);String perm=(String)hook.permission.invoke(pet);
+            if(!PetProtocol.validId(id)||!(boolean)hook.checked.invoke(pet)||perm==null||!player.hasPermission(perm))continue;
+            String mythic=null;if(hook.mythic!=null)try{mythic=(String)hook.mythic.invoke(pet);}catch(Exception ignored){}
+            out.add(new Owned(id,petName(id),mythic));
+        }}catch(Exception|LinkageError e){plugin.getLogger().warning("MCPets 보유 펫 읽기 실패: "+e);}
+        return out;
+    }
     private String petName(String id){for(var d:catalog)if(d.id.equals(id))return d.name;return id;}
     private void registerCommands(){
         if(!CodexCommands.ready(plugin,"펫"))return;
@@ -162,6 +174,8 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
     public void close(){catalog=List.of();objects=List.of();requests.clear();actions.clear();hook=null;}
     private static final class Hook{
         final ClassLoader loader;final Method list,object,active,activeEntity,id,icon,checked,permission,spawn,despawn;final Object revoke;
+        /** Pet#getMythicMobName (변신 가면용, 없는 버전이면 null). */
+        Method mythic;
         @SuppressWarnings({"unchecked","rawtypes"}) Hook(ClassLoader loader)throws Exception{
             this.loader=loader;var api=Class.forName("fr.nocsy.mcpets.api.MCPetsAPI",true,loader);
             var pet=Class.forName("fr.nocsy.mcpets.data.Pet",true,loader);var reason=Class.forName("fr.nocsy.mcpets.data.PetDespawnReason",true,loader);
@@ -169,6 +183,7 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
             activeEntity=pet.getMethod("getFromEntity",org.bukkit.entity.Entity.class);
             id=pet.getMethod("getId");icon=pet.getMethod("getIcon");checked=pet.getMethod("isCheckPermission");permission=pet.getMethod("getPermission");
             spawn=pet.getMethod("spawn",Player.class,Location.class);despawn=pet.getMethod("despawn",reason);revoke=Enum.valueOf((Class)reason,"REVOKE");
+            try{mythic=pet.getMethod("getMythicMobName");}catch(NoSuchMethodException ignored){mythic=null;}
         }
         List<?> active(UUID uuid)throws Exception{return (List<?>)active.invoke(null,uuid);}
         String idOf(Object pet){try{return (String)id.invoke(pet);}catch(Exception e){throw new IllegalStateException(e);}}

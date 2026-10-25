@@ -63,6 +63,10 @@ final class ArtifactEffects implements Listener {
     private final MagicHooks hooks = new MagicHooks();
     final ArtifactActions actions;
     final ArtifactLife life;
+    /** 그룹 D (2026-10-26): 화염 정령·거울 쌍둥이·수다 앵무새 / 그림자 군주의 가면 / 변신 가면 (null = ModelEngine 없음). */
+    final ArtifactCompanions companions;
+    final ArtifactShadows shadows;
+    final ArtifactShapeshift shapeshift;
 
     /** Time-limited bonus from one source (refreshing the same source replaces it). */
     record Timed(long until, double speed, double haste) {}
@@ -102,6 +106,9 @@ final class ArtifactEffects implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
         Bukkit.getPluginManager().registerEvents(actions, plugin);
         Bukkit.getPluginManager().registerEvents(life, plugin);
+        companions = new ArtifactCompanions(this);
+        shadows = new ArtifactShadows(this);
+        shapeshift = new ArtifactShapeshift(this);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20, 20);
         Bukkit.getScheduler().runTaskTimer(plugin, this::fastTick, 2, 2);
         Bukkit.getScheduler().runTask(plugin, hooks::connect);
@@ -719,5 +726,8 @@ final class ArtifactEffects implements Listener {
         actions.quit(id); life.quit(id);
     }
 
-    void close() { for (Player p : Bukkit.getOnlinePlayers()) clear(p); }
+    void close() {
+        for (Player p : Bukkit.getOnlinePlayers()) clear(p);
+        shapeshift.close(); shadows.close(); companions.close();   // 변신 원상 복구 · 그림자 제거
+    }
 }

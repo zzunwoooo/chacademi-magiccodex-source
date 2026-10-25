@@ -9,6 +9,7 @@ final class TamingTargetPolicy {
         return entity instanceof Player||entity instanceof ArmorStand||entity.hasMetadata("NPC")
                 ||entity instanceof Tameable tameable&&tameable.isTamed()
                 ||entity instanceof AbstractHorse horse&&horse.isTamed()
-                ||entity.getScoreboardTags().contains("chacademia_pet")||activePet;
+                ||entity.getScoreboardTags().contains("chacademia_pet")||activePet
+                ||entity.getScoreboardTags().contains("chacademi_shadow");   // 그림자 군주의 가면 그림자: 교화 불가
     }
 }
