@@ -93,4 +93,10 @@ class PetTest {
         points.addProperty("x","query.life_time");var model=PetBbModel.parse(json,root.resolve("pet.bbmodel"),root);assertFalse(model.warnings.isEmpty());
         json.getAsJsonArray("outliner").add("cube");assertThrows(IllegalArgumentException.class,()->PetBbModel.parse(json,root.resolve("pet.bbmodel"),root));
     }
+    @Test void summaryAndInfoSurviveTheWire(){
+        var parts=PetProtocol.split(9,"","도감 체력 +8 · 점수 51 / 612",List.of(new Entry("ca_fox","여우",2,true,false,new byte[0],"2성\n장착 중: 이동속도 +10%")));
+        var back=PetProtocol.response(PetProtocol.encode(parts.getFirst()));
+        assertEquals("도감 체력 +8 · 점수 51 / 612",back.summary());
+        assertEquals("2성\n장착 중: 이동속도 +10%",back.entries().getFirst().info());
+    }
 }

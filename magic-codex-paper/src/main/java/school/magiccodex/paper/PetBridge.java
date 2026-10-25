@@ -188,7 +188,7 @@ final class PetBridge implements PluginMessageListener,Listener,AutoCloseable {
         }catch(Exception|LinkageError e){plugin.getLogger().warning("도감 체력: MCPets 펫 목록 실패 "+e);}
         return new double[]{have,full};
     }
-    private void send(Player p,long seq,String msg,List<Entry> list){for(var part:PetProtocol.split(seq,msg,list))p.sendPluginMessage(plugin,PetProtocol.RESPONSE,PetProtocol.encode(part));}
+    private void send(Player p,long seq,String msg,List<Entry> list){String summary="";try{if(companions!=null)summary=companions.collectionSummary(p);}catch(RuntimeException e){plugin.getLogger().warning("도감 체력 요약 실패: "+e);}if(summary.length()>PetProtocol.MAX_SUMMARY)summary=summary.substring(0,PetProtocol.MAX_SUMMARY);for(var part:PetProtocol.split(seq,msg,summary,list))p.sendPluginMessage(plugin,PetProtocol.RESPONSE,PetProtocol.encode(part));}
     @EventHandler public void quit(PlayerQuitEvent e){requests.remove(e.getPlayer().getUniqueId());actions.remove(e.getPlayer().getUniqueId());}
     // ------------------------------------------------------------------ 명령 (2026-10-20 명령어 정리)
     /** 펫 ID (MCPets) → 보유 권한 노드. CheckPermission 이 꺼진 펫은 누구나 가진 것으로 보고 빠진다. */

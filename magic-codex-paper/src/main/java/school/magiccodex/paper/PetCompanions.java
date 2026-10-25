@@ -233,6 +233,14 @@ final class PetCompanions implements Listener, AutoCloseable {
 
     // ------------------------------------------------------------------ 장착 효과
 
+    /** 펫 창 위쪽 한 줄 (오너 2026-10-26): "도감 체력 +8 · 점수 51 / 612". */
+    String collectionSummary(Player p) {
+        var cfg = settings;
+        double[] score = bridge.collection(p, stars -> cfg.points()[Math.clamp(stars, 1, 3)]);
+        int hp = CompanionMath.collectionHealth(score[0], score[1], cfg.maxHealth(), cfg.curve());
+        return "도감 체력 +" + hp + " · 점수 " + Math.round(score[0]) + " / " + Math.round(score[1]);
+    }
+
     /** PlayerStats 원천 "pets": 지금 상태대로 수정자를 맞춘다 (같은 값이면 아무것도 안 함). */
     void apply(Player p) {
         if (!p.isOnline()) return;

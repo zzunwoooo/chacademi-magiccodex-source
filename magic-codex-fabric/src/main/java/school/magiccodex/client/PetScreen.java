@@ -67,6 +67,8 @@ public final class PetScreen extends Screen {
             PetAssets.draw(c,"filter_active",400+PetClient.STATE.filter()*120,99,120,60,0xDEFFFFFF);
             String[] tabs={"전체","1성","2성","3성"};
             for(int i=0;i<4;i++)label(c,tabs[i],460+i*120,130,24,PetClient.STATE.filter()==i?0xFFFFF2CC:0xFFE0E4EE,PetClient.STATE.filter()==i);
+            // 도감 체력 (오너 2026-10-26): 교화해 보유한 펫이 많을수록 누적되는 최대 체력 — 등급 탭 바로 아래 한 줄
+            String summary=PetClient.STATE.summary();if(!summary.isEmpty())label(c,summary,640,174,17,0xFFE9D3A0,false);
             round(c,"close",1171,28,66,60,"close",false);
             round(c,"prev",207,340,86,80,"chevron_left",false);
             round(c,"next",987,340,86,80,"chevron_left",true);

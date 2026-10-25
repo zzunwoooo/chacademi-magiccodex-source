@@ -9,7 +9,7 @@ public final class PetCatalogState {
     private List<Entry> visible=List.of();
     private final Set<String> favorites=new HashSet<>();
     private final Map<Integer,List<Entry>> pending=new HashMap<>();
-    private int parts,filter;private String selected="",query="";
+    private int parts,filter;private String selected="",query="",summary="";
     private long expected;
     public void expect(long seq){expected=seq;pending.clear();parts=0;}
     public boolean accept(Response r){
@@ -20,11 +20,13 @@ public final class PetCatalogState {
         if(pending.size()!=parts)return false;
         var next=new ArrayList<Entry>();var ids=new HashSet<String>();
         for(int i=0;i<parts;i++)for(var e:pending.get(i)){if(!ids.add(e.id()))throw new IllegalArgumentException("Duplicate");next.add(e);}
-        entries=List.copyOf(next);expected=0;pending.clear();rebuild();return true;
+        entries=List.copyOf(next);summary=r.summary();expected=0;pending.clear();rebuild();return true;
     }
     public void reset(){clearCatalog();favorites.clear();filter=0;query="";}
-    public void clearCatalog(){entries=List.of();visible=List.of();pending.clear();expected=0;parts=0;selected="";}
+    public void clearCatalog(){summary="";entries=List.of();visible=List.of();pending.clear();expected=0;parts=0;selected="";}
     public List<Entry> visible(){return visible;}
+    /** 서버가 보낸 도감 체력 한 줄 (없으면 ""). */
+    public String summary(){return summary;}
     private void rebuild(){visible=entries.stream().filter(Entry::owned).filter(e->query.isEmpty()||searchable(e.name()).contains(query)||searchable(e.id()).contains(query)).filter(e->filter==0||e.stars()==filter).sorted(Comparator.<Entry,Boolean>comparing(e->!favorites.contains(e.id())).thenComparing(Entry::name,String.CASE_INSENSITIVE_ORDER).thenComparing(Entry::id)).toList();ensureSelection();}
     private static String searchable(String value){return java.text.Normalizer.normalize(value,java.text.Normalizer.Form.NFKC).toLowerCase(Locale.ROOT);}
     public void search(String value){query=searchable(value.strip());rebuild();}
