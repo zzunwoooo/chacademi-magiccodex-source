@@ -98,7 +98,8 @@ public final class PlayerHudRenderer implements AutoCloseable {
             if(player.hasStatusEffect(StatusEffects.POISON)){healthFrom=0xFF88AA53;healthTo=0xFFC5DF75;}
             else if(player.hasStatusEffect(StatusEffects.WITHER)){healthFrom=0xFF716B79;healthTo=0xFFAEA7B8;}
             vitalGauge(ctx,true,l.vitalX(),l.healthY(),player.getHealth(),player.getMaxHealth(),healthFrom,healthTo);
-            vitalGauge(ctx,false,l.vitalX(),l.manaY(),mana,maxMana,0xFF29BED4,0xFF9DEFF1);
+            if(ManaClient.heat())vitalGauge(ctx,false,l.vitalX(),l.manaY(),Math.max(0,maxMana-mana),maxMana,ManaClient.heatLockRemaining()>0?0xFFB8322A:0xFFE0662A,0xFFFFC266); // 거꾸로 된 마나병: 과열 게이지
+            else vitalGauge(ctx,false,l.vitalX(),l.manaY(),mana,maxMana,0xFF29BED4,0xFF9DEFF1);
             if(player.getAbsorptionAmount()>0)text.draw(ctx,"+"+number(player.getAbsorptionAmount()),l.vitalX()+133,l.healthY()-17,11,0xFFE8D38E,FONT,false);
             ctx.getMatrices().pop();
         }finally{ctx.getMatrices().pop();vitalsScope.close();}
@@ -122,6 +123,7 @@ public final class PlayerHudRenderer implements AutoCloseable {
         images.drawTexture(ctx,GAUGE,Math.round(x),Math.round(y-frameHeight/2f),54,243,PlayerHudLayout.VITAL_WIDTH,frameHeight,2064,230,2172,724);
         images.drawTexture(ctx,INFO,Math.round(x+20),Math.round(y-28),146,health?269:392,14,14,118,health?108:126,1774,887);
         String label=health?number(value)+" / "+number(max):max==0&&!ManaClient.available()?"— / —":manaNumber(value)+" / "+manaNumber(max);
+        if(!health&&ManaClient.heat())label=ManaClient.heatLockRemaining()>0?"과열! "+(ManaClient.heatLockRemaining()+999)/1000+"초":"과열 "+label;
         text.draw(ctx,label,x+44,y-20,12,0xFFF0F3F5,FONT,false);
     }
     private void secondaryStatus(DrawContext ctx,PlayerHudLayout l,PlayerEntity player){

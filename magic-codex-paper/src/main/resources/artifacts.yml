@@ -1021,7 +1021,6 @@ artifacts:
     effect: "키세팅 1번부터 6번까지 차례로 쓰면 마지막 마법 피해 +40%"
     icon: "magiccodex:textures/artifact/sequence_necklace.png"
     order: 1420
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   reaction_chain_orb:
     name: "반응 연쇄 구슬"
     grade: unique
@@ -1063,7 +1062,6 @@ artifacts:
     effect: "키세팅 6칸이 6원소 하나씩이면 내가 일으킨 원소 반응의 피해·회복·범위 2배, CC 시간 +50%"
     icon: "magiccodex:textures/artifact/rainbow_prism.png"
     order: 530
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   chaos_dice:
     name: "혼돈의 주사위"
     grade: legendary
@@ -1071,7 +1069,6 @@ artifacts:
     effect: "마법을 쓸 때마다 원소가 무작위로 바뀌어 혼자서도 반응이 일어남"
     icon: "magiccodex:textures/artifact/chaos_dice.png"
     order: 540
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   the_only_tome:
     name: "단 하나의 서"
     grade: legendary
@@ -1079,7 +1076,6 @@ artifacts:
     effect: "키세팅에 마법을 1개만 넣으면 최대 4번까지 충전해 연속으로 쓸 수 있음. 재사용 대기 30초 이하 마법만 가능하며, 지능 -50%, 그 마법의 재사용 대기 2배, 대기가 끝나면 충전이 모두 찬다."
     icon: "magiccodex:textures/artifact/the_only_tome.png"
     order: 550
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   inverted_mana_flask:
     name: "거꾸로 된 마나병"
     grade: legendary
@@ -1087,7 +1083,6 @@ artifacts:
     effect: "마나가 과열 게이지로 바뀜. 마법을 쓰면 과열이 차고 초당 5씩 식으며, 가득 차면 30초간 마법을 쓸 수 없음. 마나 재생량에 비례해 게이지 최대치가 늘어남."
     icon: "magiccodex:textures/artifact/inverted_mana_flask.png"
     order: 560
-    enabled: false        # 보류: 효과 코드 없음 → 뽑기·도감 제외 (2026-10-21, 구현 후 이 줄 삭제)
   tilted_scales:
     name: "기울어진 천칭"
     grade: legendary

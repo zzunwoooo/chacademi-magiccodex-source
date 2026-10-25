@@ -8,7 +8,8 @@ import org.bukkit.event.HandlerList;
  * Fired when an element reaction happens, before its effect (only when someone listens). The icon pop is already
  * sent. Listeners (artifacts) may cancel the effect (the name still shows) or add small bonuses:
  * extra radius (sand vortex pull), extra chain-lightning bounces, extra crowd-control ticks (all CC, or only the
- * 3-second normal CC), a crowd-control duration multiplier, extra rainbow heal.
+ * 3-second normal CC), a crowd-control duration multiplier, extra rainbow heal, an area radius multiplier
+ * (2026-10-26 무지개 프리즘: 증기·불씨·모래 회오리·연쇄 번개 튀는 거리·무지개·섬광 범위).
  * Reaction damage itself goes through {@link MagicDamageEvent} with a reaction id.
  */
 public final class MagicReactionEvent extends Event {
@@ -18,7 +19,7 @@ public final class MagicReactionEvent extends Event {
     private boolean effectCancelled;
     private double radiusBonus, healBonus;
     private int bounceBonus, controlBonusTicks, normalControlBonusTicks;
-    private double controlMultiplier = 1;
+    private double controlMultiplier = 1, radiusMultiplier = 1;
 
     public MagicReactionEvent(LivingEntity caster, LivingEntity target, String reaction, String markElement, String triggerElement) {
         this.caster = caster; this.target = target; this.reaction = reaction; this.markElement = markElement; this.triggerElement = triggerElement;
@@ -45,6 +46,9 @@ public final class MagicReactionEvent extends Event {
     /** Crowd-control duration multiplier (applied before the bonus ticks). Several artifacts multiply together. */
     public double getControlMultiplier() { return controlMultiplier; }
     public void multiplyControl(double v) { controlMultiplier = Math.clamp(controlMultiplier * v, 0.25, 3); }
+    /** Area radius multiplier for this reaction (applied before the sand vortex radius bonus). Several multiply. */
+    public double getRadiusMultiplier() { return radiusMultiplier; }
+    public void multiplyRadius(double v) { radiusMultiplier = Math.clamp(radiusMultiplier * v, 0.5, 2); }
     public double getHealBonus() { return healBonus; }
     public void setHealBonus(double v) { healBonus = Math.clamp(v, 0, 10); }
     @Override public HandlerList getHandlers() { return HANDLERS; }

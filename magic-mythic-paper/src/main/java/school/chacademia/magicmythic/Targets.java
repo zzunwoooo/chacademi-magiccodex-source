@@ -125,7 +125,7 @@ final class Targets {
         if (amount > 0 && caster instanceof Player && MagicDamageEvent.listened()) {
             var mark = plugin.reactions() == null ? null : plugin.reactions().markOf(target);
             var e = new MagicDamageEvent(caster, target, element == null ? "" : element, reaction == null ? "" : reaction,
-                    mark == null ? "" : mark.element().id, mark == null ? null : mark.caster(), amount);
+                    mark == null ? "" : mark.element().id, mark == null ? null : mark.caster(), amount, SpellTrace.current().spell());
             Bukkit.getPluginManager().callEvent(e);
             amount = e.getDamage();
         }

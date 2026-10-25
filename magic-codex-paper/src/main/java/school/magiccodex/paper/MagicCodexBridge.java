@@ -150,7 +150,11 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     void savePlayerState(Player p){if(playerState!=null)playerState.save(p);}
     /** 잦은 변경(마법 시전)용: 표시만 하고 다음 주기 저장에 묶는다. 종료·서버 이동 시에는 항상 저장된다. */
     void markPlayerStateDirty(Player p){if(playerState!=null)playerState.markDirty(p);}
-    Double equipmentPower(UUID id,Double base){return equipment==null?base:equipment.power(id,base);}
+    Double equipmentPower(UUID id,Double base){Double v=equipment==null?base:equipment.power(id,base);return v==null||artifactEffects==null?v:v*artifactEffects.rules.powerFactor(id);} // 단 하나의 서: 지능 -50%
+    /** mana-spells.yml entry (cost, cooldown) of an enabled spell, or null. */
+    ManaSpells.Spell spellRule(String id){return mana==null?null:mana.reviewSpell(id);}
+    /** 단 하나의 서: may change the cooldown of a successful cast before the client hears it. */
+    ManaCasting.Result artifactCooldown(Player p,ManaSpells.Spell spell,ManaCasting.Result result){return artifactEffects==null?result:artifactEffects.rules.cooldown(p,spell,result);}
     DisplayNames names(){return names;}
     TitleBridge titleService(){return titles;}
     SchoolBridge schoolBridge(){return school;}

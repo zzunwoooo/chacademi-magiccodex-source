@@ -187,6 +187,7 @@ final class ManaBridge implements Listener,PluginMessageListener,AutoCloseable {
             plugin.getLogger().warning("마법 명령 실패: "+(spell==null?"unknown":spell.id())+" ("+error.getClass().getSimpleName()+")");
             result=new ManaCasting.Result(ManaProtocol.FAILED,0);
         }finally{casting.remove(id);}
+        if(result.status()==ManaProtocol.OK)result=plugin.artifactCooldown(p,spell,result); // 단 하나의 서 (충전)
         mana.publish(id);
         if(result.status()==ManaProtocol.OK){mana.save(p);plugin.markPlayerStateDirty(p);DiscoveryLink.cast(p.getUniqueId(),spell.id(),spell.cost());plugin.artifactCast(p,spell.id(),spell.cost());plugin.spellSound(p,spell.id(),"cast",p.getLocation());}
         return new Response(sequence,result.status(),result.cooldownMillis(),a.snapshot());
