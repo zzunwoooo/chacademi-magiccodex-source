@@ -58,6 +58,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 - tutorial-shop.yml 기본값: shop `pipi_tutorial`, required 교복·견습 지팡이·빈 마법서 각 1. **운영 서버에 상점 pipi_tutorial 을 만들고 같은 이름으로 상품 등록 필요.**
 - 아레나 큐디치 사망 처리 우선순위 HIGHEST→HIGH (경기 중 /kill 류 사망 시 장신구 소실 방지).
 - 펫 도감: `config/magiccodex/pets/models/aliases.json` 으로 펫ID ↔ bbmodel 파일 이름 연결.
+  - **GPT 할 일 (#30, 오너 지시 2026-10-25)**: 펫 도감에서 알로 보이는 바닐라 몹 펫마다 이미 만든 bbmodel 을 찾아 `aliases.json` 에 `{"<펫ID>": "<bbmodel 파일 이름(확장자 없이)>"}` 로 적고 런처 리소스에 넣기. 새 모델 제작 아님, 이름 연결만. 파일이 펫ID와 같은 이름이면 연결 없이 바로 뜸. 확인: 도감에서 해당 펫이 알 대신 모델로 보이면 끝.
 - 1장 서버 파일(steps.yml·server_command.yml·대화)은 chacademi-server 저장소 claude/ 브랜치에 따로 올림.
 - **아직 안 된 것**: 스토리 진행 공유 DB(튜토리얼 서버 → 학교 서버 진행 이어짐) — 오너가 작업을 멈춤. 이게 없으면 학교 서버 도착 시 진행이 이어지지 않음.
 
