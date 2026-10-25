@@ -200,19 +200,18 @@ final class QuestWorld {
         // 남은 거리
         Vec3 me = mc.player.getPosition(pt);
         long meters = Math.round(Math.sqrt((target.x - me.x) * (target.x - me.x) + (target.z - me.z) * (target.z - me.z)));
-        var label = Component.literal(meters + "m");
+        var label = Component.literal(meters + "m").getVisualOrderText();
         Vec3 at = c.subtract(fw.scale(size * 0.62)).add(0, firstPerson ? -0.02 : -0.12, 0);
-        int textColor = argb(alpha, 1f, 0.95f, 0.82f);
+        pose.pushPose();
+        pose.translate(at.x, at.y, at.z);
+        pose.mulPose(camera.rotation());
+        float k = firstPerson ? 0.0085f : 0.016f;
+        pose.scale(k, -k, k);
+        int textColor = argb(alpha, 1f, 0.95f, 0.82f), outline = argb(alpha * 0.9f, 0.04f, 0.05f, 0.08f);
         if ((textColor >>> 24) > 4) {
-            pose.pushPose();
-            pose.translate(at.x, at.y, at.z);
-            pose.mulPose(camera.rotation());
-            float k = firstPerson ? 0.0085f : 0.016f;
-            pose.scale(k, -k, k);
-            mc.font.drawInBatch(label, -mc.font.width(label) / 2f, -4, textColor, true, pose.last().pose(), OWN,
-                    net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
-            pose.popPose();
+            mc.font.drawInBatch8xOutline(label, -mc.font.width(label) / 2f, -4, textColor, outline, pose.last().pose(), OWN, LightTexture.FULL_BRIGHT);
         }
+        pose.popPose();
     }
 
     /** 이 세계에 있는 목표 지점 중 가장 가까운 곳 (없으면 null). */
@@ -230,19 +229,7 @@ final class QuestWorld {
     }
 
     /** 중심 c(카메라 기준), 앞 방향 fw(그림 위쪽 = 화살표 끝), 오른쪽 right 로 놓인 사각형. */
-    private static void plane(PoseStack pose, String name, boolean additive, Vec3 c, Vec3 fw, Vec3 right, float w, float h, int color) {
-        if ((color >>> 24) == 0) return;
-        var tex = QuestArt.image(name).orElse(null);
-        if (tex == null) return;
-        VertexConsumer vc = OWN.getBuffer(QuestArt.worldLayer(tex, additive));
-        var last = pose.last();
-        Vec3 hf = fw.scale(h / 2), hr = right.scale(w / 2);
-        Vec3 tl = c.add(hf).subtract(hr), tr = c.add(hf).add(hr), br = c.subtract(hf).add(hr), bl = c.subtract(hf).subtract(hr);
-        vertex(vc, last, (float) tl.x, (float) tl.y, (float) tl.z, 0, 0, color);
-        vertex(vc, last, (float) bl.x, (float) bl.y, (float) bl.z, 0, 1, color);
-        vertex(vc, last, (float) br.x, (float) br.y, (float) br.z, 1, 1, color);
-        vertex(vc, last, (float) tr.x, (float) tr.y, (float) tr.z, 1, 0, color);
-    }
+
 
     /** NPC 3D 외형 모드(chacademi-npc-model)가 그 NPC를 모델로 그리는 중이면 모델 꼭대기, 아니면 히트박스 높이. 모드가 없어도 동작. */
     private static java.lang.reflect.Method npcModelTop;
@@ -274,71 +261,7 @@ final class QuestWorld {
      * 화살표 판은 바닥과 나란히 두되 카메라 쪽으로 기울여 어느 시점에서도 읽히게 한다. 아래에 남은 거리(m).
      * 목표 수평 10블록 안 · 단계 변경 · 다른 세계 · 목표 없음 → 서서히 사라지고 끝.
      */
-    private static void drawGuide(Minecraft mc, PoseStack pose, net.minecraft.client.Camera camera, Vec3 cam, QuestClient.View v, long now, float pt, float t) {
-        boolean valid = QuestGuidePolicy.tracks(v.active(), v.session, QuestClient.guideSession, v.targetType, sameWorld(v));
-        Vec3 target = null;
-        if (valid) {
-            Vec3 npc = v.targetType == QuestPackets.TARGET_NPC ? markerPos(mc, v, pt) : null;
-            target = npc != null ? npc : new Vec3(v.x, v.y, v.z);
-            Vec3 me = mc.player.getPosition(pt);
-            if (!QuestGuidePolicy.finite(target.x, target.y, target.z)) { valid = false; target = null; }
-            else if (QuestGuidePolicy.reached(target.x - me.x, target.z - me.z)) valid = false;
-        }
-        if (!valid && QuestClient.guideEndAt == 0) QuestClient.guideEndAt = now;
-        float fadeOut = QuestClient.guideEndAt == 0 ? 1 : 1 - (now - QuestClient.guideEndAt) / 450f;
-        if (fadeOut <= 0) { QuestClient.guideSession = 0; QuestClient.guideEndAt = 0; return; }
-        if (target == null) return; // 사라지는 중인데 목표를 잃음: 그릴 방향이 없다
-        float alpha = Mth.clamp((now - QuestClient.guideAt) / 300f, 0, 1) * fadeOut;
 
-        boolean firstPerson = mc.options.getCameraType().isFirstPerson();
-        Vec3 anchor;
-        float size;
-        if (firstPerson) {
-            float yaw = camera.getYRot() * Mth.DEG_TO_RAD;
-            Vec3 look = new Vec3(-Mth.sin(yaw), 0, Mth.cos(yaw));
-            anchor = cam.add(look.scale(1.5)).add(0, -0.48, 0);
-            size = 0.34f;
-        } else {
-            Vec3 me = mc.player.getPosition(pt);
-            anchor = me.add(0, mc.player.getBbHeight() + 0.7 + Mth.sin(t * 2.2f) * 0.05, 0);
-            size = 0.6f;
-        }
-        Vec3 f = new Vec3(target.x - anchor.x, 0, target.z - anchor.z);
-        if (f.lengthSqr() < 1e-6) return;
-        f = f.normalize();
-        // 판의 법선 = 위쪽 + 카메라 쪽 → 바닥과 비슷하게 누워 있으면서도 내 쪽으로 기울어 보인다
-        Vec3 toCam = cam.subtract(anchor);
-        toCam = toCam.lengthSqr() < 1e-6 ? new Vec3(0, 1, 0) : toCam.normalize();
-        Vec3 n = new Vec3(0, 1, 0).add(toCam.scale(0.9)).normalize();
-        Vec3 fw = f.subtract(n.scale(f.dot(n)));
-        if (fw.lengthSqr() < 1e-6) return;
-        fw = fw.normalize();
-        Vec3 right = fw.cross(n).normalize();
-        float nudge = Mth.sin(t * 3.4f) * 0.06f * size;
-        Vec3 c = anchor.add(fw.scale(nudge)).subtract(cam);
-        float pulse = 0.85f + 0.15f * Mth.sin(t * 3.4f);
-
-        // 뒤쪽 빛 (블룸, 셰이더팩이면 건너뜀) → 화살표
-        plane(pose, HALO, true, c, fw, right, size * 1.7f, size * 1.7f, argb(alpha * 0.45f * pulse, 0.55f, 0.85f, 1f));
-        plane(pose, ARROW, false, c, fw, right, size, size, white(alpha));
-        plane(pose, ARROW, true, c, fw, right, size, size, white(alpha * 0.25f * pulse));
-
-        // 남은 거리
-        Vec3 me = mc.player.getPosition(pt);
-        long meters = Math.round(Math.sqrt((target.x - me.x) * (target.x - me.x) + (target.z - me.z) * (target.z - me.z)));
-        var label = Component.literal(meters + "m").getVisualOrderText();
-        Vec3 at = c.subtract(fw.scale(size * 0.62)).add(0, firstPerson ? -0.02 : -0.12, 0);
-        pose.pushPose();
-        pose.translate(at.x, at.y, at.z);
-        pose.mulPose(camera.rotation());
-        float k = firstPerson ? 0.0085f : 0.016f;
-        pose.scale(k, -k, k);
-        int textColor = argb(alpha, 1f, 0.95f, 0.82f), outline = argb(alpha * 0.9f, 0.04f, 0.05f, 0.08f);
-        if ((textColor >>> 24) > 4) {
-            mc.font.drawInBatch8xOutline(label, -mc.font.width(label) / 2f, -4, textColor, outline, pose.last().pose(), OWN, LightTexture.FULL_BRIGHT);
-        }
-        pose.popPose();
-    }
 
     /** 중심 c(카메라 기준), 앞 방향 fw(그림 위쪽 = 화살표 끝), 오른쪽 right 로 놓인 사각형. */
     private static void plane(PoseStack pose, String name, boolean additive, Vec3 c, Vec3 fw, Vec3 right, float w, float h, int color) {
