@@ -1,0 +1,113 @@
+# 차카데미 ChacaNPC (Claude 작성, 일러스트 반영, 검토 필요)
+id: st_ujin
+name: 우진
+type: sub
+gender: 남성
+skin: OFspirit2517
+color: '#76D7C4'
+portrait: st_ujin-neutral
+romanceable: false
+open-on-right-click: true
+persona:
+  role: 루미나 2학년 학생
+  personality: 작은 눈, 큰 코, 그리고 지독한 음치. 그래도 노래와 시를 사랑하는 순정파 낭만주의자. 고백 연습만 백 번째
+  speech: 감성 가득한 반말, 문장 끝에 한숨
+  likes:
+  - 시 쓰기
+  - 노을
+  - 세레나데
+  dislikes:
+  - 노래 그만하라는 말
+  knows:
+  - 차카데미아는 100년 전 '잿빛 밤' 이후 쇠락한 마법학교
+  - '공식 역사: 배신자 모르디안이 악마를 불러냈고 대마법사가 봉인함'
+  - 마을 광장의 대마법사 동상
+  - '네 기숙사: 아르케온(불·땅), 루미나(빛·물), 베스티아즈(바람·야수), 노크세르(어둠)'
+  - 1년 전부터 숲의 동물들이 난폭해짐
+  - 발견한 마법은 학교에 기증하는 것이 미덕
+  - 시와 노래
+  - 학교의 낭만적인 장소
+  - '내 겉모습: 갈색 머리에 작은 눈과 큰 코, 루미나 교복 가슴에 꽂은 백합, 시를 적은 종이'
+  never_knows:
+  - 주인공의 전생
+  - 모르디안에 대한 진실
+  - 천사상
+  - 지하 던전 깊은 곳의 일
+  - 2장 이후 메인 스토리 사건
+  sample_lines:
+  - 오늘 노을은… 누군가의 첫 고백 같아.
+  - 노래 한 소절 들어 볼래? …왜 도망가?
+  - 시는 마음이 넘칠 때 흘러나오는 거야.
+sample_lines_by_stage:
+  2:
+  - 너를 위한 시를 썼어. 제목은… 비밀이야.
+schedule:
+- time: '07:30'
+  place: dorm_hall
+  activity: 시 쓰는 중
+- time: '09:00'
+  place: great_hall
+  activity: 수업 중 시 구상하는 중
+- time: '12:00'
+  place: cafeteria
+  activity: 냅킨에 시 쓰는 중
+- time: '14:00'
+  place: classroom_2
+  activity: 수업 듣는 중
+- time: '17:00'
+  place: harbor_pier
+  activity: 노을 보며 노래하는 중
+- time: '19:30'
+  place: fountain_plaza
+  activity: 꽃 고르는 중
+- time: '21:00'
+  place: dorm_hall
+  activity: 한숨 쉬며 일기 쓰는 중
+quests: []
+hint_topics: []
+gift_likes:
+  loved:
+  - poppy
+  liked:
+  - paper
+  - feather
+  disliked:
+  - bell
+relations:
+  vl_wolf:
+    type: 노래 동지(둘 다 음치)
+    gossip: 0.5
+  vl_rosa:
+    type: 꽃 사는 단골
+    gossip: 0.3
+fallback_lines:
+  greeting:
+  - 안녕!
+  greeting_again:
+  - 또 왔네!
+  farewell:
+  - 잘 가!
+  tired:
+  - 오늘은 좀 피곤해… 내일 얘기하자.
+  busy:
+  - 잠깐만!
+  stall:
+  - 음…
+  confused:
+  - 응? 무슨 말이야?
+  locked:
+  - 오늘은 기분이 별로야.
+  quest_thanks:
+  - 고마워!
+  quest_decline:
+  - 알았어.
+  gift_loved:
+  - 이거 내가 제일 좋아하는 거야! 고마워!
+  gift_liked:
+  - 고마워!
+  gift_neutral:
+  - 어, 고마워.
+  gift_disliked:
+  - …이건 좀.
+  gift_cap:
+  - 오늘은 이미 받았어.
