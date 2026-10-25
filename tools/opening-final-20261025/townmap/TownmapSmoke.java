@@ -1,0 +1,9 @@
+import java.util.*;import java.util.zip.*;import org.objectweb.asm.tree.*;public class TownmapSmoke{
+ public static void main(String[]a)throws Exception{try(var z=new ZipFile(a[0])){boolean client=a[1].equals("client");String name=client?"school/magiccodex/client/TravelScreen.class":"school/magiccodex/paper/TravelBridge.class";var c=OpeningDelta.read(z.getInputStream(z.getEntry(name)).readAllBytes(),0);
+ var expected=client?List.of("marker","hologram","sparkles","label"):List.of("fitCommands","fitView","fitAnchor","fitSecond","fitScale","fitRotate","fitShift","fitSave");
+ for(String n:expected)if(c.methods.stream().noneMatch(m->m.name.equals(n)))throw new AssertionError("missing method "+n);
+ if(!client){var command=c.methods.stream().filter(m->m.name.equals("commands")).findFirst().orElseThrow();int calls=0;for(var i:command.instructions)if(i instanceof MethodInsnNode m&&m.owner.equals(c.name)&&m.name.equals("fitCommands"))calls++;if(calls!=1)throw new AssertionError("fit command registration "+calls);
+ if(z.getEntry("school/magiccodex/paper/TravelMapFit.class")==null||z.getEntry("school/magiccodex/paper/TravelMapFit$Fit.class")==null)throw new AssertionError("math classes missing");
+ }else{var marker=c.methods.stream().filter(m->m.name.equals("marker")).findFirst().orElseThrow();var calls=new HashSet<String>();for(var i:marker.instructions)if(i instanceof MethodInsnNode m&&m.owner.equals(c.name))calls.add(m.name);if(!calls.containsAll(List.of("sparkles","hologram")))throw new AssertionError("new marker signals absent");}
+ System.out.println("PASS actual townmap command/marker registration methods "+a[1]);}}
+}

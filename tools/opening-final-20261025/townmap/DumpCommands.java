@@ -1,0 +1,1 @@
+import java.nio.file.*;public class DumpCommands{public static void main(String[]a)throws Exception{var c=OpeningDelta.read(Files.readAllBytes(Path.of(a[0])),0);for(var m:c.methods)if(m.name.equals("commands"))System.out.print(OpeningDelta.norm(m));}}

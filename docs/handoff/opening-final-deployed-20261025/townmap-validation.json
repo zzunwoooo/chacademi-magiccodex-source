@@ -1,0 +1,57 @@
+{
+  "candidates": [
+    {
+      "area": "school",
+      "status": "PRIVATE_PACKAGED",
+      "path": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-school-private.jar",
+      "sha256": "02b036c1ed96e1dc1edf39747e684bbf315d1ef57118d8e03d8f254ed8fb20c4",
+      "JVM": "PASS",
+      "JVMSummary": [
+        "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-school-private.jar passed=3 externalMissing=0 failures=0 noInitialization=true"
+      ],
+      "controlSignalSmoke": "PASS",
+      "unchangedProtocolClasses": 387,
+      "removedEntries": [],
+      "untouchedByteIdentical": 1256,
+      "image": null
+    },
+    {
+      "area": "wild",
+      "status": "PRIVATE_PACKAGED",
+      "path": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-wild-private.jar",
+      "sha256": "286cf8eef5c1f55c70234acfb331d323bdb659bd665fcda3809beaee41608937",
+      "JVM": "PASS",
+      "JVMSummary": [
+        "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-wild-private.jar passed=3 externalMissing=0 failures=0 noInitialization=true"
+      ],
+      "controlSignalSmoke": "PASS",
+      "unchangedProtocolClasses": 387,
+      "removedEntries": [],
+      "untouchedByteIdentical": 1256,
+      "image": null
+    },
+    {
+      "area": "client",
+      "status": "PRIVATE_PACKAGED",
+      "path": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-client-private.jar",
+      "sha256": "0c36beb76c7d3326c8d44e67c63dcaddabc64ec934d743fd8274b3671b337b5f",
+      "JVM": "PASS",
+      "JVMSummary": [
+        "FINAL_JVM_VERIFY artifact=C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-client-private.jar passed=1 externalMissing=0 failures=0 noInitialization=true"
+      ],
+      "controlSignalSmoke": "PASS",
+      "unchangedProtocolClasses": 392,
+      "removedEntries": [],
+      "untouchedByteIdentical": 3506,
+      "image": {
+        "width": 1479,
+        "height": 1064,
+        "sha256": "9f3aca34b73cb83951dadc5ffd189a52cfcc974639fbadeb22d0b57106baee04",
+        "legacyAssetsPreserved": 2338
+      }
+    }
+  ],
+  "arena": "UNCHANGED_TRAVEL_NOT_INSTALLED",
+  "sourceOnlyReproduction": false,
+  "deployment": "NOT_STARTED"
+}

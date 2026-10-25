@@ -1,0 +1,1319 @@
+{
+  "sourceCommit": "70044a79232b22b37c5e024f3fc0bcaf808a04cc",
+  "status": "READY_AWAITING_PARENT_SHUTDOWN_NOTICE",
+  "restartTargets": [
+    "school",
+    "wild",
+    "arena"
+  ],
+  "proxyRestart": false,
+  "serverFiles": [
+    {
+      "label": "school/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "target": "school/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-0-magic-discovery-paper.jar",
+      "sha256": "70f6f76186484aac3095f6f6c56199b495f0cf1c78dd8801dca396a2680e6755",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 782,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\00-new-0-magic-discovery-paper.jar"
+    },
+    {
+      "label": "wild/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "target": "wild/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-1-magic-discovery-paper.jar",
+      "sha256": "70f6f76186484aac3095f6f6c56199b495f0cf1c78dd8801dca396a2680e6755",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "144a8d52645255038d0f675c429be82fb74642defaaea25ef56d07e66ee79d43",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 782,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\01-new-1-magic-discovery-paper.jar"
+    },
+    {
+      "label": "school/plugins/chacademy-story-plugin-final-guide-20261024.jar",
+      "target": "school/plugins/chacademy-story-plugin-final-guide-20261024.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-2-chacademy-story-plugin.jar",
+      "sha256": "441c2e1479cd920460496494da015ef5247ba570d78ecc1dce58e6cacda2b87d",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chacademy-story-plugin-final-guide-20261024.jar",
+      "baselineSHA256": "a03db9a9ba28501fda8bc0996fd30e79b198313e29346de6bf3077dccf95ca5f",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 68,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\02-new-2-chacademy-story-plugin.jar"
+    },
+    {
+      "label": "arena/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "target": "arena/plugins/magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-3-magic-discovery-paper.jar",
+      "sha256": "f71283a8de5a3a40dcb4fd70ccdef429cb1c1805aeb7dd177ddf76d5d70a246d",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\magic-discovery-0.3.1-integrated-20261020.1-gimmick.1-commands.1.jar",
+      "baselineSHA256": "858713c4ffc1077898f8b014fe9404c9a19e8bb648c87f0f18fd395a325d27bb",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 782,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\03-new-3-magic-discovery-paper.jar"
+    },
+    {
+      "label": "school/plugins/chacademia-magic-mythic-final-20261024-school.jar",
+      "target": "school/plugins/chacademia-magic-mythic-final-20261024-school.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\magic-mythic-school-opening-final-private-20261025.jar",
+      "sha256": "cae722cb1d601bbe0eb587f9e67a09f62672e6d015708a7390f229f2f815910b",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chacademia-magic-mythic-final-20261024-school.jar",
+      "baselineSHA256": "8fb1951552cbf61f84ec8724a9f7ab884a2689a133f4e9124ffef0171caf62ee",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 162,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\04-magic-mythic-school-opening-final-private-20261025.jar"
+    },
+    {
+      "label": "wild/plugins/chacademia-magic-mythic-final-20261024-wild.jar",
+      "target": "wild/plugins/chacademia-magic-mythic-final-20261024-wild.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\magic-mythic-wild-opening-final-private-20261025.jar",
+      "sha256": "942548f7625b831ad76e183a8345e2c1a6481c0cbad30cda65e9b9b705a31e80",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chacademia-magic-mythic-final-20261024-wild.jar",
+      "baselineSHA256": "6b96ae27abfef104c9f5c49490043b1f75fa34b922b0ec5be3979c22dfb4ffca",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 162,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\05-magic-mythic-wild-opening-final-private-20261025.jar"
+    },
+    {
+      "label": "arena/plugins/chacademia-magic-mythic-final-20261024-arena.jar",
+      "target": "arena/plugins/chacademia-magic-mythic-final-20261024-arena.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\magic-mythic-arena-opening-final-private-20261025.jar",
+      "sha256": "ddd728297b1208061a354e81278370a15d843fa8666fabf4f0889d0f9fd9cbd3",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\chacademia-magic-mythic-final-20261024-arena.jar",
+      "baselineSHA256": "4438a07902f8db71865ab739534a3467172520bb194781806904f45efd11afce",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 162,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\06-magic-mythic-arena-opening-final-private-20261025.jar"
+    },
+    {
+      "label": "school/plugins/chaca-housing-0.1.2-usersearch.1-school.jar",
+      "target": "school/plugins/chaca-housing-0.1.2-usersearch.1-school.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\housing\\housing-school-private.jar",
+      "sha256": "be2c29bea2ea9d27fd15b3fdb022f558eb8ac719f31eccb182d597ae73799507",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chaca-housing-0.1.2-usersearch.1-school.jar",
+      "baselineSHA256": "2bfbba912cb27b30ac0b3d7a1c333e0740357824d3525da5cda39d6ac1ea76b5",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 785,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\07-housing-school-private.jar"
+    },
+    {
+      "label": "wild/plugins/chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "target": "wild/plugins/chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\housing\\housing-wild-private.jar",
+      "sha256": "3b1de880f01b055c08753aa39ed8c97d4eaba06d1d6b63c924b0ea5528388c2a",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\chaca-housing-0.1.2-usersearch.1-wild.jar",
+      "baselineSHA256": "9cf96ac8ffe33f9a4bd97dcb5da4dc6ab4bccc9fba0e422412b093d6204cea5c",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 784,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\08-housing-wild-private.jar"
+    },
+    {
+      "label": "arena/plugins/chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "target": "arena/plugins/chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\mythic-kyu\\chaca-kyudichi-arena-opening-final-private-20261025.jar",
+      "sha256": "9773adbe6df3b5c5b182c6432723dbbb7cb79de92c29273719a449b2a0e4837d",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\chaca-kyudichi-0.1.2-presets-api.2.jar",
+      "baselineSHA256": "1cd2271a7694a0e25ae70d9e209580a9975b94b9a853cdc8d5a22470f719be11",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 812,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\09-chaca-kyudichi-arena-opening-final-private-20261025.jar"
+    },
+    {
+      "label": "school/plugins/magic-codex-bridge-final-20261024-school.jar",
+      "target": "school/plugins/magic-codex-bridge-final-20261024-school.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-school-private.jar",
+      "sha256": "02b036c1ed96e1dc1edf39747e684bbf315d1ef57118d8e03d8f254ed8fb20c4",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\magic-codex-bridge-final-20261024-school.jar",
+      "baselineSHA256": "4b90ebb14e331f108d01469f4c6b9a97385936e7bb58ac2669a80a603341e93f",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 1228,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "townmapInputCandidate": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-10-magic-codex-paper.jar",
+      "townmapInputSHA256": "54a5da6842d7870f99eeec2654bad398f3cd380a0ee39bb6e5312b1bd101240b",
+      "townmapValidation": "PASS",
+      "cumulativeChangedEntries": [
+        "school/magiccodex/paper/CommandHub.class",
+        "school/magiccodex/paper/FishingGear$HeldFish.class",
+        "school/magiccodex/paper/FishingGear.class",
+        "school/magiccodex/paper/JournalBridge.class",
+        "school/magiccodex/paper/MagicCodexBridge.class",
+        "school/magiccodex/paper/ManaBridge.class",
+        "school/magiccodex/paper/PreviewSender.class",
+        "school/magiccodex/paper/SchoolBridge.class",
+        "plugin.yml",
+        "school/magiccodex/paper/TravelBridge.class",
+        "travel.yml",
+        "school/magiccodex/paper/SpellReviewRunner.class",
+        "school/magiccodex/paper/CommandHub$CatalogLine.class",
+        "school/magiccodex/paper/OperatorHelp$Reply.class",
+        "school/magiccodex/paper/OperatorHelp$Suggestion.class",
+        "school/magiccodex/paper/OperatorHelp$Token.class",
+        "school/magiccodex/paper/OperatorHelp.class",
+        "school/magiccodex/paper/SpellSounds$Layer.class",
+        "school/magiccodex/paper/SpellSounds.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Notice.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Open.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Page.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Query.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Row.class",
+        "school/magiccodex/protocol/HousingRankProtocol$ToClient.class",
+        "school/magiccodex/protocol/HousingRankProtocol$ToServer.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Visit.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Writer.class",
+        "school/magiccodex/protocol/HousingRankProtocol.class",
+        "operator-guide.md",
+        "spell-sounds.yml",
+        "school/magiccodex/paper/TravelMapFit$Fit.class",
+        "school/magiccodex/paper/TravelMapFit.class"
+      ],
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\10-magic-codex-townmap-school-private.jar"
+    },
+    {
+      "label": "wild/plugins/magic-codex-bridge-final-20261024-wild.jar",
+      "target": "wild/plugins/magic-codex-bridge-final-20261024-wild.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-wild-private.jar",
+      "sha256": "286cf8eef5c1f55c70234acfb331d323bdb659bd665fcda3809beaee41608937",
+      "baseline": "C:\\Chacademi\\network\\wild\\plugins\\magic-codex-bridge-final-20261024-wild.jar",
+      "baselineSHA256": "40ff5a0e716c5f482d0e76c9921bcf4faa4922df0368cf0674dade6f373edc29",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 1228,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "townmapInputCandidate": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-11-magic-codex-paper.jar",
+      "townmapInputSHA256": "9cb070cdea7ebb90a204a57d3ab46a1ccd05fc433dea7ac6a6086359bcf9b680",
+      "townmapValidation": "PASS",
+      "cumulativeChangedEntries": [
+        "school/magiccodex/paper/CommandHub.class",
+        "school/magiccodex/paper/FishingGear$HeldFish.class",
+        "school/magiccodex/paper/FishingGear.class",
+        "school/magiccodex/paper/JournalBridge.class",
+        "school/magiccodex/paper/MagicCodexBridge.class",
+        "school/magiccodex/paper/ManaBridge.class",
+        "school/magiccodex/paper/PreviewSender.class",
+        "school/magiccodex/paper/SchoolBridge.class",
+        "plugin.yml",
+        "school/magiccodex/paper/TravelBridge.class",
+        "travel.yml",
+        "school/magiccodex/paper/SpellReviewRunner.class",
+        "school/magiccodex/paper/CommandHub$CatalogLine.class",
+        "school/magiccodex/paper/OperatorHelp$Reply.class",
+        "school/magiccodex/paper/OperatorHelp$Suggestion.class",
+        "school/magiccodex/paper/OperatorHelp$Token.class",
+        "school/magiccodex/paper/OperatorHelp.class",
+        "school/magiccodex/paper/SpellSounds$Layer.class",
+        "school/magiccodex/paper/SpellSounds.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Notice.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Open.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Page.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Query.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Row.class",
+        "school/magiccodex/protocol/HousingRankProtocol$ToClient.class",
+        "school/magiccodex/protocol/HousingRankProtocol$ToServer.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Visit.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Writer.class",
+        "school/magiccodex/protocol/HousingRankProtocol.class",
+        "operator-guide.md",
+        "spell-sounds.yml",
+        "school/magiccodex/paper/TravelMapFit$Fit.class",
+        "school/magiccodex/paper/TravelMapFit.class"
+      ],
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\11-magic-codex-townmap-wild-private.jar"
+    },
+    {
+      "label": "arena/plugins/magic-codex-bridge-final-20261024-arena.jar",
+      "target": "arena/plugins/magic-codex-bridge-final-20261024-arena.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-12-magic-codex-paper.jar",
+      "sha256": "3d1ef45722f8718f42a7fd71e3a971a1aa786011be7b036e0c74e55d5ad3ec08",
+      "baseline": "C:\\Chacademi\\network\\arena\\plugins\\magic-codex-bridge-final-20261024-arena.jar",
+      "baselineSHA256": "6b2633cbc792e92992306cce212bbe411830be7ec5ace941f6c875a7583e49c7",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 1181,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\12-new-12-magic-codex-paper.jar"
+    },
+    {
+      "label": "school/plugins/chaca-npc-0.3.0-npcmodel.3.jar",
+      "target": "school/plugins/chaca-npc-0.3.0-npcmodel.3.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-13-chaca-npc-paper.jar",
+      "sha256": "37806423d1f5be0d27aa073f1355fbd78c1de793ad5ec16505126b6bb9932a62",
+      "baseline": "C:\\Chacademi\\network\\school\\plugins\\chaca-npc-0.3.0-npcmodel.3.jar",
+      "baselineSHA256": "22c7038dc5c632f876cc94d7118f8d835445d9393239765dab7c582137425b21",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 549,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\13-new-13-chaca-npc-paper.jar"
+    }
+  ],
+  "clientFiles": [
+    {
+      "label": "chacademy-story-mod-client",
+      "target": "mods/chacademy-story-mod-client-opening-safe-20261025.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-14-chacademy-story-mod.jar",
+      "sha256": "6aeb8e6a406a5d85bca60b35dc83eaa4da00a4f1619e2ac638a15d767d4ef46e",
+      "baseline": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\chacademy-story-mod-client-opening-safe-20261025.jar",
+      "baselineSHA256": "e99f92db9328e77effe19e1317a47d2eedec6f2eb04df9fe234fe9bf0466626e",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 130,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\14-new-14-chacademy-story-mod.jar"
+    },
+    {
+      "label": "portable-vfx-runtime-client-client",
+      "target": "mods/portable-vfx-runtime-client-client-opening-safe-20261025.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-15-portable-vfx-runtime-client.jar",
+      "sha256": "dbca428a16f35b17a3e71ff327f74690c3ad2ca40e1da0e4cf9b25b142278a5f",
+      "baseline": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\other-preservation\\portable-vfx-runtime-client-client-opening-safe-20261025.jar",
+      "baselineSHA256": "aea5599784daa39d315f6114380d0a016a7db6c7119067fbbf65d04824e67f91",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 184,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\15-new-15-portable-vfx-runtime-client.jar"
+    },
+    {
+      "label": "MagicCodex-client",
+      "target": "mods/magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+      "sourcePath": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\candidates\\magic-codex-townmap-client-private.jar",
+      "sha256": "0c36beb76c7d3326c8d44e67c63dcaddabc64ec934d743fd8274b3671b337b5f",
+      "baseline": "C:\\Chacademi\\artifacts\\opening-prep-safe-integration-20261025-task3\\bounded-packaging\\magic-codex-ui-opening-safe-20261025-v2+mc1.21.4.jar",
+      "baselineSHA256": "11754cca8f1d8cdd34aa1e4958f9aa732e3a18b3384eda8af733315fd78ffc96",
+      "removedEntries": 0,
+      "untouchedByteIdentical": 3474,
+      "internalLinkage": "PASS",
+      "deployment": "NOT_STARTED",
+      "sourceOnlyReproduction": false,
+      "townmapInputCandidate": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\candidate-tools\\new-16-magic-codex-fabric.jar",
+      "townmapInputSHA256": "4c437bc4d82907689ae64d94f8820344eb54d45be554f2482945487187a4fc13",
+      "townmapValidation": "PASS",
+      "cumulativeChangedEntries": [
+        "assets/magiccodex/default-spells/132_guiding_star.yml",
+        "assets/magiccodex/default-spells/known-hashes.tsv",
+        "fabric.mod.json",
+        "school/magiccodex/client/HousingClient.class",
+        "school/magiccodex/client/JournalClient.class",
+        "school/magiccodex/client/JournalTree.class",
+        "school/magiccodex/client/ScreenVfxClient.class",
+        "school/magiccodex/client/TravelScreen.class",
+        "school/magiccodex/client/HousingRankClient$Payload$1.class",
+        "school/magiccodex/client/HousingRankClient$Payload.class",
+        "school/magiccodex/client/HousingRankClient.class",
+        "school/magiccodex/client/HousingRankScreen$Tex.class",
+        "school/magiccodex/client/HousingRankScreen.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Notice.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Open.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Page.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Query.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Row.class",
+        "school/magiccodex/protocol/HousingRankProtocol$ToClient.class",
+        "school/magiccodex/protocol/HousingRankProtocol$ToServer.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Visit.class",
+        "school/magiccodex/protocol/HousingRankProtocol$Writer.class",
+        "school/magiccodex/protocol/HousingRankProtocol.class",
+        "assets/magiccodex/textures/gui/housing_rank/close.png",
+        "assets/magiccodex/textures/gui/housing_rank/page_left.png",
+        "assets/magiccodex/textures/gui/housing_rank/page_right.png",
+        "assets/magiccodex/textures/gui/housing_rank/panel.png",
+        "assets/magiccodex/textures/gui/housing_rank/rank_bronze.png",
+        "assets/magiccodex/textures/gui/housing_rank/rank_gold.png",
+        "assets/magiccodex/textures/gui/housing_rank/rank_silver.png",
+        "assets/magiccodex/textures/gui/housing_rank/tab_normal.png",
+        "assets/magiccodex/textures/gui/housing_rank/tab_selected.png",
+        "assets/magiccodex/textures/gui/housing_rank/visit_disabled.png",
+        "assets/magiccodex/textures/gui/housing_rank/visit_enabled.png",
+        "assets/magiccodex/textures/gui/travel/maps/school.png"
+      ],
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\stage\\jars\\16-magic-codex-townmap-client-private.jar"
+    }
+  ],
+  "configFiles": [
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17-alchemy-preserved\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17-alchemy-preserved\\dialogue.yml",
+      "stagedSHA256": "ac2a2a7324b4f024ffdbb3d1e8d564f2fd11acd1027cead31db5e9add70e3739",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\dialogue.yml",
+      "sourceSHA256": "09dad51a81f0c6467a12fa919a64708f627d8da43d1b40fbabd2f66e896ea8b0",
+      "kind": "preserve-existing-alchemy-before-replacing-ch1-17",
+      "changes": [
+        "id ch1-17 -> ch1-17-alchemy-preserved"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17-alchemy-preserved\\tc_berna-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17-alchemy-preserved\\tc_berna-neutral.png",
+      "stagedSHA256": "0df810a6a70902ffffb0dd6b37ee1e1171ea073e2685ecdf8d9cacabf5b0186a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\tc_berna-neutral.png",
+      "sourceSHA256": "0df810a6a70902ffffb0dd6b37ee1e1171ea073e2685ecdf8d9cacabf5b0186a",
+      "kind": "preserve-existing-alchemy-before-replacing-ch1-17",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\dialogue.yml",
+      "beforeSHA256": "09dad51a81f0c6467a12fa919a64708f627d8da43d1b40fbabd2f66e896ea8b0",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\dialogue.yml",
+      "stagedSHA256": "6d15eab157a033ad8baad9fe4185386eefe708761772e275a96c3b9a319026b6",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15\\dialogue.yml",
+      "sourceSHA256": "955013de550b2676d90b4e96ff05e2dc24bd8522af48eae2c70ee0e51a0db839",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15 -> ch1-17"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-arkeon\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-arkeon\\dialogue.yml",
+      "stagedSHA256": "36b13c08a231a3dca6568a6a0d73d87667b34d4201e545031218ad10dfd6d4c3",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-arkeon\\dialogue.yml",
+      "sourceSHA256": "03931a7bf57da6dd83f5bf32eb796d736ed1d1b82f7a998a25735bb4a2101ce8",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15f-arkeon -> ch1-17f-arkeon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-arkeon\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-arkeon\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-arkeon\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-bestiaz\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-bestiaz\\dialogue.yml",
+      "stagedSHA256": "4b8bc6ca8710b66b426c8b646f20efc76933a71dffecce37d72fcde9c45c0d5e",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-bestiaz\\dialogue.yml",
+      "sourceSHA256": "38b2e2ebbf8d82ca923009dc69cfd0dac008618ffa5143b2ac8d3842f395c510",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15f-bestiaz -> ch1-17f-bestiaz"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-bestiaz\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-bestiaz\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-bestiaz\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-lumina\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-lumina\\dialogue.yml",
+      "stagedSHA256": "5de8a6be449c1de5a7295e34f6ea543bf3f48afed232586a935a2a56d6987f97",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-lumina\\dialogue.yml",
+      "sourceSHA256": "13feadd2f65608dfd3b1a2b065659a0e9549131614f653ca49175e72497625f3",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15f-lumina -> ch1-17f-lumina"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-lumina\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-lumina\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-lumina\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\dialogue.yml",
+      "stagedSHA256": "e51283ca4f88347c222a44fdf1372abde17e55e70461cb1322ca741a90b54b0d",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-noxer\\dialogue.yml",
+      "sourceSHA256": "dc03fca67c79392cb62bfd84f6e39cb98fbd56c530ab2461f522477e20931dc0",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15f-noxer -> ch1-17f-noxer"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\luka-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\luka-neutral.png",
+      "stagedSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-noxer\\luka-neutral.png",
+      "sourceSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-noxer\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-arkeon\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-arkeon\\dialogue.yml",
+      "stagedSHA256": "5bbfddb4650bddb687a925f5f9add7ee047ff2120cdd4ce3a3370cfbc7e745d9",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-arkeon\\dialogue.yml",
+      "sourceSHA256": "d2a376f48386a07c604a48dc559bb3e611129ab41d432f445cd31eb9813cddc7",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15m-arkeon -> ch1-17m-arkeon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-arkeon\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-arkeon\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-arkeon\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-bestiaz\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-bestiaz\\dialogue.yml",
+      "stagedSHA256": "b1c0efb44bf1b7899074c04ee9466cbff1e8d45d7e39661bce6db994981141ae",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-bestiaz\\dialogue.yml",
+      "sourceSHA256": "55e5eec2151e47dbb93aee29ac1bec2201dc342dc785128eef4db43fa32b6bd3",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15m-bestiaz -> ch1-17m-bestiaz"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-bestiaz\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-bestiaz\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-bestiaz\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-lumina\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-lumina\\dialogue.yml",
+      "stagedSHA256": "1eadd6b80cd9a145a1bffc03c1849f20d1c1f8c8e6ba696a8496c766e6e4f1cd",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-lumina\\dialogue.yml",
+      "sourceSHA256": "fc4a873c2216b556a834d3b3b35447afd9da2c36ea4d78023043116f7596f606",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15m-lumina -> ch1-17m-lumina"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-lumina\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-lumina\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-lumina\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\dialogue.yml",
+      "stagedSHA256": "a8c528a860938ef6b04fd204c94b54b0b3b13aee574bb37593bc25a39afd674b",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-noxer\\dialogue.yml",
+      "sourceSHA256": "aa57017fc88875cda48f96185ac52c655c641c80ed64ab1396992003950a0fae",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15m-noxer -> ch1-17m-noxer"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\luka-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\luka-neutral.png",
+      "stagedSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-noxer\\luka-neutral.png",
+      "sourceSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-noxer\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-arkeon\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-arkeon\\dialogue.yml",
+      "stagedSHA256": "9ea5dacb8653a7c8fa6fea507f0b2e5277d1d6f8687be0bae819122bcc78eaff",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-arkeon\\dialogue.yml",
+      "sourceSHA256": "a0a2040a806d284ef7d1dc63e6a83f65f43c641d631416473ed9edfed60d28bf",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15r-arkeon -> ch1-17r-arkeon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-arkeon\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-arkeon\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-arkeon\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-bestiaz\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-bestiaz\\dialogue.yml",
+      "stagedSHA256": "5408685eb42bda1d7b3e426eb0831e46cbd5aac12c7b2d6e72350aad011bbe8b",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-bestiaz\\dialogue.yml",
+      "sourceSHA256": "e39b0a64f437b7921007f748fe5af9aac519c1e830a688f0ae8d379cec051d40",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15r-bestiaz -> ch1-17r-bestiaz"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-bestiaz\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-bestiaz\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-bestiaz\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-lumina\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-lumina\\dialogue.yml",
+      "stagedSHA256": "64b0a639ac200fa26e9538cfd7bc376d3762af353d31642690eb6571457f64da",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-lumina\\dialogue.yml",
+      "sourceSHA256": "6e89b0a13f3b7ae2e120e296eb77ef49ce95a8888824786b696c28f2cd7f011a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15r-lumina -> ch1-17r-lumina"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-lumina\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-lumina\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-lumina\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\dialogue.yml",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\dialogue.yml",
+      "stagedSHA256": "420ce97885d4a16c170703aa4b6582ab6d119987558fd0c624e7acd0619c72dc",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-noxer\\dialogue.yml",
+      "sourceSHA256": "a553b49ad0ba3b5b4391dd920f9ed48c87a9e50e49a80510eaf1b99c715af322",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "id ch1-15r-noxer -> ch1-17r-noxer"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\luka-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\luka-neutral.png",
+      "stagedSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-noxer\\luka-neutral.png",
+      "sourceSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\vice_gregor-neutral.png",
+      "beforeSHA256": null,
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\vice_gregor-neutral.png",
+      "stagedSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-noxer\\vice_gregor-neutral.png",
+      "sourceSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "kind": "sorting-dialogue-ID-rename",
+      "changes": [
+        "folder-local asset byte-identical"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\steps.yml",
+      "beforeSHA256": "3f1b8c058fb89a9a7cafdb796c97e9e8d5a2e5cff29b0f6bc0058479e4d2dcd7",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\steps.yml",
+      "stagedSHA256": "2b736d2f2e234e89b4c59dea98a3a8ec2f1ab5702298fe10f6673fc87dab402b",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\steps.yml",
+      "sourceSHA256": "3f1b8c058fb89a9a7cafdb796c97e9e8d5a2e5cff29b0f6bc0058479e4d2dcd7",
+      "kind": "current-live-step-minimal-patch",
+      "changes": [
+        "\ub2e8\uacc4.ch1-17.\uc870\uac74.0.\ub300\uc0c1",
+        "\ub2e8\uacc4.ch1-20.\ub300\ud654"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\server_command.yml",
+      "beforeSHA256": "df2655dde29386d370c13e8bbf526249f05159dcf6687580cf1ae30e7c2ffc90",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\ChacademyStory\\dialogues\\server_command.yml",
+      "stagedSHA256": "279cb26f850ec133f6e35c977245d2ad9ce7dfaef60d419bd115d693949c0e9c",
+      "source": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\server_command.yml",
+      "sourceSHA256": "df2655dde29386d370c13e8bbf526249f05159dcf6687580cf1ae30e7c2ffc90",
+      "kind": "sorting-ending-command-key-rename",
+      "changes": [
+        "commands.ch1-15 -> commands.ch1-17; command values unchanged"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\MagicDiscovery\\manual-conditions.yml",
+      "beforeSHA256": "df1e0e5f62607fb7f492dc298909cca1f4705508eb2224eadf1f07375e47d305",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\MagicDiscovery\\manual-conditions.yml",
+      "stagedSHA256": "fc32cc56a2baf54e2e3a20d27608f22b4bb166c0a295c97b1fe02f34fdb51e92",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\src\\main\\resources\\manual-conditions.yml",
+      "sourceSHA256": "8b0ada4435f191b4f5b8cb127a2ddbc924daa03176ceb3f4a91c55e7ae17d58d",
+      "kind": "guiding-star-only",
+      "changes": [
+        "spells.guiding_star"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\MagicDiscovery\\discoveries.yml",
+      "beforeSHA256": "053937c691bc074b2c514d1d1403c899c0b1818f9c222ccaca729b0399e9d167",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\MagicDiscovery\\discoveries.yml",
+      "stagedSHA256": "2d81dabb769de0299173547996d7020846497b780634a4ff664e881ab669aa45",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\src\\main\\resources\\discoveries.yml",
+      "sourceSHA256": "a974b942f3d403dfef4978bc131efa168589d3f5372b990e9a229bbc8d129e5e",
+      "kind": "icon-fields-only",
+      "changes": [
+        "spells.pressure_hammer.icon",
+        "spells.waterspout.icon",
+        "spells.fox_orbit.icon",
+        "spells.curving_plumes.icon",
+        "spells.crystal_orbit.icon",
+        "spells.venom_spit.icon",
+        "spells.smoke_veil.icon",
+        "spells.domain_stomp.icon",
+        "spells.seal_circle.icon",
+        "spells.seal_talismans.icon",
+        "spells.shield_slam.icon",
+        "spells.chain_arrow.icon",
+        "spells.mana_drain.icon",
+        "spells.soul_scythe.icon",
+        "spells.oblivion_orbs.icon",
+        "spells.bone_grasp.icon",
+        "spells.shadow_leap.icon",
+        "spells.binding_pull.icon",
+        "spells.fairy_dust.icon",
+        "spells.moon_wind.icon",
+        "spells.gale_wings.icon",
+        "spells.feather_storm.icon",
+        "spells.hunting_pounce.icon",
+        "spells.roar_leap.icon",
+        "spells.gravity_slam.icon",
+        "spells.tail_spikes.icon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\PortableVFX\\spell-catalog.yml",
+      "beforeSHA256": "53816837b851f314d484c03c5be8eeb70e1e4a16294fc49572c42cc781307a47",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\school\\plugins\\PortableVFX\\spell-catalog.yml",
+      "stagedSHA256": "84a01b1d166432141c3e42033687a6d6096eb7998654071526a440855ac9d480",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\deployment\\operating-config\\PortableVFX\\spell-catalog.yml",
+      "sourceSHA256": "e168770c90135614f46aa7b0d4876631dfa72c4b3fb457235ac9b5f542817fe7",
+      "kind": "icon-fields-only",
+      "changes": [
+        "spells.pressure_hammer.icon",
+        "spells.waterspout.icon",
+        "spells.fox_orbit.icon",
+        "spells.curving_plumes.icon",
+        "spells.crystal_orbit.icon",
+        "spells.venom_spit.icon",
+        "spells.smoke_veil.icon",
+        "spells.domain_stomp.icon",
+        "spells.seal_circle.icon",
+        "spells.seal_talismans.icon",
+        "spells.shield_slam.icon",
+        "spells.chain_arrow.icon",
+        "spells.mana_drain.icon",
+        "spells.soul_scythe.icon",
+        "spells.oblivion_orbs.icon",
+        "spells.bone_grasp.icon",
+        "spells.shadow_leap.icon",
+        "spells.binding_pull.icon",
+        "spells.fairy_dust.icon",
+        "spells.moon_wind.icon",
+        "spells.gale_wings.icon",
+        "spells.feather_storm.icon",
+        "spells.hunting_pounce.icon",
+        "spells.roar_leap.icon",
+        "spells.gravity_slam.icon",
+        "spells.tail_spikes.icon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\wild\\plugins\\MagicDiscovery\\manual-conditions.yml",
+      "beforeSHA256": "df1e0e5f62607fb7f492dc298909cca1f4705508eb2224eadf1f07375e47d305",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\wild\\plugins\\MagicDiscovery\\manual-conditions.yml",
+      "stagedSHA256": "fc32cc56a2baf54e2e3a20d27608f22b4bb166c0a295c97b1fe02f34fdb51e92",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\src\\main\\resources\\manual-conditions.yml",
+      "sourceSHA256": "8b0ada4435f191b4f5b8cb127a2ddbc924daa03176ceb3f4a91c55e7ae17d58d",
+      "kind": "guiding-star-only",
+      "changes": [
+        "spells.guiding_star"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\wild\\plugins\\MagicDiscovery\\discoveries.yml",
+      "beforeSHA256": "053937c691bc074b2c514d1d1403c899c0b1818f9c222ccaca729b0399e9d167",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\wild\\plugins\\MagicDiscovery\\discoveries.yml",
+      "stagedSHA256": "2d81dabb769de0299173547996d7020846497b780634a4ff664e881ab669aa45",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\src\\main\\resources\\discoveries.yml",
+      "sourceSHA256": "a974b942f3d403dfef4978bc131efa168589d3f5372b990e9a229bbc8d129e5e",
+      "kind": "icon-fields-only",
+      "changes": [
+        "spells.pressure_hammer.icon",
+        "spells.waterspout.icon",
+        "spells.fox_orbit.icon",
+        "spells.curving_plumes.icon",
+        "spells.crystal_orbit.icon",
+        "spells.venom_spit.icon",
+        "spells.smoke_veil.icon",
+        "spells.domain_stomp.icon",
+        "spells.seal_circle.icon",
+        "spells.seal_talismans.icon",
+        "spells.shield_slam.icon",
+        "spells.chain_arrow.icon",
+        "spells.mana_drain.icon",
+        "spells.soul_scythe.icon",
+        "spells.oblivion_orbs.icon",
+        "spells.bone_grasp.icon",
+        "spells.shadow_leap.icon",
+        "spells.binding_pull.icon",
+        "spells.fairy_dust.icon",
+        "spells.moon_wind.icon",
+        "spells.gale_wings.icon",
+        "spells.feather_storm.icon",
+        "spells.hunting_pounce.icon",
+        "spells.roar_leap.icon",
+        "spells.gravity_slam.icon",
+        "spells.tail_spikes.icon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\wild\\plugins\\PortableVFX\\spell-catalog.yml",
+      "beforeSHA256": "53816837b851f314d484c03c5be8eeb70e1e4a16294fc49572c42cc781307a47",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\wild\\plugins\\PortableVFX\\spell-catalog.yml",
+      "stagedSHA256": "84a01b1d166432141c3e42033687a6d6096eb7998654071526a440855ac9d480",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\deployment\\operating-config\\PortableVFX\\spell-catalog.yml",
+      "sourceSHA256": "e168770c90135614f46aa7b0d4876631dfa72c4b3fb457235ac9b5f542817fe7",
+      "kind": "icon-fields-only",
+      "changes": [
+        "spells.pressure_hammer.icon",
+        "spells.waterspout.icon",
+        "spells.fox_orbit.icon",
+        "spells.curving_plumes.icon",
+        "spells.crystal_orbit.icon",
+        "spells.venom_spit.icon",
+        "spells.smoke_veil.icon",
+        "spells.domain_stomp.icon",
+        "spells.seal_circle.icon",
+        "spells.seal_talismans.icon",
+        "spells.shield_slam.icon",
+        "spells.chain_arrow.icon",
+        "spells.mana_drain.icon",
+        "spells.soul_scythe.icon",
+        "spells.oblivion_orbs.icon",
+        "spells.bone_grasp.icon",
+        "spells.shadow_leap.icon",
+        "spells.binding_pull.icon",
+        "spells.fairy_dust.icon",
+        "spells.moon_wind.icon",
+        "spells.gale_wings.icon",
+        "spells.feather_storm.icon",
+        "spells.hunting_pounce.icon",
+        "spells.roar_leap.icon",
+        "spells.gravity_slam.icon",
+        "spells.tail_spikes.icon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\arena\\plugins\\MagicDiscovery\\manual-conditions.yml",
+      "beforeSHA256": "df1e0e5f62607fb7f492dc298909cca1f4705508eb2224eadf1f07375e47d305",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\arena\\plugins\\MagicDiscovery\\manual-conditions.yml",
+      "stagedSHA256": "fc32cc56a2baf54e2e3a20d27608f22b4bb166c0a295c97b1fe02f34fdb51e92",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\src\\main\\resources\\manual-conditions.yml",
+      "sourceSHA256": "8b0ada4435f191b4f5b8cb127a2ddbc924daa03176ceb3f4a91c55e7ae17d58d",
+      "kind": "guiding-star-only",
+      "changes": [
+        "spells.guiding_star"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\arena\\plugins\\MagicDiscovery\\discoveries.yml",
+      "beforeSHA256": "6e61c15305f8b0cb761ea9fe2d2f62d22d88c443376b6b548a9ebb497ef8b53a",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\arena\\plugins\\MagicDiscovery\\discoveries.yml",
+      "stagedSHA256": "570679d037f6c31d8de32cededbcb42ffa9ecfeee6d85184bfb7e8c49553d684",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-discovery-paper\\src\\main\\resources\\discoveries.yml",
+      "sourceSHA256": "a974b942f3d403dfef4978bc131efa168589d3f5372b990e9a229bbc8d129e5e",
+      "kind": "icon-fields-only",
+      "changes": [
+        "spells.pressure_hammer.icon",
+        "spells.waterspout.icon",
+        "spells.fox_orbit.icon",
+        "spells.curving_plumes.icon",
+        "spells.crystal_orbit.icon",
+        "spells.venom_spit.icon",
+        "spells.smoke_veil.icon",
+        "spells.domain_stomp.icon",
+        "spells.seal_circle.icon",
+        "spells.seal_talismans.icon",
+        "spells.shield_slam.icon",
+        "spells.chain_arrow.icon",
+        "spells.mana_drain.icon",
+        "spells.soul_scythe.icon",
+        "spells.oblivion_orbs.icon",
+        "spells.bone_grasp.icon",
+        "spells.shadow_leap.icon",
+        "spells.binding_pull.icon",
+        "spells.fairy_dust.icon",
+        "spells.moon_wind.icon",
+        "spells.gale_wings.icon",
+        "spells.feather_storm.icon",
+        "spells.hunting_pounce.icon",
+        "spells.roar_leap.icon",
+        "spells.gravity_slam.icon",
+        "spells.tail_spikes.icon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\arena\\plugins\\PortableVFX\\spell-catalog.yml",
+      "beforeSHA256": "afd9772dde34900dfe2f743f0918e572d2e458a7ecfbd43d3d43db25e37362f4",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\config-stage\\payload\\arena\\plugins\\PortableVFX\\spell-catalog.yml",
+      "stagedSHA256": "1840722027e1498a28788d6cc4f7db249018283105503547932076640c28cb88",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\deployment\\operating-config\\PortableVFX\\spell-catalog.yml",
+      "sourceSHA256": "e168770c90135614f46aa7b0d4876631dfa72c4b3fb457235ac9b5f542817fe7",
+      "kind": "icon-fields-only",
+      "changes": [
+        "spells.pressure_hammer.icon",
+        "spells.waterspout.icon",
+        "spells.fox_orbit.icon",
+        "spells.curving_plumes.icon",
+        "spells.crystal_orbit.icon",
+        "spells.venom_spit.icon",
+        "spells.smoke_veil.icon",
+        "spells.domain_stomp.icon",
+        "spells.seal_circle.icon",
+        "spells.seal_talismans.icon",
+        "spells.shield_slam.icon",
+        "spells.chain_arrow.icon",
+        "spells.mana_drain.icon",
+        "spells.soul_scythe.icon",
+        "spells.oblivion_orbs.icon",
+        "spells.bone_grasp.icon",
+        "spells.shadow_leap.icon",
+        "spells.binding_pull.icon",
+        "spells.fairy_dust.icon",
+        "spells.moon_wind.icon",
+        "spells.gale_wings.icon",
+        "spells.feather_storm.icon",
+        "spells.hunting_pounce.icon",
+        "spells.roar_leap.icon",
+        "spells.gravity_slam.icon",
+        "spells.tail_spikes.icon"
+      ],
+      "operatingChanged": false
+    },
+    {
+      "target": "C:\\Chacademi\\network\\school\\plugins\\MagicCodexBridge\\travel.yml",
+      "beforeSHA256": "21aca2fb8b2c31c3baf0fc838fc63a95396746faf7030bc618935ecd15312fc9",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\config-stage\\payload\\school\\plugins\\MagicCodexBridge\\travel.yml",
+      "stagedSHA256": "414554bfea0349b6d5039719baf8d00c9d5cdcd412a7f4c137ddc75e1c3d3f6a",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-codex-paper\\src\\main\\resources\\travel.yml",
+      "sourceSHA256": "4d671fa50d514afa62410e32eba83b73cd17e871dd453c394277ee4546853540",
+      "changedRootKeys": [
+        "tabs.school.map",
+        "tabs.school.image"
+      ],
+      "changedLeafScope": [
+        "tabs.school.map",
+        "tabs.school.image.texture",
+        "tabs.school.image.size",
+        "tabs.school.image.top-left",
+        "tabs.school.image.top-right",
+        "tabs.school.image.bottom-left",
+        "tabs.school.image.anchor"
+      ],
+      "allOtherTravelValuesEqual": true,
+      "pointIdsPreserved": [
+        "wild_spawn"
+      ],
+      "serverIdPreserved": "school",
+      "rulesPreserved": true
+    },
+    {
+      "target": "C:\\Chacademi\\network\\wild\\plugins\\MagicCodexBridge\\travel.yml",
+      "beforeSHA256": "e7bffa2be0ffd9ff25bf30f96393530eea604d61281aaf6353462d5a8e08e5ed",
+      "staged": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\config-stage\\payload\\wild\\plugins\\MagicCodexBridge\\travel.yml",
+      "stagedSHA256": "a7ed09fafc4ce112b3ab80a65ba72cef52c3a94fd543c30cb35fe81350978de4",
+      "source": "C:\\Chacademi\\staging\\opening-final-20261025-task3\\magic-codex-paper\\src\\main\\resources\\travel.yml",
+      "sourceSHA256": "4d671fa50d514afa62410e32eba83b73cd17e871dd453c394277ee4546853540",
+      "changedRootKeys": [
+        "tabs.school.map",
+        "tabs.school.image"
+      ],
+      "changedLeafScope": [
+        "tabs.school.map",
+        "tabs.school.image.texture",
+        "tabs.school.image.size",
+        "tabs.school.image.top-left",
+        "tabs.school.image.top-right",
+        "tabs.school.image.bottom-left",
+        "tabs.school.image.anchor"
+      ],
+      "allOtherTravelValuesEqual": true,
+      "pointIdsPreserved": [
+        "wild_spawn"
+      ],
+      "serverIdPreserved": "wild",
+      "rulesPreserved": true
+    }
+  ],
+  "archiveOldSorting": [
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15\\dialogue.yml",
+      "oldSHA256": "955013de550b2676d90b4e96ff05e2dc24bd8522af48eae2c70ee0e51a0db839",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-arkeon\\dialogue.yml",
+      "oldSHA256": "03931a7bf57da6dd83f5bf32eb796d736ed1d1b82f7a998a25735bb4a2101ce8",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-arkeon\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-arkeon\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-arkeon\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-bestiaz\\dialogue.yml",
+      "oldSHA256": "38b2e2ebbf8d82ca923009dc69cfd0dac008618ffa5143b2ac8d3842f395c510",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-bestiaz\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-bestiaz\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-bestiaz\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-lumina\\dialogue.yml",
+      "oldSHA256": "13feadd2f65608dfd3b1a2b065659a0e9549131614f653ca49175e72497625f3",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-lumina\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-lumina\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-lumina\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-noxer\\dialogue.yml",
+      "oldSHA256": "dc03fca67c79392cb62bfd84f6e39cb98fbd56c530ab2461f522477e20931dc0",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-noxer\\luka-neutral.png",
+      "oldSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\luka-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15f-noxer\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17f-noxer\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-arkeon\\dialogue.yml",
+      "oldSHA256": "d2a376f48386a07c604a48dc559bb3e611129ab41d432f445cd31eb9813cddc7",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-arkeon\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-arkeon\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-arkeon\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-bestiaz\\dialogue.yml",
+      "oldSHA256": "55e5eec2151e47dbb93aee29ac1bec2201dc342dc785128eef4db43fa32b6bd3",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-bestiaz\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-bestiaz\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-bestiaz\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-lumina\\dialogue.yml",
+      "oldSHA256": "fc4a873c2216b556a834d3b3b35447afd9da2c36ea4d78023043116f7596f606",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-lumina\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-lumina\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-lumina\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-noxer\\dialogue.yml",
+      "oldSHA256": "aa57017fc88875cda48f96185ac52c655c641c80ed64ab1396992003950a0fae",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-noxer\\luka-neutral.png",
+      "oldSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\luka-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15m-noxer\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17m-noxer\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-arkeon\\dialogue.yml",
+      "oldSHA256": "a0a2040a806d284ef7d1dc63e6a83f65f43c641d631416473ed9edfed60d28bf",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-arkeon\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-arkeon\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-arkeon\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-bestiaz\\dialogue.yml",
+      "oldSHA256": "e39b0a64f437b7921007f748fe5af9aac519c1e830a688f0ae8d379cec051d40",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-bestiaz\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-bestiaz\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-bestiaz\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-lumina\\dialogue.yml",
+      "oldSHA256": "6e89b0a13f3b7ae2e120e296eb77ef49ce95a8888824786b696c28f2cd7f011a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-lumina\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-lumina\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-lumina\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-noxer\\dialogue.yml",
+      "oldSHA256": "a553b49ad0ba3b5b4391dd920f9ed48c87a9e50e49a80510eaf1b99c715af322",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\dialogue.yml",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-noxer\\luka-neutral.png",
+      "oldSHA256": "4d1b4acd2827f2589872b6a7aa4dfb11044ddca9bc196f1fc00b27d64e1435ea",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\luka-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    },
+    {
+      "oldPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-15r-noxer\\vice_gregor-neutral.png",
+      "oldSHA256": "be228515d26496f3857714bf8a5112e79f1e43e713f0916a498e6135f488645a",
+      "newPath": "C:\\Chacademi\\network\\school\\plugins\\ChacademyStory\\dialogues\\ch1-17r-noxer\\vice_gregor-neutral.png",
+      "action": "archive old path only during approved stopped installation after backup and new-family verification; not executed"
+    }
+  ],
+  "publicAssetsVerified": "C:\\Chacademi\\artifacts\\opening-final-20261025-task3\\townmap\\launcher\\PUBLIC-ASSET-VERIFICATION.json",
+  "launcherWorktree": "C:/Chacademi/staging/temporary-launcher-opening-final-20261025-task3",
+  "launcherReleaseTag": "content-opening-final-20261025-task3",
+  "excluded": [
+    "personal launcher",
+    "dungeon",
+    "nonexistent tutorial servers",
+    "cancelled harbor cutscene"
+  ],
+  "sourceOnlyReproduction": false,
+  "sourceJUnitTotals": {
+    "tests": 2263,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 9
+  },
+  "actualSchoolCandidateTests": {
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}
