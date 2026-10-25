@@ -14,7 +14,7 @@
 | magic-codex-fabric 클라 모드 | 스탯명, 설정창, 하우징 화면, 펫 aliases, 도감 132/157/176 |
 | magic-codex-protocol 변경 → Bridge·클라·Velocity 같이 | CoreAffinity 표시, KyudichiQueueProtocol Custom |
 | MagicMythic + chacademi_spells.yml | 파티 아군 피해, 허수아비, 길잡이 별, 잔류 VFX, 빗자루 투사체 |
-| PortableVFX paper jar + client jar | #77 대상 전달(3인자), #29 투명도 셰이더 |
+| PortableVFX paper jar + client jar | #77 대상 전달(3인자), #29 반응·기믹·성소 투명도 제외 |
 | MagicDiscovery | 발견 칭호 연결(리플렉션, 없으면 건너뜀) |
 | ChacademyStory 플러그인+모드 | 장 잠금, 길잡이, HUD |
 | chacademi-party (Velocity) | 커스텀 경기, 재접속 버그, 튜토리얼 분산 |
@@ -126,7 +126,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 배포: Velocity chacademi-party + 경기장 ChacaKyudichi + 클라 모드(프로토콜) 동시.
 
 ### 09-client
-#29 투명도: 연결은 정상, 원인은 가산 혼합+톤맵 때문에 체감이 거의 없음 → ClaudeBackend 셰이더에서 가산 빛에만 opacity^1.2 추가(50%→55~79%). 100%·일반 투명은 그대로. 실화면 확인 필요.
+#29 투명도: 오너 확인 결과 정상 → 1차의 셰이더 보정(opacity^1.2)은 **되돌림**. 대신 원소 반응·던전 기믹 12팩·큐디치 성소(shrine*)는 투명도 설정에서 제외(늘 100%, EffectRuntime.OPACITY_EXEMPT_PACKS). 큐디치 성소 VFX 이름을 config 에서 shrine* 아닌 이름으로 바꾸면 목록에 추가할 것.
    레이아웃: 빛 번짐 슬라이더 추가로 3줄인데 2줄 간격 그대로 → 3번째 줄이 금색 구분선과 겹침. SettingsSlider.rowY로 3줄 이상 168+76n. 테스트 추가.
    보고만: GUI(핫바 크기) 페이지가 홈에서 못 열림(HUD 잠금으로 교체됨, Shift+휠만), 저장 실패 문구 순서, 내것/남의것 분류(반응·기믹·큐디치=남의것, 남의 빗자루 궤적=내것).
 #81 펫은 MCPets+ModelEngine 서버 엔티티 → 클라만으로 불가. A: 소환 시 1회 setScale(크기만). B(권장): 서버는 소환/해제만 알리고 클라가 bbmodel로 머리 옆에 그림. 결정 필요.

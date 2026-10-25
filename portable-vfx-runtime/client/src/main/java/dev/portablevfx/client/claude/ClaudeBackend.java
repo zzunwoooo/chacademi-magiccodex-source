@@ -196,10 +196,6 @@ public final class ClaudeBackend implements EffectBackend {
             }
             float a=texel.a*alpha*localOpacity;if(a<=0.0)discard;
             rgb=rgb*tint*pow(max(srgbColor,vec3(0)),vec3(2.2));
-            // Settings opacity is a perceptual (screen) fraction. Additive light is composited in linear HDR and
-            // then gamma-encoded, so a linear multiply barely dims it (50% looked ~85-90%). Scale additive light by
-            // opacity^2.2 in total (alpha already carries one factor). Alpha-over coverage stays linear (already perceptual).
-            if(additiveMaterial&&localOpacity<1.0)rgb*=pow(max(localOpacity,0.0),1.2);
             color=vec4(additiveMaterial?vec3(0):rgb,a);
             light=vec4(additiveMaterial?rgb:vec3(0),a);}
         """;

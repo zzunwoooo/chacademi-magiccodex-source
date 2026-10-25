@@ -41,7 +41,19 @@ public final class EffectRuntime {
     }
 
     public void owner(UUID instance,UUID owner){requireMainThread();var effect=active.get(instance);if(effect!=null&&effect.serverOrigin&&effect.owner==null)effect.owner=owner;}
+    /**
+     * 투명도 설정에서 빼는 효과 (오너 결정 2026-10-25, 메모 #29): 원소 반응, 던전 기믹, 큐디치 성소는 늘 100%.
+     * 게임 정보(반응 종류·기믹 상태·성소 위치)를 알려 주는 효과라 내 것/남의 것 투명도로 흐려지면 안 된다.
+     */
+    static final java.util.Set<String> OPACITY_EXEMPT_PACKS=java.util.Set.of("elementreactions",
+        "conduitturn","dimensionmark","lightbeam","mirrortune","prismtint","rewind","statuewake","steamignition","stoneweight","thawingheat","vineawaken","waterlevel");
+    static boolean opacityExempt(String effectId){
+        if(effectId==null||!effectId.startsWith("claude:"))return false;
+        int slash=effectId.indexOf('/',7);String pack=slash<0?effectId.substring(7):effectId.substring(7,slash);
+        return OPACITY_EXEMPT_PACKS.contains(pack)||pack.startsWith("shrine");
+    }
     public float opacity(ActiveEffect effect){
+        if(opacityExempt(effect.request.effectId()))return 1f;
         boolean own=!effect.serverOrigin || effect.owner!=null&&client.player!=null&&effect.owner.equals(client.player.getUuid());
         return dev.portablevfx.client.api.VfxPreferences.get().opacity(own);
     }
