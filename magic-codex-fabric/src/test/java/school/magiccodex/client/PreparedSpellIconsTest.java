@@ -6,7 +6,7 @@ class PreparedSpellIconsTest {
  static final Path ROOT=Path.of("src/main/resources/assets/magiccodex");
  @Test void twentyTwoPreparedIdsHavePngsAndPreserveCustomAssignments()throws Exception{
   var expected=new HashSet<>(HELD);expected.addAll(List.of("landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane","earth_shaping","moss_coating","flint_sorting","dormant_seed","material_exchange","remembering_field","afterlife_gate"));assertEquals(expected,SpellYamlLoader.PREPARED_20261020_ICON_IDS);
-  String template=Files.readString(ROOT.resolve("default-spells/203_landing_airbrake.yml"));var loader=new SpellYamlLoader();
+  String template=Files.readString(ROOT.resolve("default-spells/020_landing_airbrake.yml"));var loader=new SpellYamlLoader();
   for(String id:expected){
    String source=template.replaceAll("(?m)^id:.*$","id: "+id).replaceAll("(?m)^icon:.*$","icon: ''");
    var spell=loader.parse(source);assertEquals(id,spell.id());assertEquals("magiccodex:textures/spells/reviewed_20261020/"+id+".png",spell.icon());

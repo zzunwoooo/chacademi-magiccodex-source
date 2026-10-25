@@ -326,8 +326,10 @@ def _phase_yaml(pack, P):
 
 def _rows():
     """Every spell this file owns: (order, id, name, cat, mana, cd, enabled, description, discovery, research, pack, hold, phases)."""
-    r = [(o, i, nm, cat, mana, cd, en, desc, disc, res, pack, hold, P) for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, pack, hold, P, en) in M]
-    r += [(o, i, nm, cat, 0, 0, True, desc, disc, res, pack, 40, P) for (o, i, nm, cat, note, desc, disc, res, pack, P) in PASSIVES]
+    import spell_order   # 2026-10-25 renumber: number/order come from tools/spell_order.py
+    N = spell_order.number
+    r = [(N(i, o), i, nm, cat, mana, cd, en, desc, disc, res, pack, hold, P) for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, pack, hold, P, en) in M]
+    r += [(N(i, o), i, nm, cat, 0, 0, True, desc, disc, res, pack, 40, P) for (o, i, nm, cat, note, desc, disc, res, pack, P) in PASSIVES]
     return sorted(r)
 
 def write_all():
@@ -337,7 +339,7 @@ def write_all():
     idx = [l for l in _read(os.path.join(ds, 'index.txt')).split('\n') if l.strip()]
     hashes = [l.rstrip('\r') for l in open(os.path.join(ds, 'known-hashes.tsv'), encoding='utf-8', newline='').read().split('\n') if l.strip()]
     for (o, i, nm, cat, mana, cd, en, desc, disc, res, *_r) in rows:
-        fn = f'{o}_{i}.yml'; path = os.path.join(ds, fn)
+        fn = f'{o:03d}_{i}.yml'; path = os.path.join(ds, fn)
         old = _read(path) if os.path.exists(path) else ''
         get = lambda k, d='': (re.search(r'(?m)^' + k + r': (.*)$', old) or [None, d])[1]
         icon = get('icon', "''")
@@ -347,7 +349,7 @@ def write_all():
              f"discovery:\n  description: {_q(disc) if disc else (odisc or _q('아직 알려지지 않았습니다.'))}\nresearch: {_q(res) if res else (ores or chr(39)*2)}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
         _write_if(path, y)
-        if f'{o}_{i}' not in idx: idx.append(f'{o}_{i}')
+        if f'{o:03d}_{i}' not in idx: idx.append(f'{o:03d}_{i}')
         h = hashlib.sha256(y.encode('utf-8')).hexdigest()
         if f'{fn}\t{h}' not in hashes: hashes.append(f'{fn}\t{h}')   # history: old shipped hashes stay (DefaultSpellMigration)
     idx.sort(key=lambda l: (int(l.split('_', 1)[0]) if l.split('_', 1)[0].isdigit() else 9999, l))

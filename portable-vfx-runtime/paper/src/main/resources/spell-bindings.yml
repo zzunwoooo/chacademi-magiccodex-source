@@ -23,7 +23,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wind_basket:
     folder: WindBasket
-    number: 2
+    number: 14
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -43,7 +43,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   harvest_wind:
     folder: HarvestWind
-    number: 3
+    number: 15
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -64,7 +64,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   wind_push:
     folder: WindPush
-    number: 4
+    number: 2
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -93,7 +93,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   light_leap:
     folder: LightLeap
-    number: 5
+    number: 11
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -114,7 +114,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   flight:
     folder: Flight
-    number: 6
+    number: 28
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -135,7 +135,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   far_touch:
     folder: FarTouch
-    number: 7
+    number: 12
     range: 30
     speed: 0.6
     holdTicks: 100
@@ -156,7 +156,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wind_message:
     folder: WindMessage
-    number: 9
+    number: 3
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -177,7 +177,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   storm_command:
     folder: StormCommand
-    number: 10
+    number: 40
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -206,7 +206,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   vacuum_cleave:
     folder: VacuumCleave
-    number: 11
+    number: 16
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -235,7 +235,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   gale_dash:
     folder: GaleDash
-    number: 12
+    number: 4
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -256,7 +256,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   returning_wind:
     folder: ReturningWind
-    number: 13
+    number: 29
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -286,7 +286,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wind_grooming:
     folder: WindGrooming
-    number: 14
+    number: 5
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -317,7 +317,7 @@ bindings:
     pending: notcollisionprojectile; airnormaldissolve after1.25 editable duration, pathwithin10caster
   weightless_zone:
     folder: WeightlessZone
-    number: 15
+    number: 43
     range: 15
     speed: 0.6
     holdTicks: 60
@@ -367,7 +367,7 @@ bindings:
       onCancel: jumpToEnd
   trajectory_acceleration:
     folder: TrajectoryAcceleration
-    number: 17
+    number: 6
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -420,7 +420,7 @@ bindings:
     pending: idle duration30sec is editable safe cap, not normative duration; external attack bridge required
   dust_duster:
     folder: DustDuster
-    number: 18
+    number: 7
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -441,7 +441,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   leaf_cleanup:
     folder: LeafCleanup
-    number: 19
+    number: 30
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -472,7 +472,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   feather_rustle:
     folder: FeatherRustle
-    number: 20
+    number: 17
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -493,7 +493,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   cross_breeze:
     folder: CrossBreeze
-    number: 21
+    number: 18
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -553,7 +553,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   returning_blade:
     folder: ReturningBlade
-    number: 22
+    number: 19
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -600,7 +600,7 @@ bindings:
       - 0
   pressure_press:
     folder: PressurePress
-    number: 23
+    number: 31
     range: 15
     speed: 0.6
     holdTicks: 8
@@ -650,7 +650,7 @@ bindings:
       onCancel: jumpToEnd
   wind_decoy:
     folder: WindDecoy
-    number: 24
+    number: 32
     range: 10
     speed: 0.6
     holdTicks: 58
@@ -700,7 +700,7 @@ bindings:
       onCancel: jumpToEnd
   air_step:
     folder: AirStep
-    number: 25
+    number: 36
     range: 15
     speed: 0.6
     holdTicks: 60
@@ -750,7 +750,7 @@ bindings:
       onCancel: jumpToEnd
   lightning_needle:
     folder: LightningNeedle
-    number: 26
+    number: 41
     range: 20
     speed: 0.6
     holdTicks: 100
@@ -771,7 +771,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   air_stacking:
     folder: AirStacking
-    number: 27
+    number: 37
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -792,7 +792,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   arrested_orbit:
     folder: ArrestedOrbit
-    number: 28
+    number: 42
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -936,7 +936,7 @@ bindings:
             - idle5
   crossfire:
     folder: Crossfire
-    number: 29
+    number: 47
     range: 15
     speed: 0.6
     holdTicks: 16
@@ -986,7 +986,7 @@ bindings:
       onCancel: jumpToEnd
   resonant_arrow:
     folder: ResonantArrow
-    number: 30
+    number: 25
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1060,7 +1060,7 @@ bindings:
     salvo-mode: external-direct-damage
   pressure_rupture:
     folder: PressureRupture
-    number: 31
+    number: 33
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1080,7 +1080,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   storm_crown:
     folder: StormCrown
-    number: 32
+    number: 44
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1226,7 +1226,7 @@ bindings:
           impactSystem: impactV
   hearth_touch:
     folder: HearthTouch
-    number: 33
+    number: 53
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1246,7 +1246,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ember_bolt:
     folder: Fireball
-    number: 34
+    number: 49
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1274,7 +1274,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   rekindle:
     folder: Rekindle
-    number: 35
+    number: 50
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1294,7 +1294,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   flame_forging:
     folder: FlameForging
-    number: 36
+    number: 66
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1315,7 +1315,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ember_trap:
     folder: EmberTrap
-    number: 37
+    number: 56
     range: 15
     speed: 0.6
     holdTicks: 1200
@@ -1379,7 +1379,7 @@ bindings:
       onTrigger: stopEmittingAndPlayTriggerEnd
   fire_curtain:
     folder: FireCurtain
-    number: 38
+    number: 79
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1429,7 +1429,7 @@ bindings:
       onCancel: jumpToEnd
   phoenix_oath:
     folder: PhoenixOath
-    number: 39
+    number: 86
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1461,7 +1461,7 @@ bindings:
     no-persistent-visual: true
   living_furnace:
     folder: LivingFurnace
-    number: 40
+    number: 67
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1481,7 +1481,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   falling_star:
     folder: FallingStar
-    number: 41
+    number: 93
     range: 20
     speed: 0.6
     holdTicks: 100
@@ -1552,7 +1552,7 @@ bindings:
     timing-provenance: 3.4/.6/.8 projecteditable defaults; NOTES externaltiming, not normative demo authority
   flame_lash:
     folder: FlameLash
-    number: 42
+    number: 74
     range: 8
     speed: 0.6
     holdTicks: 20
@@ -1639,7 +1639,7 @@ bindings:
       onTrigger: stopEmittingAndPlayTriggerEnd
   palm_fireworks:
     folder: PalmFireworks
-    number: 44
+    number: 54
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1668,7 +1668,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ash_brand:
     folder: AshBrand
-    number: 45
+    number: 87
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1709,7 +1709,7 @@ bindings:
     pending: transfer target selection external
   flame_leap:
     folder: BlazeKick
-    number: 46
+    number: 81
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1739,7 +1739,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   crimson_heart:
     folder: CrimsonHeart
-    number: 47
+    number: 88
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1759,7 +1759,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wick_trimming:
     folder: WickTrimming
-    number: 48
+    number: 68
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1779,7 +1779,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   glass_firing:
     folder: GlassFiring
-    number: 49
+    number: 57
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1799,7 +1799,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   charcoal_conversion:
     folder: CharcoalConversion
-    number: 50
+    number: 69
     range: 20
     speed: 0.6
     holdTicks: 100
@@ -1820,7 +1820,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   sponge_drying:
     folder: SpongeDrying
-    number: 51
+    number: 58
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1839,41 +1839,9 @@ bindings:
         finish-after-ticks: 20
     external-events: []
     review: candidate; implementer must verify anchors against catalog; demo ignored
-  flame_footprints:
-    folder: FlameFootprints
-    number: 52
-    range: 15
-    speed: 0.6
-    holdTicks: 100
-    numeric-provenance: editable project defaults unless overridden; user authorized defaults
-    evidence:
-      - received_vfx/all97/unpacked/effects/FlameFootprints/vfx.json
-      - received_vfx/all97/unpacked/effects/FlameFootprints/NOTES.md
-    phases:
-      - role: impact
-        follow-entity: false
-        trigger: external:left_step
-        effect: claude:flamefootprints/stepl
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 88
-        finish-after-ticks: 46
-      - role: impact
-        follow-entity: false
-        trigger: external:right_step
-        effect: claude:flamefootprints/stepr
-        anchor: impact
-        delay-ticks: 0
-        duration-ticks: 88
-        finish-after-ticks: 46
-    external-events:
-      - left_step
-      - right_step
-    review: candidate; implementer must verify anchors against catalog; demo ignored
-    pending: movementstep event binding required; eachstep authored2sec fuse
   boiling_armor:
     folder: BoilingArmor
-    number: 53
+    number: 75
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -1893,7 +1861,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   kiln_breath:
     folder: KilnBreath
-    number: 54
+    number: 70
     range: 15
     speed: 0.6
     holdTicks: 400
@@ -1945,7 +1913,7 @@ bindings:
       onTrigger: null
   glaze_coating:
     folder: GlazeCoating
-    number: 55
+    number: 59
     range: 15
     speed: 0.6
     holdTicks: 140
@@ -1997,7 +1965,7 @@ bindings:
       onTrigger: null
   explosive_wedge:
     folder: ExplosiveWedge
-    number: 56
+    number: 89
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2030,7 +1998,7 @@ bindings:
     pending: duration30sec editable cap; melee hit signal external
   heat_recovery:
     folder: HeatRecovery
-    number: 58
+    number: 90
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2052,7 +2020,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   firebird_hunt:
     folder: FirebirdHunt
-    number: 59
+    number: 80
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -2124,7 +2092,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   flame_sword_dance:
     folder: FlameSwordDance
-    number: 61
+    number: 91
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2264,7 +2232,7 @@ bindings:
     salvo-mode: external-attack
   incandescent_break:
     folder: IncandescentBreak
-    number: 62
+    number: 82
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2314,7 +2282,7 @@ bindings:
     pending: shield usesimpactShield insteadimpact; sourcecast muzzle targetraycastendpoint
   blue_bonfire:
     folder: BlueBonfire
-    number: 63
+    number: 83
     range: 15
     speed: 0.6
     holdTicks: 1200
@@ -2366,7 +2334,7 @@ bindings:
       onTrigger: null
   crimson_breath:
     folder: CrimsonBreath
-    number: 64
+    number: 94
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2416,7 +2384,7 @@ bindings:
     timing-provenance: NOTES fixed dragon->breath2.4sec; chant5/hold5 projectdefaults matching original draft, editable
   water_breath:
     folder: WaterBreath
-    number: 65
+    number: 105
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2437,7 +2405,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   tide_stride:
     folder: TideStride
-    number: 66
+    number: 106
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2458,7 +2426,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   water_bolt:
     folder: WaterBolt
-    number: 67
+    number: 96
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2494,7 +2462,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   quench:
     folder: Quench
-    number: 68
+    number: 97
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2516,7 +2484,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   purifying_wave:
     folder: PurifyingWave
-    number: 69
+    number: 118
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2545,7 +2513,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ice_bridge:
     folder: IceBridge
-    number: 70
+    number: 119
     range: 15
     speed: 0.6
     holdTicks: 300
@@ -2606,7 +2574,7 @@ bindings:
       onTrigger: null
   spring_unseal:
     folder: SpringUnseal
-    number: 72
+    number: 111
     range: 20
     speed: 0.6
     holdTicks: 100
@@ -2626,7 +2594,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   water_elemental:
     folder: WaterElemental
-    number: 73
+    number: 133
     range: 15
     speed: 0.6
     holdTicks: 600
@@ -2720,7 +2688,7 @@ bindings:
     activation-policy: summon/idle/follow/dismiss now; realattack hookup later; attack event operator preview available
   eternal_ice_prison:
     folder: EternalIcePrison
-    number: 74
+    number: 134
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2772,7 +2740,7 @@ bindings:
       onTrigger: null
   cauldron_fill:
     folder: CauldronFill
-    number: 75
+    number: 98
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2793,7 +2761,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   dye_rinse:
     folder: DyeRinse
-    number: 76
+    number: 99
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2814,7 +2782,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   fish_lure:
     folder: FishLure
-    number: 77
+    number: 107
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2835,7 +2803,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   frost_rupture:
     folder: FrostRupture
-    number: 78
+    number: 113
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -2864,7 +2832,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   pressure_lance:
     folder: PressureLance
-    number: 79
+    number: 124
     range: 15
     speed: 1.25
     holdTicks: 100
@@ -2928,7 +2896,7 @@ bindings:
     pending: dissolve airnormal atcentre; block splash realnormal attip centre+forward1.4; stop=block orrange
   life_distribution:
     folder: LifeDistribution
-    number: 80
+    number: 135
     range: 6
     speed: 0.6
     holdTicks: 100
@@ -2983,7 +2951,7 @@ bindings:
     target-limit: 3
   moist_farmland:
     folder: MoistFarmland
-    number: 81
+    number: 108
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3004,7 +2972,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   wash_letters:
     folder: WashLetters
-    number: 82
+    number: 100
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3025,7 +2993,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   healing_rain:
     folder: HealingRain
-    number: 83
+    number: 136
     range: 15
     speed: 0.6
     holdTicks: 60
@@ -3086,7 +3054,7 @@ bindings:
       onTrigger: null
   dew_gathering:
     folder: DewGathering
-    number: 84
+    number: 101
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3117,7 +3085,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   quiet_mooring:
     folder: QuietMooring
-    number: 85
+    number: 125
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3139,7 +3107,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   bubble_aria:
     folder: BubbleAria
-    number: 86
+    number: 120
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3182,7 +3150,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   pressure_hammer:
     folder: PressureHammer
-    number: 87
+    number: 126
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3203,7 +3171,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   waterspout:
     folder: Waterspout
-    number: 88
+    number: 137
     range: 15
     speed: 0.6
     holdTicks: 38
@@ -3255,7 +3223,7 @@ bindings:
       onTrigger: null
   current_sorting:
     folder: CurrentSorting
-    number: 89
+    number: 140
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3277,7 +3245,7 @@ bindings:
     anchor-verification: reviewed original description or included NOTES placement verified
   potion_mist:
     folder: PotionMist
-    number: 90
+    number: 121
     range: 15
     speed: 0.6
     holdTicks: 189
@@ -3347,7 +3315,7 @@ bindings:
       onTrigger: null
   waterwheel_shield:
     folder: WaterwheelShield
-    number: 91
+    number: 127
     range: 15
     speed: 0.6
     holdTicks: 120
@@ -3420,7 +3388,7 @@ bindings:
       onTrigger: stopEmittingAndPlayTriggerEnd
   concrete_curing:
     folder: ConcreteCuring
-    number: 92
+    number: 128
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3452,7 +3420,7 @@ bindings:
     pending: BFS6neighbors; cure t=.05+depth*min(.10,.85/maxDepth), bottomfaceup. No conversion gameplay here
   ripple_guard:
     folder: RippleGuard
-    number: 93
+    number: 129
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3482,7 +3450,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   tidal_wave:
     folder: TidalWave
-    number: 94
+    number: 138
     range: 12
     speed: 0.4
     holdTicks: 100
@@ -3529,7 +3497,7 @@ bindings:
     notes: wave stop also collapse onrangeexpiry; splashoncepertarget withoutstoppingwave
   bouncing_droplet:
     folder: BouncingDroplet
-    number: 95
+    number: 130
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3595,7 +3563,7 @@ bindings:
     pending: server targetselection and distincthit logic required; never fixedpreviewtarget
   abyssal_pressure:
     folder: AbyssalPressure
-    number: 96
+    number: 141
     range: 15
     speed: 0.6
     holdTicks: 84
@@ -3647,7 +3615,7 @@ bindings:
       onTrigger: null
   verdant_touch:
     folder: VerdantTouch
-    number: 97
+    number: 151
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3668,7 +3636,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   ore_whisper:
     folder: OreWhisper
-    number: 98
+    number: 160
     range: 10
     speed: 0.6
     holdTicks: 100
@@ -3700,7 +3668,7 @@ bindings:
     pending: marker perorecentre, delay .05+dist/8, depthtestoff required
   pebble_toss:
     folder: PebbleToss
-    number: 99
+    number: 145
     range: 15
     speed: 0.6
     holdTicks: 100
@@ -3737,7 +3705,7 @@ bindings:
     review: candidate; implementer must verify anchors against catalog; demo ignored
   miners_rhythm:
     folder: MinersRhythm
-    number: 100
+    number: 152
     range: 15
     speed: 0.6
     holdTicks: 300
@@ -3786,7 +3754,7 @@ bindings:
       onTrigger: null
   rainbow_collar:
     folder: HolyTaming
-    number: 149
+    number: 223
     range: 12
     speed: 0.6
     max-ticks: 400
@@ -3902,7 +3870,7 @@ bindings:
       -1 scale uses target height. Authored stopTail is preserved.
   solar_judgment:
     folder: SolarJudgment
-    number: 147
+    number: 236
     range: 30
     speed: 1
     max-ticks: 440
@@ -4291,7 +4259,7 @@ bindings:
       acceptance pending
   stone_wall:
     folder: StoneWall
-    number: 102
+    number: 171
     range: 8
     speed: 1
     trajectory: server-events
@@ -4330,7 +4298,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earthquake:
     folder: Earthquake
-    number: 105
+    number: 185
     range: 12
     speed: 1
     trajectory: server-events
@@ -4363,7 +4331,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   thorn_armor:
     folder: ThornArmor
-    number: 109
+    number: 172
     range: 12
     speed: 1
     trajectory: server-events
@@ -4402,7 +4370,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_anchor:
     folder: EarthAnchor
-    number: 111
+    number: 175
     range: 12
     speed: 1
     trajectory: server-events
@@ -4441,7 +4409,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   iron_carapace:
     folder: IronCarapace
-    number: 113
+    number: 181
     range: 12
     speed: 1
     trajectory: server-events
@@ -4474,7 +4442,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   material_exchange:
     folder: MaterialExchange
-    number: 124
+    number: 182
     range: 15
     speed: 1
     trajectory: server-events
@@ -4507,7 +4475,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   little_giant:
     folder: LittleGiant
-    number: 126
+    number: 177
     range: 12
     speed: 1
     trajectory: server-events
@@ -4540,7 +4508,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   forest_throne:
     folder: ForestThrone
-    number: 130
+    number: 189
     range: 12
     speed: 1
     trajectory: server-events
@@ -4579,7 +4547,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   arcane_imprint:
     folder: ArcaneImprint
-    number: 140
+    number: 229
     range: 12
     speed: 1
     trajectory: server-events
@@ -4618,7 +4586,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   flawless_moment:
     folder: FlawlessMoment
-    number: 146
+    number: 230
     range: 12
     speed: 1
     trajectory: server-events
@@ -4657,7 +4625,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   firefly_mark:
     folder: FireflyMark
-    number: 148
+    number: 206
     range: 12
     speed: 1
     trajectory: server-events
@@ -4690,7 +4658,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   shadow_bind:
     folder: ShadowBind
-    number: 166
+    number: 240
     range: 10
     speed: 1
     trajectory: server-events
@@ -4723,7 +4691,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_shaping:
     folder: EarthShaping
-    number: 101
+    number: 180
     range: 7
     speed: 1
     trajectory: server-events
@@ -4747,7 +4715,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   climate_control:
     folder: ClimateControl
-    number: 106
+    number: 187
     range: 12
     speed: 1
     trajectory: server-events
@@ -4777,7 +4745,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   vein_fracture:
     folder: VeinFracture
-    number: 110
+    number: 161
     range: 6
     speed: 1
     trajectory: server-events
@@ -4801,7 +4769,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   moss_coating:
     folder: DeepDarkDetect
-    number: 114
+    number: 155
     range: 12
     speed: 1
     trajectory: server-events
@@ -4831,7 +4799,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   grass_sprouting:
     folder: GrassSprouting
-    number: 115
+    number: 147
     range: 8
     speed: 1
     trajectory: server-events
@@ -4849,7 +4817,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   bark_peeling:
     folder: BarkPeeling
-    number: 117
+    number: 156
     range: 6
     speed: 1
     trajectory: server-events
@@ -4867,7 +4835,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   compost_return:
     folder: CompostReturn
-    number: 118
+    number: 157
     range: 12
     speed: 1
     trajectory: server-events
@@ -4885,7 +4853,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   dormant_seed:
     folder: DormantSeed
-    number: 122
+    number: 159
     range: 12
     speed: 1
     trajectory: server-events
@@ -4909,7 +4877,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_embrace:
     folder: earth_embrace
-    number: 129
+    number: 173
     range: 12
     speed: 1
     trajectory: server-events
@@ -4933,7 +4901,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   night_sight:
     folder: NightSight
-    number: 165
+    number: 239
     range: 12
     speed: 1
     trajectory: server-events
@@ -4951,7 +4919,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   faint_veil:
     folder: FaintVeil
-    number: 167
+    number: 247
     range: 12
     speed: 1
     trajectory: server-events
@@ -4975,7 +4943,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   bee_calm:
     folder: BeeCalm
-    number: 108
+    number: 154
     range: 12
     speed: 1
     trajectory: server-events
@@ -5005,7 +4973,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   weathering_touch:
     folder: WeatheringTouch
-    number: 112
+    number: 146
     range: 6
     speed: 1
     trajectory: server-events
@@ -5037,7 +5005,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   pollen_matchmaking:
     folder: PollenMatchmaking
-    number: 120
+    number: 158
     range: 10
     speed: 1
     trajectory: server-events
@@ -5077,7 +5045,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   counterweight:
     folder: Counterweight
-    number: 123
+    number: 176
     range: 12
     speed: 1
     trajectory: server-events
@@ -5119,7 +5087,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   remembering_field:
     folder: RememberingField
-    number: 125
+    number: 183
     range: 12
     speed: 1
     trajectory: server-events
@@ -5145,7 +5113,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   spring_ground:
     folder: SpringGround
-    number: 127
+    number: 178
     range: 10
     speed: 1
     trajectory: server-events
@@ -5206,7 +5174,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   flint_sorting:
     folder: FlintSorting
-    number: 116
+    number: 162
     range: 15
     speed: 1
     trajectory: server-events
@@ -5278,7 +5246,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   thorn_seeds:
     folder: ThornSeeds
-    number: 119
+    number: 188
     range: 15
     speed: 1
     trajectory: server-events
@@ -5356,7 +5324,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mountain_back:
     folder: MountainBack
-    number: 128
+    number: 186
     range: 16
     speed: 1
     trajectory: server-events
@@ -5398,7 +5366,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   merciful_arrow:
     folder: MercifulArrow
-    number: 158
+    number: 214
     range: 25
     speed: 1
     trajectory: server-events
@@ -5452,7 +5420,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   seed_row:
     folder: SeedRow
-    number: 107
+    number: 153
     range: 12
     speed: 1
     trajectory: server-events
@@ -5521,7 +5489,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   primordial_stone:
     folder: PrimordialStone
-    number: 131
+    number: 190
     range: 22
     speed: 1
     trajectory: server-events
@@ -5591,7 +5559,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   guiding_star:
     folder: GuidingStar
-    number: 132
+    number: 193
     range: 12
     speed: 1
     trajectory: server-events
@@ -5636,7 +5604,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   minor_heal:
     folder: MinorHeal
-    number: 133
+    number: 199
     range: 12
     speed: 1
     trajectory: server-events
@@ -5666,7 +5634,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   true_sight:
     folder: TrueSight
-    number: 137
+    number: 219
     range: 12
     speed: 1
     trajectory: server-events
@@ -5718,7 +5686,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   protective_ward:
     folder: ProtectiveWard
-    number: 138
+    number: 222
     range: 12
     speed: 1
     trajectory: server-events
@@ -5786,7 +5754,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   constellation_blessing:
     folder: ConstellationBlessing
-    number: 139
+    number: 228
     range: 12
     speed: 1
     trajectory: server-events
@@ -5823,7 +5791,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   dawn_ritual:
     folder: DawnRitual
-    number: 141
+    number: 231
     range: 12
     speed: 1
     trajectory: server-events
@@ -5866,7 +5834,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   comforting_light:
     folder: ComfortingLight
-    number: 142
+    number: 205
     range: 15
     speed: 1
     trajectory: server-events
@@ -5912,7 +5880,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   exorcism_flash:
     folder: ExorcismFlash
-    number: 143
+    number: 213
     range: 12
     speed: 1
     trajectory: server-events
@@ -5948,7 +5916,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   arcane_mending:
     folder: ArcaneMending
-    number: 144
+    number: 232
     range: 12
     speed: 1
     trajectory: server-events
@@ -6008,7 +5976,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   companion_return:
     folder: CompanionReturn
-    number: 145
+    number: 194
     range: 12
     speed: 1
     trajectory: server-events
@@ -6046,7 +6014,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   sun_drying:
     folder: SunDrying
-    number: 150
+    number: 200
     range: 12
     speed: 1
     trajectory: server-events
@@ -6083,7 +6051,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   luminous_copy:
     folder: LuminousCopy
-    number: 151
+    number: 195
     range: 12
     speed: 1
     trajectory: server-events
@@ -6124,7 +6092,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   guiding_fletching:
     folder: GuidingFletching
-    number: 152
+    number: 207
     range: 12
     speed: 1
     trajectory: server-events
@@ -6155,7 +6123,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   sharing_table:
     folder: SharingTable
-    number: 153
+    number: 224
     range: 12
     speed: 1
     trajectory: server-events
@@ -6193,7 +6161,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   summons_letter:
     folder: SummonsLetter
-    number: 154
+    number: 225
     range: 12
     speed: 1
     trajectory: server-events
@@ -6247,7 +6215,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   starlight_survey:
     folder: StarlightSurvey
-    number: 155
+    number: 196
     range: 48
     speed: 1
     trajectory: server-events
@@ -6278,7 +6246,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   luminous_handover:
     folder: LuminousHandover
-    number: 156
+    number: 220
     range: 12
     speed: 1
     trajectory: server-events
@@ -6308,7 +6276,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mana_conduit:
     folder: ManaConduit
-    number: 157
+    number: 233
     range: 12
     speed: 1
     trajectory: server-events
@@ -6363,7 +6331,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   mana_deposit:
     folder: ManaDeposit
-    number: 159
+    number: 226
     range: 12
     speed: 1
     trajectory: server-events
@@ -6401,7 +6369,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   guardian_oath:
     folder: GuardianOath
-    number: 160
+    number: 227
     range: 10
     speed: 1
     trajectory: server-events
@@ -6446,7 +6414,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   starlight_reprise:
     folder: StarlightReprise
-    number: 163
+    number: 237
     range: 12
     speed: 1
     trajectory: server-events
@@ -6498,7 +6466,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   constellation_emissary:
     folder: ConstellationEmissary
-    number: 164
+    number: 234
     range: 12
     speed: 1
     trajectory: server-events
@@ -6545,7 +6513,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   earth_elemental:
     folder: EarthElemental
-    number: 104
+    number: 184
     range: 12
     speed: 1
     trajectory: server-events
@@ -6608,7 +6576,7 @@ bindings:
     review: Connected against delivered NOTES and implemented gameplay events; visual game QA pending
   shadow_double:
     folder: ShadowDouble
-    number: 168
+    number: 264
     range: 30
     speed: 1
     trajectory: server-events
@@ -6654,7 +6622,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   echo_reading:
     folder: EchoReading
-    number: 169
+    number: 244
     range: 30
     speed: 1
     trajectory: server-events
@@ -6672,7 +6640,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   sealing_thread:
     folder: SealingThread
-    number: 170
+    number: 248
     range: 30
     speed: 1
     trajectory: server-events
@@ -6710,7 +6678,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   shadow_exchange:
     folder: ShadowExchange
-    number: 172
+    number: 272
     range: 30
     speed: 1
     trajectory: server-events
@@ -6734,7 +6702,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   forbidden_contract:
     folder: ForbiddenContract
-    number: 173
+    number: 284
     range: 30
     speed: 1
     trajectory: server-events
@@ -6774,7 +6742,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   life_siphon:
     folder: LifeSiphon
-    number: 174
+    number: 249
     range: 30
     speed: 1
     trajectory: server-events
@@ -6814,7 +6782,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   misfortune_whisper:
     folder: misfortune_whisper
-    number: 176
+    number: 260
     range: 30
     speed: 1
     trajectory: server-events
@@ -6844,7 +6812,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   hungry_shadow:
     folder: HungryShadow
-    number: 177
+    number: 250
     range: 30
     speed: 1
     trajectory: server-events
@@ -6872,7 +6840,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   curse_transfer:
     folder: CurseTransfer
-    number: 178
+    number: 265
     range: 30
     speed: 1
     trajectory: server-events
@@ -6910,7 +6878,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   discord:
     folder: Discord
-    number: 179
+    number: 274
     range: 30
     speed: 1
     trajectory: server-events
@@ -6942,7 +6910,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   night_chain:
     folder: NightChain
-    number: 180
+    number: 280
     range: 30
     speed: 1
     trajectory: server-events
@@ -7004,7 +6972,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   pain_deferral:
     folder: PainDeferral
-    number: 181
+    number: 275
     range: 30
     speed: 1
     trajectory: server-events
@@ -7112,7 +7080,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   black_harvest:
     folder: BlackHarvest
-    number: 182
+    number: 266
     range: 30
     speed: 1
     trajectory: server-events
@@ -7130,7 +7098,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   ink_fingertip:
     folder: InkFingertip
-    number: 183
+    number: 251
     range: 30
     speed: 1
     trajectory: server-events
@@ -7238,7 +7206,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   shadow_nail:
     folder: ShadowNail
-    number: 184
+    number: 281
     range: 30
     speed: 1
     trajectory: server-events
@@ -7278,7 +7246,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   night_lullaby:
     folder: NightLullaby
-    number: 185
+    number: 276
     range: 30
     speed: 1
     trajectory: server-events
@@ -7316,7 +7284,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   loosen_grasp:
     folder: LoosenGrasp
-    number: 186
+    number: 261
     range: 30
     speed: 1
     trajectory: server-events
@@ -7354,7 +7322,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   healing_seal:
     folder: HealingSeal
-    number: 188
+    number: 267
     range: 30
     speed: 1
     trajectory: server-events
@@ -7384,7 +7352,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   shadow_scales:
     folder: ShadowScales
-    number: 189
+    number: 277
     range: 30
     speed: 1
     trajectory: server-events
@@ -7420,7 +7388,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   warning_thread:
     folder: WarningThread
-    number: 190
+    number: 282
     range: 30
     speed: 1
     trajectory: server-events
@@ -7458,7 +7426,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   wound_accounting:
     folder: WoundAccounting
-    number: 192
+    number: 268
     range: 30
     speed: 1
     trajectory: server-events
@@ -7488,7 +7456,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   inverted_offering:
     folder: InvertedOffering
-    number: 193
+    number: 252
     range: 30
     speed: 1
     trajectory: server-events
@@ -7516,7 +7484,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   ghost_tool:
     folder: GhostTool
-    number: 194
+    number: 278
     range: 30
     speed: 1
     trajectory: server-events
@@ -7576,7 +7544,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   bell_of_fear:
     folder: BellOfFear
-    number: 195
+    number: 279
     range: 30
     speed: 1
     trajectory: server-events
@@ -7612,7 +7580,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   eclipse_eye:
     folder: EclipseEye
-    number: 196
+    number: 287
     range: 30
     speed: 1
     trajectory: server-events
@@ -7703,7 +7671,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   void_maw:
     folder: VoidMaw
-    number: 198
+    number: 285
     range: 30
     speed: 1
     trajectory: server-events
@@ -7733,7 +7701,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   landing_airbrake:
     folder: LandingAirbrake
-    number: 203
+    number: 20
     range: 30
     speed: 1
     trajectory: server-events
@@ -7757,7 +7725,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   hushed_soles:
     folder: HushedSoles
-    number: 210
+    number: 262
     range: 30
     speed: 1
     trajectory: server-events
@@ -7775,7 +7743,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   thorn_manners:
     folder: ThornManners
-    number: 211
+    number: 148
     range: 30
     speed: 1
     trajectory: server-events
@@ -7793,7 +7761,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   cinder_skipring:
     folder: CinderSkipring
-    number: 212
+    number: 76
     range: 30
     speed: 1
     trajectory: server-events
@@ -7817,7 +7785,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   droplet_relay:
     folder: DropletRelay
-    number: 213
+    number: 131
     range: 30
     speed: 1
     trajectory: server-events
@@ -7853,7 +7821,7 @@ bindings:
     review: arcana 168~214 (tools/arcana_spells.py) - phases from the delivered VFX NOTES, events sent by chaarcana; game QA pending
   folding_tideplane:
     folder: FoldingTideplane
-    number: 214
+    number: 132
     range: 30
     speed: 1
     trajectory: server-events
@@ -7896,7 +7864,7 @@ bindings:
   # ---- 239~250 던전 기믹 마법 (magic-mythic-paper/tools/gimmick_spells.py) ----
   thawing_heat:
     folder: ThawingHeat
-    number: 239
+    number: 61
     range: 30
     speed: 1
     trajectory: server-events
@@ -7915,7 +7883,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   steam_ignition:
     folder: SteamIgnition
-    number: 240
+    number: 62
     range: 30
     speed: 1
     trajectory: server-events
@@ -7934,7 +7902,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   water_level:
     folder: WaterLevel
-    number: 241
+    number: 109
     range: 30
     speed: 1
     trajectory: server-events
@@ -7953,7 +7921,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   stone_weight:
     folder: StoneWeight
-    number: 242
+    number: 163
     range: 30
     speed: 1
     trajectory: server-events
@@ -7972,7 +7940,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   vine_awaken:
     folder: VineAwaken
-    number: 243
+    number: 164
     range: 30
     speed: 1
     trajectory: server-events
@@ -7991,7 +7959,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   light_beam:
     folder: LightBeam
-    number: 244
+    number: 215
     range: 30
     speed: 1
     trajectory: server-events
@@ -8010,7 +7978,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   mirror_tune:
     folder: MirrorTune
-    number: 245
+    number: 201
     range: 30
     speed: 1
     trajectory: server-events
@@ -8029,7 +7997,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   prism_tint:
     folder: PrismTint
-    number: 246
+    number: 202
     range: 30
     speed: 1
     trajectory: server-events
@@ -8048,7 +8016,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   statue_wake:
     folder: StatueWake
-    number: 247
+    number: 245
     range: 30
     speed: 1
     trajectory: server-events
@@ -8067,7 +8035,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   rewind:
     folder: Rewind
-    number: 248
+    number: 253
     range: 30
     speed: 1
     trajectory: server-events
@@ -8086,7 +8054,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   conduit_turn:
     folder: ConduitTurn
-    number: 249
+    number: 149
     range: 30
     speed: 1
     trajectory: server-events
@@ -8105,7 +8073,7 @@ bindings:
     review: gimmick 239~250 (tools/gimmick_spells.py) - catalogue plays only the pack's attached cast; ChacaGimmick plays the rest at the gimmick
   dimension_mark:
     folder: DimensionMark
-    number: 250
+    number: 254
     range: 30
     speed: 1
     trajectory: server-events
@@ -8125,7 +8093,7 @@ bindings:
   # ---- 325~387 신규 마법 (magic-mythic-paper/tools/nova_spells.py) ----
   spark_flick:
     folder: SparkFlick
-    number: 325
+    number: 51
     range: 30
     speed: 1
     trajectory: server-events
@@ -8149,7 +8117,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   ember_puff:
     folder: EmberPuff
-    number: 326
+    number: 52
     range: 30
     speed: 1
     trajectory: server-events
@@ -8173,7 +8141,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   tide_slash:
     folder: TideSlash
-    number: 327
+    number: 103
     range: 30
     speed: 1
     trajectory: server-events
@@ -8197,7 +8165,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   ice_shard:
     folder: IceShard
-    number: 328
+    number: 104
     range: 30
     speed: 1
     trajectory: server-events
@@ -8227,7 +8195,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   wind_needle:
     folder: WindNeedle
-    number: 329
+    number: 8
     range: 30
     speed: 1
     trajectory: server-events
@@ -8257,7 +8225,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   mini_twister:
     folder: MiniTwister
-    number: 330
+    number: 9
     range: 30
     speed: 1
     trajectory: server-events
@@ -8287,7 +8255,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   shadow_fang:
     folder: ShadowFang
-    number: 331
+    number: 241
     range: 30
     speed: 1
     trajectory: server-events
@@ -8311,7 +8279,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   dusk_orb:
     folder: DuskOrb
-    number: 332
+    number: 242
     range: 30
     speed: 1
     trajectory: server-events
@@ -8341,7 +8309,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   prism_shot:
     folder: PrismShot
-    number: 333
+    number: 197
     range: 30
     speed: 1
     trajectory: server-events
@@ -8371,7 +8339,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   sand_flick:
     folder: SandFlick
-    number: 334
+    number: 150
     range: 30
     speed: 1
     trajectory: server-events
@@ -8395,7 +8363,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   sunlance_drop:
     folder: SunlanceDrop
-    number: 335
+    number: 198
     range: 30
     speed: 1
     trajectory: server-events
@@ -8419,7 +8387,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   flame_wheel:
     folder: FlameWheel
-    number: 336
+    number: 65
     range: 30
     speed: 1
     trajectory: server-events
@@ -8455,7 +8423,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   eruption_line:
     folder: EruptionLine
-    number: 337
+    number: 71
     range: 30
     speed: 1
     trajectory: server-events
@@ -8479,7 +8447,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   flame_javelin:
     folder: FlameJavelin
-    number: 338
+    number: 72
     range: 30
     speed: 1
     trajectory: server-events
@@ -8509,7 +8477,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   heat_haze:
     folder: HeatHaze
-    number: 339
+    number: 77
     range: 30
     speed: 1
     trajectory: server-events
@@ -8539,7 +8507,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   frost_path:
     folder: FrostPath
-    number: 340
+    number: 115
     range: 30
     speed: 1
     trajectory: server-events
@@ -8591,7 +8559,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   hydro_burst:
     folder: HydroBurst
-    number: 341
+    number: 116
     range: 30
     speed: 1
     trajectory: server-events
@@ -8623,7 +8591,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   crystal_coat:
     folder: CrystalCoat
-    number: 342
+    number: 122
     range: 30
     speed: 1
     trajectory: server-events
@@ -8691,7 +8659,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   ice_bloom:
     folder: IceBloom
-    number: 343
+    number: 123
     range: 30
     speed: 1
     trajectory: server-events
@@ -8715,7 +8683,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   vacuum_burst:
     folder: VacuumBurst
-    number: 344
+    number: 34
     range: 30
     speed: 1
     trajectory: server-events
@@ -8733,7 +8701,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   gale_combo:
     folder: GaleCombo
-    number: 345
+    number: 24
     range: 30
     speed: 1
     trajectory: server-events
@@ -8775,7 +8743,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   air_choke:
     folder: AirChoke
-    number: 346
+    number: 38
     range: 30
     speed: 1
     trajectory: server-events
@@ -8815,7 +8783,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   storm_eye:
     folder: StormEye
-    number: 347
+    number: 39
     range: 30
     speed: 1
     trajectory: server-events
@@ -8853,7 +8821,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   shadow_mire:
     folder: ShadowMire
-    number: 348
+    number: 269
     range: 30
     speed: 1
     trajectory: server-events
@@ -8891,7 +8859,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   dread_dream:
     folder: DreadDream
-    number: 349
+    number: 270
     range: 30
     speed: 1
     trajectory: server-events
@@ -8929,7 +8897,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   shadow_step:
     folder: ShadowStep
-    number: 350
+    number: 263
     range: 30
     speed: 1
     trajectory: server-events
@@ -8967,7 +8935,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   halo_throw:
     folder: HaloThrow
-    number: 351
+    number: 217
     range: 30
     speed: 1
     trajectory: server-events
@@ -9003,7 +8971,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   flash_blink:
     folder: FlashBlink
-    number: 352
+    number: 221
     range: 30
     speed: 1
     trajectory: server-events
@@ -9041,7 +9009,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   boulder_charge:
     folder: BoulderCharge
-    number: 353
+    number: 179
     range: 30
     speed: 1
     trajectory: server-events
@@ -9086,7 +9054,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   air_cannon:
     folder: AirCannon
-    number: 354
+    number: 35
     range: 30
     speed: 1
     trajectory: server-events
@@ -9116,7 +9084,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   hex_doll:
     folder: HexDoll
-    number: 355
+    number: 271
     range: 30
     speed: 1
     trajectory: server-events
@@ -9182,7 +9150,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   crimson_spiral:
     folder: CrimsonSpiral
-    number: 356
+    number: 84
     range: 30
     speed: 1
     trajectory: server-events
@@ -9218,7 +9186,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   volcanic_barrage:
     folder: VolcanicBarrage
-    number: 357
+    number: 92
     range: 30
     speed: 1
     trajectory: server-events
@@ -9254,7 +9222,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   scorch_lock:
     folder: ScorchLock
-    number: 358
+    number: 85
     range: 30
     speed: 1
     trajectory: server-events
@@ -9334,7 +9302,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   freeze_field:
     folder: FreezeField
-    number: 359
+    number: 142
     range: 30
     speed: 1
     trajectory: server-events
@@ -9372,7 +9340,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   ebb_mark:
     folder: EbbMark
-    number: 360
+    number: 139
     range: 30
     speed: 1
     trajectory: server-events
@@ -9433,7 +9401,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   ice_serpent:
     folder: IceSerpent
-    number: 361
+    number: 143
     range: 30
     speed: 1
     trajectory: server-events
@@ -9463,7 +9431,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   sky_dive:
     folder: SkyDive
-    number: 362
+    number: 45
     range: 30
     speed: 1
     trajectory: server-events
@@ -9510,7 +9478,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   thundercloud:
     folder: Thundercloud
-    number: 363
+    number: 46
     range: 30
     speed: 1
     trajectory: server-events
@@ -9534,7 +9502,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   fate_link:
     folder: FateLink
-    number: 364
+    number: 283
     range: 30
     speed: 1
     trajectory: server-events
@@ -9639,7 +9607,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   prism_cage:
     folder: PrismCage
-    number: 365
+    number: 235
     range: 30
     speed: 1
     trajectory: server-events
@@ -9663,7 +9631,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   wraith_march:
     folder: WraithMarch
-    number: 366
+    number: 286
     range: 30
     speed: 1
     trajectory: server-events
@@ -9687,7 +9655,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   fault_rift:
     folder: FaultRift
-    number: 367
+    number: 191
     range: 30
     speed: 1
     trajectory: server-events
@@ -9711,7 +9679,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   flame_emperor:
     folder: FlameEmperor
-    number: 368
+    number: 95
     range: 30
     speed: 1
     trajectory: server-events
@@ -9757,7 +9725,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   leviathan_rise:
     folder: LeviathanRise
-    number: 369
+    number: 144
     range: 30
     speed: 1
     trajectory: server-events
@@ -9810,7 +9778,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   heaven_cyclone:
     folder: HeavenCyclone
-    number: 370
+    number: 48
     range: 30
     speed: 1
     trajectory: server-events
@@ -9856,7 +9824,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   abyss_gate:
     folder: AbyssGate
-    number: 371
+    number: 288
     range: 30
     speed: 1
     trajectory: server-events
@@ -9927,7 +9895,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   aurora_veil:
     folder: AuroraVeil
-    number: 372
+    number: 238
     range: 30
     speed: 1
     trajectory: server-events
@@ -9973,7 +9941,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   titan_stride:
     folder: TitanStride
-    number: 373
+    number: 192
     range: 30
     speed: 1
     trajectory: server-events
@@ -10009,7 +9977,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   alchemy_preheat:
     folder: AlchemyPreheat
-    number: 374
+    number: 73
     range: 30
     speed: 1
     trajectory: server-events
@@ -10027,7 +9995,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   broom_afterburner:
     folder: BroomAfterburner
-    number: 375
+    number: 78
     range: 30
     speed: 1
     trajectory: server-events
@@ -10059,7 +10027,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   signal_flare:
     folder: SignalFlare
-    number: 376
+    number: 55
     range: 30
     speed: 1
     trajectory: server-events
@@ -10077,7 +10045,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   water_glimpse:
     folder: WaterGlimpse
-    number: 377
+    number: 110
     range: 30
     speed: 1
     trajectory: server-events
@@ -10101,7 +10069,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   calm_ripple:
     folder: CalmRipple
-    number: 378
+    number: 112
     range: 30
     speed: 1
     trajectory: server-events
@@ -10119,7 +10087,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   treasure_scent:
     folder: TreasureScent
-    number: 379
+    number: 117
     range: 30
     speed: 1
     trajectory: server-events
@@ -10137,7 +10105,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   tailwind:
     folder: Tailwind
-    number: 380
+    number: 27
     range: 30
     speed: 1
     trajectory: server-events
@@ -10161,7 +10129,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   season_sense:
     folder: SeasonSense
-    number: 381
+    number: 10
     range: 30
     speed: 1
     trajectory: server-events
@@ -10179,7 +10147,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   pack_sort:
     folder: PackSort
-    number: 382
+    number: 243
     range: 30
     speed: 1
     trajectory: server-events
@@ -10197,7 +10165,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   heart_read:
     folder: HeartRead
-    number: 383
+    number: 259
     range: 30
     speed: 1
     trajectory: server-events
@@ -10229,7 +10197,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   insight_flash:
     folder: InsightFlash
-    number: 384
+    number: 210
     range: 30
     speed: 1
     trajectory: server-events
@@ -10247,7 +10215,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   harvest_bell:
     folder: HarvestBell
-    number: 385
+    number: 218
     range: 30
     speed: 1
     trajectory: server-events
@@ -10271,7 +10239,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   blessed_ribbon:
     folder: BlessedRibbon
-    number: 386
+    number: 211
     range: 30
     speed: 1
     trajectory: server-events
@@ -10289,7 +10257,7 @@ bindings:
     review: nova 325~387 (tools/nova_spells.py) - phases from the delivered VFX NOTES, events sent by chanova; game QA pending
   crop_snare:
     folder: CropSnare
-    number: 387
+    number: 170
     range: 30
     speed: 1
     trajectory: server-events
@@ -10314,7 +10282,7 @@ bindings:
   # ---- 168~214 최종 기획 신규 구현 (magic-mythic-paper/tools/arcana_spells.py) ----
   drowsiness:
     folder: Drowsiness
-    number: 175
+    number: 273
     range: 30
     speed: 1
     trajectory: server-events

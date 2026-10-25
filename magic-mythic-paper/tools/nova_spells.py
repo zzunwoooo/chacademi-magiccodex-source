@@ -30,21 +30,22 @@ MARK = '  # ---- 325~387 신규 마법 (magic-mythic-paper/tools/nova_spells.py)
 
 def write_all():
     ids = [r[1] for r in M]; assert len(ids) == len(set(ids)), 'duplicate id'
-    rows = sorted((o, i, nm, cat, mana, cd, en, desc, disc, res, bundle.lower(), hold, P)
+    import spell_order   # 2026-10-25 renumber: number/order come from tools/spell_order.py
+    rows = sorted((spell_order.number(i, o), i, nm, cat, mana, cd, en, desc, disc, res, bundle.lower(), hold, P)
                   for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, bundle, hold, P, en) in M)
     folders = {bundle.lower(): bundle for (*_x, bundle, hold, P, en) in M}
     ds = os.path.join(REPO, 'magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells')
     idx = [l for l in _a._read(os.path.join(ds, 'index.txt')).split('\n') if l.strip()]
     hashes = [l.rstrip('\r') for l in open(os.path.join(ds, 'known-hashes.tsv'), encoding='utf-8', newline='').read().split('\n') if l.strip()]
     for (o, i, nm, cat, mana, cd, en, desc, disc, res, *_r) in rows:
-        fn = f'{o}_{i}.yml'; path = os.path.join(ds, fn)
+        fn = f'{o:03d}_{i}.yml'; path = os.path.join(ds, fn)
         old = _a._read(path) if os.path.exists(path) else ''
         icon = (re.search(r'(?m)^icon: (.*)$', old) or [None, "''"])[1]
         y = (f"id: {i}\nname: {nm}\ncategory: {cat}\ndescription: {_a._q(desc)}\nicon: {icon}\npermission: magic.learned.{i}\n"
              f"discovery:\n  description: {_a._q(disc) if disc else _a._q('아직 알려지지 않았습니다.')}\nresearch: {_a._q(res) if res else chr(39)*2}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
         _a._write_if(path, y)
-        if f'{o}_{i}' not in idx: idx.append(f'{o}_{i}')
+        if f'{o:03d}_{i}' not in idx: idx.append(f'{o:03d}_{i}')
         h = hashlib.sha256(y.encode('utf-8')).hexdigest()
         if f'{fn}\t{h}' not in hashes: hashes.append(f'{fn}\t{h}')
     idx.sort(key=lambda l: (int(l.split('_', 1)[0]) if l.split('_', 1)[0].isdigit() else 9999, l))

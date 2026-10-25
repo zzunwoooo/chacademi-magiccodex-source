@@ -1,0 +1,14 @@
+id: droplet_relay
+name: 물방울 인계
+category: water
+description: 몸에서 출발한 물방울이 지정한 곳까지 날아가 주변의 적을 가두고 3초 동안 띄워 올립니다.
+icon: magiccodex:textures/spells/reviewed_20261020/droplet_relay.png
+permission: magic.learned.droplet_relay
+discovery:
+  description: 서로 다른 몬스터 3마리를 한 전투에서 각각 공격한 뒤 생존 5회.
+research: ''
+cast:
+  command: 마법 droplet_relay
+  cooldown-seconds: 20
+  mana-cost: 100
+order: 131

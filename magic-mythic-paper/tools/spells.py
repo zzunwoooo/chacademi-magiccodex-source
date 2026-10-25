@@ -214,6 +214,8 @@ def catalog():
     D = {}
     for f in glob.glob(os.path.join(REPO,'magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/*.yml')):
         d = yaml.safe_load(open(f, encoding='utf-8')); D[d['id']] = d
+    import spell_order   # 2026-10-25: dropped spells left the codex; keep their name/element for the (disabled) routes
+    for i, (nm, cat, o) in spell_order.DROPPED_INFO.items(): D.setdefault(i, {'id': i, 'name': nm, 'category': cat, 'order': 900 + o})
     return D
 
 def main():

@@ -75,8 +75,10 @@ def routes():
             for (o, i, nm, cat, t, rng, mana, cd, pack, ct, desc, disc, res, note) in M]
 
 def _rows():
+    import spell_order
     rows = []
     for (o, i, nm, cat, t, rng, mana, cd, pack, ct, desc, disc, res, note) in M:
+        o = spell_order.number(i, o)   # 2026-10-25 renumber: number/order come from tools/spell_order.py
         P = [A.att('cast', 'cast', ct)]
         rows.append((o, i, nm, cat, mana, cd, True, desc, disc, res, pack.lower(), ct + 20, P))
     return rows
@@ -92,12 +94,12 @@ def _write(rows):
     idx = [l for l in A._read(os.path.join(ds, 'index.txt')).split('\n') if l.strip()]
     hashes = [l.rstrip('\r') for l in open(os.path.join(ds, 'known-hashes.tsv'), encoding='utf-8', newline='').read().split('\n') if l.strip()]
     for (o, i, nm, cat, mana, cd, en, desc, disc, res, pack, hold, P) in rows:
-        fn = f'{o}_{i}.yml'; path = os.path.join(ds, fn)
+        fn = f'{o:03d}_{i}.yml'; path = os.path.join(ds, fn)
         y = (f"id: {i}\nname: {nm}\ncategory: {cat}\ndescription: {A._q(desc)}\nicon: ''\npermission: magic.learned.{i}\n"
              f"discovery:\n  description: {A._q(disc)}\nresearch: {A._q(res)}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
         A._write_if(path, y)
-        if f'{o}_{i}' not in idx: idx.append(f'{o}_{i}')
+        if f'{o:03d}_{i}' not in idx: idx.append(f'{o:03d}_{i}')
         h = hashlib.sha256(y.encode('utf-8')).hexdigest()
         if f'{fn}\t{h}' not in hashes: hashes.append(f'{fn}\t{h}')
     idx.sort(key=lambda l: (int(l.split('_', 1)[0]) if l.split('_', 1)[0].isdigit() else 9999, l))

@@ -7,22 +7,17 @@ import java.util.*;
 
 /** Updates only recognized shipped defaults. Local edits and extra files remain untouched. */
 final class DefaultSpellMigration {
-    static final String VERSION="spells-nova-325-387-20261025";
+    static final String VERSION="spells-renumber-288-20261025";
     private static final String ROOT="/assets/magiccodex/default-spells/";
-    private static final Set<String> ARCANA_IDS=Set.of("shadow_double","echo_reading","sealing_thread","shadow_exchange","forbidden_contract","life_siphon","drowsiness","misfortune_whisper","hungry_shadow","curse_transfer","discord","night_chain","pain_deferral","black_harvest","ink_fingertip","shadow_nail","night_lullaby","loosen_grasp","healing_seal","shadow_scales","warning_thread","wound_accounting","inverted_offering","ghost_tool","bell_of_fear","eclipse_eye","void_maw","landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
-    /** 239~250 dungeon gimmick spells (2026-10-20). */
-    private static final Set<String> GIMMICK_IDS=Set.of("thawing_heat","steam_ignition","water_level","stone_weight","vine_awaken","light_beam","mirror_tune","prism_tint","statue_wake","rewind","conduit_turn","dimension_mark");
-    /** Shipped defaults outside the numbered blocks whose display text was updated (2026-10-21: 통발 -> 아공간 수조). */
-    private static final Set<String> RENAMED_FILES=Set.of("324_fish_trap.yml");
+    /** Owner-edited default that only migrates through its own exact-hash path (SpellYamlLoader.migrateHolyTamingDefault). */
+    private static final String UNMANAGED_ID="rainbow_collar";
+    /**
+     * 2026-10-25: every shipped default (index.txt) is managed: it is replaced only when the player's copy is byte-identical
+     * to a shipped version (known-hashes.tsv), so player edits always stay. Before the renumber only some number ranges were.
+     */
     static boolean managedHistoryName(String name){
-        if(RENAMED_FILES.contains(name))return true;
-        if(name.matches("(?:239|24[0-9]|250)_.*\\.yml")&&GIMMICK_IDS.contains(name.substring(name.indexOf('_')+1,name.length()-4)))return true;
-        if(name.startsWith("149_"))return false;
-        if(name.matches("(?:32[5-9]|3[3-7][0-9]|38[0-7])_.*\\.yml"))return true; // 325~387 신규 마법 (2026-10-25, tools/nova_spells.py)
-        if(name.matches("(?:10[1-9]|1[1-5][0-9]|16[0-7])_.*\\.yml"))return true;
-        if(!name.matches("(?:16[89]|1[7-9][0-9]|20[0-9]|21[0-4])_.*\\.yml"))return false;
-        String id=name.substring(name.indexOf('_')+1,name.length()-4);
-        return ARCANA_IDS.contains(id); // Excludes all fourteen deferred IDs and legacy wind entries sharing 200-series numbers.
+        if(!name.matches("[0-9]{3}_[a-z0-9_]+\\.yml"))return false;
+        return !name.substring(4,name.length()-4).equals(UNMANAGED_ID);
     }
     static String hash(byte[] bytes) {
         String text=new String(bytes,StandardCharsets.UTF_8).replace("\r\n","\n");
@@ -39,11 +34,40 @@ final class DefaultSpellMigration {
         for(String line:new String(resource("known-hashes.tsv"),StandardCharsets.UTF_8).lines().toList()){
             String[] parts=line.split("\t");if(parts.length==2 && managedHistoryName(parts[0]))history.computeIfAbsent(parts[0],k->new HashSet<>()).add(parts[1]);
         }
+        applyRenames(directory,parseRenames(new String(resource("renamed-defaults.tsv"),StandardCharsets.UTF_8)),allHistory(new String(resource("known-hashes.tsv"),StandardCharsets.UTF_8)));
         Map<String,byte[]> defaults=new LinkedHashMap<>();
         for(String id:new String(resource("index.txt"),StandardCharsets.UTF_8).lines().filter(s->!s.isBlank()).toList())defaults.put(id+".yml",resource(id+".yml"));
         migrate(directory,defaults,history,VERSION);
-        removeRetired(directory,new String(resource("removed-defaults.txt"),StandardCharsets.UTF_8).lines().map(String::strip).filter(l->!l.isEmpty()&&!l.startsWith("#")).toList(),
-            allHistory(new String(resource("known-hashes.tsv"),StandardCharsets.UTF_8)));
+        var all=allHistory(new String(resource("known-hashes.tsv"),StandardCharsets.UTF_8));
+        for(String list:List.of("removed-defaults.txt","dropped-defaults.txt"))
+            removeRetired(directory,new String(resource(list),StandardCharsets.UTF_8).lines().map(String::strip).filter(l->!l.isEmpty()&&!l.startsWith("#")).toList(),all);
+    }
+    /** renamed-defaults.tsv: "old.yml<TAB>new.yml" per line, # comments. */
+    static Map<String,String> parseRenames(String tsv){
+        Map<String,String> out=new LinkedHashMap<>();
+        for(String line:tsv.lines().toList()){
+            String l=line.strip();if(l.isEmpty()||l.startsWith("#"))continue;
+            String[] p=l.split("\t");
+            if(p.length==2&&p[0].matches("[a-zA-Z0-9_-]+\\.yml")&&p[1].matches("[a-zA-Z0-9_-]+\\.yml"))out.put(p[0],p[1]);
+        }
+        return out;
+    }
+    /**
+     * 2026-10-25 renumber: the spell files were renamed (number prefix). Moves each old copy to its new name so the same id
+     * never exists twice (the loader rejects the whole folder on a duplicate id). Shipped copies are moved and then updated
+     * by migrate(); an edited copy keeps its content under the new name. When the new name already exists, a shipped old
+     * copy is deleted and an edited one is parked as "<old>.renamed" (not .yml, so it is not loaded).
+     */
+    static void applyRenames(Path directory,Map<String,String> renames,Map<String,Set<String>> history)throws IOException {
+        if(!Files.isDirectory(directory,LinkOption.NOFOLLOW_LINKS)||Files.isSymbolicLink(directory))return;
+        for(var e:renames.entrySet()){
+            Path from=directory.resolve(e.getKey()),to=directory.resolve(e.getValue());
+            if(!Files.isRegularFile(from,LinkOption.NOFOLLOW_LINKS)||Files.size(from)>65536)continue;
+            if(!Files.exists(to,LinkOption.NOFOLLOW_LINKS)){Files.move(from,to);continue;}
+            boolean shipped=history.getOrDefault(e.getKey(),Set.of()).contains(hash(Files.readAllBytes(from)));
+            if(shipped)Files.delete(from);
+            else Files.move(from,directory.resolve(e.getKey()+".renamed"),StandardCopyOption.REPLACE_EXISTING);
+        }
     }
     static Map<String,Set<String>> allHistory(String tsv){
         Map<String,Set<String>> out=new HashMap<>();

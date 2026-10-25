@@ -59,7 +59,7 @@ class ManaTest {
     }
     @Test void catalogContainsReviewedCommandsFromTheIntegrated329SpellPack()throws Exception{
         var spells=ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(224,spells.byId.size());assertEquals(237,spells.discoveryPermissions.size());
+        assertEquals(288,spells.byId.size());assertEquals(300,spells.discoveryPermissions.size()); // 2026-10-25: +63 new, 175 drowsiness on
         assertEquals(0,spells.byId.get("spatial_leap").cost());
         assertEquals(0,spells.byId.get("spatial_leap").cooldown());
         assertEquals(spells.byId.size(),spells.byCommand.size());
