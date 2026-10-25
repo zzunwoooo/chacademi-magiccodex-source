@@ -8,11 +8,21 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class WildFollowRestoreTest {
+    MockedStatic<io.papermc.paper.registry.RegistryAccess> registry;
+    @BeforeEach void registrySetup() {
+        registry=mockStatic(io.papermc.paper.registry.RegistryAccess.class);
+        var access=mock(io.papermc.paper.registry.RegistryAccess.class, call -> java.lang.reflect.Proxy.newProxyInstance(
+            getClass().getClassLoader(),new Class<?>[]{org.bukkit.Registry.class},(proxy,method,args)->null));
+        registry.when(io.papermc.paper.registry.RegistryAccess::registryAccess).thenReturn(access);
+    }
+    @AfterEach void registryCleanup() { registry.close(); }
+
     static final class Fixture {
         final WildlifePlugin plugin=mock(WildlifePlugin.class);
         final LivingEntity mob=mock(LivingEntity.class);
