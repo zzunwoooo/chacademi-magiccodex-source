@@ -17,20 +17,29 @@ final class JournalBridge implements PluginMessageListener,Listener {
  public void onPluginMessageReceived(String channel,Player player,byte[] bytes){if(!channel.equals(JournalProtocol.QUERY))return;try{
   Message m=JournalProtocol.decode(bytes);UUID id=player.getUniqueId();long now=System.currentTimeMillis();
   if(m.kind()==0){if(loading.contains(id)||now<limits.getOrDefault(id,0L)||!player.hasPermission("magiccodex.quests"))return;limits.put(id,now+1000);loading.add(id);
-   plugin.questBridge().journalRows(player,quests->plugin.dialogueBridge().journalRows(player,dialogues->{loading.remove(id);if(!player.isOnline())return;var all=new ArrayList<Entry>(quests);all.addAll(dialogues);all.sort(Comparator.comparing(Entry::key));var rows=all.stream().limit(JournalProtocol.MAX).toList();for(int i=0;i<Math.max(1,rows.size());i+=JournalProtocol.CHUNK)send(plugin,player,new Message(1,m.token(),"","","",i/JournalProtocol.CHUNK,rows.size(),rows.subList(Math.min(i,rows.size()),Math.min(i+JournalProtocol.CHUNK,rows.size()))));}));
+   plugin.questBridge().journalRows(player,quests->plugin.dialogueBridge().journalRows(player,dialogues->{loading.remove(id);if(!player.isOnline())return;var all=new ArrayList<Entry>(quests);all.addAll(dialogues);all.sort(Comparator.comparing(Entry::key));all.addAll(storyRows(player));var rows=all.stream().limit(JournalProtocol.MAX).toList();for(int i=0;i<Math.max(1,rows.size());i+=JournalProtocol.CHUNK)send(plugin,player,new Message(1,m.token(),"","","",i/JournalProtocol.CHUNK,rows.size(),rows.subList(Math.min(i,rows.size()),Math.min(i+JournalProtocol.CHUNK,rows.size()))));}));
   }else if(m.kind()==3){var request=pending.get(m.token());if(request==null||!request.target.equals(id)||request.until<now||!request.id.equals(m.id())||!request.operation.equals(m.operation()))return;pending.remove(m.token());if(m.text().startsWith("ERROR")){plugin.getLogger().warning("STORY JOURNAL client refused: "+m.text());CmdKit.userFail(request.sender,"퀘스트 기록을 바꾸지 못했어요. 대상의 대사 파일과 진행 상태를 확인해 주세요");}else CmdKit.ok(request.sender,"퀘스트 기록을 바꿨어요 (보상·호감도 수령 기록은 그대로)");plugin.getLogger().info("STORY JOURNAL admin="+request.sender.getName()+" player="+id+" id="+m.id()+" operation="+m.operation()+" clientAck=true");
-  }else if(m.kind()==5){var c=catalogs.computeIfAbsent(id,x->new Catalog());if(m.part()==0){if(now-c.start<1000)return;c.token=m.token();c.part=0;c.total=m.total();c.rows.clear();c.start=now;}
+  }else if(m.kind()==5){if(true)return;/* 2026-10-25: 메인 스토리는 서버 단계 기록(storyRows)만 쓴다 — 런처 기록은 무시 */var c=catalogs.computeIfAbsent(id,x->new Catalog());if(m.part()==0){if(now-c.start<1000)return;c.token=m.token();c.part=0;c.total=m.total();c.rows.clear();c.start=now;}
    if(!c.token.equals(m.token())||c.part!=m.part()||c.total!=m.total()||c.rows.size()+m.entries().size()>JournalProtocol.MAX||m.entries().stream().anyMatch(e->!e.source().equals("story")))return;
    for(var e:m.entries())c.rows.add(new Entry("story",e.id(),e.title(),"",e.state(),e.main(),"",""));c.part++;if(c.rows.size()==c.total)storyCatalog.put(id,List.copyOf(c.rows));
   }
  }catch(IllegalArgumentException ignored){}}
- Map<String,String> catalog(Player target){var rows=new TreeMap<String,String>();rows.putAll(plugin.questBridge().journalCatalog());rows.putAll(plugin.dialogueBridge().journalCatalog());for(var e:storyCatalog.getOrDefault(target.getUniqueId(),List.of()))rows.put(e.key(),e.title());return rows;}
+ /** 메인 스토리 = ChacademyStory 서버 단계 기록 (끝낸 단계 claimed · 지금 단계 active), 단계 순서 그대로. 장 이름은 group 에 담는다. */
+ @SuppressWarnings("unchecked")
+ List<Entry> storyRows(Player p){
+  var story=Bukkit.getPluginManager().getPlugin("ChacademyStory");if(story==null||!story.isEnabled())return List.of();
+  try{var raw=(List<Map<String,String>>)story.getClass().getMethod("journalRows",UUID.class).invoke(story,p.getUniqueId());var out=new ArrayList<Entry>();
+   for(var m:raw){try{out.add(new Entry("story",m.get("id"),JournalProtocol.cut(m.getOrDefault("title",""),140),JournalProtocol.cut(m.getOrDefault("description",""),2000),m.getOrDefault("state","active"),true,JournalProtocol.cut(m.getOrDefault("details",""),1200),"",JournalProtocol.cut(m.getOrDefault("chapter",""),40)));}catch(IllegalArgumentException ignored){}}
+   return out;
+  }catch(ReflectiveOperationException|ClassCastException|LinkageError e){return List.of();}
+ }
+ Map<String,String> catalog(Player target){var rows=new TreeMap<String,String>();rows.putAll(plugin.questBridge().journalCatalog());rows.putAll(plugin.dialogueBridge().journalCatalog());for(var e:storyRows(target))rows.put(e.key(),e.title());return rows;}
  private final Map<UUID,List<Entry>> adminRows=new HashMap<>();private final Map<UUID,Long> adminRefresh=new HashMap<>();private final Set<UUID> adminLoading=new HashSet<>();
  private void readAdminRows(Player target,java.util.function.Consumer<List<Entry>> callback){
   plugin.questBridge().journalRows(target,quests->plugin.dialogueBridge().journalRows(target,dialogues->{
    var map=new TreeMap<String,Entry>();for(var e:plugin.questBridge().journalDefinitions())map.put(e.key(),e);
    plugin.dialogueBridge().journalCatalog().forEach((key,title)->{String id=key.substring(key.indexOf(':')+1);map.put(key,new Entry("dialogue",id,title,"","available",true,"",""));});
-   for(var e:quests)map.put(e.key(),e);for(var e:dialogues)map.put(e.key(),e);for(var e:storyCatalog.getOrDefault(target.getUniqueId(),List.of()))map.put(e.key(),e);
+   for(var e:quests)map.put(e.key(),e);for(var e:dialogues)map.put(e.key(),e);for(var e:storyRows(target))map.put(e.key(),e);
    var result=List.copyOf(map.values());adminRows.put(target.getUniqueId(),result);callback.accept(result);
   }));
  }
@@ -59,6 +68,7 @@ final class JournalBridge implements PluginMessageListener,Listener {
   if(!OPERATIONS.contains(operationName))throw new IllegalArgumentException("보기·주기·진행·완료·초기화 중 하나여야 해요");String resolved=AdminCommandRules.resolve(catalog(target),key);if(resolved==null)throw new IllegalArgumentException("해당 퀘스트가 없거나 이름이 겹쳐요. 대상의 일지를 새로 열고 다시 해 주세요");
   String operation=switch(operationName){case "보기"->"query";case "주기"->"grant";case "진행"->"progress";case "완료"->"complete";default->"reset";};String[] ref=resolved.split(":",2);
   if(ref[0].equals("quest")){plugin.questBridge().journalEdit(sender,target,ref[1],operation);return;}if(ref[0].equals("dialogue")){plugin.dialogueBridge().journalEdit(sender,target,ref[1],operation);return;}
+  if(ref[0].equals("story"))throw new IllegalArgumentException("메인 스토리는 /유저관리 <닉네임> 스토리진행 단계 <단계> 로 옮겨 주세요 (퀘스트창은 서버 단계 기록을 그대로 보여 줘요)");
   if(!target.getListeningPluginChannels().contains(JournalProtocol.REPLY))throw new IllegalArgumentException("대상의 스토리·UI 모드를 업데이트해야 해요");if(pending.size()>=64)throw new IllegalArgumentException("퀘스트 요청이 많아요. 잠시 뒤 다시 해 주세요");String token=UUID.randomUUID().toString();pending.put(token,new Pending(target.getUniqueId(),sender,operation,ref[1],System.currentTimeMillis()+15000));send(plugin,target,new Message(2,token,operation,ref[1],"",0,0,List.of()));
  }
 }

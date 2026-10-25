@@ -15,7 +15,8 @@ import java.util.UUID;
  */
 final class QuestProgress {
     static final int FORMAT = 1;
-    static final int MAX_HISTORY = 64;
+    /** 퀘스트창 완료 목록에도 쓰므로 넉넉히 (2026-10-25, 64 → 600). */
+    static final int MAX_HISTORY = 600;
 
     enum Phase { ACTIVE, PLAYING }
 

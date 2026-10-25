@@ -162,6 +162,8 @@ final class StoryState {
         final List<Effect> effects = new ArrayList<>();
         /** 클라 고정 보상(LocalStoryRewards) 영수증: 키 → pending|applied|failed. 한 번 생기면 다시 주지 않는다 (관리자 초기화로만 지움). */
         final Map<String, String> rewards = new TreeMap<>();
+        /** 끝까지 본 컷신 (서버 기록, 2026-10-25). 다음부터 이 컷신은 건너뛰기를 허용한다. 런처를 바꿔도 유지. */
+        final Set<String> seen = new TreeSet<>();
         /** 효과 실행 중 (명령어가 다시 스토리 명령을 불러도 겹쳐 돌지 않게). 저장하지 않는다. */
         boolean running;
 
@@ -170,7 +172,7 @@ final class StoryState {
         }
 
         boolean empty() {
-            return active == null && queue.isEmpty() && done.isEmpty() && fired.isEmpty() && gained.isEmpty() && effects.isEmpty() && rewards.isEmpty();
+            return active == null && queue.isEmpty() && done.isEmpty() && fired.isEmpty() && gained.isEmpty() && effects.isEmpty() && rewards.isEmpty() && seen.isEmpty();
         }
 
         boolean has(Kind kind, String id) {
@@ -272,6 +274,7 @@ final class StoryState {
             }
             if (!gained.isEmpty()) m.put("gained", new LinkedHashMap<>(gained));
             if (!rewards.isEmpty()) m.put("rewards", new LinkedHashMap<>(rewards));
+            if (!seen.isEmpty()) m.put("seen", new ArrayList<>(seen));
             if (!effects.isEmpty()) {
                 List<Object> l = new ArrayList<>();
                 for (Effect e : effects) l.add(e.toMap());
@@ -317,6 +320,9 @@ final class StoryState {
                     String id = String.valueOf(e.getKey());
                     if (StorySafety.validId(id)) ps.gained.put(id, (int) Math.max(0, Math.min(1_000_000, num(e.getValue()))));
                 }
+            }
+            if (m.get("seen") instanceof List<?> sl) {
+                for (Object o : sl) if (o != null && StorySafety.validId(o.toString())) ps.seen.add(o.toString());
             }
             if (m.get("rewards") instanceof Map<?, ?> rw) {
                 for (var e : rw.entrySet()) {

@@ -58,6 +58,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -1230,6 +1231,44 @@ final class QuestEngine implements Listener {
     private static boolean flatNear(Location a, Location b) {
         double dx = a.getX() - b.getX(), dz = a.getZ() - b.getZ();
         return dx * dx + dz * dz <= GUIDE_NEAR_DISTANCE * GUIDE_NEAR_DISTANCE;
+    }
+
+    /**
+     * 퀘스트창 메인 스토리 (2026-10-25 오너: 런처 기록 대신 서버 기록). 단계 정의 순서대로, 끝낸 단계 = claimed, 지금 단계 = active.
+     * 각 줄: id · title · description · state · chapter · details. meta(대화 id) = {대화 제목, 대화 장} (없으면 null).
+     */
+    List<Map<String, String>> journalRows(UUID uuid, java.util.function.Function<String, String[]> meta) {
+        P st = prog.players.get(uuid);
+        if (st == null) return List.of();
+        Player p = Bukkit.getPlayer(uuid);
+        List<Map<String, String>> out = new ArrayList<>();
+        for (Step s : defs.steps.values()) {
+            boolean current = s.id.equals(st.step);
+            if (!current && !st.history.contains(s.id)) continue;
+            if (!s.id.matches("[a-z0-9_-]{1,64}")) continue;
+            String[] m = s.dialogue.isEmpty() ? null : meta.apply(s.dialogue);
+            String title = m != null && !m[0].isBlank() ? m[0] : !s.description.isBlank() ? s.description : s.id;
+            String chapter = m != null && !m[1].isBlank() ? m[1] : s.chapter;
+            StringBuilder details = new StringBuilder();
+            if (current) {
+                int[] cur = currents(p, st, s, true);
+                for (int i = 0; i < cur.length; i++) {
+                    Cond c = s.conds.get(i);
+                    if (c.hidden()) continue;
+                    if (details.length() > 0) details.append('\n');
+                    details.append(c.label().isBlank() ? c.target() : c.label()).append(' ').append(cur[i]).append(" / ").append(c.required());
+                }
+            }
+            Map<String, String> row = new LinkedHashMap<>();
+            row.put("id", s.id);
+            row.put("title", title);
+            row.put("description", s.description);
+            row.put("state", current ? "active" : "claimed");
+            row.put("chapter", chapter);
+            row.put("details", details.toString());
+            out.add(row);
+        }
+        return out;
     }
 
     /**

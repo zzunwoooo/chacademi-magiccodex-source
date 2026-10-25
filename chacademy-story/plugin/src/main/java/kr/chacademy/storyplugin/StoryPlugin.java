@@ -413,6 +413,26 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         return ps != null && ps.has(dialogue ? Kind.DIALOGUE : Kind.CUTSCENE, id);
     }
 
+    /** 퀘스트창 메인 스토리 (MagicCodexBridge JournalBridge 가 리플렉션으로 부른다, 메인 스레드). */
+    public List<Map<String, String>> journalRows(UUID uuid) {
+        return quests == null ? List.of() : quests.journalRows(uuid, this::dialogueMeta);
+    }
+
+    private static final java.util.regex.Pattern META = java.util.regex.Pattern.compile("(?m)^(title|chapter):\\s*[\"']?(.*?)[\"']?\\s*$");
+
+    /** 서버 dialogue.yml 의 {제목, 장} (없으면 null). */
+    private String[] dialogueMeta(String id) {
+        String text = dialogueTexts.get(id);
+        if (text == null) return null;
+        String title = "", chapter = "";
+        var m = META.matcher(text);
+        while (m.find()) {
+            if (m.group(1).equals("title") && title.isEmpty()) title = m.group(2);
+            else if (m.group(1).equals("chapter") && chapter.isEmpty()) chapter = m.group(2);
+        }
+        return new String[]{title, chapter};
+    }
+
     /**
      * 길잡이 별 (MagicMythic 가 리플렉션으로 부른다): 0 = 가리킬 퀘스트 목표 없음, 1 = 화살표 표시 시작,
      * 2 = 목표가 다른 세계, 3 = 이미 목표 근처 (10블록), 4 = 켜져 있던 화살표를 끔 (다시 시전).
@@ -731,8 +751,10 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
         a.sent = true;
         a.sentAtMs = System.currentTimeMillis();
         protection.enter(p);
-        // 최소 시청 시간이 걸린 컷신은 "본 적 있으면 건너뛰기" 를 서버가 믿을 수 없으므로 건너뛰기 없이 보낸다
-        int mode = a.mode == StoryCodec.MODE_AUTO && minSeconds(a.id) > 0 ? StoryCodec.MODE_NOSKIP : a.mode;
+        // "본 적 있으면 건너뛰기" 는 서버 기록(ps.seen)으로 정한다 — 런처 파일(_seen.txt)은 런처를 바꾸면 사라지고 믿을 수도 없다
+        PlayerStory owner = state.players.get(p.getUniqueId());
+        int mode = a.mode != StoryCodec.MODE_AUTO ? a.mode
+                : owner != null && owner.seen.contains(a.id) ? StoryCodec.MODE_SKIP : StoryCodec.MODE_NOSKIP;
         p.sendPluginMessage(this, StoryCodec.CUTSCENE_PLAY, StoryCodec.cutscenePlay(a.id, mode));
     }
 
@@ -750,6 +772,7 @@ public class StoryPlugin extends JavaPlugin implements PluginMessageListener, Li
     private void finishCutscene(Player p, PlayerStory ps, Request a, boolean skipped, boolean missing) {
         if (!ps.cancelCutscene(a)) return;
         protection.release(p);
+        if (!skipped && !missing) ps.seen.add(a.id); // 끝까지 봄 → 다음부터 건너뛰기 허용 (서버 기록)
         Effect e = new Effect(ps.nextSeq(), Effect.CUTSCENE_END, a.id, "", skipped, missing);
         queueEffect(p.getUniqueId(), ps, e);
     }
