@@ -50,6 +50,8 @@ final class ArtifactActions implements Listener {
             case "chant_candlestick" -> { fx.run(p).chantArmed = true; p.getWorld().playSound(p.getLocation(), Sound.ITEM_FLINTANDSTEEL_USE, 1f, 1.2f); yield "다음 마법 1개는 마나를 쓰지 않습니다."; }
             case "rewind_hourglass" -> rewind(p);
             case "wish_coin" -> wishCoin(p);
+            // 접이식 망원경: 새 MagicCodex 모드는 사용 키를 누르고 있는 동안 직접 확대하고 서버에 보내지 않는다 (옛 모드만 여기로 옴)
+            case "folding_spyglass" -> "!접이식 망원경은 최신 MagicCodex 모드에서 사용 키를 누르고 있으면 확대됩니다.";
             default -> null;
         };
         if (result == null) return;                       // not ours / held: ArtifactBridge shows "준비 중"

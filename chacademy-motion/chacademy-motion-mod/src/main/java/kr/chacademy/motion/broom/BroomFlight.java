@@ -59,6 +59,18 @@ public final class BroomFlight {
     /** 다시 올라타는 모션 길이 (broom_climb.json 과 맞춤) */
     public static final int CLIMB_TICKS = 16;
     private static boolean hangMode;
+
+    // 아티팩트 빗자루 효과 (서버 broom_perk, 2026-10-26). 틱마다 읽으므로 ride 와 순서가 바뀌어도 괜찮다.
+    /** BroomPackets.PERK_* (서버가 탈 때마다 보냄, 접속 종료 때 0) */
+    private static int perks;
+    /** 빗자루 끈: 이륙 뒤 남은 가속 틱 */
+    private static int cordTicks;
+    static final int CORD_TICKS = 60;
+    static final float CORD_ACCEL = 1.6f, ECHO_ACCEL = 1.35f, PERK_SPEED = 1.10f, PINWHEEL_TURN_STRESS = 0.6f;
+    private static boolean echoing;
+    /** 서버가 장착 아티팩트의 빗자루 효과를 알려 줌. */
+    public static void onPerks(int mask) { perks = mask; }
+    private static boolean perk(int bit) { return (perks & bit) != 0; }
     private static boolean hanging;
     private static int climbTicks;
     public static boolean hanging() { return physics != null && hanging; }
@@ -111,6 +123,7 @@ public final class BroomFlight {
             play(SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1.3f, 0.8f);
         } else {
             play(SoundEvents.ARMOR_EQUIP_ELYTRA.value(), 1.2f, 0.8f);
+            cordTicks = CORD_TICKS; // 새 이륙만 (다시 잡기는 아님)
         }
         drop = null;
         catchTicks = 0;
@@ -162,6 +175,8 @@ public final class BroomFlight {
         awaitingCatch = 0;
         fallenPhysics=null;catchRequested=false;catchLevel=null;
         hangMode = false; hanging = false; climbTicks = 0;
+        perks = 0; cordTicks = 0; echoing = false;
+        StarEcho.clear();
         if (wind != null) wind.finish();
         wind = null;
     }
@@ -244,6 +259,7 @@ public final class BroomFlight {
         if (p.hurtTime > lastHurtTime) physics.hurt();
         lastHurtTime = p.hurtTime;
 
+        applyPerks(p);
         int boostBefore = physics.boostTicks, rollBefore = physics.rollTicks;
         var level = p.level();
         var input = new BroomPhysics.Input(k.forward(), k.backward(), k.left(), k.right(), k.jump(), k.shift(),
@@ -258,6 +274,7 @@ public final class BroomFlight {
         double impact = physics.afterMove(a.x, a.y, a.z, p.horizontalCollision, p.onGround());
         p.setDeltaMovement(physics.vx, physics.vy, physics.vz);
         p.resetFallDistance();
+        if (perk(BroomPackets.PERK_STAR_ECHO)) StarEcho.record(p.getX(), p.getY(), p.getZ(), physics.vx, physics.vz);
 
         if (impact > 0.08 && crashCooldown == 0) {
             crashCooldown = 10;
@@ -285,6 +302,18 @@ public final class BroomFlight {
             else fall();
         }
         return true;
+    }
+
+    /** 아티팩트 효과를 이번 틱 물리에 넣는다: 빗자루 끈(이륙 3초 가속), 별의 잔향(내 궤적 따라 날면 가속), 바람개비 장식(급선회 균형 감소 -40%). */
+    private static void applyPerks(LocalPlayer p) {
+        boolean cord = cordTicks > 0 && perk(BroomPackets.PERK_CORD);
+        if (cordTicks > 0) cordTicks--;
+        boolean echo = perk(BroomPackets.PERK_STAR_ECHO) && StarEcho.following(p.getX(), p.getY(), p.getZ(), physics.vx, physics.vz);
+        if (echo && !echoing) play(SoundEvents.AMETHYST_BLOCK_CHIME, 1.6f, 0.6f);
+        echoing = echo;
+        physics.accelBonus = cord ? CORD_ACCEL : echo ? ECHO_ACCEL : 1f;
+        physics.speedBonus = cord || echo ? PERK_SPEED : 1f;
+        physics.turnStress = perk(BroomPackets.PERK_PINWHEEL) ? PINWHEEL_TURN_STRESS : 1f;
     }
 
     /** 큐디치: 균형을 잃음 → 떨어지지 않고 그 자리에서 한 팔로 매달림. */
@@ -323,6 +352,7 @@ public final class BroomFlight {
     // ------------------------------------------------------------------ 틱 (이동 뒤)
 
     public static void tick(Minecraft mc) {
+        StarEcho.tick(mc);
         LocalPlayer p = mc.player;
         if (p == null) {
             if (physics != null || catchTicks > 0 || catchRequested) reset();

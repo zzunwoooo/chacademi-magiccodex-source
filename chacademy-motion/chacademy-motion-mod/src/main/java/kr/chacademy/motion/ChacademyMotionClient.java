@@ -56,6 +56,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
         PayloadTypeRegistry.playC2S().register(BroomPackets.EventC2S.TYPE, BroomPackets.EventC2S.CODEC);
         PayloadTypeRegistry.playS2C().register(BroomPackets.ListS2C.TYPE, BroomPackets.ListS2C.CODEC);
         PayloadTypeRegistry.playS2C().register(BroomPackets.FxS2C.TYPE, BroomPackets.FxS2C.CODEC);
+        PayloadTypeRegistry.playS2C().register(BroomPackets.PerkS2C.TYPE, BroomPackets.PerkS2C.CODEC);
         PayloadTypeRegistry.playC2S().register(BroomPackets.RequestC2S.TYPE, BroomPackets.RequestC2S.CODEC);
 
         MotionPlayer.init();
@@ -67,6 +68,7 @@ public class ChacademyMotionClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.RideS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.RideS2C.INVALID) BroomFlight.onRide(payload); });
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.StateS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.StateS2C.INVALID) BroomRiders.onState(payload); });
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.ListS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.ListS2C.INVALID) BroomApi.onList(payload); });
+        ClientPlayNetworking.registerGlobalReceiver(BroomPackets.PerkS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.PerkS2C.INVALID) BroomFlight.onPerks(payload.perks()); });
         ClientPlayNetworking.registerGlobalReceiver(BroomPackets.FxS2C.TYPE, (payload, context) -> { if (payload != BroomPackets.FxS2C.INVALID) context.client().execute(() -> BroomFlight.onFx(payload.kind())); });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
             BroomFlight.reset();

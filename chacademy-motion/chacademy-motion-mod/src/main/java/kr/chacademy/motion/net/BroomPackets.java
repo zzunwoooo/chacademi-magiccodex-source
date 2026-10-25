@@ -114,6 +114,33 @@ public final class BroomPackets {
         }
     }
 
+    // broom_perk 비트 (플러그인 BroomCodec.PERK_* 와 같아야 함). 모르는 비트는 무시.
+    /** 빗자루 끈: 이륙 뒤 3초간 가속 */
+    public static final int PERK_CORD = 1;
+    /** 빗자루 쿠션 (서버가 처리, 모드는 쓰지 않음) */
+    public static final int PERK_CUSHION = 1 << 1;
+    /** 바람개비 장식: 급선회로 깎이는 균형 -40% */
+    public static final int PERK_PINWHEEL = 1 << 2;
+    /** 별의 잔향: 내 궤적 별가루가 오래 남고 따라 날면 가속 */
+    public static final int PERK_STAR_ECHO = 1 << 3;
+    /** 폭풍 날개 (서버가 ride 최고 속도에 곱해서 보냄, 모드는 쓰지 않음) */
+    public static final int PERK_STORM = 1 << 4;
+
+    /** 서버 → 나: 장착한 아티팩트의 빗자루 효과 (2026-10-26). 탈 때 ride 바로 앞에 옴. */
+    public record PerkS2C(int perks) implements CustomPacketPayload {
+        public static final Type<PerkS2C> TYPE = typeOf("broom_perk");
+        /** 깨진·모르는 형식의 패킷 (핸들러가 무시). */
+        public static final PerkS2C INVALID = new PerkS2C(Integer.MIN_VALUE);
+        public static final StreamCodec<RegistryFriendlyByteBuf, PerkS2C> CODEC = SafeCodec.failSafe("broom_perk", StreamCodec.of(
+                (buf, f) -> buf.writeInt(f.perks),
+                buf -> new PerkS2C(buf.readInt())), INVALID);
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
     /** 나 → 서버: 내리기, 낙마, 다시 잡기 등. */
     public record EventC2S(byte kind, float value) implements CustomPacketPayload {
         public static final Type<EventC2S> TYPE = typeOf("broom_evt");

@@ -29,6 +29,15 @@ class BroomCodecTest {
     }
 
     @Test
+    void perksAreFourBytesBigEndian() throws Exception {
+        int mask = BroomCodec.PERK_CORD | BroomCodec.PERK_STORM;
+        byte[] b = BroomCodec.encodePerks(mask);
+        assertArrayEquals(new byte[]{0, 0, 0, 17}, b);
+        assertEquals(mask, BroomCodec.decodePerks(b));
+        assertThrows(BroomCodec.MalformedException.class, () -> BroomCodec.decodePerks(new byte[]{1}));
+    }
+
+    @Test
     void emptyBroomMeansOff() throws Exception {
         var s = new BroomCodec.State(UUID.randomUUID(), "", BroomCodec.STATE_NORMAL);
         assertEquals("", BroomCodec.decodeState(BroomCodec.encodeState(s)).broom());
