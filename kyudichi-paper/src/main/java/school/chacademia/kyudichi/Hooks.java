@@ -202,5 +202,26 @@ final class Hooks {
     /** null = not a match question (let the party decide). */
     interface AllyHandler { Boolean ally(Player first, Player second); }
 
+    /**
+     * #33 (오너 결정 2026-10-25): MagicMythic 이 "이 선수는 지금 어떤 경기 중인가" 를 묻는다 (MagicMatchEvent).
+     * 큐디치 선수면 "quidditch", 1:1 결투면 "duel" — 큐디치 전투 보정(투사체 속도·비행 피격 범위·유도 추적)은 큐디치에만 걸린다.
+     */
+    void listenMatch(Listener owner, java.util.function.Function<Player, String> kind) {
+        Plugin m = Bukkit.getPluginManager().getPlugin("ChAcademiaMagicMythic");
+        if (m == null) return;
+        try {
+            @SuppressWarnings("unchecked")
+            Class<? extends Event> type = (Class<? extends Event>) Class.forName("school.chacademia.magicmythic.MagicMatchEvent", true, m.getClass().getClassLoader());
+            Method player = type.getMethod("getPlayer"), set = type.getMethod("setKind", String.class);
+            Bukkit.getPluginManager().registerEvent(type, owner, EventPriority.NORMAL, (l, e) -> {
+                if (!type.isInstance(e)) return;
+                try {
+                    String k = kind.apply((Player) player.invoke(e));
+                    if (k != null) set.invoke(e, k);
+                } catch (ReflectiveOperationException | RuntimeException ex) { warnOnce("match-run", "경기 판정 이벤트 처리 실패: " + ex); }
+            }, plugin, false);
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) { warnOnce("match-reg", "MagicMatchEvent 연결 실패 (MagicMythic 업데이트 필요 — 큐디치 전투 보정 꺼짐): " + e); }
+    }
+
     static boolean isOurs(org.bukkit.entity.Entity e) { return e.getScoreboardTags().contains(BallVisual.TAG); }
 }

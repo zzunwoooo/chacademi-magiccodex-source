@@ -257,7 +257,7 @@ final class ArcanaMech extends Mech {
 
     // ================================================================== 175 졸음
     private boolean drowse(Player pl, Ctx c) {
-        Location goal = c.at().clone().add(0, 0.6, 0); double speed = Math.clamp(p.d("speed", 0.8), 0.1, 3), r = p.d("r", 3);
+        Location goal = c.at().clone().add(0, 0.6, 0); double speed = Math.clamp(p.d("speed", 0.8), 0.1, 3) * QuidditchCombat.speedFactor(pl), r = p.d("r", 3); // #33 큐디치 ×1.5
         int wait = Math.clamp(p.i("wait", 200), 1, 1200), root = Math.clamp(p.i("root", 60), 1, 200);
         Location start = pl.getEyeLocation().add(pl.getEyeLocation().getDirection().multiply(0.6)).add(0, -0.3, 0);
         vfx(pl, "orb", start, null);
@@ -560,7 +560,7 @@ final class ArcanaMech extends Mech {
     private boolean wound(Player pl, Ctx c) {
         if (!(c.target() instanceof LivingEntity t) || !plugin.targets().hurt(pl, t, 0)) return false;
         vfx(pl, "gather", pl.getLocation(), null);
-        double speed = Math.clamp(p.d("speed", 0.7), 0.1, 3), range = p.d("range", 20);
+        double speed = Math.clamp(p.d("speed", 0.7), 0.1, 3) * QuidditchCombat.speedFactor(pl), range = p.d("range", 20); // #33
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (!pl.isOnline() || !t.isValid()) return;
             Location start = pl.getLocation().add(0, 1.35, 0).add(flat(pl).multiply(0.55));
@@ -709,7 +709,7 @@ final class ArcanaMech extends Mech {
 
     // ================================================================== 213 물방울 인계
     private boolean droplet(Player pl, Ctx c) {
-        Location goal = c.at().clone(); double speed = Math.clamp(p.d("speed", 0.6), 0.1, 3), r = p.d("r", 2.5), dmg = c.dmg(p);
+        Location goal = c.at().clone(); double speed = Math.clamp(p.d("speed", 0.6), 0.1, 3) * QuidditchCombat.speedFactor(pl), r = p.d("r", 2.5), dmg = c.dmg(p); // #33
         int ticks = Math.clamp(p.i("ticks", 60), 1, 200); String element = p.s("element", "");
         vfx(pl, "form", pl.getLocation(), null);
         Bukkit.getScheduler().runTaskLater(plugin, () -> {

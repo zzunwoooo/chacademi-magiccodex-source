@@ -80,7 +80,8 @@ final class Targets {
     List<LivingEntity> enemiesNear(LivingEntity caster, Location center, double radius, int max) {
         if (center.getWorld() == null || radius <= 0) return List.of();
         var list = new ArrayList<LivingEntity>();
-        for (Entity e : center.getWorld().getNearbyEntities(center, radius, radius, radius)) {
+        double search = radius + QuidditchCombat.searchMargin(); // 큐디치 비행 선수는 몸 상자가 커서 조금 더 넓게 찾는다
+        for (Entity e : center.getWorld().getNearbyEntities(center, search, search, search)) {
             if (!enemy(caster, e)) continue;
             LivingEntity le = (LivingEntity) e;
             if (closestDistance(le, center) <= radius) list.add(le);
@@ -100,9 +101,12 @@ final class Targets {
         return list.size() > max ? list.subList(0, Math.max(0, max)) : list;
     }
 
-    /** Distance from a point to the entity's bounding box, so large mobs are hit at their edge. */
+    /**
+     * Distance from a point to the entity's bounding box, so large mobs are hit at their edge.
+     * 큐디치 경기 중 비행하는 선수는 키운 상자 ({@link QuidditchCombat#hitBox}, #33).
+     */
     static double closestDistance(Entity e, Location p) {
-        var box = e.getBoundingBox();
+        var box = QuidditchCombat.hitBox(e);
         double x = Math.clamp(p.getX(), box.getMinX(), box.getMaxX());
         double y = Math.clamp(p.getY(), box.getMinY(), box.getMaxY());
         double z = Math.clamp(p.getZ(), box.getMinZ(), box.getMaxZ());
