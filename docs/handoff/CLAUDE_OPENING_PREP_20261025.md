@@ -46,6 +46,7 @@ codex_title_awards, codex_artifact_pity, codex_shop_tutorial(SQLite: shop_tutori
 
 ## 오너 검수 중 추가 변경 (2026-10-25 오전, 검수 기록: CLAUDE_OPENING_PREP_REVIEW_20261025.md)
 - 일러스트(ChacaPortrait): `queue.workers` 기본 2→12, 상한 8→16 (60명 10분 안). `auto.server-ids` 기본 [school, tutorial_1, tutorial_2]. **운영 config.yml 의 queue.workers 를 12로 직접 바꿔야 함.**
+- 칭호(#21): titles.yml 에 마법 237·업적 38·티어 4 칭호 추가 (총 290 + NPC 자동), title-awards.yml discovery 237·fishing 대물/괴물같은·`affinity.npc-prefix` (ChacaNPC npcs/*.yml 의 id·name 으로 `prefix_npc_<id>` = "<이름>의" 자동 생성, 호감도 30). **운영 서버의 MagicCodexBridge/titles.yml·title-awards.yml 은 자동으로 안 바뀌므로 학교·야생·던전 모두 새 파일로 교체(직접 고친 칭호가 있으면 합치기) 후 `/서버관리 새로고침 칭호`.** TitleProtocol VERSION 02 (개수 1→2바이트, 상한 96 제거) → **Bridge 플러그인·클라 모드 같이 배포**, 옛 모드는 칭호창이 안 열림.
 - Velocity TutorialRouter: tutorial.properties 기본 `tutorial-servers=tutorial_1,tutorial_2`.
 - ChacaNPC 대화 버튼 `action: "shop:<상점ID>"` (또는 `shop:물고기판매소`) → 대화창 닫고 Bridge `NpcSocialFacade.openShop` 으로 상점 열기 (튜토리얼 재료 상점 분기 그대로). Bridge·ChacaNPC 같이 배포. 피피 버튼 예: `{ id: shop, label: "물건 좀 볼 수 있어요?", action: "shop:pipi" }`.
 - 스토리(ChacademyStory 플러그인 + 모드 같이 배포):

@@ -38,7 +38,7 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
     }
     private Set<String> defaults(){return catalog.values().stream().filter(d->d.enabled()&&d.initial()).map(TitleDefinition::id).collect(java.util.stream.Collectors.toUnmodifiableSet());}
     private void reload()throws Exception{
-        var y=new YamlConfiguration();y.load(new File(plugin.getDataFolder(),"titles.yml"));var root=y.getConfigurationSection("titles");if(root==null||root.getKeys(false).size()>TitleProtocol.MAX_TITLES)throw new IllegalArgumentException("칭호 최대 96개");var next=new LinkedHashMap<String,TitleDefinition>();
+        var y=new YamlConfiguration();y.load(new File(plugin.getDataFolder(),"titles.yml"));var root=y.getConfigurationSection("titles");if(root==null)throw new IllegalArgumentException("titles.yml 에 titles: 가 없어요");if(root.getKeys(false).size()>TitleProtocol.MAX_TITLES)throw new IllegalArgumentException("칭호가 너무 많아요 (최대 "+TitleProtocol.MAX_TITLES+"개)");var next=new LinkedHashMap<String,TitleDefinition>();
         for(String id:root.getKeys(false)){var s=root.getConfigurationSection(id);if(s==null)throw new IllegalArgumentException(id);int side=switch(s.getString("side","")){case "prefix"->0;case "suffix"->1;default->throw new IllegalArgumentException("칭호 side 확인: "+id);};String hex=s.getString("color",side==0?"#96E4EC":"#DEC58E");if(!hex.matches("#[a-fA-F0-9]{6}"))throw new IllegalArgumentException("칭호 color 확인: "+id);next.put(id,new TitleDefinition(id,side,s.getString("name",id),Integer.parseInt(hex.substring(1),16),s.getBoolean("enabled",true),s.getBoolean("initial",false)));}
         TitleAwards nextAwards;
         try{var awardsFile=new YamlConfiguration();awardsFile.load(new File(plugin.getDataFolder(),"title-awards.yml"));var presetFile=new YamlConfiguration();presetFile.load(new File(plugin.getDataFolder(),"player-presets.yml"));nextAwards=TitleAwards.parse(awardsFile,presetFile);}
@@ -47,9 +47,27 @@ final class TitleBridge implements Listener,PluginMessageListener,AutoCloseable 
             if(catalog.isEmpty()){plugin.getLogger().severe("title-awards.yml·player-presets.yml 읽기 실패 — 칭호 자동 지급·사전 설정을 멈춥니다: "+error.getMessage());nextAwards=TitleAwards.EMPTY;}
             else throw error;
         }
+        npcTitles(next,nextAwards);
         catalog=Collections.unmodifiableMap(next);awards=nextAwards;settled.clear();
         var missing=new TreeSet<String>();for(String id:nextAwards.referencedTitles())if(!next.containsKey(id))missing.add(id);
         if(!missing.isEmpty())plugin.getLogger().warning("title-awards.yml·player-presets.yml 이 titles.yml 에 없는 칭호를 가리켜요 (지급 안 함): "+missing);
+    }
+    /**
+     * NPC별 자동 접두 칭호 (오너 결정 2026-10-25: 호감도 30 → "리아의"). ChacaNPC 의 npcs/*.yml 에서 id·name 을 읽어 prefix_npc_<id> 를 만든다.
+     * titles.yml 에 같은 ID 가 있으면 그쪽을 쓴다. ChacaNPC 가 없는 서버(야생·던전)도 폴더가 있으면 읽고, 없으면 건너뛴다 (그 서버에선 NPC 칭호를 주지 않음 → 학교에서 줌).
+     */
+    private void npcTitles(Map<String,TitleDefinition> next,TitleAwards a){
+        if(a.npcFormat.isEmpty())return;
+        var chaca=Bukkit.getPluginManager().getPlugin("ChacaNPC");
+        File folder=chaca!=null?new File(chaca.getDataFolder(),"npcs"):new File(plugin.getDataFolder().getParentFile(),"ChacaNPC/npcs");
+        File[] files=folder.listFiles((d,n)->n.endsWith(".yml"));if(files==null)return;Arrays.sort(files);int made=0;
+        for(File file:files){
+            try{var y=YamlConfiguration.loadConfiguration(file);String npc=y.getString("id","").trim(),name=y.getString("name","").trim();if(npc.isEmpty()||name.isEmpty())continue;
+                String id=a.npcTitle(npc);if(id==null||!id.startsWith(TitleAwards.NPC_PREFIX)||next.containsKey(id))continue;
+                next.put(id,new TitleDefinition(id,0,a.npcTitleName(name),a.npcColor,true,false));made++;}
+            catch(IllegalArgumentException bad){plugin.getLogger().warning("NPC 칭호를 만들지 못했어요 ("+file.getName()+"): 이름·ID 확인");}
+        }
+        if(made>0)plugin.getLogger().info("NPC 호감도 칭호 "+made+"개 준비 (prefix_npc_*)");
     }
     private boolean current(Player p){return !closing&&p.isOnline()&&Bukkit.getPlayer(p.getUniqueId())==p;}
     private void main(Runnable r){if(!closing&&plugin.isEnabled())Bukkit.getScheduler().runTask(plugin,r);}

@@ -14,9 +14,9 @@ import school.magiccodex.protocol.TitleProtocol;
 /** Client-only presentation. No local title ownership, database or authoritative mutation. */
 public final class TitleClient {
     private interface Bytes{byte[] bytes();}
-    public record Query(byte[] bytes)implements CustomPayload,Bytes{static final Id<Query> ID=new Id<>(Identifier.of(TitleProtocol.REQUEST));static final PacketCodec<RegistryByteBuf,Query> CODEC=codec(Query::new);public Id<Query> getId(){return ID;}}
-    public record Reply(byte[] bytes)implements CustomPayload,Bytes{static final Id<Reply> ID=new Id<>(Identifier.of(TitleProtocol.RESPONSE));static final PacketCodec<RegistryByteBuf,Reply> CODEC=codec(Reply::new);public Id<Reply> getId(){return ID;}}
-    private static <T extends Bytes>PacketCodec<RegistryByteBuf,T> codec(Function<byte[],T> f){return new PacketCodec<>(){public T decode(RegistryByteBuf b){int n=b.readableBytes();if(n<4||n>TitleProtocol.MAX_BYTES){b.skipBytes(n);return f.apply(new byte[0]);}byte[] v=new byte[n];b.readBytes(v);return f.apply(v);}public void encode(RegistryByteBuf b,T value){b.writeBytes(value.bytes());}};}
+    public record Query(byte[] bytes)implements CustomPayload,Bytes{static final Id<Query> ID=new Id<>(Identifier.of(TitleProtocol.REQUEST));static final PacketCodec<RegistryByteBuf,Query> CODEC=codec(Query::new,TitleProtocol.MAX_REQUEST_BYTES);public Id<Query> getId(){return ID;}}
+    public record Reply(byte[] bytes)implements CustomPayload,Bytes{static final Id<Reply> ID=new Id<>(Identifier.of(TitleProtocol.RESPONSE));static final PacketCodec<RegistryByteBuf,Reply> CODEC=codec(Reply::new,TitleProtocol.MAX_BYTES);public Id<Reply> getId(){return ID;}}
+    private static <T extends Bytes>PacketCodec<RegistryByteBuf,T> codec(Function<byte[],T> f,int max){return new PacketCodec<>(){public T decode(RegistryByteBuf b){int n=b.readableBytes();if(n<4||n>max){b.skipBytes(n);return f.apply(new byte[0]);}byte[] v=new byte[n];b.readBytes(v);return f.apply(v);}public void encode(RegistryByteBuf b,T value){int n=value.bytes().length;if(n<4||n>max)throw new IllegalArgumentException("Title payload size");b.writeBytes(value.bytes());}};}
     private static long sequence,pending,until,lastSend;private static int action;private static TitleScreen owner;private static TitleProtocol.Response data;
     public static void initialize(){
         PayloadTypeRegistry.playC2S().register(Query.ID,Query.CODEC);PayloadTypeRegistry.playS2C().register(Reply.ID,Reply.CODEC);
