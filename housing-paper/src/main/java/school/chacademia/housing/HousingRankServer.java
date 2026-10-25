@@ -12,7 +12,7 @@ import school.magiccodex.protocol.HousingRankProtocol.*;
 
 /**
  * 하우징 랭킹 채널 (#51). 창은 /하우징랭킹 이 연다 (OPEN). 요청은 사람마다 0.25초에 한 번, 같은 사람의 앞 요청이 끝나기 전 새 요청은
- * 마지막 것만 처리 (generation). 방 이동은 /방구경 과 같은 규칙: 내 방·운영자는 바로, 그 밖은 친구만 (Rooms.open 이 다시 확인).
+ * 마지막 것만 처리 (generation). 방 이동은 친구가 아니어도 된다 (오너 결정 2026-10-25, /방구경 은 그대로 친구만).
  */
 final class HousingRankServer implements PluginMessageListener, Listener, AutoCloseable {
     private final HousingPlugin plugin;
@@ -69,15 +69,8 @@ final class HousingRankServer implements PluginMessageListener, Listener, AutoCl
         });
     }
 
-    /** /방구경 과 같은 규칙. 친구가 아니면 이동하지 않고 알림만. */
-    private void visit(Player p, UUID owner) {
-        if (owner.equals(p.getUniqueId()) || p.isOp()) { plugin.rooms().open(p, owner, false); return; }
-        plugin.store().isFriend(p.getUniqueId(), owner, friend -> {
-            if (!p.isOnline()) return;
-            if (Boolean.TRUE.equals(friend)) plugin.rooms().open(p, owner, false);
-            else send(p, new Notice(friend == null ? "지금은 친구 정보를 확인할 수 없어요. 잠시 후 다시 시도해 주세요." : "친구의 방만 방문할 수 있어요."));
-        });
-    }
+    /** 오너 결정 (2026-10-25): 랭킹에서는 친구가 아니어도 방에 갈 수 있다. 방이 실제로 있는지는 방을 읽을 때 확인. */
+    private void visit(Player p, UUID owner) { plugin.rooms().openFromRanking(p, owner); }
 
     private void send(Player p, ToClient m) { if (p.isOnline() && hasMod(p)) p.sendPluginMessage(plugin, HousingRankProtocol.CHANNEL, HousingRankProtocol.encode(m)); }
 

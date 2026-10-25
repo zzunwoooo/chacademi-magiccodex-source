@@ -88,6 +88,8 @@ final class Rooms {
         if(HousingVisitPolicy.immediate(viewer,owner,p.isOp())){openAllowed(p,owner,home);return;}
         plugin.store().isFriend(viewer,owner,friend->{if(Bukkit.getPlayer(viewer)!=p||!Objects.equals(openRequests.get(viewer),request))return;openRequests.remove(viewer);if(HousingVisitPolicy.allowed(viewer,owner,p.isOp(),friend))openAllowed(p,owner,home);else plugin.net().result(p,false,friend==null?"친구 방문 권한을 확인하지 못했어요.":"친구의 방만 방문할 수 있어요.");});
     }
+    /** #51 하우징 랭킹에서 방 이동 (오너 결정 2026-10-25): 친구가 아니어도 구경 가능. 랭킹 창에서만 쓴다 — /방구경 은 여전히 친구만. */
+    void openFromRanking(Player p, UUID owner) { openRequests.remove(p.getUniqueId()); openAllowed(p, owner, false); }
     private void openAllowed(Player p, UUID owner, boolean home) {
         if (!plugin.net().hasMod(p)) { ChacaLink.notify(p, "warning", "housing-nomod", "방 꾸미기를 열 수 없어요", "차카데미 클라이언트에서만 열 수 있어요", 2000); return; }
         UUID id = p.getUniqueId();

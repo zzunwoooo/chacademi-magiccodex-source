@@ -59,7 +59,8 @@ public final class HousingRankScreen extends Screen {
         try {
             c.getMatrices().translate(x0, y0, 0); c.getMatrices().scale(k, k, 1);
             whole(c, PANEL, 0, 0, VW, VH, 0xFFFFFFFF);
-            text(c, "하우징 랭킹", 196, 124, 44, GOLD, SERIF, false); // panel 에 제목 밑줄이 그려져 있어 그 위 (분리 PNG 조립 미리보기와 같은 자리)
+            // 제목: 기존 UI 굵은 글꼴, panel 의 제목 밑줄(약 200~600) 가운데 위, 위 테두리(86)와 밑줄(158) 사이 가운데 (오너 2026-10-25)
+            text(c, "하우징 랭킹", 400, 122, 44, GOLD, BOLD, true);
             for (int i = 0; i < 3; i++) {
                 var r = TABS[i]; boolean on = i == metric, over = !on && in(mx, my, r, 0);
                 nine(c, on ? TAB_ON : TAB_OFF, r[0], r[1], r[2], r[3], over ? 0xFFFFF4DC : 0xFFFFFFFF);

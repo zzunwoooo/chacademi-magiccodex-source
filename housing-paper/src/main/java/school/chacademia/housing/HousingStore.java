@@ -325,7 +325,7 @@ final class HousingStore {
      * 랭킹 한 쪽 (6줄). metric 0 = 일일 방문 (KST 오늘, 주인별 고유 방문자 수 — 본인 방문은 처음부터 기록 안 됨),
      * 1 = 누적 방문 (codex_housing_room.visits), 2 = 하트 (codex_housing_room.likes, 좋아요 토글 값). 측정 정의는 기존 그대로.
      * 그 값이 0 인 방은 빠진다. 같은 값이면 같은 순위 (1,1,3 …), 표시 순서는 값 → 누적 → 하트 → 오늘 → UUID.
-     * visit: 내 방 2 · 운영자 또는 친구 1 · 그 밖 0 (친구 전용). 친구 정보를 못 읽으면 0 — 실제 이동은 기존 방문 규칙이 다시 판단.
+     * visit: 내 방 2 · 그 밖 1 (랭킹에서는 친구가 아니어도 이동 가능, 오너 결정 2026-10-25).
      * 요청할 때만 읽는다 (주기 순회 없음). DB 오류면 null.
      */
     void ranking(int metric, int page, UUID viewer, boolean operator, Consumer<RankPage> done) {
@@ -364,12 +364,10 @@ final class HousingStore {
                     try (var r = s.executeQuery()) { ranks.put(x.value(), 1 + (r.next() ? r.getInt(1) : 0)); }
                 }
             }
-            Set<UUID> friends;
-            try { friends = operator ? Set.of() : directory.friends(viewer); } catch (Exception unknown) { friends = Set.of(); }
             var names = displayNames.read(raw.stream().map(Raw::owner).toList());
             var out = new ArrayList<RankRow>();
             for (var x : raw) {
-                int visit = x.owner().equals(viewer) ? 2 : operator || friends.contains(x.owner()) ? 1 : 0;
+                int visit = x.owner().equals(viewer) ? 2 : 1; // 랭킹에서는 누구 방이든 이동 가능 (오너 결정 2026-10-25)
                 String name = HousingNames.shown(names.get(x.owner()));
                 if (name.length() > 32) name = name.substring(0, 32);
                 out.add(new RankRow(x.owner(), name, x.today(), x.total(), x.hearts(), ranks.getOrDefault(x.value(), 1), visit));
