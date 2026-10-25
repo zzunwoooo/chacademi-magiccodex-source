@@ -96,3 +96,4 @@ buttons:
 | 70 | 지능 기준 책 열람 제한 | books.yml `required-intelligence` 이미 있음(모자라면 "아직 읽을 조건이 충족되지 않았어요 · 필요 지능 N") | 수업 목록에도 필요 지능 표시·교수 대사로 막기 | 완료 |
 | 71 | 스탯 마력→지능 | 확인: 스탯 표시·지팡이 툴팁·관리 명령은 이미 지능(예전 lore "[강화] 마력"은 숨김, 명령은 "마력"도 받음). 남은 "마력"은 마력 코어·마력 회로 강화·마력 재구성·아이템/아티팩트 설명 같은 고유명·분위기 문구라 그대로 | 확인 | 완료 |
 | 72 | 길잡이 별·퀘스트 연동 | 메인 스토리 목표(포탈·NPC·여러 지점이면 가장 가까운 곳) 연결, 10블록 안·재시전·단계 변경 시 끔. VFX 확인: 시전 성공 시 external:form → claude:guidingstar/form·hold·fade (spell-catalog), 팩 GuidingStar 는 배포 목록(external-vfx-assets.json)에 있음, 화살표 텍스처 chaca_story guide_arrow.png 있음. NPC·일일 퀘스트는 대상 아님 | VFX 확인 후 넘김 | 완료 |
+| 73 | Git 중앙 통합 기획안·시스템 안내 | — | 오너: 이미 함 | 완료(오너) |
