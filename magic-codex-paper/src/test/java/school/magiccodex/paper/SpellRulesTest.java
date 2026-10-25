@@ -10,7 +10,7 @@ class SpellRulesTest {
     @Test void legacyAndMobRoutesAreIsolatedFromTheCatalogIdentity()throws Exception{
         var routes=SpellRules.load(Path.of("src/main/resources/spell-runtime.yml").toFile());
         var paid=ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(98,routes.size()); // Original compatibility file is preserved, not activated in catalogue mode.
+        assertEquals(97,routes.size()); // 2026-10-26: cinder_detonation 기획에서 삭제 // Original compatibility file is preserved, not activated in catalogue mode.
         assertTrue(paid.catalogMode);
         assertFalse(paid.byId.containsKey("feather_step"));
         assertFalse(paid.byId.containsKey("wind_vault"));

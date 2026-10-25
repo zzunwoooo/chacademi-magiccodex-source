@@ -404,13 +404,11 @@ final class LifeSpells implements Listener, AutoCloseable {
     // ------------------------------------------------------------------ 깨달음의 빛 (enlighten_hint)
 
     /**
-     * 힌트로 고르지 않는 마법: 궁극(tools/spell_order.py 가중치 10), 버린 12종(spell_order.DROPPED), MagicDiscovery 의
+     * 힌트로 고르지 않는 마법: 궁극(tools/spell_order.py 가중치 10), MagicDiscovery 의
      * 미구현 조건(Definitions.PENDING). 번호를 다시 매겨도 id 는 그대로라 여기 목록은 가중치 10 이 바뀔 때만 고친다.
      */
     static final Set<String> NO_HINT = Set.of(
             "abyss_gate", "aurora_veil", "crimson_breath", "crossfire", "eclipse_eye", "flame_emperor", "heaven_cyclone", "leviathan_rise", "titan_stride",
-            "aerial_haul", "descent_command", "cinder_detonation", "flame_footprints", "fireproof_film", "water_mirror", "vine_ladder",
-            "automatic_supply", "light_mark", "luminous_archive", "experience_exchange", "white_night_sanctuary",
             "crimson_heart", "feather_step", "wind_vault", "handful_of_snow", "wet_footprints", "pressure_weight", "cold_storage");
 
     private record Hint(String spell, String permission, String condition) {}

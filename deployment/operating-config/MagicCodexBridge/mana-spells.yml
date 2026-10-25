@@ -49,13 +49,6 @@ spells:
     permission: magic.learned.far_touch
     mana-cost: 20
     cooldown-seconds: 15
-  aerial_haul:
-    name: 부유
-    enabled: false
-    command: 마법 aerial_haul
-    permission: magic.learned.aerial_haul
-    mana-cost: 250
-    cooldown-seconds: 120
   wind_message:
     name: 바람의 전언
     enabled: true
@@ -105,13 +98,6 @@ spells:
     permission: magic.learned.weightless_zone
     mana-cost: 320
     cooldown-seconds: 80
-  descent_command:
-    name: 낙하 명령
-    enabled: false
-    command: 마법 descent_command
-    permission: magic.learned.descent_command
-    mana-cost: 270
-    cooldown-seconds: 30
   trajectory_acceleration:
     name: 미라지 슈터
     enabled: true
@@ -294,13 +280,6 @@ spells:
     permission: magic.learned.flame_lash
     mana-cost: 75
     cooldown-seconds: 18
-  cinder_detonation:
-    name: 스타 퓨리
-    enabled: false
-    command: 마법 cinder_detonation
-    permission: magic.learned.cinder_detonation
-    mana-cost: 120
-    cooldown-seconds: 30
   palm_fireworks:
     name: 손바닥 폭죽
     enabled: true
@@ -357,13 +336,6 @@ spells:
     permission: magic.learned.sponge_drying
     mana-cost: 30
     cooldown-seconds: 15
-  flame_footprints:
-    name: 불꽃 걸음
-    enabled: false
-    command: 마법 flame_footprints
-    permission: magic.learned.flame_footprints
-    mana-cost: 10
-    cooldown-seconds: 0
   boiling_armor:
     name: 끓는 갑주
     enabled: true
@@ -392,13 +364,6 @@ spells:
     permission: magic.learned.explosive_wedge
     mana-cost: 350
     cooldown-seconds: 30
-  fireproof_film:
-    name: 내연성
-    enabled: false
-    command: 마법 fireproof_film
-    permission: magic.learned.fireproof_film
-    mana-cost: 0
-    cooldown-seconds: 0
   heat_recovery:
     name: 열량 보존
     enabled: true
@@ -490,13 +455,6 @@ spells:
     permission: magic.learned.ice_bridge
     mana-cost: 80
     cooldown-seconds: 30
-  water_mirror:
-    name: 수면의 거울
-    enabled: false
-    command: 마법 water_mirror
-    permission: magic.learned.water_mirror
-    mana-cost: 45
-    cooldown-seconds: 20
   spring_unseal:
     name: 수맥 개방
     enabled: true
@@ -714,13 +672,6 @@ spells:
     permission: magic.learned.stone_wall
     mana-cost: 60
     cooldown-seconds: 20
-  vine_ladder:
-    name: 덩굴 사다리
-    enabled: true
-    command: 마법 vine_ladder
-    permission: magic.learned.vine_ladder
-    mana-cost: 35
-    cooldown-seconds: 15
   earth_elemental:
     name: 그놈
     enabled: true
@@ -840,13 +791,6 @@ spells:
     permission: magic.learned.pollen_matchmaking
     mana-cost: 25
     cooldown-seconds: 15
-  automatic_supply:
-    name: 자동 보급
-    enabled: false
-    command: 마법 automatic_supply
-    permission: magic.learned.automatic_supply
-    mana-cost: 0
-    cooldown-seconds: 0
   dormant_seed:
     name: 동면의 씨앗
     enabled: true
@@ -932,13 +876,6 @@ spells:
     permission: magic.learned.minor_heal
     mana-cost: 15
     cooldown-seconds: 10
-  light_mark:
-    name: 빛의 낙인
-    enabled: true
-    command: 마법 light_mark
-    permission: magic.learned.light_mark
-    mana-cost: 10
-    cooldown-seconds: 5
   spatial_leap:
     name: 공간 도약
     # 2026-10-24 오너 확정: 시전 = 현재 위치를 개인 지점으로 (TravelBridge), 마나·쿨 없음. 개인 지점 이동의 마나·쿨은 travel.yml rules.personal-travel-*
@@ -947,13 +884,6 @@ spells:
     permission: magic.learned.spatial_leap
     mana-cost: 0
     cooldown-seconds: 0
-  luminous_archive:
-    name: 빛의 서고
-    enabled: false
-    command: 마법 luminous_archive
-    permission: magic.learned.luminous_archive
-    mana-cost: 20
-    cooldown-seconds: 5
   true_sight:
     name: 진실의 눈
     enabled: true
@@ -1125,20 +1055,6 @@ spells:
     permission: magic.learned.guardian_oath
     mana-cost: 130
     cooldown-seconds: 45
-  experience_exchange:
-    name: 경험의 환전
-    enabled: false
-    command: 마법 experience_exchange
-    permission: magic.learned.experience_exchange
-    mana-cost: 0
-    cooldown-seconds: 600
-  white_night_sanctuary:
-    name: 백야의 성역
-    enabled: false
-    command: 마법 white_night_sanctuary
-    permission: magic.learned.white_night_sanctuary
-    mana-cost: 250
-    cooldown-seconds: 180
   starlight_reprise:
     name: 별빛 재현
     enabled: true

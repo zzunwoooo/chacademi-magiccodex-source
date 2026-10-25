@@ -29,7 +29,7 @@ class TamingCatalogTest {
         for(String alias:Set.of("rainbow_collar","taming","교화","무지개 목줄"))
             assertEquals(TamingSpell.ID,catalog.resolve(alias),alias);
         assertFalse(catalog.byId.containsKey("taming"));
-        assertEquals(312,catalog.registeredCatalog.size()); // 2026-10-25: +63 new +12 life spells
+        assertEquals(300,catalog.registeredCatalog.size()); // 2026-10-25: +63 new +12 life spells, 2026-10-26: 꺼진 12개 삭제
         assertEquals("교화",catalog.registeredCatalog.get(TamingSpell.ID).get("name"));
     }
     @Test void aliasesCannotChargeTwiceOrAcquireIndependentCooldowns()throws Exception{

@@ -33,7 +33,7 @@ class TitleTest {
         try(var in=getClass().getClassLoader().getResourceAsStream("title-awards.yml")){awards.loadFromString(new String(in.readAllBytes(),java.nio.charset.StandardCharsets.UTF_8));}
         var rules=TitleAwards.parse(awards,new org.bukkit.configuration.file.YamlConfiguration());
         var catalogue=new ArrayList<TitleProtocol.Entry>();var root=titles.getConfigurationSection("titles");
-        assertEquals(290,root.getKeys(false).size());
+        assertEquals(278,root.getKeys(false).size()); // 2026-10-26: 꺼진 마법 12개 칭호 삭제
         for(String id:root.getKeys(false)){var entry=root.getConfigurationSection(id);catalogue.add(new TitleProtocol.Entry(id,entry.getString("side").equals("prefix")?0:1,entry.getString("name"),Integer.parseInt(entry.getString("color").substring(1),16)));}
         for(int i=0;i<40;i++){String npc="npc_"+i;catalogue.add(new TitleProtocol.Entry(rules.npcTitle(npc),0,rules.npcTitleName("NPC "+i),rules.npcColor));}
         var reply=new TitleProtocol.Response(true,12,UUID.randomUUID().toString(),7,"Player","","","",catalogue);
@@ -42,8 +42,8 @@ class TitleTest {
         var input=new java.io.DataInputStream(new java.io.ByteArrayInputStream(wire));
         assertEquals(0x54495402,input.readInt());input.readBoolean();input.readLong();input.readUTF();input.readLong();
         for(int i=0;i<4;i++)input.readUTF();
-        assertEquals(330,input.readUnsignedShort(),"v2 count is unsigned 16-bit, not truncated to 8-bit");
-        assertEquals("prefix_npc_npc_39",TitleProtocol.response(wire).entries().get(329).id());
+        assertEquals(318,input.readUnsignedShort(),"v2 count is unsigned 16-bit, not truncated to 8-bit");
+        assertEquals("prefix_npc_npc_39",TitleProtocol.response(wire).entries().get(317).id());
     }
     @Test void v2RejectsOldVersionAndEveryTruncatedRequest() {
         var query=new TitleProtocol.Request(TitleProtocol.APPLY,1,UUID.randomUUID().toString(),3,"prefix_star","suffix_student");

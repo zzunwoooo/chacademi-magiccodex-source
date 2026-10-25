@@ -28,11 +28,10 @@ final class NativeConditions implements Listener,AutoCloseable {
     private record BlockKey(UUID world,int x,int y,int z){static BlockKey of(Block b){return new BlockKey(b.getWorld().getUID(),b.getX(),b.getY(),b.getZ());}}
     private record Water(UUID player,int expires){}
     NativeConditions(MagicDiscovery plugin){this.plugin=plugin;partyHealing=new PartyHealing(plugin);origin=new NamespacedKey(plugin,"arrow_origin");nearbyInterval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
-    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);watchNearby(p);environment(p);if(p.getFireTicks()>0)burning.add(p.getUniqueId());}
+    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);watchNearby(p);environment(p);}
     /** Discard transient pre-reset evidence as well as persistent retry counters. */
     void restart(Player p,String spell){var t=traces.get(p.getUniqueId());if(t==null)return;
         switch(spell){
-            case "flame_footprints" -> {t.burning=0;if(p.getFireTicks()>0)burning.add(p.getUniqueId());}
             case "pressure_rupture" -> {t.rotation=0;t.still=null;}
             case "storm_command" -> {t.hotUntil=0;t.hotRotation=0;t.wasAirborne=false;}
             case "feather_step" -> fallState(p,false);
@@ -48,9 +47,7 @@ final class NativeConditions implements Listener,AutoCloseable {
     private void watchNearby(Player p){
         if(plugin.needed(p,"wind_decoy"))nearby.computeIfAbsent(Math.floorMod(p.getEntityId(),nearbyInterval),k->new HashSet<>()).add(p.getUniqueId());
     }
-    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void combust(EntityCombustEvent e){
-        if(e.getEntity() instanceof Player p&&plugin.needed(p,"flame_footprints"))burning.add(p.getUniqueId());
-    }
+    // 2026-10-26: 052 불꽃 걸음(flame_footprints) 기획에서 삭제 — 불타며 30초 버티기(burn.survive_thirty) 조건도 뺌
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void air(EntityAirChangeEvent e){
         // Also arms a stationary player when flowing water reaches their head.
         if(e.getEntity() instanceof Player p&&e.getAmount()<p.getRemainingAir())environment(p);
@@ -70,11 +67,6 @@ final class NativeConditions implements Listener,AutoCloseable {
             var session=plugin.session(p);if(session!=null&&session.learned.learned("water_breath",session.acquired.containsKey("water_breath")))it.remove();
         }
         // Only active continuous evidence is sampled each tick; no online-player or spell-catalog scan.
-        for(var it=burning.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
-            if(t==null||!plugin.eligible(p)||p.getFireTicks()<=0){if(t!=null)t.burning=0;it.remove();continue;}
-            var session=plugin.session(p);if(session!=null&&session.learned.learned("flame_footprints",session.acquired.containsKey("flame_footprints"))){it.remove();continue;}
-            t.burning=Math.min(600,t.burning+1);if(t.burning>=600&&plugin.needed(p,"flame_footprints"))add(p,"burn.survive_thirty",1);
-        }
         for(var it=hot.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
             if(t==null||!plugin.eligible(p)){if(t!=null)t.hotUntil=0;it.remove();continue;}
             if(!p.isOnGround())t.wasAirborne=true;

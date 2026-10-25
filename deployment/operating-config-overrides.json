@@ -52,56 +52,6 @@
  ],
  "keep": [
   {
-   "file": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
-   "path": [
-    "spells",
-    "vine_ladder",
-    "enabled"
-   ],
-   "reason": "103 덩굴 사다리: 운영에서만 켠 서버 이벤트 연동(CODEX_OPERATING_ALCHEMY_CARRIER_20261016 '103/134 runtime-only bindings')"
-  },
-  {
-   "file": "deployment/operating-config/MagicCodexBridge/mana-spells.yml",
-   "path": [
-    "spells",
-    "light_mark",
-    "enabled"
-   ],
-   "reason": "134 빛의 낙인: 운영에서만 켠 서버 이벤트 연동"
-  },
-  {
-   "file": "deployment/operating-config/PortableVFX/spell-catalog.yml",
-   "path": [
-    "spells",
-    "vine_ladder"
-   ],
-   "reason": "103 운영 연출 단계(phases)·enabled·reviewed"
-  },
-  {
-   "file": "deployment/operating-config/PortableVFX/spell-catalog.yml",
-   "path": [
-    "spells",
-    "light_mark"
-   ],
-   "reason": "134 운영 연출 단계(phases)·enabled·reviewed"
-  },
-  {
-   "file": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-   "path": [
-    "bindings",
-    "vine_ladder"
-   ],
-   "reason": "103 운영 전용 바인딩 (원본에 없음)"
-  },
-  {
-   "file": "deployment/operating-config/PortableVFX/spell-bindings.yml",
-   "path": [
-    "bindings",
-    "light_mark"
-   ],
-   "reason": "134 운영 전용 바인딩 (원본에 없음)"
-  },
-  {
    "file": "deployment/operating-config/MagicCodexBridge/climate.yml",
    "path": [
     "season-clock"

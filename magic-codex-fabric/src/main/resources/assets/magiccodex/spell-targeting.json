@@ -90,12 +90,6 @@
    "mode": "unit",
    "range": 34
   },
-  "cinder_detonation": {
-   "filter": "burning",
-   "mode": "unit",
-   "radius": 3.0,
-   "range": 31
-  },
   "concrete_curing": {
    "mode": "point",
    "radius": 0.6,
@@ -374,10 +368,6 @@
    "mode": "point",
    "radius": 0.6,
    "range": 20
-  },
-  "light_mark": {
-   "mode": "unit",
-   "range": 34
   },
   "lightning_needle": {
    "mode": "area",

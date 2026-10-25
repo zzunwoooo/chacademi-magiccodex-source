@@ -95,7 +95,7 @@ lessons:
     all-done: "내가 가르칠 수 있는 건 여기까지란다. 나머지는 책이 알려 줄 거야."
     classes:
       - { book: lesson_light_1, name: "[기초] 작은 치유 · 동행 귀환 · 교화" }
-      - { book: lesson_light_2, name: "[중급] 보호 결계 · 빛의 서고" }
+      - { book: lesson_light_2, name: "[중급] 보호 결계 · 기억의 등불" }
       - { book: lesson_light_3, name: "[고급] 자비의 화살 · 마력 예금" }
       - { book: lesson_light_secret, name: "[비전] 성좌의 가호", affinity: 30 }
   gregor:

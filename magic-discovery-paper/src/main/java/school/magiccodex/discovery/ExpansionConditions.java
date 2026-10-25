@@ -26,10 +26,9 @@ import org.bukkit.potion.PotionEffectType;
  */
 final class ExpansionConditions implements Listener, AutoCloseable {
     private final MagicDiscovery plugin;
-    private final NamespacedKey sameBlocks;
     private int tick;
     private static final class Trace {
-        double vine, compass, pet, sneak; int dark; boolean petNear; int petChecked;
+        double compass, pet, sneak; int dark; boolean petNear; int petChecked;
         double slimeTop = Double.NaN, apex; int bounces; boolean onSlime;
         UUID blockedAttacker; int blockedUntil;
     }
@@ -39,7 +38,6 @@ final class ExpansionConditions implements Listener, AutoCloseable {
 
     ExpansionConditions(MagicDiscovery plugin) {
         this.plugin = plugin;
-        sameBlocks = new NamespacedKey(plugin, "same_block_counts");
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1, 1);
     }
 
@@ -57,7 +55,7 @@ final class ExpansionConditions implements Listener, AutoCloseable {
     }
     private static boolean night(World w) { long t = w.getTime(); return w.getEnvironment() == World.Environment.NORMAL && t >= 13000 && t <= 23000; }
 
-    // ------------------------------------------------------------------ block placing (101 112 107 115 121 148 126 165)
+    // ------------------------------------------------------------------ block placing (101 112 107 115 148 126 165; 121 자동 보급 2026-10-26 삭제)
     private static final Set<Material> CROP_BLOCKS = EnumSet.of(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS,
         Material.MELON_STEM, Material.PUMPKIN_STEM, Material.TORCHFLOWER_CROP, Material.PITCHER_CROP, Material.NETHER_WART);
     private static final Set<Material> TALL_FLOWERS = EnumSet.of(Material.SUNFLOWER, Material.LILAC, Material.ROSE_BUSH, Material.PEONY, Material.PITCHER_PLANT);
@@ -79,25 +77,6 @@ final class ExpansionConditions implements Listener, AutoCloseable {
             Location at = e.getBlockPlaced().getLocation();
             pumpkins.put(at, p.getUniqueId()); pumpkinTick.put(at, tick);
         }
-        if (m.isBlock() && m.isSolid() && !CROP_BLOCKS.contains(m) && plugin.needed(p, "automatic_supply")) sameBlock(p, m);
-    }
-
-    /** 121: the best count of any single building block; the discovery counter only grows when that best grows. */
-    private void sameBlock(Player p, Material m) {
-        var pdc = p.getPersistentDataContainer();
-        String raw = pdc.getOrDefault(sameBlocks, PersistentDataType.STRING, "");
-        var counts = new LinkedHashMap<String, Integer>();
-        for (String part : raw.split(";")) { String[] kv = part.split("="); if (kv.length == 2) try { counts.put(kv[0], Integer.parseInt(kv[1])); } catch (NumberFormatException ignored) {} }
-        int best = counts.values().stream().mapToInt(Integer::intValue).max().orElse(0);
-        int now = counts.merge(m.name(), 1, Integer::sum);
-        if (counts.size() > 64) { // keep the 64 largest
-            var keep = counts.entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(64).toList();
-            counts.clear(); keep.forEach(x -> counts.put(x.getKey(), x.getValue()));
-        }
-        var text = new StringBuilder();
-        counts.forEach((k, v) -> text.append(k).append('=').append(v).append(';'));
-        pdc.set(sameBlocks, PersistentDataType.STRING, text.toString());
-        if (now > best) add(p, "place.same_block", now - best);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -263,7 +242,7 @@ final class ExpansionConditions implements Listener, AutoCloseable {
         if (thrower != null && amount > 0) add(thrower, "food.shared", amount);
     }
 
-    // ------------------------------------------------------------------ movement (103 127 132 154 167)
+    // ------------------------------------------------------------------ movement (127 132 154 167; 103 덩굴 사다리 2026-10-26 삭제)
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void move(PlayerMoveEvent e) {
         Location from = e.getFrom(), to = e.getTo();
@@ -274,10 +253,6 @@ final class ExpansionConditions implements Listener, AutoCloseable {
         if (flat < 1e-4 && Math.abs(dy) < 1e-4) return;
         if (!plugin.eligible(p) || flat > 3) return; // teleports / vehicles
         Trace t = null;
-        if (dy > 0 && plugin.needed(p, "vine_ladder")) {
-            Material at = to.getBlock().getType(), feet = from.getBlock().getType();
-            if (at == Material.VINE || feet == Material.VINE) { t = trace(p); t.vine += dy; int whole = (int) t.vine; if (whole > 0) { t.vine -= whole; add(p, "climb.vine", whole); } }
-        }
         if (flat > 0 && p.isOnGround() && plugin.needed(p, "guiding_star")
             && (p.getInventory().getItemInMainHand().getType() == Material.COMPASS || p.getInventory().getItemInOffHand().getType() == Material.COMPASS)) {
             t = t == null ? trace(p) : t; t.compass += flat; int whole = (int) t.compass; if (whole > 0) { t.compass -= whole; add(p, "walk.compass", whole); }

@@ -71,6 +71,6 @@ class TitleAwardsTest {
         var parsed=TitleAwards.parse(awards,presets);
         for(String id:parsed.referencedTitles())assertTrue(titles.isConfigurationSection("titles."+id),id);
         assertTrue(titles.getConfigurationSection("titles").getKeys(false).size()<=school.magiccodex.protocol.TitleProtocol.MAX_TITLES);
-        assertEquals(237,parsed.discovery.size(),"owner plan: one title per spell");
+        assertEquals(225,parsed.discovery.size(),"owner plan: one title per spell (2026-10-26: 꺼진 12개 삭제)");
     }
 }

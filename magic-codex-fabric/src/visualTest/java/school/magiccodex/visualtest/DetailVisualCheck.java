@@ -17,11 +17,11 @@ final class DetailVisualCheck {
             if(c.getOverlay()!=null)return;
             if(phase[0]==0){
                 c.options.pauseOnLostFocus=false;c.options.getGuiScale().setValue(2);c.onResolutionChanged();
-                var first=new CodexData.Spell("descent_command","낙하 명령",CodexData.Category.WIND,
-                    "공중에 떠 있는 몬스터 하나를 아래로 내리꽂습니다. 지면에 부딪히면 추가 피해를 줍니다.",
-                    "공중에 떠 있는 몬스터에게 윈드 프레스 50회 사용하기.",
-                    "강력한 마법사의 윈드 프레스는 더욱 강력한 파괴력을 가지게 된다.",45,true,
-                    "magiccodex:textures/spells/expansion/descent_command.png","magic.learned.descent_command","마법 낙하명령",0,true);
+                var first=new CodexData.Spell("pressure_press","윈드 프레스",CodexData.Category.WIND,
+                    "공중에 있는 대상을 낙하시킵니다.",
+                    "앵무새를 1회 공격하기.",
+                    "날개를 스친 순간 공기가 눌리는 감각이 남았다. 무거워진 바람 속에서는 새도 날개를 펼 수 없었다.",20,true,
+                    "magiccodex:textures/spells/expansion_2/pressure_press.png","magic.learned.pressure_press","마법 pressure_press",0,true);
                 var longText=new StringBuilder();for(int i=1;i<=45;i++)longText.append("기록 ").append(i).append(": 바람의 흐름을 관찰하고 새로운 마법을 발견합니다.\n");
                 c.setScreen(new CodexScreen(List.of(first,
                     new CodexData.Spell("feather_step","매우 긴 연구 기록",CodexData.Category.WIND,longText.toString(),longText.toString(),longText.toString(),10,true),

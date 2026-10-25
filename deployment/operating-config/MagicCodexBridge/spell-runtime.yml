@@ -302,14 +302,6 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
-  cinder_detonation:
-    name: "스타 퓨리"
-    skill: "CHA_cinder_detonation"
-    target: "BURNING_ENTITY"
-    range: 31
-    utility: false
-    base-damage: 8
-    power-ratio: 0.6
   palm_fireworks:
     name: "손바닥 폭죽"
     skill: "CHA_palm_fireworks"
@@ -761,14 +753,6 @@ spells:
     base-damage: 0
     power-ratio: 0
     ground: true
-  vine_ladder:
-    name: "덩굴 사다리"
-    skill: "CHA_vine_ladder"
-    target: "SELF"
-    range: 5
-    utility: false
-    base-damage: 0
-    power-ratio: 0
   earth_elemental:
     name: "그놈"
     skill: "CHA_earth_elemental"
@@ -1007,14 +991,6 @@ spells:
     utility: false
     base-damage: 0
     power-ratio: 0
-  light_mark:
-    name: "빛의 낙인"
-    skill: "CHA_light_mark"
-    target: "ENTITY"
-    range: 34
-    utility: false
-    base-damage: 2
-    power-ratio: 0.25
   true_sight:
     name: "진실의 눈"
     skill: "CHA_true_sight"
@@ -1198,14 +1174,6 @@ spells:
     skill: "CHA_guardian_oath"
     target: "SELF"
     range: 10
-    utility: false
-    base-damage: 0
-    power-ratio: 0
-  experience_exchange:
-    name: "경험의 환전"
-    skill: "CHA_experience_exchange"
-    target: "SELF"
-    range: 12
     utility: false
     base-damage: 0
     power-ratio: 0

@@ -48,7 +48,7 @@ titles:
     name: 연인
     color: '#DEC58E'
 
-  # ── 마법 발견 칭호 237개 (오너 기획 chacademi-titles-all.yml, 2026-10-25). 지급: title-awards.yml discovery
+  # ── 마법 발견 칭호 225개 (오너 기획 chacademi-titles-all.yml 237개, 2026-10-25 / 꺼진 마법 12개 2026-10-26 삭제). 지급: title-awards.yml discovery
   prefix_magic_feather_fall:  # 001 깃털 낙하 (바람)
     side: prefix
     name: '가벼운'
@@ -60,10 +60,6 @@ titles:
   prefix_magic_light_leap:  # 005 상승기류 (바람)
     side: prefix
     name: '솟구치는'
-    color: '#96E4EC'
-  prefix_magic_aerial_haul:  # 008 부유 (바람)
-    side: prefix
-    name: '떠다니는'
     color: '#96E4EC'
   prefix_magic_vacuum_cleave:  # 011 윈드 커터 (바람)
     side: prefix
@@ -80,10 +76,6 @@ titles:
   prefix_magic_weightless_zone:  # 015 중력지대 (바람)
     side: prefix
     name: '끌어당기는'
-    color: '#96E4EC'
-  prefix_magic_descent_command:  # 016 낙하 명령 (바람)
-    side: prefix
-    name: '내리꽂는'
     color: '#96E4EC'
   prefix_magic_dust_duster:  # 018 클린 (바람)
     side: prefix
@@ -125,10 +117,6 @@ titles:
     side: prefix
     name: '불사의'
     color: '#96E4EC'
-  prefix_magic_cinder_detonation:  # 043 스타 퓨리 (불)
-    side: prefix
-    name: '휘몰아치는'
-    color: '#96E4EC'
   prefix_magic_ash_brand:  # 045 재의 낙인 (불)
     side: prefix
     name: '째깍이는'
@@ -153,10 +141,6 @@ titles:
     side: prefix
     name: '무던한'
     color: '#96E4EC'
-  prefix_magic_fireproof_film:  # 057 내연성 (불)
-    side: prefix
-    name: '시원한'
-    color: '#96E4EC'
   prefix_magic_firebird_hunt:  # 059 불새 (불)
     side: prefix
     name: '날개돋친'
@@ -176,10 +160,6 @@ titles:
   prefix_magic_purifying_wave:  # 069 정화의 물결 (물)
     side: prefix
     name: '맑은'
-    color: '#96E4EC'
-  prefix_magic_water_mirror:  # 071 수면의 거울 (물)
-    side: prefix
-    name: '비추는'
     color: '#96E4EC'
   prefix_magic_eternal_ice_prison:  # 074 만년빙옥 (물)
     side: prefix
@@ -281,10 +261,6 @@ titles:
     side: prefix
     name: '매끈한'
     color: '#96E4EC'
-  prefix_magic_automatic_supply:  # 121 자동 보급 (대지)
-    side: prefix
-    name: '알뜰한'
-    color: '#96E4EC'
   prefix_magic_counterweight:  # 123 반격의 무게추 (대지)
     side: prefix
     name: '되갚는'
@@ -360,14 +336,6 @@ titles:
   prefix_magic_mana_deposit:  # 159 마력 예금 (빛)
     side: prefix
     name: '아끼는'
-    color: '#96E4EC'
-  prefix_magic_experience_exchange:  # 161 경험의 환전 (빛)
-    side: prefix
-    name: '텅빈'
-    color: '#96E4EC'
-  prefix_magic_white_night_sanctuary:  # 162 백야의 성역 (빛)
-    side: prefix
-    name: '평온한'
     color: '#96E4EC'
   prefix_magic_starlight_reprise:  # 163 별빛 재현 (빛)
     side: prefix
@@ -633,10 +601,6 @@ titles:
     side: suffix
     name: '제련사'
     color: '#DEC58E'
-  suffix_magic_flame_footprints:  # 052 불꽃 걸음 (불)
-    side: suffix
-    name: '발자취'
-    color: '#DEC58E'
   suffix_magic_kiln_breath:  # 054 가마 숨결 (불)
     side: suffix
     name: '가마지기'
@@ -733,10 +697,6 @@ titles:
     side: suffix
     name: '성벽'
     color: '#DEC58E'
-  suffix_magic_vine_ladder:  # 103 덩굴 사다리 (대지)
-    side: suffix
-    name: '사다리'
-    color: '#DEC58E'
   suffix_magic_earth_elemental:  # 104 그놈 (대지)
     side: suffix
     name: '꼬마'
@@ -789,17 +749,9 @@ titles:
     side: suffix
     name: '길잡이'
     color: '#DEC58E'
-  suffix_magic_light_mark:  # 134 빛의 낙인 (빛)
-    side: suffix
-    name: '추적자'
-    color: '#DEC58E'
   suffix_magic_spatial_leap:  # 135 공간 도약 (빛)
     side: suffix
     name: '여행자'
-    color: '#DEC58E'
-  suffix_magic_luminous_archive:  # 136 빛의 서고 (빛)
-    side: suffix
-    name: '열쇠'
     color: '#DEC58E'
   suffix_magic_protective_ward:  # 138 보호 결계 (빛)
     side: suffix

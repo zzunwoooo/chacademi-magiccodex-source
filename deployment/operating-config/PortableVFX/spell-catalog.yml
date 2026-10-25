@@ -10740,31 +10740,3 @@ spells:
         delay-ticks: 0
         duration-ticks: 30
     preparation-status: server-events-connected
-  vine_ladder:
-    number: 103
-    name: 덩굴 사다리
-    permission: magic.learned.vine_ladder
-    icon: magiccodex:textures/spells/intermediate/vine_ladder.png
-    mana-cost: 35
-    cooldown-seconds: 15
-    reviewed: true
-    enabled: true
-    aliases: []
-    phases: [{"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/begin", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 65}, {"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/begin_2", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 65}, {"role": "static", "trigger": "external:grow", "effect": "claude:vineladder/sustain", "anchor": "impact", "delay-ticks": 48, "duration-ticks": 600, "finish-after-ticks": 552}, {"role": "scoped-static", "trigger": "external:ladder_end", "effect": "claude:vineladder/end", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 55, "stop-effects": ["claude:vineladder/begin", "claude:vineladder/begin_2", "claude:vineladder/sustain"]}, {"role": "scoped-static", "trigger": "external:ladder_end", "effect": "claude:vineladder/end_2", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 55, "stop-effects": ["claude:vineladder/begin", "claude:vineladder/begin_2", "claude:vineladder/sustain"]}]
-    preparation-status: server-events-connected
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/intermediate/vine_ladder.png
-  light_mark:
-    number: 134
-    name: 빛의 낙인
-    permission: magic.learned.light_mark
-    icon: magiccodex:textures/spells/novice_extra/light_mark.png
-    mana-cost: 10
-    cooldown-seconds: 5
-    reviewed: true
-    enabled: true
-    aliases: []
-    phases: [{"role": "attached", "trigger": "cast", "effect": "claude:lightmark/cast", "anchor": "caster", "delay-ticks": 0, "duration-ticks": 20}, {"role": "projectile", "trigger": "external:runtime_projectile", "effect": "claude:lightmark/projectile", "anchor": "projectile", "delay-ticks": 0, "duration-ticks": 440}, {"role": "impact", "trigger": "external:contact", "effect": "claude:lightmark/impact", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 28}, {"role": "impact", "trigger": "external:block_contact", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}, {"role": "impact", "trigger": "external:miss", "effect": "claude:lightmark/fizzle", "anchor": "impact", "delay-ticks": 0, "duration-ticks": 32}]
-    preparation-status: server-events-connected
-    numeric-source: magic-work/merged-input-300.json
-    baseline-icon: magiccodex:textures/spells/novice_extra/light_mark.png

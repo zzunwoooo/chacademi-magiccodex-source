@@ -306,21 +306,4 @@ ORDER = {
     'eclipse_eye': (299, 'dark', 10, 196),  # 월식의 눈
     'abyss_gate': (300, 'dark', 10, 371),  # 심연의 문
 }
-# 버린 마법 (도감에서 뺌, 서버 설정은 꺼진 채로 둠)
-DROPPED = ['aerial_haul', 'descent_command', 'cinder_detonation', 'flame_footprints', 'fireproof_film', 'water_mirror', 'vine_ladder', 'automatic_supply', 'light_mark', 'luminous_archive', 'experience_exchange', 'white_night_sanctuary']
 def number(i, default=None): return ORDER[i][0] if i in ORDER else default
-# 버린 마법의 이름·원소·옛 번호 (생성기가 미몹 스킬 주석·원소를 계속 쓸 수 있게)
-DROPPED_INFO = {
-    'aerial_haul': ('부유', 'wind', 8),
-    'descent_command': ('낙하 명령', 'wind', 16),
-    'cinder_detonation': ('스타 퓨리', 'fire', 43),
-    'flame_footprints': ('불꽃 걸음', 'fire', 52),
-    'fireproof_film': ('내연성', 'fire', 57),
-    'water_mirror': ('수면의 거울', 'water', 71),
-    'vine_ladder': ('덩굴 사다리', 'earth', 103),
-    'automatic_supply': ('자동 보급', 'earth', 121),
-    'light_mark': ('빛의 낙인', 'light', 134),
-    'luminous_archive': ('빛의 서고', 'light', 136),
-    'experience_exchange': ('경험의 환전', 'light', 161),
-    'white_night_sanctuary': ('백야의 성역', 'light', 162),
-}

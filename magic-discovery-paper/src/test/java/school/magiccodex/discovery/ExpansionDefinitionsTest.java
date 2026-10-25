@@ -19,7 +19,7 @@ class ExpansionDefinitionsTest {
         // one key may feed two spells (harvest 100 / 300)
         assertEquals(2, d.index.get("harvest.crops").size());
         // 조건 미정이던 7종은 2026-10-26 교수 수업(수동 조건)으로
-        for (String lesson : List.of("moss_coating", "flint_sorting", "dormant_seed", "material_exchange", "luminous_archive", "constellation_blessing", "mana_deposit"))
+        for (String lesson : List.of("moss_coating", "flint_sorting", "dormant_seed", "material_exchange", "memory_lantern", "constellation_blessing", "mana_deposit")) // 2026-10-26: 빛의 서고 삭제 → 빛 중급 수업은 기억의 등불
             assertEquals(Map.of(Definitions.conditionKey(lesson), 1d), d.manual.get(lesson).requirements(), lesson);
     }
 }

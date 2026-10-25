@@ -14,7 +14,8 @@ class EventIndexTest {
         assertEquals(5d,d.spells.get("quiet_mooring").requirements().get("place.boat"));
         assertEquals(List.of("falling_star"),d.meta.stream().map(Definitions.Spell::id).toList());
         // Travel's new state-only condition must not broaden any of the reviewed native event routes.
-        assertEquals(Set.of("aerial_haul","crimson_breath","guardian_oath"),new HashSet<>(d.stateOnly.stream().map(Definitions.Spell::id).filter(id->!id.equals("spatial_leap")).toList()));
+        assertEquals(Set.of("crimson_breath","guardian_oath"), // 2026-10-26: aerial_haul 기획에서 삭제
+            new HashSet<>(d.stateOnly.stream().map(Definitions.Spell::id).filter(id->!id.equals("spatial_leap")).toList()));
         assertEquals(List.of("spatial_leap"),d.index.get("state.travel_waypoints").stream().map(Definitions.Spell::id).toList());
         assertTrue(d.stateOnly.stream().anyMatch(spell->spell.id().equals("spatial_leap")));
         assertFalse(d.meta.stream().anyMatch(spell->spell.id().equals("spatial_leap")));

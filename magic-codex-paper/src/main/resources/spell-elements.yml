@@ -10,7 +10,6 @@ spells:
   light_leap: wind
   flight: wind
   far_touch: wind
-  aerial_haul: wind
   wind_message: wind
   storm_command: wind
   vacuum_cleave: wind
@@ -18,7 +17,6 @@ spells:
   returning_wind: wind
   wind_grooming: wind
   weightless_zone: wind
-  descent_command: wind
   trajectory_acceleration: wind
   dust_duster: wind
   leaf_cleanup: wind
@@ -45,7 +43,6 @@ spells:
   living_furnace: fire
   falling_star: fire
   flame_lash: fire
-  cinder_detonation: fire
   palm_fireworks: fire
   ash_brand: fire
   flame_leap: fire
@@ -54,12 +51,10 @@ spells:
   glass_firing: fire
   charcoal_conversion: fire
   sponge_drying: fire
-  flame_footprints: fire
   boiling_armor: fire
   kiln_breath: fire
   glaze_coating: fire
   explosive_wedge: fire
-  fireproof_film: fire
   heat_recovery: fire
   firebird_hunt: fire
   lava_suture: fire
@@ -73,7 +68,6 @@ spells:
   quench: water
   purifying_wave: water
   ice_bridge: water
-  water_mirror: water
   spring_unseal: water
   water_elemental: water
   eternal_ice_prison: water
@@ -105,7 +99,6 @@ spells:
   miners_rhythm: earth
   earth_shaping: earth
   stone_wall: earth
-  vine_ladder: earth
   earth_elemental: earth
   earthquake: earth
   climate_control: earth
@@ -123,7 +116,6 @@ spells:
   compost_return: earth
   thorn_seeds: earth
   pollen_matchmaking: earth
-  automatic_supply: earth
   dormant_seed: earth
   counterweight: earth
   material_exchange: earth
@@ -136,9 +128,7 @@ spells:
   primordial_stone: earth
   guiding_star: light
   minor_heal: light
-  light_mark: light
   spatial_leap: light
-  luminous_archive: light
   true_sight: light
   protective_ward: light
   constellation_blessing: light
@@ -163,8 +153,6 @@ spells:
   merciful_arrow: light
   mana_deposit: light
   guardian_oath: light
-  experience_exchange: light
-  white_night_sanctuary: light
   starlight_reprise: light
   constellation_emissary: light
   night_sight: dark

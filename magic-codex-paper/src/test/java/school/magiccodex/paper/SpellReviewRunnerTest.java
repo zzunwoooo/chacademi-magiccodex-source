@@ -12,7 +12,7 @@ class SpellReviewRunnerTest {
         var catalog = ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
         assertEquals(catalog.byId.size(), catalog.order.size());
         assertEquals("feather_fall", catalog.order.get(0));
-        assertFalse(catalog.order.contains("aerial_haul")); // enabled: false
+        assertFalse(catalog.order.contains("aerial_haul")); // 2026-10-26 기획에서 삭제
         assertTrue(catalog.order.indexOf("wind_basket") < catalog.order.indexOf("flight"));
     }
 

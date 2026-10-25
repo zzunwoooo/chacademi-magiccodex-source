@@ -7,7 +7,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -23,18 +22,16 @@ import org.bukkit.util.Vector;
  *  030 resonant_arrow 미스틱 슈터 - direct attacks only (melee / own arrow, not spells): one extra wind arrow.
  *      Both can trigger from the same hit; the extra arrows never trigger either passive again (proc flag).
  *  049 glass_firing 광석 재련 - ore drops are smelted (furnace recipe). mana per ore block.
- *  052 flame_footprints 불꽃 걸음 - mana per second; footprints behind the player explode after a fuse.
  *  055 glaze_coating 화염의 정복자 - immune to fire damage (in fire, burning) and to the 화상 status.
- *  121 automatic_supply 자동 보급 - the last building block in hand is refilled from the inventory.
  *  177 hungry_shadow 굶주린 그림자 - each monster the player kills gives food (1칸 = 2 points, saturation unchanged).
  *  193 inverted_offering 뒤집힌 공물 - a monster the player kills drops no items; they are offered for extra XP
  *      (xp-per-item x item count, rounded up; conversion_ratio 미정 - placeholder). Players / own summons never count.
  * Numbers: config.yml passives.* (all placeholders until the balance review).
+ * 2026-10-26: 052 불꽃 걸음·121 자동 보급은 기획에서 삭제 (오너) — 기능도 뺐다.
  */
 final class Passives implements Listener {
     private final MagicMythicPlugin plugin;
     private final Map<UUID, Long> icd = new HashMap<>();
-    private final Map<UUID, Footsteps> steps = new HashMap<>();
     private final Map<Material, ItemStack> smelt = new HashMap<>();
     private long tick = 0;
 
@@ -142,80 +139,9 @@ final class Passives implements Listener {
     /** 화염의 정복자 equipped (StatusEffects refuses 화상). */
     boolean fireImmune(Player p) { return on(p, "glaze_coating"); }
 
-    // ------------------------------------------------------------------ 121 refill
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void placed(BlockPlaceEvent e) {
-        Player p = e.getPlayer();
-        ItemStack used = e.getItemInHand();
-        if (used.getAmount() != 1 || !used.getType().isBlock() || !used.getType().isSolid()) return;
-        if (p.getGameMode() != GameMode.SURVIVAL && p.getGameMode() != GameMode.ADVENTURE || !on(p, "automatic_supply")) return;
-        EquipmentSlot hand = e.getHand();
-        ItemStack template = used.asOne();
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!p.isOnline()) return;
-            var inv = p.getInventory();
-            ItemStack now = inv.getItem(hand);
-            if (now != null && !now.getType().isAir()) return;
-            int handSlot = hand == EquipmentSlot.HAND ? inv.getHeldItemSlot() : 40;
-            for (int slot = 0; slot < 36; slot++) {
-                if (slot == handSlot) continue;
-                ItemStack it = inv.getItem(slot);
-                if (it == null || !it.isSimilar(template)) continue;
-                inv.setItem(hand, it);
-                inv.setItem(slot, null);
-                Links.vfx(p, "automatic_supply", "external:refill", p.getLocation(), null);
-                return;
-            }
-        });
-    }
-
-    // ------------------------------------------------------------------ 052 footprints
-    private static final class Footsteps {
-        Location last; boolean paid; long nextPay; final ArrayDeque<Object[]> pending = new ArrayDeque<>(); // Location, explodeTick
-    }
-
     private void tick() {
         tick++;
         if ((tick & 1023) == 0) icd.values().removeIf(t -> t < tick);
-        var c = cfg("flame_footprints");
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            Footsteps f = steps.get(p.getUniqueId());
-            boolean active = on(p, "flame_footprints");
-            if (!active) { if (f != null && f.pending.isEmpty()) steps.remove(p.getUniqueId()); }
-            else {
-                if (f == null) { f = new Footsteps(); steps.put(p.getUniqueId(), f); }
-                if (tick >= f.nextPay) { f.paid = Links.consume(p, c.getDouble("mana-per-second", 10)); f.nextPay = tick + 20; }
-                Location at = p.getLocation();
-                if (f.paid && p.isOnGround() && (f.last == null || f.last.getWorld() != at.getWorld()
-                    || f.last.distanceSquared(at) >= Math.pow(c.getDouble("spacing", 1.5), 2))) {
-                    f.last = at.clone();
-                    if (f.pending.size() < c.getInt("max-active", 12)) {
-                        f.pending.add(new Object[]{at.clone(), tick + Math.clamp(c.getInt("fuse-ticks", 30), 1, 200)});
-                        Links.vfx(p, "flame_footprints", "external:step", at, null);
-                    }
-                }
-            }
-            if (f == null) continue;
-            while (!f.pending.isEmpty() && (long) f.pending.peek()[1] <= tick) {
-                Location at = (Location) f.pending.poll()[0];
-                if (!p.isOnline() || at.getWorld() == null || !at.getWorld().equals(p.getWorld())) continue;
-                explode(p, at, c);
-            }
-        }
-        steps.keySet().removeIf(id -> Bukkit.getPlayer(id) == null);
-    }
-
-    private void explode(Player p, Location at, ConfigurationSection c) {
-        if (!plugin.protection().pair(p, at)) return;
-        double r = c.getDouble("radius", 1.5), dmg = damage(p, c);
-        MagicImpactEvent.fire(p, "fire", at, r, MagicImpactEvent.Kind.HIT); // result unused: a passive needs no cast success (HIT contract)
-        Links.vfx(p, "flame_footprints", "external:explode", at, null);
-        for (LivingEntity t : plugin.targets().enemiesNear(p, at, r, 8)) {
-            if (plugin.targets().hurt(p, t, dmg)) {
-                int ignite = c.getInt("ignite-ticks", 0);
-                if (ignite > 0) plugin.status().apply(p, t, school.magiccodex.protocol.StatusProtocol.Status.BURN, ignite, 0); // 화상 (no vanilla fire)
-            }
-        }
     }
 
     // ------------------------------------------------------------------ 177 / 193 kill passives
@@ -239,5 +165,5 @@ final class Passives implements Listener {
         }
     }
 
-    @EventHandler public void quit(PlayerQuitEvent e) { steps.remove(e.getPlayer().getUniqueId()); BuffMech.clearAll(e.getPlayer()); }
+    @EventHandler public void quit(PlayerQuitEvent e) { BuffMech.clearAll(e.getPlayer()); }
 }
