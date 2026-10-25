@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 /**
  * UI shortcut keys (owner 2026-10-17), edited in the 키 설정 screen next to the spell keys.
- * Defaults: P 파티창 · I 내 정보 · O 장비창 · K 마법도감 · L 친구창 · \ 키 설정 · 왼쪽 Ctrl 마우스 포인터 (HUD cursor) · Z 마법 모드 · X 아티팩트 · J 지도.
+ * Defaults: P 파티창 · I 내 정보 · O 장비창 · K 마법도감 · L 친구창 · \ 키 설정 · 왼쪽 Ctrl 마우스 포인터 (HUD cursor) · Z 마법 모드 · X 아티팩트 · J 지도 · H 내 땅.
  * Stored in config/magiccodex/ui-keys.properties. A key is used by one thing only (one UI action or one spell).
  * 마법도감 · 내 정보 · 장비창 · 마법 모드 · 아티팩트 keep their vanilla KeyBinding (their handlers read it); this class sets
  * those bindings' keys. 파티창 · 친구창 · 키 설정 · 마우스 포인터 are handled here / in PlayerHudClient by key code.
@@ -34,7 +34,9 @@ public final class UiKeys {
         MAGIC_MODE("마법 모드", "마법 모드", GLFW.GLFW_KEY_Z),
         ARTIFACT("아티팩트 사용", "아티팩트", GLFW.GLFW_KEY_X),
         /** 지도 이동 창 (owner 2026-10-24: 기본 J). */
-        MAP("지도", "지도", GLFW.GLFW_KEY_J);
+        MAP("지도", "지도", GLFW.GLFW_KEY_J),
+        /** 내 땅 관리 창 (청크 점유 메모 #88, 2026-10-26: 기본 H — 바닐라·다른 UI 키와 안 겹침). 내 땅 안에서만 열린다. */
+        LAND("내 땅 관리", "내 땅", GLFW.GLFW_KEY_H);
         public final String label, shortLabel; public final int defaultCode;
         Action(String label, String shortLabel, int defaultCode) { this.label = label; this.shortLabel = shortLabel; this.defaultCode = defaultCode; }
     }
@@ -77,6 +79,15 @@ public final class UiKeys {
                 for (Action a : Action.values()) {
                     String v = p.getProperty(a.name());
                     if (v != null) m.set(a, Integer.parseInt(v.trim()));
+                }
+                // 나중에 생긴 단축키(예: 내 땅 H)의 기본 키를 이미 다른 UI 키나 저장된 마법이 쓰고 있으면 비워 둔다 (한 키 = 한 가지).
+                SpellKeySettings spells = null;
+                try { spells = SpellKeySettings.load(FabricLoader.getInstance().getConfigDir().resolve("magiccodex/key-settings.yml")); } catch (Exception ignored) { }
+                for (Action a : Action.values()) {
+                    if (p.getProperty(a.name()) != null) continue;
+                    boolean taken = spells != null && spells.slotOfKey(a.defaultCode) >= 0;
+                    for (Action o : Action.values()) if (o != a && m.get(o) == a.defaultCode) taken = true;
+                    if (taken) m.set(a, -1);
                 }
             } catch (IOException | RuntimeException bad) {
                 org.slf4j.LoggerFactory.getLogger("magiccodex").warn("UI 키 설정 읽기 실패, 기본값 사용", bad);
@@ -125,7 +136,7 @@ public final class UiKeys {
     /** CodexKeyboardMixin: 파티창 · 친구창 · 키 설정 (the others have their own handlers). */
     public static boolean handleKey(MinecraftClient c, int key, int scan, int action) {
         Action a = current.actionOf(key);
-        boolean mine = a == Action.PARTY || a == Action.FRIENDS || a == Action.KEY_SETTINGS || a == Action.MAP;
+        boolean mine = a == Action.PARTY || a == Action.FRIENDS || a == Action.KEY_SETTINGS || a == Action.MAP || a == Action.LAND && ChunkClaimClient.land.inside();
         boolean ready = c.world != null && c.player != null && c.currentScreen == null && c.getOverlay() == null && c.isWindowFocused();
         var result = SHORTCUT.handle(key, action, mine, ready);
         if (result == CodexShortcut.Result.OPEN) {
@@ -135,6 +146,7 @@ public final class UiKeys {
                 case FRIENDS -> SocialClient.open();
                 case KEY_SETTINGS -> c.setScreen(new KeySettingsScreen(null));
                 case MAP -> TravelClient.open();
+                case LAND -> ChunkClaimClient.open();
                 default -> { }
             }
         }

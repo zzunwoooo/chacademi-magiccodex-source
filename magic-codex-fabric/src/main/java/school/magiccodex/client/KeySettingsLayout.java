@@ -19,8 +19,8 @@ public final class KeySettingsLayout {
     public static final Rect PREVIOUS = new Rect(598, 742, 95, 40);
     public static final Rect NEXT = new Rect(1257, 742, 95, 40);
     public static final Rect PICKER_CLOSE = new Rect(1316, 170, 48, 48);
-    /** 10 UI shortcuts (지도 added 2026-10-24) fit the panel (162..797): 50 px apart, 46 px tall. */
-    public static Rect uiChoice(int index) { return new Rect(316, 258 + index * 50, 230, 46); }
+    /** 11 UI shortcuts (지도 2026-10-24, 내 땅 2026-10-26) fit the panel (162..797): 48 px apart, 44 px tall (last ends 778). */
+    public static Rect uiChoice(int index) { return new Rect(316, 256 + index * 48, 230, 44); }
     public static final Rect DISCARD = new Rect(845, 510, 220, 50);
     public static final Rect CONTINUE = new Rect(605, 510, 220, 50);
     /** Keyboard area of key_settings_base.png and where/how big it is drawn (keys are baked into that art). */

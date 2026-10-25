@@ -130,6 +130,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private MileageBridge mileage;
     private FishTankBridge fishTank;
     private BagPagesBridge bagPages;
+    /** 야생 청크 점유 (메모 #88, chunk-claims.yml servers 에 든 서버에서만 켜짐). */
+    private ChunkClaimBridge chunkClaims;
     /** 생활 마법 377 / 382 (LifeSpells); null before enable or when the system failed. */
     FishingBridge fishingBridge(){return fishing;}
     BagPagesBridge bagPagesBridge(){return bagPages;}
@@ -286,6 +288,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(travel!=null)try{new ReturnTicketBridge(this,travel);}catch(Exception error){getLogger().severe("귀환권 초기화 실패 (return-ticket.yml 확인): "+error.getMessage());}
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
+        try{chunkClaims=new ChunkClaimBridge(this);}catch(Exception|LinkageError error){chunkClaims=null;getLogger().severe("청크 점유 초기화 실패 (chunk-claims.yml·DB 확인): "+error.getMessage());}
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         NameplateBootstrap.initialize(this);
         try{heartbeat=ServerHeartbeat.start(this);commandHub.status(this,"하트비트",()->heartbeat==null?"꺼짐":heartbeat.describe());}catch(Exception|LinkageError error){heartbeat=null;getLogger().warning("운영 하트비트 시작 실패 (게임은 계속): "+error);}
@@ -350,6 +353,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(alchemy!=null){alchemy.close();alchemy=null;}
         if(fishTank!=null){fishTank.close();fishTank=null;}
         if(bagPages!=null){bagPages.close();bagPages=null;}
+        if(chunkClaims!=null){chunkClaims.close();chunkClaims=null;}
         if(fishShop!=null){fishShop.close();fishShop=null;}
         if(books!=null){books.close();books=null;}
         if(travel!=null){travel.close();travel=null;}
