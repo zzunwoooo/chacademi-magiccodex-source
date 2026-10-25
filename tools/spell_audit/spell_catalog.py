@@ -3,8 +3,8 @@
 활성 마법의 기준 (오픈 전 메모 #26 근거)
   서버가 실제로 시전을 받아 주는 마법 = MagicCodexBridge mana-spells.yml 의 spells.<id> 중 enabled 가 false 가 아닌 것
   (ManaSpells.load: enabled:false 는 byId 에 안 들어가 시전 시 UNKNOWN). 운영 서버에 올라가는 값은
-  deployment/operating-config/MagicCodexBridge/mana-spells.yml (원본 magic-codex-paper/src/main/resources/mana-spells.yml 에
-  운영 전용 값 keep 2개: vine_ladder·light_mark enabled). 기본은 운영 overlay, --source 로 원본.
+  deployment/operating-config/MagicCodexBridge/mana-spells.yml (원본과 같음. 예전 운영 전용 keep vine_ladder·light_mark 는
+  2026-10-26 두 마법을 기획에서 지우며 뺐다). 기본은 운영 overlay, --source 로 원본.
   도감 번호 = PortableVFX spell-catalog.yml number (= 모드 기본 마법 파일 order). 이름 = mana-spells.yml name.
 
 python3 표준 라이브러리만으로 돈다 (PyYAML 이 있으면 그걸 쓰고, 없으면 tools/operating_overlay.py 의 작은 파서).

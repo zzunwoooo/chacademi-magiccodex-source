@@ -16,7 +16,6 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("light_leap","가벼운 도약","cast.light_leap",1276L,.65f));
         add(ids,names,new Cue("flight","비행","cast.flight",1816L,.65f));
         add(ids,names,new Cue("far_touch","손길 너머","cast.far_touch",1816L,.65f));
-        add(ids,names,new Cue("aerial_haul","공중 운반","cast.aerial_haul",1816L,.65f));
         add(ids,names,new Cue("wind_message","바람의 전언","cast.wind_message",1816L,.65f));
         add(ids,names,new Cue("storm_command","폭풍의 지휘","cast.storm_command",2656L,.65f));
         add(ids,names,new Cue("wind_vault","바람의 금고","cast.wind_vault",2656L,.65f));
@@ -35,7 +34,6 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("weightless_zone","무중력 지대","cast.weightless_zone",1996L,.65f));
         add(ids,names,new Cue("lightning_needle","벼락 바늘","cast.lightning_needle",1996L,.65f));
         add(ids,names,new Cue("air_stacking","허공 쌓기","cast.air_stacking",1996L,.65f));
-        add(ids,names,new Cue("descent_command","낙하 명령","cast.descent_command",2176L,.65f));
         add(ids,names,new Cue("arrested_orbit","정지 궤도","cast.arrested_orbit",2176L,.65f));
         add(ids,names,new Cue("crossfire","교차 사격","cast.crossfire",2176L,.65f));
         add(ids,names,new Cue("trajectory_acceleration","궤도 가속","cast.trajectory_acceleration",2356L,.65f));
@@ -57,14 +55,11 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("charcoal_conversion","숯불 전환","cast.charcoal_conversion",1456L,.65f));
         add(ids,names,new Cue("sponge_drying","스펀지 말리기","cast.sponge_drying",1456L,.65f));
         add(ids,names,new Cue("flame_lash","화염 채찍","cast.flame_lash",1636L,.65f));
-        add(ids,names,new Cue("cinder_detonation","잔불 폭발","cast.cinder_detonation",1636L,.65f));
-        add(ids,names,new Cue("flame_footprints","불꽃 발자국","cast.flame_footprints",1636L,.65f));
         add(ids,names,new Cue("boiling_armor","끓는 갑주","cast.boiling_armor",1636L,.65f));
         add(ids,names,new Cue("kiln_breath","가마 숨결","cast.kiln_breath",2116L,.65f));
         add(ids,names,new Cue("glaze_coating","유약 입히기","cast.glaze_coating",1816L,.65f));
         add(ids,names,new Cue("ash_brand","재의 낙인","cast.ash_brand",1996L,.65f));
         add(ids,names,new Cue("explosive_wedge","폭발 쐐기","cast.explosive_wedge",1996L,.65f));
-        add(ids,names,new Cue("fireproof_film","불연 피막","cast.fireproof_film",1996L,.65f));
         add(ids,names,new Cue("flame_leap","불꽃 도약","cast.flame_leap",2476L,.65f));
         add(ids,names,new Cue("heat_recovery","열량 회수","cast.heat_recovery",2176L,.65f));
         add(ids,names,new Cue("firebird_hunt","불새의 사냥","cast.firebird_hunt",2176L,.65f));
@@ -80,7 +75,6 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("quench","불길 씻기","cast.quench",1276L,.65f));
         add(ids,names,new Cue("purifying_wave","정화의 물결","cast.purifying_wave",1816L,.65f));
         add(ids,names,new Cue("ice_bridge","얼음 다리","cast.ice_bridge",1816L,.65f));
-        add(ids,names,new Cue("water_mirror","수면의 거울","cast.water_mirror",2116L,.65f));
         add(ids,names,new Cue("spring_unseal","수맥 개방","cast.spring_unseal",1816L,.65f));
         add(ids,names,new Cue("water_elemental","물의 정령 소환","cast.water_elemental",2656L,.65f));
         add(ids,names,new Cue("eternal_ice_prison","만년빙옥","cast.eternal_ice_prison",2356L,.65f));
@@ -112,7 +106,6 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("miners_rhythm","광부의 박자","cast.miners_rhythm",1276L,.65f));
         add(ids,names,new Cue("earth_shaping","대지 성형","cast.earth_shaping",1816L,.65f));
         add(ids,names,new Cue("stone_wall","석벽","cast.stone_wall",1816L,.65f));
-        add(ids,names,new Cue("vine_ladder","덩굴 사다리","cast.vine_ladder",1816L,.65f));
         add(ids,names,new Cue("earth_elemental","땅의 정령 소환","cast.earth_elemental",2656L,.65f));
         add(ids,names,new Cue("earthquake","지진","cast.earthquake",2656L,.65f));
         add(ids,names,new Cue("climate_control","기후 통제","cast.climate_control",2656L,.65f));
@@ -126,7 +119,6 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("compost_return","퇴비 환원","cast.compost_return",1636L,.65f));
         add(ids,names,new Cue("thorn_seeds","가시 씨앗","cast.thorn_seeds",1636L,.65f));
         add(ids,names,new Cue("pollen_matchmaking","꽃가루 중매","cast.pollen_matchmaking",1816L,.65f));
-        add(ids,names,new Cue("automatic_supply","자동 보급","cast.automatic_supply",1816L,.65f));
         add(ids,names,new Cue("earth_anchor","대지의 닻","cast.earth_anchor",1996L,.65f));
         add(ids,names,new Cue("weathering_touch","풍화의 손길","cast.weathering_touch",1996L,.65f));
         add(ids,names,new Cue("dormant_seed","동면의 씨앗","cast.dormant_seed",1996L,.65f));
@@ -143,9 +135,7 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("primordial_stone","원초의 돌","cast.primordial_stone",2716L,.65f));
         add(ids,names,new Cue("guiding_star","길잡이 별","cast.guiding_star",1276L,.65f));
         add(ids,names,new Cue("minor_heal","작은 치유","cast.minor_heal",1276L,.65f));
-        add(ids,names,new Cue("light_mark","빛의 낙인","cast.light_mark",1276L,.65f));
         add(ids,names,new Cue("spatial_leap","공간 도약","cast.spatial_leap",2116L,.65f));
-        add(ids,names,new Cue("luminous_archive","빛의 서고","cast.luminous_archive",1816L,.65f));
         add(ids,names,new Cue("true_sight","진실의 눈","cast.true_sight",1816L,.65f));
         add(ids,names,new Cue("protective_ward","보호 결계","cast.protective_ward",1816L,.65f));
         add(ids,names,new Cue("constellation_blessing","성좌의 가호","cast.constellation_blessing",2656L,.65f));
@@ -169,9 +159,7 @@ public final class SpellCastSounds {
         add(ids,names,new Cue("mana_deposit","마력 예금","cast.mana_deposit",2356L,.65f));
         add(ids,names,new Cue("flawless_moment","무결의 순간","cast.flawless_moment",2536L,.65f));
         add(ids,names,new Cue("guardian_oath","수호자의 서약","cast.guardian_oath",2536L,.65f));
-        add(ids,names,new Cue("experience_exchange","경험의 환전","cast.experience_exchange",2536L,.65f));
         add(ids,names,new Cue("solar_judgment","태양의 심판","cast.solar_judgment",3016L,.65f));
-        add(ids,names,new Cue("white_night_sanctuary","백야의 성역","cast.white_night_sanctuary",2716L,.65f));
         add(ids,names,new Cue("starlight_reprise","별빛 재현","cast.starlight_reprise",2716L,.65f));
         add(ids,names,new Cue("constellation_emissary","성좌의 대리인","cast.constellation_emissary",3016L,.65f));
         add(ids,names,new Cue("night_sight","밤눈","cast.night_sight",1276L,.65f));

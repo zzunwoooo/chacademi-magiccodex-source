@@ -110,17 +110,7 @@ passives:
     range: 24
   glass_firing:              # 049 광석 재련
     mana: 3                  # 광석 블록당
-  flame_footprints:          # 052 불꽃 걸음 (mana-spells.yml 에서 아직 enabled:false)
-    mana-per-second: 10
-    spacing: 1.5             # 발자국 간격 (블록)
-    fuse-ticks: 30           # 폭발 지연
-    radius: 1.5
-    base-damage: 3
-    power-ratio: 0.2
-    ignite-ticks: 0
-    max-active: 12
   glaze_coating: {}          # 055 화염의 정복자: 수치 없음
-  automatic_supply: {}       # 121 자동 보급: 수치 없음
   hungry_shadow:             # 177 굶주린 그림자: 처치 시 배고픔 회복
     food: 2                  # 1칸 = 2
   inverted_offering:         # 193 뒤집힌 공물: 처치한 몬스터 드롭 -> 추가 경험치 (conversion_ratio 미정, 임시)

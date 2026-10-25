@@ -332,15 +332,6 @@
       }
     ]
   },
-  "cast.aerial_haul": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/aerial_haul",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
   "cast.wind_message": {
     "sounds": [
       {
@@ -498,15 +489,6 @@
     "sounds": [
       {
         "name": "magiccodex:cast/air_stacking",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.descent_command": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/descent_command",
         "stream": false,
         "preload": false
       }
@@ -701,24 +683,6 @@
       }
     ]
   },
-  "cast.cinder_detonation": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/cinder_detonation",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.flame_footprints": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/flame_footprints",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
   "cast.boiling_armor": {
     "sounds": [
       {
@@ -759,15 +723,6 @@
     "sounds": [
       {
         "name": "magiccodex:cast/explosive_wedge",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.fireproof_film": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/fireproof_film",
         "stream": false,
         "preload": false
       }
@@ -903,15 +858,6 @@
     "sounds": [
       {
         "name": "magiccodex:cast/ice_bridge",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.water_mirror": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/water_mirror",
         "stream": false,
         "preload": false
       }
@@ -1196,15 +1142,6 @@
       }
     ]
   },
-  "cast.vine_ladder": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/vine_ladder",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
   "cast.earth_elemental": {
     "sounds": [
       {
@@ -1317,15 +1254,6 @@
     "sounds": [
       {
         "name": "magiccodex:cast/pollen_matchmaking",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.automatic_supply": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/automatic_supply",
         "stream": false,
         "preload": false
       }
@@ -1475,28 +1403,10 @@
       }
     ]
   },
-  "cast.light_mark": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/light_mark",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
   "cast.spatial_leap": {
     "sounds": [
       {
         "name": "magiccodex:cast/spatial_leap",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.luminous_archive": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/luminous_archive",
         "stream": false,
         "preload": false
       }
@@ -1709,28 +1619,10 @@
       }
     ]
   },
-  "cast.experience_exchange": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/experience_exchange",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
   "cast.solar_judgment": {
     "sounds": [
       {
         "name": "magiccodex:cast/solar_judgment",
-        "stream": false,
-        "preload": false
-      }
-    ]
-  },
-  "cast.white_night_sanctuary": {
-    "sounds": [
-      {
-        "name": "magiccodex:cast/white_night_sanctuary",
         "stream": false,
         "preload": false
       }

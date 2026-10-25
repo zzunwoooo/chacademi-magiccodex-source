@@ -59,7 +59,7 @@ class ManaTest {
     }
     @Test void catalogContainsReviewedCommandsFromTheIntegrated329SpellPack()throws Exception{
         var spells=ManaSpells.load(Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(300,spells.byId.size());assertEquals(312,spells.discoveryPermissions.size()); // 2026-10-25: +63 new +12 life, 175 drowsiness on
+        assertEquals(300,spells.byId.size());assertEquals(300,spells.discoveryPermissions.size()); // 2026-10-25: +63 new +12 life, 175 drowsiness on; 2026-10-26: 꺼진 12개 기획에서 삭제
         assertEquals(0,spells.byId.get("spatial_leap").cost());
         assertEquals(0,spells.byId.get("spatial_leap").cooldown());
         assertEquals(spells.byId.size(),spells.byCommand.size());

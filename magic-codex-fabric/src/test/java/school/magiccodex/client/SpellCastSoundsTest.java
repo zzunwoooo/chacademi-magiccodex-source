@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SpellCastSoundsTest {
     private Path root(){return Path.of(".");}
     @Test void existing200AuthoredCuesKeepBoundedAudioAndAliases() {
-        assertEquals(200,SpellCastSounds.values().size());var events=new HashSet<String>();
+        assertEquals(188,SpellCastSounds.values().size()); // 2026-10-26: 꺼진 마법 12개 삭제var events=new HashSet<String>();
         for(var cue:SpellCastSounds.values()) {
             assertNotNull(SpellCastSounds.byId(cue.id()));assertEquals(cue,SpellCastSounds.find(cue.label().replace(" ","")));
             assertEquals(cue,SpellCastSounds.find(cue.id().toUpperCase(Locale.ROOT)));assertTrue(events.add(cue.event()));

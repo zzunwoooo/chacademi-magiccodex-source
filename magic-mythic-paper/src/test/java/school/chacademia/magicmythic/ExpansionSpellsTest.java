@@ -49,10 +49,12 @@ class ExpansionSpellsTest {
 
     @Test void routesExistForEveryNewActiveSpell() throws Exception {
         var routes = YamlConfiguration.loadConfiguration(Path.of("server-config/spell-runtime.yml").toFile()).getConfigurationSection("spells");
-        for (String id : List.of("earth_shaping", "stone_wall", "vine_ladder", "earth_elemental", "solar_judgment", "faint_veil", "flame_forging", "blue_bonfire", "starlight_reprise"))
+        for (String id : List.of("earth_shaping", "stone_wall", "earth_elemental", "solar_judgment", "faint_veil", "flame_forging", "blue_bonfire", "starlight_reprise"))
             assertNotNull(routes.getConfigurationSection(id), id);
-        for (String passive : List.of("trajectory_acceleration", "resonant_arrow", "glass_firing", "flame_footprints", "glaze_coating", "automatic_supply", "luminous_archive"))
-            assertNull(routes.getConfigurationSection(passive), passive); // passives live in Passives, 136 has no lock system yet
+        for (String passive : List.of("trajectory_acceleration", "resonant_arrow", "glass_firing", "glaze_coating"))
+            assertNull(routes.getConfigurationSection(passive), passive); // passives live in Passives
+        for (String dropped : List.of("cinder_detonation", "vine_ladder", "light_mark", "experience_exchange"))
+            assertNull(routes.getConfigurationSection(dropped), dropped); // 2026-10-26 기획에서 삭제
         for (String id : routes.getKeys(false)) {
             int range = routes.getInt(id + ".range");
             assertTrue(range >= 1 && range <= 48, id); // Bridge SpellRules limit

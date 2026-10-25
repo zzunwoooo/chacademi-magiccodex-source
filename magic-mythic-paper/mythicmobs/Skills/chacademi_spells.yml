@@ -235,12 +235,6 @@ CHA_flame_lash:
   Skills:
   - chahit{pull=1.4;ignite=40;element=fire;spell=flame_lash}
 
-# 943 스타 퓨리 - (기존 라우트 유지) 불타는 대상 폭발
-CHA_cinder_detonation:
-  Cooldown: 0
-  Skills:
-  - chahit{r=3;max=6;ignite=60;element=fire;spell=cinder_detonation}
-
 # 56 손바닥 폭죽 - 장식 마법, 게임 효과 없음
 CHA_palm_fireworks:
   Cooldown: 0
@@ -582,12 +576,6 @@ CHA_stone_wall:
   Skills:
   - chazone{wall=4;r=0.6;height=3;ticks=200;period=20;mult=0;solid=true;element=earth;spell=stone_wall}
 
-# 1003 덩굴 사다리 - 바라보는 벽 최대 8블록 30초 사다리, 실제 덩굴 없음 (VFX 없음)
-CHA_vine_ladder:
-  Cooldown: 0
-  Skills:
-  - chasummon{type=ladder;h=8;ticks=600;range=5;element=earth;spell=vine_ladder} @self
-
 # 192 그놈 - 60초 흙 골렘(가상) 동행·근접 공격 (공격력 임시)
 CHA_earth_elemental:
   Cooldown: 0
@@ -768,12 +756,6 @@ CHA_minor_heal:
   Skills:
   - chaally{type=heal;amount=2;element=light;spell=minor_heal} @self
 
-# 1034 빛의 낙인 - 조준한 적에게 유도 빛 탄 (피해·사거리 임시, VFX 없음)
-CHA_light_mark:
-  Cooldown: 0
-  Skills:
-  - chabolt{speed=1.2;range=34;radius=0.5;homing=true;element=light;spell=light_mark}
-
 # 229 진실의 눈 - 15초 근처 투명한 적 윤곽 + 숨은 단서 이벤트 (범위 임시)
 CHA_true_sight:
   Cooldown: 0
@@ -911,12 +893,6 @@ CHA_guardian_oath:
   Cooldown: 0
   Skills:
   - chaally{type=oath;range=10;r=10;ratio=0.3;ticks=200;element=light;spell=guardian_oath} @self
-
-# 1061 경험의 환전 - 현재 마나 전부 -> 경험치 (비율 임시)
-CHA_experience_exchange:
-  Cooldown: 0
-  Skills:
-  - chautil{type=exp;ratio=0.5;element=light;spell=experience_exchange} @self
 
 # 247 별빛 재현 - 다른 장착 마법 1개 쿨타임 초기화 (Bridge 쿨타임 API + 슬롯 보고 필요)
 CHA_starlight_reprise:

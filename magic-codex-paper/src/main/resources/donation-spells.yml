@@ -30,10 +30,6 @@ spells:
     name: "손길 너머"
     permission: "magic.learned.far_touch"
     points: 1
-  aerial_haul:
-    name: "부유"
-    permission: "magic.learned.aerial_haul"
-    points: 1
   wind_message:
     name: "바람의 전언"
     permission: "magic.learned.wind_message"
@@ -65,10 +61,6 @@ spells:
   weightless_zone:
     name: "무중력 지대"
     permission: "magic.learned.weightless_zone"
-    points: 1
-  descent_command:
-    name: "낙하 명령"
-    permission: "magic.learned.descent_command"
     points: 1
   trajectory_acceleration:
     name: "미라지 슈터"
@@ -174,10 +166,6 @@ spells:
     name: "화염 채찍"
     permission: "magic.learned.flame_lash"
     points: 1
-  cinder_detonation:
-    name: "스타 퓨리"
-    permission: "magic.learned.cinder_detonation"
-    points: 1
   palm_fireworks:
     name: "손바닥 폭죽"
     permission: "magic.learned.palm_fireworks"
@@ -210,10 +198,6 @@ spells:
     name: "스펀지 말리기"
     permission: "magic.learned.sponge_drying"
     points: 1
-  flame_footprints:
-    name: "불꽃 걸음"
-    permission: "magic.learned.flame_footprints"
-    points: 1
   boiling_armor:
     name: "끓는 갑주"
     permission: "magic.learned.boiling_armor"
@@ -229,10 +213,6 @@ spells:
   explosive_wedge:
     name: "폭발 쐐기"
     permission: "magic.learned.explosive_wedge"
-    points: 1
-  fireproof_film:
-    name: "내연성"
-    permission: "magic.learned.fireproof_film"
     points: 1
   heat_recovery:
     name: "열량 보존"
@@ -285,10 +265,6 @@ spells:
   ice_bridge:
     name: "얼음 다리"
     permission: "magic.learned.ice_bridge"
-    points: 1
-  water_mirror:
-    name: "수면의 거울"
-    permission: "magic.learned.water_mirror"
     points: 1
   spring_unseal:
     name: "수맥 개방"
@@ -414,10 +390,6 @@ spells:
     name: "석벽"
     permission: "magic.learned.stone_wall"
     points: 1
-  vine_ladder:
-    name: "덩굴 사다리"
-    permission: "magic.learned.vine_ladder"
-    points: 1
   earth_elemental:
     name: "땅의 정령 소환"
     permission: "magic.learned.earth_elemental"
@@ -486,10 +458,6 @@ spells:
     name: "꽃가루 중매"
     permission: "magic.learned.pollen_matchmaking"
     points: 1
-  automatic_supply:
-    name: "자동 보급"
-    permission: "magic.learned.automatic_supply"
-    points: 1
   dormant_seed:
     name: "동면의 씨앗"
     permission: "magic.learned.dormant_seed"
@@ -538,17 +506,9 @@ spells:
     name: "작은 치유"
     permission: "magic.learned.minor_heal"
     points: 1
-  light_mark:
-    name: "빛의 낙인"
-    permission: "magic.learned.light_mark"
-    points: 1
   spatial_leap:
     name: "공간 도약"
     permission: "magic.learned.spatial_leap"
-    points: 1
-  luminous_archive:
-    name: "빛의 서고"
-    permission: "magic.learned.luminous_archive"
     points: 1
   true_sight:
     name: "진실의 눈"
@@ -645,14 +605,6 @@ spells:
   guardian_oath:
     name: "수호자의 서약"
     permission: "magic.learned.guardian_oath"
-    points: 1
-  experience_exchange:
-    name: "경험의 환전"
-    permission: "magic.learned.experience_exchange"
-    points: 1
-  white_night_sanctuary:
-    name: "백야의 성역"
-    permission: "magic.learned.white_night_sanctuary"
     points: 1
   starlight_reprise:
     name: "별빛 재현"

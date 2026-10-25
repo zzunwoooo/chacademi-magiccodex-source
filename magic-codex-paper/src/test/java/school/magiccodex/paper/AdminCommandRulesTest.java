@@ -55,9 +55,8 @@ final class AdminCommandRulesTest {
     }
     @Test void adminCatalogIncludesEveryRegisteredSpellWithoutChangingCastingEnablement()throws Exception{
         var catalog=ManaSpells.load(java.nio.file.Path.of("src/main/resources/mana-spells.yml").toFile());
-        assertEquals(312,catalog.registeredCatalog.size()); // 2026-10-25: +63 new +12 life spells (12 dropped stay registered, disabled)
-        assertTrue(catalog.registeredCatalog.containsKey("aerial_haul"));assertFalse(catalog.byId.containsKey("aerial_haul"));
-        assertEquals("magic.learned.aerial_haul",catalog.registeredCatalog.get("aerial_haul").get("permission"));
+        assertEquals(300,catalog.registeredCatalog.size()); // 2026-10-25: +63 new +12 life spells; 2026-10-26: 꺼진 12개는 기획에서 삭제
+        assertFalse(catalog.registeredCatalog.containsKey("aerial_haul"));assertFalse(catalog.byId.containsKey("aerial_haul"));
         catalog.byId.forEach((id,spell)->assertEquals(spell.permission(),catalog.registeredCatalog.get(id).get("permission")));
         assertThrows(UnsupportedOperationException.class,()->catalog.registeredCatalog.put("forged",Map.of()));
     }

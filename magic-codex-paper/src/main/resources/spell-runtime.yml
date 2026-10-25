@@ -117,14 +117,6 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
-  cinder_detonation:
-    name: 스타 퓨리
-    skill: CHA_cinder_detonation
-    target: BURNING_ENTITY
-    range: 31
-    utility: false
-    base-damage: 8
-    power-ratio: 0.6
   palm_fireworks:
     name: 손바닥 폭죽
     skill: CHA_palm_fireworks

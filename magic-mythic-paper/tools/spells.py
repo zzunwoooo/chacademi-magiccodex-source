@@ -49,7 +49,6 @@ S = [
  U('living_furnace'),
  ('falling_star','CHA_falling_star','AIM',20,14,0.9,False,['chameteor{r=4;max=12;knock=0.8;up=0.4;ignite=60;charge=68;speed=0.6;skyx=-3;skyy=24;skyz=19}'],'운석 낙하 반경 4블록 (A16: 서버가 착지 틱에 한 번 피해, charge/speed/sky 는 spell-bindings 운석 단계와 같아야 함)'),
  ('flame_lash','CHA_flame_lash','ENTITY',8,6,0.5,False,['chahit{pull=1.4;ignite=40}'],'끌어당기며 피해'),
- ('cinder_detonation','CHA_cinder_detonation','BURNING_ENTITY',18,8,0.6,False,['chahit{r=3;max=6;ignite=60}'],'(기존 라우트 유지) 불타는 대상 폭발'),
  ('palm_fireworks','CHA_palm_fireworks','SELF',12,0,0,False,['chanote{n=1} @self'],'장식 마법, 게임 효과 없음'),
  ('ash_brand','CHA_ash_brand','ENTITY',15,5,0.4,False,['chamark{type=ash_brand;ticks=60;r=3;cooldown=200}'],'3초 뒤 폭발, 맞은 적에게 전이'),
  ('flame_leap','CHA_flame_leap','SELF',12,5,0.4,False,['chahit{center=caster;r=2.5;knock=0.8;ignite=40} @self'],'회전 발차기 근접 범위'),
@@ -110,7 +109,6 @@ S = [
  # earth
  ('earth_shaping','CHA_earth_shaping','AIM',7,4,0.3,False,['chahit{center=caster;cone=60;r=7;up=0.45;knock=0.2;hitevent=external:hitBurst} @self'],'정면 7블록 부채꼴 충격파, 약하게 띄움 (피해·각도 임시)'),
  ('stone_wall','CHA_stone_wall','AIM',8,0,0,False,['chazone{wall=4;r=0.6;height=3;ticks=200;period=20;mult=0;solid=true}'],'10초 돌벽: 적 이동·투사체 차단, 실제 블록 없음 (크기 4x3 = VFX 기준, 미정)'),
- ('vine_ladder','CHA_vine_ladder','SELF',5,0,0,False,['chasummon{type=ladder;h=8;ticks=600;range=5} @self'],'바라보는 벽 최대 8블록 30초 사다리, 실제 덩굴 없음 (VFX 없음)'),
  ('earth_elemental','CHA_earth_elemental','SELF',12,5,0.4,False,['chasummon{type=golem;ticks=1200;range=8;reach=2.2;period=36;windup=12;hitr=1.5;knock=0.6} @self'],'60초 흙 골렘(가상) 동행·근접 공격 (공격력 임시)'),
  ('earthquake','CHA_earthquake','SELF',12,6,0.45,False,['chazone{center=caster;r=6;ticks=60;period=20;mult=0.5;effect=SLOWNESS:20:0} @self'],'주변 6블록 지면 흔들기 (지속 3초·피해 임시)'),
  ('climate_control','CHA_climate_control','SELF',12,0,0,False,['chafarm{type=weather} @self'],'맑음<->비 전환, 이후 자연 변화'),
@@ -141,7 +139,6 @@ S = [
  # light
  ('guiding_star','CHA_guiding_star','SELF',12,0,0,False,['chautil{type=star} @self'],'스토리 단계 목표를 화살표로 가리킴 (10블록 안이면 사라짐), 다시 시전 = 끄기 (2026-10-23)'),
  ('minor_heal','CHA_minor_heal','SELF',12,0,0,False,['chaally{type=heal;amount=2} @self'],'자신 체력 하트 1칸 회복'),
- ('light_mark','CHA_light_mark','ENTITY',20,2,0.25,False,['chabolt{speed=1.2;range=20;radius=0.5;homing=true}'],'조준한 적에게 유도 빛 탄 (피해·사거리 임시, VFX 없음)'),
  ('true_sight','CHA_true_sight','SELF',12,0,0,False,['chautil{type=truesight;r=16;ticks=300} @self'],'15초 근처 투명한 적 윤곽 + 숨은 단서 이벤트 (범위 임시)'),
  ('protective_ward','CHA_protective_ward','SELF',12,0,0,False,['chaguard{type=ward;ticks=200;r=2.5;per=2;reduce=10;extra=200} @self'],'10초 투사체 흡수 -> 보호막 (전환량·상한 임시)'),
  ('constellation_blessing','CHA_constellation_blessing','SELF',12,0,0,False,['chaally{type=buff;r=6;effect=SPEED:600:0,RESISTANCE:600:0} @self'],'자신+6블록 동료 30초 신속·저항 (레벨 임시)'),
@@ -165,7 +162,6 @@ S = [
  ('merciful_arrow','CHA_merciful_arrow','AIM',25,4,0.3,False,['chabolt{speed=3;range=25;radius=0.6;ally=true;pierce=1;hitevent=external:heal}'],'매우 빠른 치유 화살, 맞은 아군 회복 (치유량 임시)'),
  ('mana_deposit','CHA_mana_deposit','SELF',12,0,0,False,['chautil{type=potion} @self'],'마나 포션(item:mana_potion) 1개 생성, 사용 시 마나 50'),
  ('guardian_oath','CHA_guardian_oath','SELF',10,0,0,False,['chaally{type=oath;range=10;r=10;ratio=0.3;ticks=200} @self'],'바라보는 동료 피해 일부 대신 받기 (거리·지속·비율 임시)'),
- ('experience_exchange','CHA_experience_exchange','SELF',12,0,0,False,['chautil{type=exp;ratio=0.5} @self'],'현재 마나 전부 -> 경험치 (비율 임시)'),
  ('starlight_reprise','CHA_starlight_reprise','SELF',12,0,0,False,['chautil{type=reprise} @self'],'다른 장착 마법 1개 쿨타임 초기화 (Bridge 쿨타임 API + 슬롯 보고 필요)'),
  ('constellation_emissary','CHA_constellation_emissary','SELF',12,0,0,False,['chasummon{type=emissary;ticks=600;r=8;amount=6;period=40} @self'],'30초 별 사역마: 체력 낮은 동료 하트 3칸, 2초 간격'),
  ('night_sight','CHA_night_sight','SELF',12,0,0,False,['chaselfpotion{type=NIGHT_VISION;duration=1200;level=0} @self'],'60초 야간 투시'),
@@ -258,16 +254,13 @@ if RANGE_SCALE != 1.0:
 SKIP = {
  'wind_message':'Bridge가 직접 처리하는 귓속말 마법',
  'rainbow_collar':'교화(HolyTaming): TamingBridge가 별도 처리',
- 'luminous_archive':'잠긴 상자 시스템 자체가 아직 없음 (실패 확률·내용물 처리·획득 조건 미정)',
 }
 # 슬롯 장착형 패시브: 미몹 라우트 없이 애드온 Passives 가 장착 상태(SpellSlots)로 처리. 시전 키는 VFX만 재생.
 PASSIVE = {
  'trajectory_acceleration':'장착 중 내가 피해를 준 대상에게 유도 바람 화살 (발동당 마나 10)',
  'resonant_arrow':'장착 중 직접 공격 적중 시 추가 바람 화살 (발동당 마나 50), 미라지와 동시 발동',
  'glass_firing':'장착 중 광석 드롭 자동 재련 (광석당 마나 3)',
- 'flame_footprints':'장착 중 매초 마나 10, 발자국이 잠시 뒤 폭발 (서버 mana-spells enabled:false 유지)',
  'glaze_coating':'장착 중 화염 지속 피해(FIRE_TICK) 면역',
- 'automatic_supply':'장착 중 손의 건축 블록이 떨어지면 인벤토리에서 보충',
 }
 
 PASSIVE.update(_arcana.passive_notes())
@@ -277,8 +270,6 @@ def catalog():
     D = {}
     for f in glob.glob(os.path.join(REPO,'magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells/*.yml')):
         d = yaml.safe_load(open(f, encoding='utf-8')); D[d['id']] = d
-    import spell_order   # 2026-10-25: dropped spells left the codex; keep their name/element for the (disabled) routes
-    for i, (nm, cat, o) in spell_order.DROPPED_INFO.items(): D.setdefault(i, {'id': i, 'name': nm, 'category': cat, 'order': 900 + o})
     return D
 
 def main():
