@@ -10,5 +10,5 @@ research: ''
 cast:
   command: 마법 abyss_gate
   cooldown-seconds: 900
-  mana-cost: 2200
+  mana-cost: 600
 order: 300

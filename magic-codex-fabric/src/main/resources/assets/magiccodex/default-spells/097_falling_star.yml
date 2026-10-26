@@ -12,5 +12,5 @@ research: '가장 원초적이고, 가장 순수한 화염 마법의 극한
 cast:
   command: 마법 falling_star
   cooldown-seconds: 360
-  mana-cost: 700
+  mana-cost: 600
 order: 97

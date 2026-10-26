@@ -272,6 +272,52 @@ def catalog():
         d = yaml.safe_load(open(f, encoding='utf-8')); D[d['id']] = d
     return D
 
+# ---- 전투 스펙 PvP 전용 피해 (오너 승인 2026-10-26, docs/plans/combat-spec.md §4·§5(d)) ----
+# 플레이어가 플레이어를 맞힐 때만: 피해 = pvp-base + pvp-ratio × 지능 = k × (40 + 지능) × 마법별 상대 배율 (몹 상대 피해는 그대로).
+# 등급 = spell_order.py 가중치 1~3 초급 · 4~6 중급 · 7~8 고급 · 9~10 궁극. 궁극은 연계·쉬움·지원형으로 나눔.
+# 상대 배율(초급~고급) = 지금 몹 피해(base + ratio × 52) ÷ 그 등급 평균(같은 식) → 마법끼리의 차이는 지금 그대로.
+# 궁극 상대 배율 = (목표 % ÷ 분류 목표 %) ÷ 타격 합(한 시전에서 damage 가 몇 번 들어가는지, 미몹 스킬·Nova/Arcana Java 기준 추정).
+PVP_K = {'초급': 0.027, '중급': 0.045, '고급': 0.091, '궁극(쉬움)': 0.186, '궁극(연계)': 0.537}
+PVP_REF_POWER = 52                       # 현재 '적당' 지능 (제안서 §1)
+PVP_TIER_AVG = {'초급': (3.3, 0.27), '중급': (5.0, 0.38), '고급': (7.4, 0.52)}   # 등급 평균 base / ratio (제안서 §1)
+# id: (분류, 목표 % (적당 기준 실효 체력), 타격 합)
+PVP_ULT = {
+    'crossfire':       ('궁극(쉬움)', 25, 1.0),    # 49 크로스 애로우: 1타 + 체력 20% 미만 처형(감소 0)
+    'heaven_cyclone':  ('궁극(쉬움)', 40, 1.0),    # 50 하늘의 눈: 10초 붙잡은 뒤 내리꽂기 1타
+    'falling_star':    ('궁극(연계)', 130, 1.0),   # 97 메테오: 착지 1타
+    'crimson_breath':  ('궁극(쉬움)', 45, 2.0),    # 98 드래곤 브레스: 5타 × 0.4
+    'flame_emperor':   ('궁극(쉬움)', 60, 3.0),    # 99 염제 강림: 화염탄 4 × 0.5 + 끝 폭발 1
+    'leviathan_rise':  ('궁극(연계)', 130, 1.35),  # 150 레비아탄: 0.35 + 1
+    'titan_stride':    ('궁극(쉬움)', 45, 2.2),    # 200 타이탄의 발걸음: 0.6 + 0.6 + 1.0
+    'solar_judgment':  ('궁극(연계)', 150, 1.8),   # 246 태양의 심판: 레이저 3초 12틱 × 0.15
+    'starlight_reprise': ('궁극(쉬움)', 45, 1.0),  # 247 별빛 재현 (분류 지시 없음 → 쉬움으로 추정, 자체 피해 0이라 실제로는 안 씀)
+    'aurora_veil':     ('궁극(쉬움)', 10, 1.0),    # 248 오로라: 지원형 (회복·정화·약화), 피해 목표 10%
+    'eclipse_eye':     ('궁극(쉬움)', 45, 3.0),    # 299 월식의 눈: 20틱마다 접촉 피해, 10초 중 약 3번 맞는다고 추정
+    'abyss_gate':      ('궁극(연계)', 120, 1.0),   # 300 심연의 문: 닫힐 때 1타
+}
+PVP_CLASS_TARGET = {'궁극(쉬움)': 45, '궁극(연계)': 130}
+# 궁극 마나 비용 (오너 승인 2026-10-26: 쉬움 450 · 연계 600, 지원형은 쉬움과 같게). 쿨타임은 그대로.
+ULT_MANA = {i: (600 if c == '궁극(연계)' else 450) for i, (c, _t, _h) in PVP_ULT.items()}
+
+def pvp_fields(i, base, ratio):
+    """(pvp-base, pvp-ratio) 또는 None (피해 없는 마법·등급 모르는 마법 → MagicMythic pvp.fallback-scale)."""
+    if not (base > 0 or ratio > 0): return None
+    import spell_order
+    o = spell_order.ORDER.get(i)
+    if o is None: return None
+    w = o[2]
+    if i in PVP_ULT:
+        cls, tgt, hits = PVP_ULT[i]
+        k = PVP_K[cls] * tgt / PVP_CLASS_TARGET[cls] / hits
+    elif w >= 9:
+        k = PVP_K['궁극(쉬움)']          # 분류표에 없는 궁극 (지금은 없음)
+    else:
+        tier = '초급' if w <= 3 else '중급' if w <= 6 else '고급'
+        ab, ar = PVP_TIER_AVG[tier]
+        k = PVP_K[tier] * (base + ratio * PVP_REF_POWER) / (ab + ar * PVP_REF_POWER)
+    k = round(k, 5)
+    return round(40 * k, 4), k
+
 def main():
     D = catalog()
     B = yaml.safe_load(open(os.path.join(REPO,'portable-vfx-runtime/paper/src/main/resources/spell-bindings.yml'), encoding='utf-8'))['bindings']
@@ -284,6 +330,7 @@ def main():
            '# cha* 메커닉은 ChAcademiaMagicMythic 플러그인이 제공합니다.', '']
     rt = ['# 서버 마력 스냅샷: 피해 = base-damage + power-ratio * 마력. (자동 생성: magic-mythic-paper/tools/spells.py)',
           '# 피해 수치는 밸런스 검토 전 임시값입니다.',
+          '# pvp-base / pvp-ratio: 전투 스펙 2026-10-26 — 플레이어가 플레이어를 맞힐 때만 이 값 (k × (40 + 지능), tools/spells.py PVP_K). 몹 상대는 위 값 그대로.',
           f'# 사거리는 tools/spells.py RANGE_SCALE={RANGE_SCALE} 가 이미 반영된 값 (#80). 아래 배율은 서버 판정 전체에 한 번 더 곱해집니다.',
           '# 전체 마법 사거리 배율 (#80). 1.0 = 아래 range 그대로. 0.25~3. 서버 판정(조준 확인·대상 탐색)에만 적용됩니다.',
           '# 주의: 클라이언트 조준 미리보기(spell-targeting.json)·이펙트(PortableVFX spell-bindings.yml range)·미몹 투사체(range=) 는 따로라',
@@ -306,6 +353,8 @@ def main():
         out.append('')
         rt += [f'  {i}:', f'    name: "{name}"', f'    skill: "{sk}"', f'    target: "{tgt}"', f'    range: {rng}',
                f'    utility: {"true" if util else "false"}', f'    base-damage: {base}', f'    power-ratio: {ratio}']
+        pv = pvp_fields(i, base, ratio)
+        if pv: rt += [f'    pvp-base: {pv[0]}', f'    pvp-ratio: {pv[1]}']
         # 1-6 #6: ground zones (same shapes the client snaps to the ground) - horizontal range, dropped onto the ground
         shape = aim_shape((i, sk, tgt, rng, base, ratio, util, lines, note)) if tgt == 'AIM' else None
         if shape and shape['mode'] in ('area', 'point', 'wall'): rt.append('    ground: true')

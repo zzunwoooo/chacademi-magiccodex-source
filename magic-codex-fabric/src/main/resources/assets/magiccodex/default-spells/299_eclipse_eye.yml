@@ -10,5 +10,5 @@ research: 어둠을 담을 그릇이 깊어지자, 달빛마저 그 안에 잠�
 cast:
   command: 마법 eclipse_eye
   cooldown-seconds: 300
-  mana-cost: 1500
+  mana-cost: 450
 order: 299

@@ -853,7 +853,7 @@ spells:
     name: 크로스 애로우
     permission: magic.learned.crossfire
     icon: magiccodex:textures/spells/expansion_2/crossfire.png
-    mana-cost: 1500
+    mana-cost: 450
     cooldown-seconds: 120
     reviewed: true
     enabled: true
@@ -1301,7 +1301,7 @@ spells:
     name: 메테오 스트라이크
     permission: magic.learned.falling_star
     icon: magiccodex:textures/spells/advanced/falling_star.png
-    mana-cost: 700
+    mana-cost: 600
     cooldown-seconds: 360
     reviewed: true
     enabled: true
@@ -2064,7 +2064,7 @@ spells:
     name: 드래곤 브레스
     permission: magic.learned.crimson_breath
     icon: magiccodex:textures/spells/expansion_2/crimson_breath.png
-    mana-cost: 2500
+    mana-cost: 450
     cooldown-seconds: 1000
     reviewed: true
     enabled: true
@@ -5139,7 +5139,7 @@ spells:
     name: 태양의 심판
     permission: magic.learned.solar_judgment
     icon: magiccodex:textures/spells/expansion/solar_judgment.png
-    mana-cost: 800
+    mana-cost: 600
     cooldown-seconds: 300
     reviewed: true
     enabled: true
@@ -6134,7 +6134,7 @@ spells:
     name: 별빛 재현
     permission: magic.learned.starlight_reprise
     icon: magiccodex:textures/spells/expansion_2/starlight_reprise.png
-    mana-cost: 600
+    mana-cost: 450
     cooldown-seconds: 600
     reviewed: true
     enabled: true
@@ -7410,7 +7410,7 @@ spells:
     name: 월식의 눈
     permission: magic.learned.eclipse_eye
     icon: magiccodex:textures/spells/expansion_2/eclipse_eye.png
-    mana-cost: 1500
+    mana-cost: 450
     cooldown-seconds: 300
     reviewed: true
     enabled: true
@@ -9883,7 +9883,7 @@ spells:
     name: 염제 강림
     permission: magic.learned.flame_emperor
     icon: ''
-    mana-cost: 1800
+    mana-cost: 450
     cooldown-seconds: 600
     reviewed: true
     enabled: true
@@ -9929,7 +9929,7 @@ spells:
     name: 레비아탄
     permission: magic.learned.leviathan_rise
     icon: ''
-    mana-cost: 2000
+    mana-cost: 600
     cooldown-seconds: 900
     reviewed: true
     enabled: true
@@ -9982,7 +9982,7 @@ spells:
     name: 하늘의 눈
     permission: magic.learned.heaven_cyclone
     icon: ''
-    mana-cost: 2000
+    mana-cost: 450
     cooldown-seconds: 900
     reviewed: true
     enabled: true
@@ -10028,7 +10028,7 @@ spells:
     name: 심연의 문
     permission: magic.learned.abyss_gate
     icon: ''
-    mana-cost: 2200
+    mana-cost: 600
     cooldown-seconds: 900
     reviewed: true
     enabled: true
@@ -10099,7 +10099,7 @@ spells:
     name: 오로라
     permission: magic.learned.aurora_veil
     icon: ''
-    mana-cost: 1800
+    mana-cost: 450
     cooldown-seconds: 900
     reviewed: true
     enabled: true
@@ -10145,7 +10145,7 @@ spells:
     name: 타이탄의 발걸음
     permission: magic.learned.titan_stride
     icon: ''
-    mana-cost: 2000
+    mana-cost: 450
     cooldown-seconds: 900
     reviewed: true
     enabled: true

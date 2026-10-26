@@ -11,5 +11,5 @@ research: 적을 한 번에 쓰러뜨린 바람이 두 갈래로 갈라져, 도�
 cast:
   command: 마법 crossfire
   cooldown-seconds: 120
-  mana-cost: 1500
+  mana-cost: 450
 order: 49
