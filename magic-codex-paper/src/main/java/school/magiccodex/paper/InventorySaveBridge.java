@@ -31,6 +31,11 @@ import org.bukkit.persistence.PersistentDataType;
  * 가 이미 켜진 사망(게임룰·다른 플러그인 — 인벤세이브 안 씀, 배낭도 그대로), 이 기능을 쓰지 않는 서버(inventory-save.yml servers,
  * 기본 학교·야생 — 아레나 아님). 순서: 이것(HIGH) → EquipmentBridge 장신구 드롭(HIGHEST, keepInventory 면 건너뜀) → 다음 틱 배낭.
  *
+ * <p><b>후원 사망</b> (별풍선 10000개, BalloonDonationBridge, 오너 2026-10-26 "무조건 제자리에 드랍, 인벤세이브 안 먹힘"):
+ * {@link #forcedDeath} 로 죽이는 동안만 표시가 켜진다. 그 사망은 인벤세이브를 쓰지도 세지도 않고, keepInventory 게임룰이 켜져 있어도
+ * 끄고 인벤토리를 그 자리에 떨어뜨리며(LOWEST), 아공간 배낭 다른 쪽도 서버 목록(servers)·drop-bag-pages-on-death 와 상관없이 떨어뜨린다.
+ * 단 큐디치·결투 경기 중(GeneralPresetBridge.combat)이면 경기 규칙대로 둔다 (경기용 장비라 떨어뜨리면 복제가 됨).
+ *
  * <p>부담: 사망 때만 일한다 (인벤토리 41칸 한 번 훑기 + 배낭은 쪽 넘기기 한 번과 같은 일).
  */
 final class InventorySaveBridge implements Listener {
@@ -46,6 +51,45 @@ final class InventorySaveBridge implements Listener {
     private boolean bagDrop = true;
     /** 이번 사망에서 인벤세이브를 쓴 사람 (부활하면 알림). */
     private final Map<UUID, Integer> saved = new HashMap<>();
+    /** 후원 사망 중인 사람 (메인 스레드, {@link #forcedDeath} 안에서만 들어 있음). */
+    private static final Set<UUID> FORCED = new HashSet<>();
+
+    /**
+     * 후원 사망: 그 자리에서 죽이고, 그 사망은 인벤세이브·keepInventory 없이 인벤토리·배낭 다른 쪽을 모두 떨어뜨린다. 메인 스레드.
+     * 반환: 실제로 죽었는지 (이미 죽어 있음·접속 안 함·사망 이벤트 취소 = false).
+     */
+    static boolean forcedDeath(Player p) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("server thread required");
+        if (p == null || !p.isOnline() || p.isDead()) return false;
+        UUID id = p.getUniqueId();
+        FORCED.add(id);
+        try { p.setHealth(0); }   // 사망 이벤트가 이 안에서 바로 불린다
+        finally { FORCED.remove(id); }
+        return p.isDead();
+    }
+    static boolean forced(UUID id) { return FORCED.contains(id); }
+
+    /** 후원 사망: keepInventory(게임룰·다른 플러그인)를 끄고, 비어 있으면 인벤토리를 떨어뜨릴 목록에 채운다. */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void forcedDrop(PlayerDeathEvent e) {
+        Player p = e.getEntity();
+        if (!forced(p.getUniqueId()) || GeneralPresetBridge.combat(p.getUniqueId()) || !plugin.playerStateReady(p)) return;
+        unkeep(e, p);
+    }
+
+    /** keepInventory 를 끈다. 켜져 있던 사망은 바닐라가 drops 를 비워 두므로 인벤토리를 채운다 (안 채우면 지워지기만 함). */
+    private static void unkeep(PlayerDeathEvent e, Player p) {
+        if (e.getKeepLevel()) {   // 경험치도 보통 사망처럼 (바닐라: 레벨×7, 최대 100 을 떨어뜨리고 0 에서 다시)
+            e.setKeepLevel(false);
+            e.setNewLevel(0); e.setNewExp(0); e.setNewTotalExp(0);
+            e.setDroppedExp(Math.min(100, p.getLevel() * 7));
+        }
+        if (!e.getKeepInventory()) return;   // 보통 사망: 바닐라가 이미 인벤토리를 drops 에 넣었다
+        e.setKeepInventory(false);
+        if (e.getDrops().isEmpty())
+            for (ItemStack it : p.getInventory().getContents())
+                if (it != null && !it.getType().isAir() && !it.containsEnchantment(org.bukkit.enchantments.Enchantment.VANISHING_CURSE)) e.getDrops().add(it.clone());
+    }
 
     InventorySaveBridge(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
@@ -86,6 +130,10 @@ final class InventorySaveBridge implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void death(PlayerDeathEvent e) {
         Player p = e.getEntity();
+        if (forced(p.getUniqueId())) {   // 후원 사망: 인벤세이브를 쓰지 않고, 다른 것이 켠 keepInventory 도 끈다 (경기 중 제외)
+            if (!GeneralPresetBridge.combat(p.getUniqueId()) && plugin.playerStateReady(p)) unkeep(e, p);
+            return;
+        }
         if (e.getKeepInventory() || GeneralPresetBridge.combat(p.getUniqueId()) || !here()) return;
         if (!plugin.playerStateReady(p)) return;   // 캐릭터 정보를 불러오기 전: 예전 인벤토리일 수 있어 건드리지 않음
         var inv = p.getInventory();
@@ -121,9 +169,10 @@ final class InventorySaveBridge implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void dropBag(PlayerDeathEvent e) {
-        if (!bagDrop || e.getKeepInventory()) return;   // 인벤세이브·게임룰·경기(keepInventory) = 배낭도 그대로
         Player p = e.getEntity();
-        if (GeneralPresetBridge.combat(p.getUniqueId()) || !here() || !plugin.playerStateReady(p)) return;
+        boolean forced = forced(p.getUniqueId());   // 후원 사망: 서버 목록·설정·keepInventory 와 상관없이 (경기 중만 제외)
+        if (!forced && (!bagDrop || e.getKeepInventory())) return;   // 인벤세이브·게임룰·경기(keepInventory) = 배낭도 그대로
+        if (GeneralPresetBridge.combat(p.getUniqueId()) || (!forced && !here()) || !plugin.playerStateReady(p)) return;
         var bags = plugin.bagPagesBridge();
         if (bags == null) return;   // 아공간 배낭이 없는 서버
         Location at = p.getLocation().clone();

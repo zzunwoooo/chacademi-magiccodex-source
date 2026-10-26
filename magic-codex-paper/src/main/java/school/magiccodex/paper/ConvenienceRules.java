@@ -92,7 +92,8 @@ final class ConvenienceRules {
 
     // ------------------------------------------------------------------ 서버 간 메시지
 
-    enum Kind { NOTICE, HELP, HELP_ACK }
+    /** ANNOUNCE (2026-10-26, 별풍선 후원 사망): who = 알림 카드 제목, account = 화면 가운데 큰 글씨, text = 가운데 작은 글씨·카드 본문. 맨 뒤에만 더한다(순서 = 번호). */
+    enum Kind { NOTICE, HELP, HELP_ACK, ANNOUNCE }
 
     /**
      * 서버 간 메시지. origin = 보낸 서버 플러그인의 이번 실행 토큰(자기 메시지 무시용), id = 메시지 하나의 ID(중복 무시·확인 짝),

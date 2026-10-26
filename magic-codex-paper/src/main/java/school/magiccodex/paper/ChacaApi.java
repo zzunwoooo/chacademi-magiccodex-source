@@ -38,7 +38,7 @@ public final class ChacaApi {
     public static final String 관리 = "관리", 유저관리 = "유저관리", 아이템관리 = "아이템관리", 상점관리 = "상점관리",
             기숙사관리 = "기숙사관리", 퀘스트관리 = "퀘스트관리", 대화관리 = "대화관리", NPC관리 = "NPC관리",
             큐디치관리 = "큐디치관리", 하우징관리 = "하우징관리", 월드관리 = "월드관리", 던전관리 = "던전관리",
-            컨텐츠관리 = "컨텐츠관리", 서버관리 = "서버관리", 테스트 = "테스트", 개발 = "개발", 상자관리 = "상자관리";
+            컨텐츠관리 = "컨텐츠관리", 서버관리 = "서버관리", 테스트 = "테스트", 개발 = "개발", 상자관리 = "상자관리", 후원관리 = "후원관리";
 
     /** /유저관리 아래 갈래에서 대상 유저를 꺼낼 때 쓰는 인자 이름. */
     public static final String TARGET = "닉네임";
@@ -63,6 +63,14 @@ public final class ChacaApi {
      */
     public static void branch(Plugin owner, String root, LiteralArgumentBuilder<CommandSourceStack> node, String description, String example) {
         hub().branch(owner, root, node.build(), description, example);
+    }
+
+    /**
+     * 대단원 바로 뒤에 칸을 붙인다 (갈래 이름 없이, 예: /후원관리 &lt;닉네임&gt; &lt;개수&gt;). 실행·OP 제한·운영 기록은 갈래와 같다.
+     * 유저관리에는 못 붙인다 (그 자리는 &lt;닉네임&gt; 칸).
+     */
+    public static void rootArgument(Plugin owner, String root, com.mojang.brigadier.builder.RequiredArgumentBuilder<CommandSourceStack, ?> node, String description, String example) {
+        hub().rootArgument(owner, root, node.build(), description, example);
     }
 
     /** 일반 유저 명령(누구나). 실행은 허브가 감싸고, OP 제한은 없다. */
