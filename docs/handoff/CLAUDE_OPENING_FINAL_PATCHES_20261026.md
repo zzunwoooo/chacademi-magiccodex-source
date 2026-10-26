@@ -1580,3 +1580,10 @@ spells:
 - 서버에서 할 것: [story-ch1-v2.md "게임 안에서 정할 것"](../plans/story-ch1-v2.md) (NPC 5곳·책장 3개·warp·셀마 판매소·튜토리얼 상점·연금실 웨이포인트).
 
 **검증**: QuestDefs·StorySafety 단독 컴파일 + 서버·서버이동 왕복 실행 확인, QuestEngine 문법 검사 통과. steps.yml 25단계: 다음 단계·대화 파일·대기대화 존재·대화 ID 중복 없음·NPC클릭 서버 = 단계 서버 (스크립트 검사). 대화 37개: id = 폴더, 시작·선택지·next 장면 존재, 화자 정의, 끝 장면 있음, 에드윈 없음.
+
+### §45 추가 — 교화는 하르바 교수 수업으로 (오너 2026-10-26 15:05 "교화를 2장 대신 수업으로 땡기자")
+- 새 수업 책 `lesson_wind_taming` 「하르바의 수업 — 숲의 짐승 달래기」(필요 지능 0) → 끝까지 읽으면 `rainbow_collar`(교화) 지급. `lessons.yml` 하르바 목록에 "[기초] 교화 — 숲의 짐승 달래기" 추가.
+- 이솔데 빛 기초(`lesson_light_1`)에서 교화를 뺌 (작은 치유·동행 귀환만, 본문 한 줄은 "교화는 하르바 교수에게" 안내로).
+- 조건 문구 3곳(discoveries.yml·manual-conditions.yml·도감 233) = "하르바 교수의 「숲의 짐승 달래기」 수업 듣기." 도감 known-hashes 갱신, 힌트 2성 문장 수정.
+- 2장 초안의 "이솔데 교화 수업"(ch2-2)은 빠짐 → 2장은 이미 교화를 아는 상태에서 시작.
+- 배포: 서버 `MagicCodexBridge/books.yml`(overlay)·`lessons.yml`(jar 가 안 덮음 → 손으로 하르바 목록에 한 줄)·MagicDiscovery 두 yml 교체.

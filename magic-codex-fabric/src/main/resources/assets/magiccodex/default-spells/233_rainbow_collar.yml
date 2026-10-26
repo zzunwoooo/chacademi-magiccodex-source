@@ -8,7 +8,7 @@ description: |-
 icon: magiccodex:textures/spells/expansion_2/rainbow_collar.png
 permission: magic.learned.rainbow_collar
 discovery:
-  description: 이솔데 교수의 빛 마법 기초 수업 듣기.
+  description: 하르바 교수의 「숲의 짐승 달래기」 수업 듣기.
 research: 빛의 고리가 닫히자, 낯선 숨결이 내 이름에 답했다. 처음 만난 짐승의 눈동자에서 오래된 약속의 흔적이 잠깐 빛났다.
 cast:
   command: 교화

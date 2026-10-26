@@ -41,6 +41,7 @@ lessons:
     all-done: "가르칠 건 다 가르쳤다. …잘했다."
     classes:
       - { book: lesson_wind_1, name: "[기초] 윈드 푸쉬 · 바람 화살" }
+      - { book: lesson_wind_taming, name: "[기초] 교화 — 숲의 짐승 달래기" }
       - { book: lesson_wind_2, name: "[중급] 윈드 커터 · 되받는 바람" }
       - { book: lesson_wind_3, name: "[고급] 퍼붓는 화살" }
       - { book: lesson_wind_secret, name: "[비전] 중력지대 · 폭풍의 지휘", affinity: 30 }
@@ -94,7 +95,7 @@ lessons:
     secret: "(이솔데 교수의 비전 마법은 조금 더 친해져야 배울 수 있을 것 같다…)"
     all-done: "내가 가르칠 수 있는 건 여기까지란다. 나머지는 책이 알려 줄 거야."
     classes:
-      - { book: lesson_light_1, name: "[기초] 작은 치유 · 동행 귀환 · 교화" }
+      - { book: lesson_light_1, name: "[기초] 작은 치유 · 동행 귀환" }
       - { book: lesson_light_2, name: "[중급] 보호 결계 · 기억의 등불" }
       - { book: lesson_light_3, name: "[고급] 자비의 화살 · 마력 예금" }
       - { book: lesson_light_secret, name: "[비전] 성좌의 가호", affinity: 30 }

@@ -133,6 +133,32 @@ books:
           충분하다. 나머지는 숲에서 배워라.
     commands:
       - "유저관리 {player} 마법조건 주기 arrested_orbit"
+  lesson_wind_taming:
+    title: "하르바의 수업 — 숲의 짐승 달래기"
+    required-intelligence: 0
+    pages:
+      - left: |
+          숲의 짐승들이 사나워졌다.
+          그렇다고 다 쓰러뜨릴 셈이냐?
+
+          짐승은 적이 아니다. 겁먹었을 뿐이다.
+        right: |
+          교화는 빛으로 마음을 달래는 마법이다.
+          빛은 이솔데 교수 몫이지만, 짐승은 내가 더 잘 안다.
+
+          — 실습: 바람으로 거리를 두고, 짐승이 지칠 때를 기다려라.
+      - left: |
+          약해진 짐승일수록 마음을 열기 쉽다.
+          해치지 말고, 쓰러뜨리지도 말고.
+
+          내 매도 그렇게 처음 만났다.
+        right: |
+          교화한 짐승은 도감에 남는다.
+          함께 다니는 친구가 될 수도 있지.
+
+          …숲이 다시 조용해지면 좋겠군.
+    commands:
+      - "유저관리 {player} 마법조건 주기 rainbow_collar"
   lesson_wind_secret:
     title: "하르바의 비전 — 하늘을 누르는 바람"
     required-intelligence: 0
@@ -477,7 +503,7 @@ books:
           작은 치유는 나를 조금 회복한다.
         right: |
           동행 귀환은 길을 잃었을 때 마을로 돌아가는 마법.
-          교화는 몬스터의 마음을 빛으로 달래 친구로 삼는 마법이다.
+          교화는 숲에서 짐승을 아는 하르바 교수에게 배우렴.
 
           — 실습: 상처 입은 몬스터를 해치지 않고 바라보기.
       - left: |
@@ -490,7 +516,6 @@ books:
     commands:
       - "유저관리 {player} 마법조건 주기 minor_heal"
       - "유저관리 {player} 마법조건 주기 companion_return"
-      - "유저관리 {player} 마법조건 주기 rainbow_collar"
   lesson_light_2:
     title: "빛 마법 중급 — 지키는 빛"
     required-intelligence: 20

@@ -597,7 +597,7 @@ spells:
     permission: "magic.learned.rainbow_collar"
     icon: "magiccodex:textures/spells/expansion_2/rainbow_collar.png"
     category: "light"
-    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
+    condition-text: "하르바 교수의 「숲의 짐승 달래기」 수업 듣기."
     requirements:
       "trace.condition.rainbow_collar": 1
     chance: 1.0
