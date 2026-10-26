@@ -171,7 +171,7 @@ final class QuestEngine implements Listener {
         defsStore = new StoryStore(text -> StorySafety.atomicWrite(defsFile.toPath(), text), StoryStore.newWorker(),
                 r -> Bukkit.getScheduler().runTask(plugin, r), plugin.getLogger());
         ready = true;
-        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE, QuestCodec.GUIDE, QuestCodec.POINTS, QuestCodec.GUIDE_TARGET)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
+        for (String out : List.of(QuestCodec.STEP, QuestCodec.UPDATE, QuestCodec.GUIDE, QuestCodec.POINTS, QuestCodec.GUIDE_TARGET, BUNGEE)) plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, out);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 40L, TICK_CHECK);
         Bukkit.getScheduler().runTaskTimer(plugin, this::followTick, 40L, FOLLOW_TICKS);
@@ -192,6 +192,41 @@ final class QuestEngine implements Listener {
     String serverId() {
         String s = plugin.getConfig().getString("quest-server-id", "school");
         return s == null || s.isBlank() ? "school" : s.strip();
+    }
+
+    // ================================================================ 단계의 서버 (2026-10-26 오너: 1장은 tutorial → 배 → school)
+
+    /** Velocity 의 BungeeCord 호환 채널 (Connect = 그 서버로 보내기). */
+    static final String BUNGEE = "BungeeCord";
+    /** 서버이동을 마지막으로 보낸 때 (같은 사람에게 10초에 한 번). */
+    private final Map<UUID, Long> transferAt = new HashMap<>();
+
+    /** 이 단계가 다른 서버(steps.yml 단계의 서버:) 것인지. 서버가 비어 있으면 어느 서버에서나 진행. */
+    boolean elsewhere(Step s) {
+        return s != null && !s.server.isEmpty() && !s.server.equals(serverId());
+    }
+
+    /**
+     * 서버이동 단계: 그 단계의 서버로 보낸다 (예: 튜토리얼 서버에서 배 컷신을 보고 ch1-8 에 들어오면 school 로).
+     * 진행 기록은 공유 저장소에서 같은 단계로 이어진다. 서버이동이 아닌 단계는 아무것도 하지 않는다 (그 서버에 가면 이어짐).
+     */
+    private void sendToStepServer(Player p, Step s) {
+        if (s == null || !s.transfer || s.server.isEmpty() || p == null || !p.isOnline()) return;
+        long now = System.currentTimeMillis();
+        Long last = transferAt.get(p.getUniqueId());
+        if (last != null && now - last < 10_000) return;
+        transferAt.put(p.getUniqueId(), now);
+        try {
+            java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+            java.io.DataOutputStream data = new java.io.DataOutputStream(bytes);
+            data.writeUTF("Connect");
+            data.writeUTF(s.server);
+            p.sendPluginMessage(plugin, BUNGEE, bytes.toByteArray());
+            plugin.getLogger().info("[스토리 단계] " + p.getName() + ": " + s.id + " 은(는) " + s.server + " 서버 단계 — 그 서버로 보냅니다");
+            ChacaLink.notify(p, "system", "story-transfer", "다음 이야기로 이동해요", "잠시만 기다려 주세요", 5000);
+        } catch (java.io.IOException | RuntimeException ex) {
+            plugin.getLogger().log(Level.WARNING, "[스토리 단계] " + p.getName() + ": " + s.server + " 서버로 보내지 못했습니다", ex);
+        }
     }
 
     /** /서버관리 새로고침 스토리: steps.yml 다시 읽기 (진행 기록은 그대로). */
@@ -441,6 +476,11 @@ final class QuestEngine implements Listener {
             if (tell) tellLocked(p, 0);
             return;
         }
+        if (elsewhere(s)) {
+            // 다른 서버의 단계: 여기서는 알림·시작명령 없이 (서버이동 단계면 그 서버로 보냄)
+            Bukkit.getScheduler().runTask(plugin, () -> sendToStepServer(p, s));
+            return;
+        }
         if (tell && s != null && !s.description.isBlank()) ChacaLink.notify(p, "system", "story-step-" + st.run, "새 목표", s.description, 0);
         if (s != null && !s.startCommands.isEmpty()) {
             int run = st.run;
@@ -459,6 +499,7 @@ final class QuestEngine implements Listener {
         Step s = defs.get(st.step);
         if (s == null) return;
         if (chapterLocked(s)) { heldByGate.add(p.getUniqueId()); return; }
+        if (elsewhere(s)) { sendToStepServer(p, s); return; }   // 시작명령은 그 단계의 서버에서만
         if (!manual && s.startOnce()) {
             if (st.startedRun == run) return;
             st.startedRun = run;
@@ -517,6 +558,7 @@ final class QuestEngine implements Listener {
             if (!why.equals("자동") && !why.equals("컷신")) tellLocked(p, why.equals("위치") ? 10_000 : 3_000);
             return;
         }
+        if (elsewhere(s)) { sendToStepServer(p, s); return; }   // 다른 서버의 단계는 여기서 호출하지 않는다
         long now = System.currentTimeMillis();
         if (now < retryAt.getOrDefault(uuid, 0L)) return;
         if (!st.submitted && hasSubmit(s)) {
@@ -783,7 +825,11 @@ final class QuestEngine implements Listener {
         Bukkit.getScheduler().runTaskLater(plugin, () -> { if (p.isOnline()) { needStep.add(uuid); scheduleSend(); } }, 60L);
         // 시작명령이 있는 단계(예: 분류의 거울)를 끝내지 못하고 나갔으면 다시 실행 (조건을 이미 채웠으면 하지 않는다)
         P cur = st;
-        if (cur != null && !cur.step.isEmpty()) {
+        if (cur != null && !cur.step.isEmpty() && elsewhere(defs.get(cur.step))) {
+            // 다른 서버의 단계인데 이 서버로 들어옴 (예: 배를 탄 뒤 튜토리얼로 다시 접속): 서버이동 단계면 3초 뒤 그 서버로
+            Step there = defs.get(cur.step);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> sendToStepServer(p, there), 60L);
+        } else if (cur != null && !cur.step.isEmpty()) {
             int run = cur.run;
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 Step s = defs.get(cur.step);
@@ -902,7 +948,7 @@ final class QuestEngine implements Listener {
         }
         P st = prog.players.get(uuid);
         Step s = st == null ? null : defs.get(st.step);
-        if (s == null || st.phase != Phase.ACTIVE) return;
+        if (s == null || st.phase != Phase.ACTIVE || elsewhere(s)) return;
         boolean changed = false;
         for (int i = 0; i < s.conds.size(); i++) {
             Cond c = s.conds.get(i);
@@ -979,7 +1025,7 @@ final class QuestEngine implements Listener {
         }
         P st = prog.players.get(uuid);
         Step s = st == null ? null : defs.get(st.step);
-        if (s == null) return;
+        if (s == null || elsewhere(s)) return;   // 다른 서버의 단계: 이 서버 NPC 번호와 섞이지 않게 (평소 대화)
         String waitDialogue = s.waiting.get(id);
         boolean called = s.trigger.type == TrigType.NPC && s.trigger.npc == id
                 && (s.trigger.server.isEmpty() || s.trigger.server.equals(serverId()));
@@ -1167,7 +1213,7 @@ final class QuestEngine implements Listener {
     private void sendPoints(Player p, int session, P st, Step s, boolean force) {
         if (!p.getListeningPluginChannels().contains(QuestCodec.POINTS)) return;
         UUID uuid = p.getUniqueId();
-        List<QuestCodec.Point> points = st.phase == Phase.ACTIVE && !chapterLocked(s) ? pendingPoints(st, s) : List.of();
+        List<QuestCodec.Point> points = st.phase == Phase.ACTIVE && !chapterLocked(s) && !elsewhere(s) ? pendingPoints(st, s) : List.of();
         StringBuilder key = new StringBuilder().append(session);
         for (QuestCodec.Point pt : points) key.append('|').append(pt.world()).append(',').append(pt.x()).append(',').append(pt.y()).append(',').append(pt.z());
         String k = key.toString();
@@ -1249,7 +1295,9 @@ final class QuestEngine implements Listener {
         int type = QuestCodec.TARGET_NONE;
         String world = "", entity = "";
         double x = 0, y = 0, z = 0, radius = 0;
-        if (t.type == TrigType.LOCATION) {
+        if (gated && elsewhere(s)) {
+            // 다른 서버의 단계: 목표 위치는 보내지 않는다 (두 서버 세계 이름이 같아 엉뚱한 곳에 포탈이 생기지 않게)
+        } else if (t.type == TrigType.LOCATION) {
             World w = Bukkit.getWorld(t.world);
             if (w != null) { type = QuestCodec.TARGET_LOCATION; world = w.getKey().toString(); x = t.x; y = t.y; z = t.z; radius = t.radius; }
         } else if (t.type == TrigType.NPC && (t.server.isEmpty() || t.server.equals(serverId()))) {
@@ -1271,6 +1319,7 @@ final class QuestEngine implements Listener {
 
     /** 단계 목표 위치 (위치 포탈 / 이 서버의 NPC클릭 NPC). 없으면 null (자동·컷신·미지정·다른 서버 NPC). */
     private Location guideTarget(Step s) {
+        if (elsewhere(s)) return null;
         Trigger t = s.trigger;
         if (t.type == TrigType.LOCATION) {
             World w = Bukkit.getWorld(t.world);
@@ -1715,6 +1764,7 @@ final class QuestEngine implements Listener {
     /** 이 단계에서 운영자가 아직 정하지 않았거나 잘못된 것. 이것이 있는 단계는 그 부분에서 진행이 멈춘다 (임의로 넘기지 않음). */
     List<String> problems(Step s) {
         List<String> out = new ArrayList<>();
+        if (elsewhere(s)) return out;   // 다른 서버의 단계: NPC·월드·블록은 그 서버에서 점검 (/대화관리 단계 점검 을 그 서버에서)
         Trigger t = s.trigger;
         switch (t.type) {
             case NONE -> out.add("호출 미설정 — 조건을 채워도 다음으로 가지 않음 (/대화관리 단계 " + s.id + " 호출 …)");
@@ -1794,6 +1844,7 @@ final class QuestEngine implements Listener {
                     + (c.hidden() ? " (숨김)" : "") + (c.type() == CondType.INTERACT ? " · 블록 " + c.blocks().size() + "개" : ""));
         }
         if (s.conds.isEmpty()) out.add("조건: 없음 (바로 준비 완료)");
+        if (!s.server.isEmpty()) out.add("서버: " + s.server + (s.transfer ? " (다른 서버에서 들어오면 이 서버로 보냄)" : "") + (elsewhere(s) ? " · 이 서버(" + serverId() + ")에서는 진행 안 함" : ""));
         out.add("호출: " + s.trigger.describe());
         out.add("대화: " + (s.dialogue.isEmpty() ? "-" : s.dialogue) + " · 컷신: " + (s.cutscene.isEmpty() ? "-" : s.cutscene) + " · 다음: " + (s.next.isEmpty() ? "(끝)" : s.next));
         if (!s.startCommands.isEmpty()) out.add("시작명령" + (s.startOnce() ? " (한번)" : " (반복 가능)") + ": " + String.join(" / ", s.startCommands));

@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  *   ch1-8:
  *     장: "1장 · 차카데미아"
  *     설명: "피피네 잡화점을 찾아가자."
+ *     서버: school                          # 이 단계가 진행되는 서버 (config quest-server-id). 비우면 어느 서버에서나 (2026-10-26)
+ *     서버이동: false                       # true = 다른 서버에서 이 단계에 들어오면 그 서버로 보냄 (예: 튜토리얼 → 학교 배)
  *     조건:                                # 다 채우면 "준비 완료" → 포탈·NPC 징표가 보인다
  *       - { 종류: 아이템, 대상: "LEATHER_CHESTPLATE|교복", 개수: 1, 표시: "교복 사기" }
  *     호출: { 종류: NPC클릭, 서버: school, NPC: 12 }   # 자동(지연) · NPC클릭 · 위치 · 컷신
@@ -142,6 +144,13 @@ final class QuestDefs {
     static final class Step {
         final String id;
         String chapter = "", description = "", dialogue = "", cutscene = "", next = "";
+        /**
+         * 서버 (2026-10-26 오너: 1장은 tutorial 에서 시작, 배를 타면 school). 비우면 어느 서버에서나.
+         * 다른 서버에서는 호출·시작명령·대기대화·목표 표시를 하지 않는다 (두 서버 모두 세계 이름이 world 라 위치·블록이 섞이지 않게).
+         */
+        String server = "";
+        /** 서버이동: 다른 서버에서 이 단계에 들어오면 Velocity 로 {@link #server} 에 보낸다. */
+        boolean transfer;
         final List<Cond> conds = new ArrayList<>();
         final List<String> startCommands = new ArrayList<>();
         /** 시작명령-한번. null = 생략 (명령 내용으로 정함). */
@@ -203,6 +212,9 @@ final class QuestDefs {
         Step s = new Step(id);
         s.chapter = text(m.get("장"), 64);
         s.description = text(m.get("설명"), 200);
+        s.server = id(m.get("서버"));
+        s.transfer = Boolean.TRUE.equals(m.get("서버이동"));
+        if (s.transfer && s.server.isEmpty()) warnings.add(id + ": 서버이동 은 서버 를 같이 적어야 함 (무시됨)");
         s.dialogue = id(m.get("대화"));
         s.cutscene = id(m.get("컷신"));
         s.next = id(m.get("다음"));
@@ -295,6 +307,8 @@ final class QuestDefs {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("장", s.chapter);
             m.put("설명", s.description);
+            if (!s.server.isEmpty()) m.put("서버", s.server);
+            if (s.transfer) m.put("서버이동", true);
             List<Object> conds = new ArrayList<>();
             for (Cond c : s.conds) {
                 Map<String, Object> cm = new LinkedHashMap<>();
