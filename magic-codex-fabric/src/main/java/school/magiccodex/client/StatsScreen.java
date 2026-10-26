@@ -82,7 +82,7 @@ public final class StatsScreen extends Screen {
         if(!opened){
             opened=true;
             if(live)RemoteStatsClient.requestSelf();
-            StatsRanks.request(self()?"":remote.profile().name());
+            StatsRanks.request(self()||remote==null?"":remote.profile().name()); // remote==null 은 미리보기 고정값(live=false)뿐
             if(remote!=null&&!self())OtherPortraits.open(remote.id());
         }
     }
