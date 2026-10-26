@@ -22,6 +22,11 @@
    "source": "magic-codex-paper/src/main/resources/climate.yml"
   },
   {
+   "overlay": "deployment/operating-config/MagicCodexBridge/books.yml",
+   "source": "magic-codex-paper/src/main/resources/books.yml",
+   "entries": "books"
+  },
+  {
    "overlay": "deployment/operating-config/PortableVFX/spell-catalog.yml",
    "source": "portable-vfx-runtime/paper/src/main/resources/spell-catalog.yml",
    "entries": "spells"
