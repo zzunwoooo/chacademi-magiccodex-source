@@ -2,7 +2,7 @@
 # 고친 뒤: /서버관리 새로고침 이동   (서버마다 한 번씩)
 # 파일이 서버끼리 다르면 /서버관리 상태 · /컨텐츠관리 이동지점 목록 에 "travel.yml 다름" 이 표시됩니다.
 
-# 이 서버의 서버 ID (아래 servers 의 키). 학교 서버 = school, 야생1 서버 = wild, 야생2 서버 = wild2 ...
+# 이 서버의 서버 ID (아래 servers 의 키). 튜토리얼 서버 = tutorial, 학교 서버 = school, 야생1 서버 = wild, 야생2 서버 = wild2 ...
 server-id: school
 
 # 서버 목록. 키 = DB 에 저장되는 서버 ID (바꾸지 마세요 — 바꾸면 저장된 개인 지점이 "지도에서 빠진 서버" 가 됩니다).
@@ -19,8 +19,8 @@ servers:
   wild2:
     proxy: wild2
     label: 야생2
-    enabled: false            # 야생2 서버가 생기면 true
-    closed-text: 준비 중입니다  # enabled: false 동안 지도·목록에 "야생2 · 준비 중입니다" 로 표시
+    enabled: true             # 오너 2026-10-26: 야생2 연결 (false 로 바꾸면 이동만 막고 closed-text 표시)
+    closed-text: 준비 중입니다
 
 # 지도 탭 (위에서부터 순서대로, 오너 결정: 학교 / 야생1 / 야생2).
 #   server, world = 그 탭이 보여 주는 서버·세계
@@ -71,6 +71,13 @@ points:
   wild_spawn:
     name: 야생 스폰
     server: wild
+    world: world
+    spawn: true
+    from: [school]
+  # 야생2 기본 스폰 (오너 2026-10-26 "타운맵이랑 야생2 연결"): 야생1 스폰과 같은 규칙 (학교 타운맵에서만 이동)
+  wild2_spawn:
+    name: 야생2 스폰
+    server: wild2
     world: world
     spawn: true
     from: [school]
