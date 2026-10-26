@@ -63,6 +63,7 @@
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - 마법 발견 조건 v2 (§45): **학교·야생·아레나 `plugins/MagicDiscovery/discoveries.yml`·`manual-conditions.yml` 을 저장소 파일로 교체** (안 바꾸면 옛 조건 그대로) → `/서버관리 새로고침 마법발견`. books.yml overlay(대기 책 16권 켬) · ChacademyStory `steps.yml` ch1-13 시작명령(길잡이 별) 같이. MagicDiscovery·Bridge·MagicMythic·모션 플러그인·클라 모드(도감 문구) 같은 빌드로.
 - TAB 한글 닉 (#110): `deployment/tab/`.
+- **메인 스토리 1장 다시 짜기 (§49)**: `deployment/operating-config/ChacademyStory/steps.yml` 을 **tutorial·school 두 서버** `plugins/ChacademyStory/steps.yml` 에 똑같이 (튜토리얼 서버 `ChacademyStory/config.yml` 은 `quest-server-id: tutorial` 손으로). 대화 `deployment/story-dialogues/` → 학교 `plugins/ChacademyStory/dialogues/` 에 ch1-8~ch1-24·분류 결과 12개·대기대화 7개·`server_command.yml`, 튜토리얼에는 `ch1-7` + 학교에 있던 `ch1-1`~`ch1-6` 복사 + `server_command.yml` (폴더 README). 클라 대화 사본 필요 없음(대사는 서버가 보냄, 초상화 리소스팩 — 셀마 `vl_selma-neutral.png` 확인). 넣은 뒤 두 서버 `/서버관리 새로고침 스토리` → `/대화관리 단계 점검`. 스토리 플러그인 새 jar 필요(단계 `서버:`·`서버이동:`). **스토리 진행 공유 DB(A안)가 들어가야 튜토리얼 → 학교로 진행이 이어짐.** 컷신 4개(1장)는 런처 `config/chaca_cutscene/` ([컷신 목록](../plans/story-cutscenes-ch1-ch2.md)).
 - 마법별 힌트 파일 (§46): `plugins/MagicCodexBridge/spell-hints.yml` 은 처음 켤 때 jar 에서 자동 복사 (이미 있으면 안 덮어씀 → 내용이 바뀌면 손으로 교체) → `/서버관리 새로고침 힌트`. MagicCodexBridge·MagicDiscovery(`hintProgress`)·ChacaNPC(`spellHint`) 같은 빌드로 (옛 jar 와 섞여도 예전 자동 문장으로 동작).
 
 ## 4. 손으로 할 것

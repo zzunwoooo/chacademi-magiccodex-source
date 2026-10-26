@@ -1518,3 +1518,32 @@ spells:
 - 대시보드를 쓰면 `servers=` 에 `tutorial` 추가 + 주석 풀기, MagicCodexBridge `server-heartbeat.yml` server-id `tutorial`(또는 폴더 이름 tutorial).
 
 **검증**: 바뀐 Java 문법 검사 통과. GPT 빌드 때 `TutorialRouterTest`·`PortraitSettingsTest`·`ServerHeartbeatTest` 확인.
+
+## 49. 메인 스토리 1장 다시 짜기 + 1·2장 컷신 목록 (2026-10-26, 오너)
+
+**오너**: 메인 스토리는 아직 서버 적용 전이라 1장을 다시 짬. 시작의 섬(tutorial, 첫 접속) → 선착장 출항(배 컷신) → 그 뒤로 school. 항구 마을 → 피피 상점 → 돈이 없어 어부 올레 → 낚시 1마리 → 올레에게 보여 주면 길잡이 별 → 셀마에게 팔기(에드윈 아님) → 튜토리얼 재료 상점에서 준비물 전부("다 샀어? 준비는 완벽하네!") → 광장 동상 → 정문 루카·그레고르 → 입학·분류의 거울 → 내 방 → 로웰 사감 뒤·연금실 앞 웨이포인트(지도 이동) → 연금술 교수(창 열기 보류) → 엘레나 첫 수업 → 대도서관 이솔데 → 이론서 3권(책장 블록 각각) → 잿빛 밤 동화 컷신 → 1장 엔딩(보상 보류). 농사 없음. 스토리 NPC = Citizens 고정 + NPC클릭, 조건 전에 누르면 짧은 대기대화. 오픈 첫날은 1장만(config 그대로).
+
+**만든 것**
+- 단계 25개: `deployment/operating-config/ChacademyStory/steps.yml` (운영 기준) = 플러그인 기본 `steps.yml`. 표·자리 채우기: [docs/plans/story-ch1-v2.md](../plans/story-ch1-v2.md).
+  - **대화 ID = 단계 ID** (ch1-8~ch1-24). 예전 운영 초안의 ch1-14 가 대화 ch1-12 를 다시 쓰던 것(두 번째는 이미 본 대화라 안 열림) 고침. 분류의 거울은 코드(SchoolBridge·`SORTING_DIALOGUE`)가 이미 `ch1-17` 이라 조건 `ch1-17r-*|m-*|f-*` 로 맞춤 (초안의 `ch1-15r-*` 는 1장이 멈추는 버그).
+  - 신호·명령 확인: 낚시성공·물고기판매·튜토리얼재료구매·웨이포인트등록·지도열기 (StoryProgressEvent), `아이템관리 낚시장비`·`유저관리 … 마법조건 주기 guiding_star`·`유저관리 … 튜토리얼상점 시작/끝`·`유저관리 … 닉네임 창열기`·`기숙사분류 시작/결정` 전부 코드에 있음.
+  - 대기대화: ch1-12 올레·피피, ch1-13 피피·올레, ch1-14 피피 (번호 있음). ch1-19 로웰·ch1-23 이솔데는 NPC 번호를 정한 뒤 한 줄씩 추가.
+- 대화 37개 + `server_command.yml`: `deployment/story-dialogues/` (overlay 도구는 스토리 대화를 안 다뤄서 여기, README 에 넣는 곳). 저장소본·실서버본 대사 그대로, 새로 쓴 것 6개: ch1-12 올레 첫 물고기·길잡이 별, ch1-13 셀마, ch1-13w-ole, ch1-19 지도 혼잣말, ch1-19w-lowell (+ ch1-18 은 로웰 내 방 + 실서버 웨이포인트 대사 합침). ch1-7 선착장은 저장소본(메뉴 단축키·마이크·API 설명 없음). ch1-20 베르나 "마법진 열어 볼래요?" → 다음에 보여 준다는 말(창 열기 보류). 장 표시 `1장 · 차카데미아`.
+- **스토리 플러그인 (Java)**: 단계 키 `서버:`·`서버이동:` (`QuestDefs`·`QuestEngine`). 단계의 서버가 `quest-server-id` 와 다르면 그 서버에서는 호출·시작명령·대기대화·포탈·징표·길잡이 별 목표를 안 함 (튜토리얼·학교 세계 이름이 둘 다 world 라 좌표·NPC 번호가 섞이는 것 방지). `서버이동: true`(ch1-8) 는 다른 서버에서 그 단계에 들어오면 Velocity BungeeCord 호환 `Connect` 로 그 서버에 보냄(10초에 한 번, 튜토리얼 재접속 시 3초 뒤 다시). `/대화관리 단계 정보` 에 서버 줄, `점검` 은 그 서버 단계만. QuestDefsTest 왕복 테스트 추가.
+- 컷신 목록 6개: [docs/plans/story-cutscenes-ch1-ch2.md](../plans/story-cutscenes-ch1-ch2.md) — `ch0_forgotten_dream`(새, 튜토리얼 시작 = 예전엔 ch1_ashen_night 를 임시로 씀) · `magic_tutorial` · `ch1_harbor_arrival` · `ch1_ashen_night` · 2장 초안 `ch2_ashen_eyes` · `ch2_ashen_echo`. 장면별 그림·인물·확대·자막·길이·권장 min-seconds. 컷신 파일은 런처 `config/chaca_cutscene/`. config.yml 자동완성 목록에 5개.
+
+**Claude 판단**
+- 튜토리얼 → 학교 이동은 새 명령 대신 단계 키 `서버이동` 으로 (배 컷신이 끝나는 순간 이동, 재접속에도 다시 보냄). 학교 도착 자리는 `essentials:warp harbor {player}` (오너가 부두에서 `/setwarp harbor`).
+- ch1-13 셀마 판매 뒤 짧은 셀마 대사 하나 추가 (단계마다 대화가 있게). 판매는 셀마 = 물고기 판매소 NPC연결.
+- ch1-15 동상은 광장 동상 좌표(32.5, 124, 12.5) 반경 6 포탈. ch1-16 정문·18·20~22 는 NPC클릭(번호 -1 = 미정 → 그 단계에서 멈춤).
+- ch1-19 조건 = 웨이포인트등록 1 + 지도열기 1 (어느 공개 지점이든 처음 등록이면 참 — 연금실 앞을 HUD 글로 안내).
+- ch1-23 대화는 책 고르기 선택지를 빼고 세 권을 다 읽은 뒤 장면부터 (책은 책장 블록 조건 3개).
+- 2장은 기획 문서가 없어 오너 개요 5단계 기준 초안: 컷신은 ch2-1(잿빛 눈)·ch2-4(잿빛 가루 → 연대기 회상, 1장 그림 재사용) 2개. 교화 기초 수업은 책 UI 수업이라 컷신 없음.
+
+**전제·주의**
+- **스토리 진행 공유 DB(A안, 진행 중인 별도 작업)가 들어가야** 튜토리얼에서 학교로 진행이 이어짐 (지금 `QuestProgress` 는 서버 로컬 파일).
+- Velocity `bungee-plugin-message-channel = true`, Velocity 서버 이름 `school` = 단계 `서버: school`.
+- 컷신 파일이 아직 없으면 3번 다시 시도 후 건너뛰고 진행 (멈추지는 않음).
+- 서버에서 할 것: [story-ch1-v2.md "게임 안에서 정할 것"](../plans/story-ch1-v2.md) (NPC 5곳·책장 3개·warp·셀마 판매소·튜토리얼 상점·연금실 웨이포인트).
+
+**검증**: QuestDefs·StorySafety 단독 컴파일 + 서버·서버이동 왕복 실행 확인, QuestEngine 문법 검사 통과. steps.yml 25단계: 다음 단계·대화 파일·대기대화 존재·대화 ID 중복 없음·NPC클릭 서버 = 단계 서버 (스크립트 검사). 대화 37개: id = 폴더, 시작·선택지·next 장면 존재, 화자 정의, 끝 장면 있음, 에드윈 없음.
