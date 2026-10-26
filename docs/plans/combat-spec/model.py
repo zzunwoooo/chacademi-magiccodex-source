@@ -79,5 +79,22 @@ def table(out=sys.stdout):
         p(f"| {a} | {pool/24.6:.0f} | {pool/77:.0f} | {pool/276.5:.1f} | {pool/450:.1f} | {pool/600:.1f} | {manaf(a)*100:.0f}% |")
     return T
 
+def variants():
+    """적당↔한계 1.6배를 넘을 때 어떤 손잡이가 얼마나 줄이는지 (python3 model.py variants)."""
+    global L, N
+    import io
+    keep = dict(L)
+    def run(name, levels):
+        global L, N
+        L = levels; N = list(L); T = table(io.StringIO())
+        print(f"| {name} | {T['대충','대충']:.0f} / {T['적당','적당']:.0f} / {T['한계','한계']:.0f}초 | {T['적당','한계']/T['한계','적당']:.2f}배 | {T['대충','한계']/T['한계','대충']:.1f}배 |")
+    low = keep['대충']
+    print('| 경우 | 같은 스펙 대충/적당/한계 | 적당↔한계 | 한계↔대충 |\n|---|---|---|---|')
+    run('적용값 (위 표)', keep)
+    run('한계 펫 도감 +16 (제안서 권장, 오너는 20 유지)', {'대충': low, '적당': keep['적당'], '한계': build('전설', 10, ['전설'] * 3, 5, 0, 16, 20, 16, 1.12)})
+    run('적당 = 펫 도감 헤비(+13) · 다이아+보호 III(EPF 12)', {'대충': low, '적당': build('고급', 7, ['고급'] * 3, 3, 0, 13, 20, 12, 1.08), '한계': keep['한계']})
+    run('대충 = 수습 마법봉 추가 마나 50 → 300', {'대충': dict(low, mana=low['mana'] + 250), '적당': keep['적당'], '한계': keep['한계']})
+    L = keep; N = list(L)
+
 if __name__ == '__main__':
-    table()
+    variants() if sys.argv[1:] == ['variants'] else table()

@@ -720,3 +720,77 @@ items:
 
 확인: 각 아이템을 손에 들고 `/iaget` 류 또는 `/ia` 편집기에서 id 를 보고, 설정 바꾼 뒤 `/서버관리 새로고침 …`(각 섹션 참고).
 - **추가 (오너 2026-10-26 10:07)**: 잠긴 쪽에서 **"아공간 배낭" 제목을 그리지 않음**(자물쇠·문구만). 잠긴 쪽에서는 **Shift+클릭(빠른 이동)·두 번 클릭 모으기 막음**(보이지 않는 27칸으로 옮겨져 사라진 것처럼 보이던 문제) — 제작 패널 닫을 때 2x2 되돌리기만 예외. `GalaxyBagScreen.onMouseClick` 오버라이드.
+
+## 34. 전투 스펙 + 장신구 강화 (2026-10-26, 오너 승인 제안 적용)
+근거·계산: `docs/plans/combat-spec.md`(맨 위 "오너 결정 2026-10-26" 표) · `docs/plans/combat-spec/model.py`. 몹 체력·몹 마법 피해·플레이어→몹 피해는 **그대로**, 바뀌는 건 플레이어 스펙과 **플레이어→플레이어 마법**뿐.
+
+**바뀐 수치**
+
+| 항목 | 전 | 후 | 위치 |
+|---|---|---|---|
+| 기본 최대 마나 / 초당 회복 | 100 / 5 | **300 / 8** | `MagicCodexBridge/config.yml` `mana` |
+| 마법봉 기본 지능 (추가 마나) | 수습 24 (0), 나머지는 운영자 직접 | 수습 20 (50) · 일반 30 (50) · 고급 45 (120) · 유일 50 (135) · 전설 55 (150) | `enhancement.yml` `wand-grades` |
+| 마법봉 강화 1회 상승 | 코어 stat-gain 1.5~12 | 성공 1~7번째 +5 · 8~10번째 +2 (지능 중심 코어, 누적 +41). 코어 품질은 성공률·스타캐치만 | `enhancement.yml` `stage-gains` |
+| 장신구 등급 (지능 / 체력 / 최대 마나 / 초당 회복) | 정의 없음 | 일반 3/1/30/0.5 · 고급 6/3/60/1.3 · 유일 7/3/80/1.7 · 전설 9/3/100/2.3 | `enhancement.yml` `accessory-grades` |
+| 장신구 강화 | 없음 | 시도 5 · 1000원 · 단계 2,2,2,1,1 × (지능 0.5 · 마나 2.5 · 회복 0.15) × 코어 성향 | `enhancement.yml` `accessory` |
+| 궁극 마나 비용 | 600~2500 | 쉬움 450 · 연계 600 (오로라·별빛 재현 450) | `mana-spells.yml` · 도감 · `spell-catalog.yml` |
+| PvP 아티팩트 피해 보정 | 제한 없음 (여유 시계 +50% 등) | 합 +20% 상한 | `CombatSpec.PVP_ARTIFACT_CAP` |
+| 펫 도감 체력 · 몹 수치 | — | **유지** (최대 +20, 몹 그대로) | — |
+
+**마법 방어 (플레이어→플레이어 마법만)** — `MagicMythic/config.yml` `pvp:` (없으면 코드 기본값 같은 값)
+- 감소율 = min(45%, (방어력 속성 + 갑옷 4칸 보호(Protection) 레벨 합, 최대 20) × 1.25%). 방어 강도 무시. 저항 효과 단계당 20%, 최대 20% (방어 뒤에 곱함). 예: 철 세트 18.75% · 다이아 + 보호 II~III 37.5% · 네더라이트 + 보호 IV 45%.
+- 구현: `MagicProtection` 이 줄인 값을 `target.damage` 로 넣고, HIGHEST 리스너가 그 타격의 바닐라 ARMOR·MAGIC(보호 인첸트)·RESISTANCE 를 0으로 (흡수 하트는 다시 계산). **데이터팩·새 피해 종류 없음.**
+- 처형(크로스 애로우 체력 20% 미만): 감소 0 (방어·저항·흡수 넘는 피해). 예전엔 방어구가 줄여 처형이 실패했음.
+- 다단 히트: PvP 마법 타격 직전 대상 무적 시간 0 (`pvp.reset-invulnerability`).
+- 이중 감소 정리: 화상 폭발(이미 줄어든 받은 피해 × 0.1)·피해 나눠 받기(`Guards` 맹세)는 다시 줄이지 않음 / 플레이어가 건 독은 마법 방어.
+- 몹이 쓰는 마법·플레이어가 몹을 맞히는 마법은 예전 그대로(바닐라 방어).
+
+**PvP 피해 공식** — 생성기 `magic-mythic-paper/tools/spells.py` `PVP_K`·`PVP_ULT` → `spell-runtime.yml` 마법마다 `pvp-base`/`pvp-ratio` (피해 있는 118개)
+- PvP 피해 = k × (40 + 지능) × 마법별 상대 배율. k = 초급 0.027 · 중급 0.045 · 고급 0.091 · 쉬운 궁극 0.186 · 연계 궁극 0.537. 등급 = `spell_order.py` 가중치 1~3 / 4~6 / 7~8 / 9~10.
+- 상대 배율(초급~고급) = 지금 몹 피해(지능 52 기준) ÷ 그 등급 평균 → 마법끼리 차이는 지금 그대로. 궁극 = 목표 %(제안서 §4) ÷ 분류 목표 % ÷ 타격 합.
+- 전달: Bridge 가 시전 때 미몹 변수 `pvp_scale` = PvP 피해 ÷ 몹 상대 피해 를 넘기고, MagicMythic `Targets.hurt` 가 대상이 플레이어일 때만 곱함 (같은 시전의 모든 타격·투사체·장판·표식 폭발에 같은 배율). 변수를 못 받은 타격(패시브 추가타, 나중에 도는 일부 예약 작업)은 `pvp.fallback-scale` 0.13.
+
+**궁극 분류**
+
+| 분류 | 마법 (목표 %, 타격 합) |
+|---|---|
+| 연계 (k 0.537, 마나 600) | 메테오 (130, 1) · 레비아탄 (130, 1.35) · 태양의 심판 (150, 1.8) · 심연의 문 (120, 1) |
+| 쉬움 (k 0.186, 마나 450) | 크로스 애로우 (25 + 처형) · 하늘의 눈 (40) · 드래곤 브레스 (45, 5타 × 0.4) · 염제 강림 (60, 4 × 0.5 + 1) · 타이탄의 발걸음 (45, 0.6+0.6+1) · 월식의 눈 (45, 접촉 약 3번 추정) · 별빛 재현 (분류 지시 없음 → 쉬움, 자체 피해 0) |
+| 지원형 (마나 450) | 오로라 (피해 10%, 회복량은 그대로) |
+
+**장신구 강화** (마법봉과 같은 흐름)
+- 반지·귀걸이·목걸이를 **주 손에 들고** `/강화` → 같은 강화 창·마력코어·스타캐치·실패 시 횟수 소모. 아티팩트 칸·장착 중인 장신구는 안 됨, 강화 중엔 장비 바꾸기 막음.
+- 오르는 값: 지능(`equipment_bonus_0`) · 최대 마나(`_2`) · 초당 마나 회복(`_3`). 체력·가속은 안 오름. 코어 성향: 지능 중심 → 지능 / 마나 중심 → 최대 마나 / 가속 중심 → 초당 회복. 5번 모두 성공(지능 중심) = 지능 +4 · 마나 +20 · 회복 +1.2.
+- 창: 세 번째 줄이 "초당 마나 회복"(마나 아이콘), 코어 툴팁 "마나 회복 중심/보조". 프로토콜 응답 버전 3(kind 1)은 장신구일 때만 — 마법봉은 예전 버전 2 그대로라 옛 클라도 마법봉 강화는 됨.
+- 원본 수치 `accessory_base_*` 를 등록 때 적음. 이미 강화한 장신구는 `장비 등급등록` 으로 다시 못 정함.
+- 새 명령: `/아이템관리 마법봉 주기 <수습|일반|고급|유일|전설> [닉네임]` · `/아이템관리 장비 등급등록 <반지|귀걸이|목걸이> <일반|고급|유일|전설>` (`docs/ADMIN_COMMANDS_KO.md` 반영).
+- **오너: 운영 서버 jar 에 저장소에 없는 장신구 강화가 있으면 GPT 가 오너에게 알려 주고 이것과 합칠 것.** (저장소에는 이번 것이 처음)
+
+**바꾼 파일**
+- `magic-codex-protocol`: EnhancementProtocol(kind·버전 3) · CoreAffinity(accessoryLabel)
+- `magic-codex-paper`: EnhancementBridge · EnhancementRules · EquipmentBridge · AdminCommandBridge · MagicCodexBridge · SpellRules(pvp-base/ratio) · SpellRuntime(pvp_scale) · ArtifactEffects · CombatSpec(새) / 설정 config.yml · enhancement.yml · mana-spells.yml
+- `magic-codex-fabric`: EnhancementScreen / 도감 default-spells 궁극 12개 + known-hashes.tsv
+- `magic-mythic-paper`: MagicArmor(새) · MagicProtection · Targets · HitMech · StatusEffects · Guards · Marks · Mech · ChannelMech · SpellTrace · MagicMythicPlugin / config.yml `pvp` / 생성기 tools/spells.py · nova/ult.py · arcana_spells.py(월식의 눈 마나 값만, 생성기는 안 돌림) / server-config/spell-runtime.yml
+- `portable-vfx-runtime`: spell-catalog.yml (궁극 마나 표시)
+- `deployment/operating-config`: MagicCodexBridge/spell-runtime.yml · mana-spells.yml · PortableVFX/spell-catalog.yml · manifest (`operating_overlay.py check` 차이 없음)
+- 문서: docs/plans/combat-spec.md · combat-spec/model.py · ADMIN_COMMANDS_KO.md
+
+**같이 배포**
+- 플러그인: **MagicCodexBridge + ChAcademiaMagicMythic** (학교·야생·튜토리얼 모든 서버, 같은 빌드끼리 — `pvp_scale` 변수를 주고받음). PortableVFX 는 jar 그대로, `spell-catalog.yml` 만.
+- 클라 모드: **MagicCodex** (장신구 강화 창). 마법봉 강화만 쓸 거면 옛 클라도 됨.
+- 운영 설정: `deployment/operating-config/MagicCodexBridge/{spell-runtime,mana-spells}.yml` → `plugins/MagicCodexBridge/`, `PortableVFX/spell-catalog.yml` → `plugins/PortableVFX/`.
+- **서버에 이미 있는 설정 파일은 자동으로 안 바뀜** (saveResource 는 없을 때만): `plugins/MagicCodexBridge/config.yml` 의 `mana.default-maximum: 300`·`default-regeneration: 8`, `plugins/MagicCodexBridge/enhancement.yml` 은 저장소 파일로 교체(새 `stage-gains`·`wand-grades`·`accessory`·`accessory-grades` — 없으면 장신구 강화 꺼짐·예전 코어 상승량), `plugins/ChAcademiaMagicMythic/config.yml` 에 `pvp:` 블록(없어도 코드 기본값이 같음).
+- 이미 접속했던 계정은 최대 마나·회복이 저장돼 있어 300/8 이 안 됨 → `/유저관리 <닉> 스탯 최대마나 설정 300` · `스탯 마나회복 설정 8`.
+- MythicMobs 스킬 파일(`chacademi_spells.yml`)·데이터팩: **변경 없음**.
+- 렉: 타격마다 속성·갑옷 4칸 인첸트 읽기와 곱셈 몇 번뿐, 새 주기 작업·DB 없음.
+
+**게임 확인**
+1. 허수아비: 몹 상대 피해가 예전과 같은지 (같은 마법·같은 지능으로 전후 숫자 비교).
+2. 두 계정 결투: 같은 마법봉·장신구로 초급 몇 발에 쓰러지는지(적당 기준 약 15발), 방어구 바꿔 감소율(철 ~19% · 다이아+보호 37.5% · 네더+보호 IV 45%) 확인.
+3. 크로스 애로우로 체력 20% 미만 상대 처형 (방어구 입어도 됨).
+4. 드래곤 브레스 5타가 다 들어가는지 (무적 시간).
+5. 화상 → 끝날 때 폭발, 독 틱 피해가 방어구 때문에 거의 0이 되지 않는지.
+6. `/아이템관리 마법봉 주기 고급` → 지능 45 · 추가 마나 120, `/강화` 성공 1~7번째 지능 +5, 8번째부터 +2.
+7. 반지에 `/아이템관리 장비 등급등록 반지 고급` → 손에 들고 `/강화` → 창 세 번째 줄 "초당 마나 회복", 성공 뒤 장착 → 정보창 지능·최대 마나·회복 반영. 장착한 채로는 강화 안 되는지.
+8. 새 계정 최대 마나 300 · 회복 8, 궁극 마나 450/600.
+9. 결투 중 여유 시계 등 아티팩트로 PvP 피해가 +20% 넘게 안 오르는지.
