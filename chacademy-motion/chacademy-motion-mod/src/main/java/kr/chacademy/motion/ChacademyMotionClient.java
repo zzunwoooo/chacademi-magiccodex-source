@@ -1,6 +1,5 @@
 package kr.chacademy.motion;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import kr.chacademy.motion.anim.MotionPlayer;
 import kr.chacademy.motion.api.BroomApi;
 import kr.chacademy.motion.broom.BroomFlight;
@@ -14,17 +13,14 @@ import kr.chacademy.motion.net.BroomPackets;
 import kr.chacademy.motion.net.MotionPackets;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +40,6 @@ public class ChacademyMotionClient implements ClientModInitializer {
     private static final int CAST_COOLDOWN_TICKS = 14;
     private static int cooldown = 0;
 
-    private static KeyMapping castKey;
 
     @Override
     public void onInitializeClient() {
@@ -99,22 +94,12 @@ public class ChacademyMotionClient implements ClientModInitializer {
             }
         });
 
-        // 모션 테스트 키(R)는 개발 환경에서만 등록한다. 배포본에서는 누구나 모션을 재생·전송할 수 없게 한다 (2026-10-21).
-        if (net.fabricmc.loader.api.FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            castKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                    "key." + MOD_ID + ".cast",
-                    InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_R,
-                    "key.category." + MOD_ID));
-        }
+        // 모션 테스트 키(R)는 없앰 (오너 2026-10-26). 마법 모션은 cast() 를 부르는 쪽에서만 재생.
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             BroomFlight.tick(client);
             BroomRiders.tick(client);
             if (cooldown > 0) cooldown--;
-            while (castKey != null && castKey.consumeClick()) {
-                cast("wand_cast");
-            }
         });
 
         LOGGER.info("Chacademy Motion 로드됨");
