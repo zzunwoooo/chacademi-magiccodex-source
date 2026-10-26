@@ -804,3 +804,24 @@ items:
 - 배율 `enhancement.yml` `core-quality-multiplier`: 1노드 0.9 · 2노드 0.95 · 3노드 1.0 → 10노드 1.15 (직선). 코드 기본값 같음 (`EnhancementRules.defaultQuality`).
 - 재계산(model.py, 적당 = 4노드쯤 1.04, 한계 = 10노드 1.15): 적당 vs 한계 **1.90배** (10노드 1.3 이면 2.04배, 품질 무관이면 1.78배). 오너 검수 때 배율 조정.
 - 서버 `enhancement.yml` 교체 필요 (jar 가 안 덮음).
+
+### §19 추가 — NPC 통계 (오너 2026-10-26 10:56: 제일 많이·적게 대화한 NPC, 선물 1위 — NPC 쪽·유저 쪽 둘 다)
+- 새 키 (플레이어별 누적, `codex_player_stats`): `대화시작:<npcId>` (ChacaNPC 대화창을 연 횟수) · `대화:<npcId>` (주고받은 말 수, AI 답 1번 = 1) · `선물:<npcId>` (선물 성공 수, 기존 `선물` 합계는 그대로). 관리자 테스트 대화는 안 셈.
+- 연결: ChacaNPC `DialogueService.open`·`addTurns` → `MagicCodexLink.stat` → Bridge `NpcSocialFacade.stat` (API_VERSION 그대로, 옛 Bridge 면 조용히 무시) → `AuditStats.add`. 선물은 Bridge `NpcSocialService.auditAffinity`.
+- 같이 배포: ChacaNPC jar + MagicCodexBridge jar.
+- 끝날 때 정리 SQL (MariaDB, NPC id → 이름은 ChacaNPC npcs/*.yml):
+```sql
+-- NPC 쪽: 가장 많이/적게 대화한 NPC (말 수 합계 · 대화한 사람 수). 0번인 NPC 는 행이 없으니 NPC 목록과 비교.
+SELECT SUBSTRING(stat_key, 4) AS npc, SUM(count) AS lines, COUNT(*) AS players
+  FROM codex_player_stats WHERE stat_key LIKE '대화:%' GROUP BY stat_key ORDER BY lines DESC;   -- ASC 면 가장 적게
+-- NPC 쪽: 선물을 가장 많이 받은 NPC
+SELECT SUBSTRING(stat_key, 4) AS npc, SUM(count) AS gifts FROM codex_player_stats WHERE stat_key LIKE '선물:%' GROUP BY stat_key ORDER BY gifts DESC;
+-- 유저 쪽: NPC 와 가장 많이 대화한 유저 / 선물을 가장 많이 건넨 유저
+SELECT player, SUM(count) AS lines FROM codex_player_stats WHERE stat_key LIKE '대화:%' GROUP BY player ORDER BY lines DESC LIMIT 20;
+SELECT player, count AS gifts FROM codex_player_stats WHERE stat_key = '선물' ORDER BY gifts DESC LIMIT 20;
+-- 유저별 가장 많이 대화한 NPC (단짝 NPC)
+SELECT s.player, SUBSTRING(s.stat_key, 4) AS npc, s.count FROM codex_player_stats s
+  WHERE s.stat_key LIKE '대화:%' AND s.count = (SELECT MAX(t.count) FROM codex_player_stats t WHERE t.player = s.player AND t.stat_key LIKE '대화:%');
+-- 특정 NPC 의 단골 1위 (예: ella)
+SELECT player, count FROM codex_player_stats WHERE stat_key = '대화:ella' ORDER BY count DESC LIMIT 5;
+```

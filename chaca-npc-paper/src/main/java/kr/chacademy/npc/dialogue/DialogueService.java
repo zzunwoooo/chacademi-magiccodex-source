@@ -166,6 +166,7 @@ public final class DialogueService {
         long now = System.currentTimeMillis();
         DialogueSession s = new DialogueSession(p.getUniqueId(), link().playerName(p), c, citizensId, adminTest, now, viewFor(p));
         sessions.put(p.getUniqueId(), s);
+        if (!adminTest) link().stat(p.getUniqueId(), "대화시작:" + c.id(), 1); // 통계 #96: NPC 별 대화 연 횟수
         loadContext(p, s);
         if (citizensId != null) {
             plugin.npcs().face(citizensId, p);
@@ -986,6 +987,7 @@ public final class DialogueService {
     }
 
     private void addTurns(DialogueSession s, String playerText, String npcLine) {
+        if (!s.adminTest()) link().stat(s.player(), "대화:" + s.character().id(), 1); // 통계 #96: NPC 별 주고받은 말 수
         int keep = plugin.settings().recentTurns * 2;
         s.recent.add(new Turn("player", playerText));
         s.recent.add(new Turn("npc", npcLine));

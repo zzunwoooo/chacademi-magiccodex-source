@@ -649,7 +649,7 @@ final class NpcSocialService implements Listener, AutoCloseable {
 
     /** 운영 기록 (메모 #92): 실제로 바뀐 호감도만 (applied 0 이면 상한·일일 제한으로 안 오른 것 → 남기지 않음, 선물은 성공이라 남김). */
     private static void auditAffinity(UUID player, String npc, String source, int requested, AffinityStore.AddResult r, String item) {
-        if (r != null && source.equals("gift")) AuditStats.add(player, "선물", 1);
+        if (r != null && source.equals("gift")) { AuditStats.add(player, "선물", 1); AuditStats.add(player, "선물:" + npc, 1); }
         if (r == null || r.applied() == 0 && !source.equals("gift")) return;
         String how = switch (source) { case "gift" -> "선물"; case "chat_reward" -> "AI 대화"; default -> source; };
         AuditLog.log(player, AuditLog.호감도, how + " · " + npc + " " + (r.applied() >= 0 ? "+" : "") + r.applied() + " → " + r.row().score() + " (하트 " + r.row().heart() + ")"

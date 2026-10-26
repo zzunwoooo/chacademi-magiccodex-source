@@ -190,4 +190,13 @@ public final class NpcSocialFacade {
     public void removeSocialListener(Consumer<Map<String, String>> listener) {
         service.removeListener(listener);
     }
+
+    /**
+     * (추가 메서드, API_VERSION 그대로) 서버 통계 (#96 추가, 오너 2026-10-26): ChacaNPC 가 NPC 대화 횟수를 플레이어 누적 통계에 더한다.
+     * key 는 "대화:<npcId>"·"대화시작:<npcId>" 등. 메모리에 더하기만 (DB 는 AuditStats 주기 반영).
+     */
+    public void stat(UUID player, String key, long amount) {
+        if (player == null || key == null || key.isBlank() || key.length() > 64 || amount <= 0) return;
+        AuditStats.add(player, key, amount);
+    }
 }

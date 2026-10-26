@@ -204,6 +204,16 @@ public final class MagicCodexLink implements Listener {
         return future("storySummary", player);
     }
 
+    /** 서버 통계 (#96, 2026-10-26): NPC 대화 횟수 등. Bridge 가 없거나 옛 버전이면 조용히 무시. */
+    public void stat(UUID player, String key, long amount) {
+        if (facade == null || !methods.containsKey("stat")) return;
+        try {
+            call("stat", player, key, amount);
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            // 통계는 부가 기능: 실패해도 대화에 영향 없음
+        }
+    }
+
     /** 이 Bridge 가 NPC 대화창에서 상점 열기(openShop)를 지원하는지. */
     public boolean shops() {
         return facade != null && methods.containsKey("openShop");
