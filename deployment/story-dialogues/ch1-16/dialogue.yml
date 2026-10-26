@@ -1,0 +1,55 @@
+# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-13)
+format: 1
+id: "ch1-16"
+title: "1-16. 입학"
+description: "언덕 위 차카데미아 정문에서 입학 수속을 밟으세요."
+chapter: "1장 · 차카데미아"
+start: a
+dim: 0.35
+type_speed: 0.03
+type_sound: default
+type_sound_volume: 0.5
+speakers:
+  me:
+    name: "{player}"
+  luka:
+    name: "루카"
+    npc: "luka"
+    portraits:
+      "기본": "luka-neutral.png"
+  gregor:
+    name: "그레고르 교감"
+    npc: "vice_gregor"
+    portraits:
+      "기본": "vice_gregor-neutral.png"
+scenes:
+  a:
+    name: "정문"
+    lines:
+      - {who: luka, face: "기본", text: "저, 저기! 혹시 너도 신입생이야? 다행이다… 나 혼자인 줄 알았어."}
+      - {who: luka, face: "기본", text: "나는 루카! 너는?"}
+      - {who: me, face: "", text: "나는 {player}. 만나서 반가워."}
+      - {who: luka, face: "기본", text: "여기 교감 선생님이 엄청 무섭대. 틀리면 첫날부터 벌점이래…"}
+      - {who: gregor, face: "기본", text: "…새로 온 학생들인가."}
+      - {who: luka, face: "기본", text: "헉! 안, 안녕하세요!"}
+      - {who: gregor, face: "기본", text: "차카데미아 교감 그레고르다. 입학을 환영한다."}
+      - {who: gregor, face: "기본", text: "{player}. 엘레나 교수에게 이야기는 들었다. 첫날 상승기류를 발현했다고."}
+      - {who: luka, face: "기본", text: "뭐? 첫날에? 나는 아직 하나도 못 했는데…"}
+    choices:
+      - {text: "운이 좋았을 뿐이에요.", to: "b"}
+      - {text: "감사합니다!", to: "c"}
+  b:
+    name: "운"
+    lines:
+      - {who: gregor, face: "기본", text: "운이든 아니든, 발현했다는 게 중요하다."}
+    next: e
+  c:
+    name: "칭찬"
+    lines:
+      - {who: gregor, face: "기본", text: "칭찬이 아니다. 할 일을 알려 주는 것뿐이다."}
+    next: e
+  e:
+    name: "기숙사로"
+    lines:
+      - {who: gregor, face: "기본", text: "백 년 전 우리는 수많은 기록과 사람을 잃었다. 학생 하나하나가 이 학교의 빈칸을 채운다."}
+      - {who: gregor, face: "기본", text: "먼저 기숙사를 정할 차례다. 따라오도록."}
