@@ -91,11 +91,17 @@ def magic(dmg, a):
     return dmg * (1 - L[a]['dr'])
 
 
+MELEE_EVERY = 1.0                     # 근접 붙어 있으면 약 1초에 한 번 (미몹 meleeattack · 플레이어 무적 0.5초)
+LAND_MELEE = 0.25                     # 피하며 싸울 때 근접에 붙잡혀 있는 비율 (야생 몹 이동 속도 ×1.35 라 완전히 떼기는 어려움)
+
+
 def ttd(tier_key, a, careful=True):
-    """가만히 맞기만 하면(careful=False) / 피하며 싸우면(True) 몇 초에 쓰러지나 (몹 1마리, 스킬만)."""
+    """몹 1마리에게 쓰러지기까지(초): 스킬 + 근접. careful=False 면 가만히 서서 전부 맞음(근접도 매초)."""
     T = tier(tier_key)
-    lb, lg = (LAND_BASIC, LAND_BIG) if careful else (1, 1)
+    lb, lg, lm = (LAND_BASIC, LAND_BIG, LAND_MELEE) if careful else (1, 1, 1)
     dps = magic(T['basic'], a) * lb / BASIC_EVERY + magic(T['big'], a) * lg / BIG_EVERY
+    if T['melee']:
+        dps += vanilla(T['melee'], a) * lm / MELEE_EVERY
     return L[a]['hp'] / dps if dps > 0 else float('inf')
 
 
@@ -115,8 +121,8 @@ def table(out=sys.stdout):
         kill = ' | '.join(f"{fmt(ttk(T['hp'], a))} · {spells_to_kill(T['hp'], a):.1f}" for a in N)
         live = ' | '.join(f"{fmt(ttd(k, a))}" for a in N)
         p(f"| {T['label']} | {T['hp']} | {T['basic']:.1f} / {T['big']:.1f} / {T['melee']:g} | {kill} | {live} |")
-    p('\n버팀 = 몹 1마리 스킬을 피하며(기본기 70% · 큰 기술 40% 맞음) 싸울 때 쓰러지기까지. 근접은 따로 (아래).')
-    p('가만히 서서 다 맞으면 버팀(초): ' + ' · '.join(T['label'] + ' ' + '/'.join(fmt(ttd(k, a, False)) for a in N) for k, T in ((k, tier(k)) for k in tiers)) + '  (대충/적당/한계)')
+    p('\n버팀 = 몹 1마리와 피하며(기본기 70% · 큰 기술 40% · 근접 붙잡힘 25%) 싸울 때 쓰러지기까지 (스킬 + 근접). 처치 < 버팀 이면 이김.')
+    p('가만히 서서 다 맞으면 버팀(초, 근접 매초 포함): ' + ' · '.join(T['label'] + ' ' + '/'.join(fmt(ttd(k, a, False)) for a in N) for k, T in ((k, tier(k)) for k in tiers)) + '  (대충/적당/한계)')
     p('\n몇 번 맞으면 쓰러지나 (가득 찬 체력 기준)')
     p('| 등급 | ' + ' | '.join(f'{a} 기본기 / 큰 기술 / 근접' for a in N) + ' |')
     p('|---|' + '---|' * len(N))
@@ -133,6 +139,8 @@ def table(out=sys.stdout):
     boss = MS.TIERS['boss']['hp']
     p('\n보스 파티: ' + ' · '.join(f"적당 {n}명 {fmt(ttk(boss, '적당', n))}초" for n in (1, 2, 3, 4))
       + f" · 한계 1명 {fmt(ttk(boss, '한계'))}초 · 한계 2명 {fmt(ttk(boss, '한계', 2))}초 · 대충 4명 {fmt(ttk(boss, '대충', 4))}초")
+    p('보스가 n명에게 골고루 나눠 때리면 한 사람 버팀(초, 피하며): ' + ' · '.join(f"적당 {n}명 {fmt(ttd('boss', '적당') * n)}" for n in (1, 2, 3, 4))
+      + f" · 한계 2명 {fmt(ttd('boss', '한계') * 2)}")
 
 
 def current():

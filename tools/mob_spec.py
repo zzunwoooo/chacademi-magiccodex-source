@@ -9,6 +9,10 @@
                                                # CA_Wild_* 의 Health·Damage 줄만 바꿈. 다른 줄(운영에만 있는 Skills 등)은 그대로.
   python3 tools/mob_spec.py baseline           # (처음 한 번) 바꾸기 전 값을 docs/plans/mob-spec/baseline.json 에 기록
 
+  apply 뒤에는 꼭: python3 tools/operating_overlay.py regenerate → check (배포본 deployment/operating-config/MythicMobs/
+  Skills/chacademi_mob_skills.yml · Mobs/chacademi_mob_minions.yml 이 같이 바뀜).
+  야생 몹 파일(chacademia_custom_wild.yml)은 overlay 에 없음: 운영본에만 있는 Skills 줄(몹 스킬 연결)이 있어서 통째로 바꾸면 안 됨 → apply-mobs.
+
 규칙
   - 등급 = creature-spawns-paper habitats.yml 의 rarity (변색종도 같은 등급, 같은 수치).
   - Health = 등급 체력. Damage(근접, 바닐라 방어 적용) = 원래 0 이면 0 그대로(공격 안 하는 몹), 아니면 등급 근접 피해.
@@ -29,10 +33,11 @@ MINIONS = os.path.join(REPO, 'magic-mythic-paper', 'mythicmobs', 'Mobs', 'chacad
 BASELINE = os.path.join(REPO, 'docs', 'plans', 'mob-spec', 'baseline.json')
 
 # ---- 등급 규칙 (오너 #109: Claude 가 정함). 근거 표는 docs/plans/mob-spec.md
+# 2차 조정(같은 날): 근접까지 넣어 계산하니 2성 80/5/×1.3 은 대충이 피해도 짐, 3성 450/14/×2.5 는 적당이 피해도 짐 → 2성 60/3/×1.1 · 3성 380/8/×1.8
 TIERS = {
     '1':      {'label': '1성',  'hp': 40,   'melee': 0,  'mult': 1.0},
-    '2':      {'label': '2성',  'hp': 80,   'melee': 5,  'mult': 1.3},
-    '3':      {'label': '3성',  'hp': 450,  'melee': 14, 'mult': 2.5},
+    '2':      {'label': '2성',  'hp': 60,   'melee': 3,  'mult': 1.1},
+    '3':      {'label': '3성',  'hp': 380,  'melee': 8,  'mult': 1.8},
     'boss':   {'label': '보스', 'hp': 2000, 'melee': 24, 'mult': 3.5},
     'minion': {'label': '소환수', 'hp': 30, 'melee': 4,  'mult': 1.0},
 }

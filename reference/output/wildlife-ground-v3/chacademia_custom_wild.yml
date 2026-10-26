@@ -230,7 +230,7 @@
 "CA_Wild_elk":
   "Type": "HUSK"
   "Display": "§f고산 엘크"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -258,7 +258,7 @@
 "CA_Wild_elk_shiny":
   "Type": "HUSK"
   "Display": "§e고산 엘크"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -458,8 +458,8 @@
 "CA_Wild_bear":
   "Type": "HUSK"
   "Display": "§f산림 불곰"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -489,8 +489,8 @@
 "CA_Wild_bear_shiny":
   "Type": "HUSK"
   "Display": "§e산림 불곰"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -521,8 +521,8 @@
 "CA_Wild_bear_black":
   "Type": "HUSK"
   "Display": "§f그늘 흑곰"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -552,8 +552,8 @@
 "CA_Wild_bear_black_shiny":
   "Type": "HUSK"
   "Display": "§e그늘 흑곰"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -584,8 +584,8 @@
 "CA_Wild_bear_polar":
   "Type": "HUSK"
   "Display": "§f빙하 백곰"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -615,8 +615,8 @@
 "CA_Wild_bear_polar_shiny":
   "Type": "HUSK"
   "Display": "§e빙하 백곰"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -647,8 +647,8 @@
 "CA_Wild_timber_wolf":
   "Type": "HUSK"
   "Display": "§f침엽 숲늑대"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -678,8 +678,8 @@
 "CA_Wild_timber_wolf_shiny":
   "Type": "HUSK"
   "Display": "§e침엽 숲늑대"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -873,7 +873,7 @@
 "CA_Wild_buffalo":
   "Type": "HUSK"
   "Display": "§f고원 버팔로"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -901,7 +901,7 @@
 "CA_Wild_buffalo_shiny":
   "Type": "HUSK"
   "Display": "§e고원 버팔로"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -987,8 +987,8 @@
 "CA_Wild_alpha_boar":
   "Type": "HUSK"
   "Display": "§f송곳니 우두머리"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1019,8 +1019,8 @@
 "CA_Wild_alpha_boar_shiny":
   "Type": "HUSK"
   "Display": "§e송곳니 우두머리"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1052,8 +1052,8 @@
 "CA_Wild_crocodile":
   "Type": "HUSK"
   "Display": "§f난초늪 악어"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1084,8 +1084,8 @@
 "CA_Wild_crocodile_shiny":
   "Type": "HUSK"
   "Display": "§e난초늪 악어"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1117,7 +1117,7 @@
 "CA_Wild_buffalo_alpha":
   "Type": "HUSK"
   "Display": "§f고원의 우두머리"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -1147,7 +1147,7 @@
 "CA_Wild_buffalo_alpha_shiny":
   "Type": "HUSK"
   "Display": "§e고원의 우두머리"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -1349,8 +1349,8 @@
 "CA_Wild_lostasset_mob1_wolf":
   "Type": "HUSK"
   "Display": "§f목초지 양치기"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1380,8 +1380,8 @@
 "CA_Wild_lostasset_mob1_wolf_shiny":
   "Type": "HUSK"
   "Display": "§e목초지 양치기"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1412,8 +1412,8 @@
 "CA_Wild_lostasset_mob2_flowersprite":
   "Type": "HUSK"
   "Display": "§f꽃망울 정령"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1443,8 +1443,8 @@
 "CA_Wild_lostasset_mob2_flowersprite_shiny":
   "Type": "HUSK"
   "Display": "§e꽃망울 정령"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1475,8 +1475,8 @@
 "CA_Wild_lostasset_mob2_lakefairy":
   "Type": "HUSK"
   "Display": "§f달물결 요정"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1506,8 +1506,8 @@
 "CA_Wild_lostasset_mob2_lakefairy_shiny":
   "Type": "HUSK"
   "Display": "§e달물결 요정"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1538,8 +1538,8 @@
 "CA_Wild_lostasset_mob2_leaffairy":
   "Type": "HUSK"
   "Display": "§f잎새 요정"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1569,8 +1569,8 @@
 "CA_Wild_lostasset_mob2_leaffairy_shiny":
   "Type": "HUSK"
   "Display": "§e잎새 요정"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1601,8 +1601,8 @@
 "CA_Wild_lostasset_mob2_mushroomfairy":
   "Type": "HUSK"
   "Display": "§f포자 요정"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1632,8 +1632,8 @@
 "CA_Wild_lostasset_mob2_mushroomfairy_shiny":
   "Type": "HUSK"
   "Display": "§e포자 요정"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1664,8 +1664,8 @@
 "CA_Wild_lostasset_mob3_herbgolem":
   "Type": "HUSK"
   "Display": "§f약초 수호골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1695,8 +1695,8 @@
 "CA_Wild_lostasset_mob3_herbgolem_shiny":
   "Type": "HUSK"
   "Display": "§e약초 수호골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1784,8 +1784,8 @@
 "CA_Wild_lostasset_mob3_mossyboar":
   "Type": "HUSK"
   "Display": "§f이끼 등멧돼지"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1815,8 +1815,8 @@
 "CA_Wild_lostasset_mob3_mossyboar_shiny":
   "Type": "HUSK"
   "Display": "§e이끼 등멧돼지"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -1904,7 +1904,7 @@
 "CA_Wild_bulb_amethyst":
   "Type": "HUSK"
   "Display": "§f자수정 새싹"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -1932,7 +1932,7 @@
 "CA_Wild_bulb_amethyst_shiny":
   "Type": "HUSK"
   "Display": "§e자수정 새싹"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -1961,7 +1961,7 @@
 "CA_Wild_bulb_crimsonspore":
   "Type": "HUSK"
   "Display": "§f진홍 포자"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -1989,7 +1989,7 @@
 "CA_Wild_bulb_crimsonspore_shiny":
   "Type": "HUSK"
   "Display": "§e진홍 포자"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2132,7 +2132,7 @@
 "CA_Wild_bulb_warpedfungus":
   "Type": "HUSK"
   "Display": "§f뒤틀린 균새싹"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2160,7 +2160,7 @@
 "CA_Wild_bulb_warpedfungus_shiny":
   "Type": "HUSK"
   "Display": "§e뒤틀린 균새싹"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2246,8 +2246,8 @@
 "CA_Wild_piranha":
   "Type": "DROWNED"
   "Display": "§f붉은이빨 피라냐"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2273,8 +2273,8 @@
 "CA_Wild_piranha_shiny":
   "Type": "DROWNED"
   "Display": "§e붉은이빨 피라냐"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2301,8 +2301,8 @@
 "CA_Wild_swordfish":
   "Type": "COD"
   "Display": "§f푸른창 황새치"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2327,8 +2327,8 @@
 "CA_Wild_swordfish_shiny":
   "Type": "COD"
   "Display": "§e푸른창 황새치"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2452,7 +2452,7 @@
 "CA_Wild_jellyfish_pink":
   "Type": "COD"
   "Display": "§f분홍 해파리"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2476,7 +2476,7 @@
 "CA_Wild_jellyfish_pink_shiny":
   "Type": "COD"
   "Display": "§e분홍 해파리"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2501,7 +2501,7 @@
 "CA_Wild_jellyfish_yellow":
   "Type": "COD"
   "Display": "§f금빛 해파리"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2525,7 +2525,7 @@
 "CA_Wild_jellyfish_yellow_shiny":
   "Type": "COD"
   "Display": "§e금빛 해파리"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2648,7 +2648,7 @@
 "CA_Wild_seahorse_pink":
   "Type": "COD"
   "Display": "§f분홍 해마"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2672,7 +2672,7 @@
 "CA_Wild_seahorse_pink_shiny":
   "Type": "COD"
   "Display": "§e분홍 해마"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2697,7 +2697,7 @@
 "CA_Wild_seahorse_yellow":
   "Type": "COD"
   "Display": "§f금빛 해마"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2721,7 +2721,7 @@
 "CA_Wild_seahorse_yellow_shiny":
   "Type": "COD"
   "Display": "§e금빛 해마"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -2746,8 +2746,8 @@
 "CA_Wild_ogre_club":
   "Type": "HUSK"
   "Display": "§f숲몽둥이 오우거"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2778,8 +2778,8 @@
 "CA_Wild_ogre_club_shiny":
   "Type": "HUSK"
   "Display": "§e숲몽둥이 오우거"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2811,8 +2811,8 @@
 "CA_Wild_ogre_axe":
   "Type": "HUSK"
   "Display": "§f벌목꾼 오우거"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2843,8 +2843,8 @@
 "CA_Wild_ogre_axe_shiny":
   "Type": "HUSK"
   "Display": "§e벌목꾼 오우거"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2876,8 +2876,8 @@
 "CA_Wild_ogre_hammer":
   "Type": "HUSK"
   "Display": "§f산울림 오우거"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2908,8 +2908,8 @@
 "CA_Wild_ogre_hammer_shiny":
   "Type": "HUSK"
   "Display": "§e산울림 오우거"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2941,8 +2941,8 @@
 "CA_Wild_ncr_spear_skeleton":
   "Type": "HUSK"
   "Display": "§f유적의 창병"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -2973,8 +2973,8 @@
 "CA_Wild_ncr_spear_skeleton_shiny":
   "Type": "HUSK"
   "Display": "§e유적의 창병"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3006,8 +3006,8 @@
 "CA_Wild_ncr_warrior_skeleton":
   "Type": "HUSK"
   "Display": "§f유적의 검병"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3038,8 +3038,8 @@
 "CA_Wild_ncr_warrior_skeleton_shiny":
   "Type": "HUSK"
   "Display": "§e유적의 검병"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3071,8 +3071,8 @@
 "CA_Wild_ncr_archer_skeleton":
   "Type": "HUSK"
   "Display": "§f유적의 궁수"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3103,8 +3103,8 @@
 "CA_Wild_ncr_archer_skeleton_shiny":
   "Type": "HUSK"
   "Display": "§e유적의 궁수"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3136,8 +3136,8 @@
 "CA_Wild_ncr_mage_skeleton":
   "Type": "HUSK"
   "Display": "§f망각의 해골술사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3168,8 +3168,8 @@
 "CA_Wild_ncr_mage_skeleton_shiny":
   "Type": "HUSK"
   "Display": "§e망각의 해골술사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3201,8 +3201,8 @@
 "CA_Wild_mf_warden_knight":
   "Type": "HUSK"
   "Display": "§f봉인의 기사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3233,8 +3233,8 @@
 "CA_Wild_mf_warden_knight_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 기사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3266,8 +3266,8 @@
 "CA_Wild_mf_warden_archer":
   "Type": "HUSK"
   "Display": "§f봉인의 궁수"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3298,8 +3298,8 @@
 "CA_Wild_mf_warden_archer_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 궁수"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3331,8 +3331,8 @@
 "CA_Wild_mf_warden_tank":
   "Type": "HUSK"
   "Display": "§f봉인의 거벽"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3363,8 +3363,8 @@
 "CA_Wild_mf_warden_tank_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 거벽"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3396,8 +3396,8 @@
 "CA_Wild_mf_warden_mage":
   "Type": "HUSK"
   "Display": "§f봉인의 술사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3428,8 +3428,8 @@
 "CA_Wild_mf_warden_mage_shiny":
   "Type": "HUSK"
   "Display": "§e봉인의 술사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -3868,7 +3868,7 @@
 "CA_Wild_nocsy_cat_fallen":
   "Type": "HUSK"
   "Display": "§f달그늘 고양이"
-  "Health": 450
+  "Health": 380
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -3896,7 +3896,7 @@
 "CA_Wild_nocsy_cat_fallen_shiny":
   "Type": "HUSK"
   "Display": "§e달그늘 고양이"
-  "Health": 450
+  "Health": 380
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -4039,8 +4039,8 @@
 "CA_Wild_baby_yeti":
   "Type": "HUSK"
   "Display": "§f눈산 꼬마예티"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4070,8 +4070,8 @@
 "CA_Wild_baby_yeti_shiny":
   "Type": "HUSK"
   "Display": "§e눈산 꼬마예티"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4102,7 +4102,7 @@
 "CA_Wild_frost_ferret":
   "Type": "HUSK"
   "Display": "§f서리 족제비"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -4130,7 +4130,7 @@
 "CA_Wild_frost_ferret_shiny":
   "Type": "HUSK"
   "Display": "§e서리 족제비"
-  "Health": 80
+  "Health": 60
   "Damage": 0
   "Options":
     "PreventOtherDrops": true
@@ -4159,8 +4159,8 @@
 "CA_Wild_gangster_snowman":
   "Type": "HUSK"
   "Display": "§f심술 눈사람"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4190,8 +4190,8 @@
 "CA_Wild_gangster_snowman_shiny":
   "Type": "HUSK"
   "Display": "§e심술 눈사람"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4222,8 +4222,8 @@
 "CA_Wild_ice_knight":
   "Type": "HUSK"
   "Display": "§f서리 기사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4253,8 +4253,8 @@
 "CA_Wild_ice_knight_shiny":
   "Type": "HUSK"
   "Display": "§e서리 기사"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4285,8 +4285,8 @@
 "CA_Wild_dragon_desert":
   "Type": "HUSK"
   "Display": "§f사막 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4317,8 +4317,8 @@
 "CA_Wild_dragon_desert_shiny":
   "Type": "HUSK"
   "Display": "§e사막 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4350,8 +4350,8 @@
 "CA_Wild_dragon_glacial":
   "Type": "HUSK"
   "Display": "§f빙하 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4382,8 +4382,8 @@
 "CA_Wild_dragon_glacial_shiny":
   "Type": "HUSK"
   "Display": "§e빙하 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4415,8 +4415,8 @@
 "CA_Wild_dragon_nether":
   "Type": "HUSK"
   "Display": "§f화산 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4447,8 +4447,8 @@
 "CA_Wild_dragon_nether_shiny":
   "Type": "HUSK"
   "Display": "§e화산 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4480,8 +4480,8 @@
 "CA_Wild_dragon_sculk":
   "Type": "HUSK"
   "Display": "§f스컬크 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4512,8 +4512,8 @@
 "CA_Wild_dragon_sculk_shiny":
   "Type": "HUSK"
   "Display": "§e스컬크 드래곤"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4545,8 +4545,8 @@
 "CA_Wild_lizard_aqua":
   "Type": "HUSK"
   "Display": "§f물가 왕도마뱀"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4576,8 +4576,8 @@
 "CA_Wild_lizard_aqua_shiny":
   "Type": "HUSK"
   "Display": "§e물가 왕도마뱀"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4608,8 +4608,8 @@
 "CA_Wild_lizard_lava":
   "Type": "HUSK"
   "Display": "§f용암 왕도마뱀"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4639,8 +4639,8 @@
 "CA_Wild_lizard_lava_shiny":
   "Type": "HUSK"
   "Display": "§e용암 왕도마뱀"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4671,8 +4671,8 @@
 "CA_Wild_manticore_aether":
   "Type": "HUSK"
   "Display": "§f창공 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4703,8 +4703,8 @@
 "CA_Wild_manticore_aether_shiny":
   "Type": "HUSK"
   "Display": "§e창공 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4736,8 +4736,8 @@
 "CA_Wild_manticore_dusk":
   "Type": "HUSK"
   "Display": "§f황혼 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4768,8 +4768,8 @@
 "CA_Wild_manticore_dusk_shiny":
   "Type": "HUSK"
   "Display": "§e황혼 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4801,8 +4801,8 @@
 "CA_Wild_manticore_soul":
   "Type": "HUSK"
   "Display": "§f혼령 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4833,8 +4833,8 @@
 "CA_Wild_manticore_soul_shiny":
   "Type": "HUSK"
   "Display": "§e혼령 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4866,8 +4866,8 @@
 "CA_Wild_manticore_venom":
   "Type": "HUSK"
   "Display": "§f맹독 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4898,8 +4898,8 @@
 "CA_Wild_manticore_venom_shiny":
   "Type": "HUSK"
   "Display": "§e맹독 만티코어"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -4988,8 +4988,8 @@
 "CA_Wild_sabertooth_arctic":
   "Type": "HUSK"
   "Display": "§f설원 검치호"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5019,8 +5019,8 @@
 "CA_Wild_sabertooth_arctic_shiny":
   "Type": "HUSK"
   "Display": "§e설원 검치호"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5051,8 +5051,8 @@
 "CA_Wild_sabertooth_midnight":
   "Type": "HUSK"
   "Display": "§f한밤 검치호"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5082,8 +5082,8 @@
 "CA_Wild_sabertooth_midnight_shiny":
   "Type": "HUSK"
   "Display": "§e한밤 검치호"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5114,8 +5114,8 @@
 "CA_Wild_sabertooth_savanna":
   "Type": "HUSK"
   "Display": "§f초원 검치호"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5145,8 +5145,8 @@
 "CA_Wild_sabertooth_savanna_shiny":
   "Type": "HUSK"
   "Display": "§e초원 검치호"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5234,8 +5234,8 @@
 "CA_Wild_horse_glacial":
   "Type": "HUSK"
   "Display": "§f빙하 준마"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5265,8 +5265,8 @@
 "CA_Wild_horse_glacial_shiny":
   "Type": "HUSK"
   "Display": "§e빙하 준마"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5297,8 +5297,8 @@
 "CA_Wild_horse_magma":
   "Type": "HUSK"
   "Display": "§f마그마 준마"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5328,8 +5328,8 @@
 "CA_Wild_horse_magma_shiny":
   "Type": "HUSK"
   "Display": "§e마그마 준마"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5360,8 +5360,8 @@
 "CA_Wild_horse_pegasus":
   "Type": "HUSK"
   "Display": "§f페가수스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5391,8 +5391,8 @@
 "CA_Wild_horse_pegasus_shiny":
   "Type": "HUSK"
   "Display": "§e페가수스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5423,8 +5423,8 @@
 "CA_Wild_horse_spartan":
   "Type": "HUSK"
   "Display": "§f철갑 준마"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5454,8 +5454,8 @@
 "CA_Wild_horse_spartan_shiny":
   "Type": "HUSK"
   "Display": "§e철갑 준마"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5486,8 +5486,8 @@
 "CA_Wild_horse_unicorn":
   "Type": "HUSK"
   "Display": "§f유니콘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5517,8 +5517,8 @@
 "CA_Wild_horse_unicorn_shiny":
   "Type": "HUSK"
   "Display": "§e유니콘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5549,8 +5549,8 @@
 "CA_Wild_kitsune_demonic":
   "Type": "HUSK"
   "Display": "§f마성 키츠네"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5580,8 +5580,8 @@
 "CA_Wild_kitsune_demonic_shiny":
   "Type": "HUSK"
   "Display": "§e마성 키츠네"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5612,8 +5612,8 @@
 "CA_Wild_kitsune_inferno":
   "Type": "HUSK"
   "Display": "§f업화 키츠네"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5643,8 +5643,8 @@
 "CA_Wild_kitsune_inferno_shiny":
   "Type": "HUSK"
   "Display": "§e업화 키츠네"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5675,8 +5675,8 @@
 "CA_Wild_kitsune_normal":
   "Type": "HUSK"
   "Display": "§f키츠네"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5706,8 +5706,8 @@
 "CA_Wild_kitsune_normal_shiny":
   "Type": "HUSK"
   "Display": "§e키츠네"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5738,8 +5738,8 @@
 "CA_Wild_phantom_ender":
   "Type": "HUSK"
   "Display": "§f공허 팬텀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5769,8 +5769,8 @@
 "CA_Wild_phantom_ender_shiny":
   "Type": "HUSK"
   "Display": "§e공허 팬텀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5801,8 +5801,8 @@
 "CA_Wild_phantom_ghost":
   "Type": "HUSK"
   "Display": "§f망령 팬텀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5832,8 +5832,8 @@
 "CA_Wild_phantom_ghost_shiny":
   "Type": "HUSK"
   "Display": "§e망령 팬텀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5864,8 +5864,8 @@
 "CA_Wild_phoenix_darkflame":
   "Type": "HUSK"
   "Display": "§f흑염 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5895,8 +5895,8 @@
 "CA_Wild_phoenix_darkflame_shiny":
   "Type": "HUSK"
   "Display": "§e흑염 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5927,8 +5927,8 @@
 "CA_Wild_phoenix_flame":
   "Type": "HUSK"
   "Display": "§f불꽃 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5958,8 +5958,8 @@
 "CA_Wild_phoenix_flame_shiny":
   "Type": "HUSK"
   "Display": "§e불꽃 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -5990,8 +5990,8 @@
 "CA_Wild_phoenix_light":
   "Type": "HUSK"
   "Display": "§f광휘 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6021,8 +6021,8 @@
 "CA_Wild_phoenix_light_shiny":
   "Type": "HUSK"
   "Display": "§e광휘 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6053,8 +6053,8 @@
 "CA_Wild_phoenix_thunder":
   "Type": "HUSK"
   "Display": "§f뇌광 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6084,8 +6084,8 @@
 "CA_Wild_phoenix_thunder_shiny":
   "Type": "HUSK"
   "Display": "§e뇌광 피닉스"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6116,8 +6116,8 @@
 "CA_Wild_basilisk_obsidian":
   "Type": "HUSK"
   "Display": "§f흑요 바실리스크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6148,8 +6148,8 @@
 "CA_Wild_basilisk_obsidian_shiny":
   "Type": "HUSK"
   "Display": "§e흑요 바실리스크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6181,8 +6181,8 @@
 "CA_Wild_basilisk_snowstorm":
   "Type": "HUSK"
   "Display": "§f눈보라 바실리스크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6213,8 +6213,8 @@
 "CA_Wild_basilisk_snowstorm_shiny":
   "Type": "HUSK"
   "Display": "§e눈보라 바실리스크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6246,8 +6246,8 @@
 "CA_Wild_basilisk_wild":
   "Type": "HUSK"
   "Display": "§f야생 바실리스크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6278,8 +6278,8 @@
 "CA_Wild_basilisk_wild_shiny":
   "Type": "HUSK"
   "Display": "§e야생 바실리스크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6311,8 +6311,8 @@
 "CA_Wild_hippogryph_common":
   "Type": "HUSK"
   "Display": "§f산악 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6342,8 +6342,8 @@
 "CA_Wild_hippogryph_common_shiny":
   "Type": "HUSK"
   "Display": "§e산악 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6374,8 +6374,8 @@
 "CA_Wild_hippogryph_crystal":
   "Type": "HUSK"
   "Display": "§f수정 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6405,8 +6405,8 @@
 "CA_Wild_hippogryph_crystal_shiny":
   "Type": "HUSK"
   "Display": "§e수정 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6437,8 +6437,8 @@
 "CA_Wild_hippogryph_fallen":
   "Type": "HUSK"
   "Display": "§f타락 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6468,8 +6468,8 @@
 "CA_Wild_hippogryph_fallen_shiny":
   "Type": "HUSK"
   "Display": "§e타락 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6500,8 +6500,8 @@
 "CA_Wild_hippogryph_royal":
   "Type": "HUSK"
   "Display": "§f왕실 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6531,8 +6531,8 @@
 "CA_Wild_hippogryph_royal_shiny":
   "Type": "HUSK"
   "Display": "§e왕실 히포그리프"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6563,8 +6563,8 @@
 "CA_Wild_raptor_nightmare":
   "Type": "HUSK"
   "Display": "§f악몽 랩터"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6595,8 +6595,8 @@
 "CA_Wild_raptor_nightmare_shiny":
   "Type": "HUSK"
   "Display": "§e악몽 랩터"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6628,8 +6628,8 @@
 "CA_Wild_raptor_red":
   "Type": "HUSK"
   "Display": "§f적갈 랩터"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6660,8 +6660,8 @@
 "CA_Wild_raptor_red_shiny":
   "Type": "HUSK"
   "Display": "§e적갈 랩터"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6693,8 +6693,8 @@
 "CA_Wild_raptor_undead":
   "Type": "HUSK"
   "Display": "§f불사 랩터"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6725,8 +6725,8 @@
 "CA_Wild_raptor_undead_shiny":
   "Type": "HUSK"
   "Display": "§e불사 랩터"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6758,8 +6758,8 @@
 "CA_Wild_sky_serpent_jade":
   "Type": "HUSK"
   "Display": "§f비취 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6789,8 +6789,8 @@
 "CA_Wild_sky_serpent_jade_shiny":
   "Type": "HUSK"
   "Display": "§e비취 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6821,8 +6821,8 @@
 "CA_Wild_sky_serpent_magma":
   "Type": "HUSK"
   "Display": "§f마그마 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6852,8 +6852,8 @@
 "CA_Wild_sky_serpent_magma_shiny":
   "Type": "HUSK"
   "Display": "§e마그마 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6884,8 +6884,8 @@
 "CA_Wild_sky_serpent_solar":
   "Type": "HUSK"
   "Display": "§f태양 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6915,8 +6915,8 @@
 "CA_Wild_sky_serpent_solar_shiny":
   "Type": "HUSK"
   "Display": "§e태양 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6947,8 +6947,8 @@
 "CA_Wild_sky_serpent_spectral":
   "Type": "HUSK"
   "Display": "§f영체 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -6978,8 +6978,8 @@
 "CA_Wild_sky_serpent_spectral_shiny":
   "Type": "HUSK"
   "Display": "§e영체 하늘뱀"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7010,8 +7010,8 @@
 "CA_Wild_stag_demonic":
   "Type": "HUSK"
   "Display": "§f마성 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7041,8 +7041,8 @@
 "CA_Wild_stag_demonic_shiny":
   "Type": "HUSK"
   "Display": "§e마성 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7073,8 +7073,8 @@
 "CA_Wild_stag_heavenly":
   "Type": "HUSK"
   "Display": "§f천상 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7104,8 +7104,8 @@
 "CA_Wild_stag_heavenly_shiny":
   "Type": "HUSK"
   "Display": "§e천상 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7136,8 +7136,8 @@
 "CA_Wild_stag_rune":
   "Type": "HUSK"
   "Display": "§f룬 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7167,8 +7167,8 @@
 "CA_Wild_stag_rune_shiny":
   "Type": "HUSK"
   "Display": "§e룬 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7199,8 +7199,8 @@
 "CA_Wild_stag_void":
   "Type": "HUSK"
   "Display": "§f심연 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7230,8 +7230,8 @@
 "CA_Wild_stag_void_shiny":
   "Type": "HUSK"
   "Display": "§e심연 영록"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7262,8 +7262,8 @@
 "CA_Wild_frog_green":
   "Type": "HUSK"
   "Display": "§f녹빛 왕개구리"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7293,8 +7293,8 @@
 "CA_Wild_frog_green_shiny":
   "Type": "HUSK"
   "Display": "§e녹빛 왕개구리"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7325,8 +7325,8 @@
 "CA_Wild_frog_permafrost":
   "Type": "HUSK"
   "Display": "§f영구동토 왕개구리"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7356,8 +7356,8 @@
 "CA_Wild_frog_permafrost_shiny":
   "Type": "HUSK"
   "Display": "§e영구동토 왕개구리"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7388,8 +7388,8 @@
 "CA_Wild_frog_royal":
   "Type": "HUSK"
   "Display": "§f왕실 왕개구리"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7419,8 +7419,8 @@
 "CA_Wild_frog_royal_shiny":
   "Type": "HUSK"
   "Display": "§e왕실 왕개구리"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7451,8 +7451,8 @@
 "CA_Wild_golem_arcane":
   "Type": "HUSK"
   "Display": "§f비전 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7482,8 +7482,8 @@
 "CA_Wild_golem_arcane_shiny":
   "Type": "HUSK"
   "Display": "§e비전 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7514,8 +7514,8 @@
 "CA_Wild_golem_corrupted":
   "Type": "HUSK"
   "Display": "§f오염 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7545,8 +7545,8 @@
 "CA_Wild_golem_corrupted_shiny":
   "Type": "HUSK"
   "Display": "§e오염 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7577,8 +7577,8 @@
 "CA_Wild_golem_magma":
   "Type": "HUSK"
   "Display": "§f마그마 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7608,8 +7608,8 @@
 "CA_Wild_golem_magma_shiny":
   "Type": "HUSK"
   "Display": "§e마그마 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7640,8 +7640,8 @@
 "CA_Wild_golem_royal":
   "Type": "HUSK"
   "Display": "§f왕실 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7671,8 +7671,8 @@
 "CA_Wild_golem_royal_shiny":
   "Type": "HUSK"
   "Display": "§e왕실 고대 골렘"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7703,8 +7703,8 @@
 "CA_Wild_tusker_demonic":
   "Type": "HUSK"
   "Display": "§f마성 터스커"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7734,8 +7734,8 @@
 "CA_Wild_tusker_demonic_shiny":
   "Type": "HUSK"
   "Display": "§e마성 터스커"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7766,8 +7766,8 @@
 "CA_Wild_tusker_dreamlight":
   "Type": "HUSK"
   "Display": "§f꿈빛 터스커"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7797,8 +7797,8 @@
 "CA_Wild_tusker_dreamlight_shiny":
   "Type": "HUSK"
   "Display": "§e꿈빛 터스커"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7829,8 +7829,8 @@
 "CA_Wild_tusker_forest":
   "Type": "HUSK"
   "Display": "§f숲 터스커"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7860,8 +7860,8 @@
 "CA_Wild_tusker_forest_shiny":
   "Type": "HUSK"
   "Display": "§e숲 터스커"
-  "Health": 80
-  "Damage": 5
+  "Health": 60
+  "Damage": 3
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7892,8 +7892,8 @@
 "CA_Wild_wolfhawk_dire":
   "Type": "HUSK"
   "Display": "§f거친 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7923,8 +7923,8 @@
 "CA_Wild_wolfhawk_dire_shiny":
   "Type": "HUSK"
   "Display": "§e거친 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7955,8 +7955,8 @@
 "CA_Wild_wolfhawk_fallen":
   "Type": "HUSK"
   "Display": "§f타락 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -7986,8 +7986,8 @@
 "CA_Wild_wolfhawk_fallen_shiny":
   "Type": "HUSK"
   "Display": "§e타락 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8018,8 +8018,8 @@
 "CA_Wild_wolfhawk_fullmoon":
   "Type": "HUSK"
   "Display": "§f만월 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8049,8 +8049,8 @@
 "CA_Wild_wolfhawk_fullmoon_shiny":
   "Type": "HUSK"
   "Display": "§e만월 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8081,8 +8081,8 @@
 "CA_Wild_wolfhawk_stormcloud":
   "Type": "HUSK"
   "Display": "§f먹구름 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8112,8 +8112,8 @@
 "CA_Wild_wolfhawk_stormcloud_shiny":
   "Type": "HUSK"
   "Display": "§e먹구름 울프호크"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8144,8 +8144,8 @@
 "CA_Wild_wyvern_ender":
   "Type": "HUSK"
   "Display": "§f공허 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8176,8 +8176,8 @@
 "CA_Wild_wyvern_ender_shiny":
   "Type": "HUSK"
   "Display": "§e공허 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8209,8 +8209,8 @@
 "CA_Wild_wyvern_green":
   "Type": "HUSK"
   "Display": "§f녹빛 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8241,8 +8241,8 @@
 "CA_Wild_wyvern_green_shiny":
   "Type": "HUSK"
   "Display": "§e녹빛 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8274,8 +8274,8 @@
 "CA_Wild_wyvern_inferno":
   "Type": "HUSK"
   "Display": "§f업화 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8306,8 +8306,8 @@
 "CA_Wild_wyvern_inferno_shiny":
   "Type": "HUSK"
   "Display": "§e업화 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8339,8 +8339,8 @@
 "CA_Wild_wyvern_undead":
   "Type": "HUSK"
   "Display": "§f불사 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
@@ -8371,8 +8371,8 @@
 "CA_Wild_wyvern_undead_shiny":
   "Type": "HUSK"
   "Display": "§e불사 와이번"
-  "Health": 450
-  "Damage": 14
+  "Health": 380
+  "Damage": 8
   "Options":
     "PreventOtherDrops": true
     "PreventRandomEquipment": true
