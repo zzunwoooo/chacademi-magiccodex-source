@@ -88,7 +88,7 @@
 - DB: 학교·야생·아레나 `database.properties` 가 같은 MariaDB (공유 표 자동 생성: codex_audit_log · codex_player_stats · codex_popularity* · codex_chunk_claim/trust · codex_housing_showcase · codex_server_status …). 안 쓰는 `codex_artifact_pity` 는 지워도 됨.
 
 ## 5. 전투 스펙 배포 주의 (§34)
-- 서버의 `MagicCodexBridge/config.yml`·`enhancement.yml` 은 jar 가 안 덮음 → 새 값으로 **교체** (enhancement.yml 이 옛 것이면 장신구 강화가 꺼져 있음). MagicMythic `config.yml` 도 새 키(마법 방어 상한 등) 반영.
+- 서버의 `MagicCodexBridge/config.yml`·`enhancement.yml` 은 jar 가 안 덮음 → 새 값으로 **교체** (enhancement.yml 이 옛 것이면 장신구 강화가 꺼져 있음). MagicMythic `config.yml` 도 새 키(마법 방어 상한 등, `limits.novas: 4096`, pvp.mob-magic-armor, 포션) 반영.
 - 이미 접속했던 계정은 최대 마나 100·회복 5 가 저장돼 있음 → 접속자 전체 `/유저관리 <닉> 스탯 최대마나 설정 300`, `스탯 마나회복 설정 8` (또는 GPT 가 일괄 처리 방법 판단, 오너에게 보고).
 - 운영 jar 에 저장소에 없는 장신구 강화가 이미 있으면 오너에게 알리고 이 구현과 합칠 것 (오너: "이미 있다").
 
