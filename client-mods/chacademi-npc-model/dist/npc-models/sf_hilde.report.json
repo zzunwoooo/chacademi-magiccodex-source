@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/sf_hilde.glb",
+  "bytes": 2796596,
+  "sha256": "59b66dd7e64e552a2dd4529046c1433e69a75240bb0ff39e26d43b40c79aeb97",
+  "heightBlocks": 1.8,
+  "scale": 1.9761260123375612,
+  "yawDegrees": 2.77,
+  "clips": {
+    "idle": {
+      "seconds": 15.3333,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 17879,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/5aa1fb27-1793013792543_29___/tripo_convert_9eb4925a-d267-4de3-971a-76196391b9cd.fbx"
+}

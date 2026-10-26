@@ -21,6 +21,29 @@ models:
 - marta
 - vl_selma
 - librarian_isolde
+- noel
+- sf_hilde
+- st_bomi
+- st_geonho
+- st_gibeom
+- st_haru
+- st_hayul
+- st_ian
+- st_jaewon
+- st_minho
+- st_minjae
+- vl_bert
+- vl_clara
+- vl_elsa
+- vl_greta
+- vl_lotte
+- vl_mia
+- vl_nina
+- vl_rosa
+- vl_karl
+- st_eden
+- st_bongu
+- st_gaeun
 # 캐릭터 ID 기준 기본값 — 그 캐릭터와 연결된 NPC를 다시 만들어도 따라갑니다
 characters:
   luka:
@@ -73,6 +96,75 @@ characters:
     scale: 1.0
   librarian_isolde:
     model: librarian_isolde
+    scale: 1.0
+  noel:
+    model: noel
+    scale: 1.0
+  sf_hilde:
+    model: sf_hilde
+    scale: 1.0
+  st_bomi:
+    model: st_bomi
+    scale: 1.0
+  st_geonho:
+    model: st_geonho
+    scale: 1.0
+  st_gibeom:
+    model: st_gibeom
+    scale: 1.0
+  st_haru:
+    model: st_haru
+    scale: 1.0
+  st_hayul:
+    model: st_hayul
+    scale: 1.0
+  st_ian:
+    model: st_ian
+    scale: 1.0
+  st_jaewon:
+    model: st_jaewon
+    scale: 1.0
+  st_minho:
+    model: st_minho
+    scale: 1.0
+  st_minjae:
+    model: st_minjae
+    scale: 1.0
+  vl_bert:
+    model: vl_bert
+    scale: 1.0
+  vl_clara:
+    model: vl_clara
+    scale: 1.0
+  vl_elsa:
+    model: vl_elsa
+    scale: 1.0
+  vl_greta:
+    model: vl_greta
+    scale: 1.0
+  vl_lotte:
+    model: vl_lotte
+    scale: 1.0
+  vl_mia:
+    model: vl_mia
+    scale: 1.0
+  vl_nina:
+    model: vl_nina
+    scale: 1.0
+  vl_rosa:
+    model: vl_rosa
+    scale: 1.0
+  vl_karl:
+    model: vl_karl
+    scale: 1.0
+  st_eden:
+    model: st_eden
+    scale: 1.0
+  st_bongu:
+    model: st_bongu
+    scale: 1.0
+  st_gaeun:
+    model: st_gaeun
     scale: 1.0
 # Citizens NPC 하나만 따로 지정 (캐릭터 기본값보다 우선). model: none = 이 NPC만 원래 외형
 npcs: {}

@@ -1,11 +1,11 @@
 {
   "warnings": [],
   "out": "out/st_jun.glb",
-  "bytes": 1934588,
-  "sha256": "e3d7ef007ea79b228cb21279034750884d12845e9aacaf61216901134da1b3e4",
+  "bytes": 2763168,
+  "sha256": "8169efa30eada4539a9a520016511abbd088ebd7246dfb26dc10639376ad62ca",
   "heightBlocks": 1.8,
-  "scale": 1.9106696238381686,
-  "yawDegrees": 0.0,
+  "scale": 1.9219174320766883,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
       "seconds": 15.5833,
@@ -16,12 +16,16 @@
       "rootSpeed": 0.0
     }
   },
-  "triangles": 15368,
+  "triangles": 15278,
   "joints": 65,
   "textures": [
     [
       2048,
-      1024
+      2048
+    ],
+    [
+      2048,
+      2048
     ]
   ],
   "proportion": {
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "9c127d1e-1793002929271_08_____/08_준/08_준_수정.glb"
+  "input": "src/d80d47e6-1793013777875_08__/tripo_convert_4a3274c9-6df6-4c03-866e-142ba8ca04dc.fbx"
 }

@@ -1,27 +1,31 @@
 {
   "warnings": [],
   "out": "out/marta.glb",
-  "bytes": 2340240,
-  "sha256": "e3c9cb6f57c72a06b700711a5fcc7f9fe2c208f5660ca3fc763019375bcefcaa",
+  "bytes": 2309220,
+  "sha256": "f1efe705e970c7d06d4f0b91af4d32ab5796d3663e7ddfd0d4e839006a6bfa31",
   "heightBlocks": 1.8,
-  "scale": 2.0170434730704003,
-  "yawDegrees": -0.0,
+  "scale": 2.035760366151644,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
-      "seconds": 15.625,
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     },
     "walk": {
-      "seconds": 2.375,
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 13879,
+  "triangles": 13777,
   "joints": 65,
   "textures": [
     [
       2048,
-      1024
+      2048
+    ],
+    [
+      2048,
+      2048
     ]
   ],
   "proportion": {
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "6e05db5e-1793002929272_54___________/54_마르타_할머니_수정.glb"
+  "input": "src/c879075e-1793013777878_54_______/tripo_convert_d0565e02-b85c-497f-b460-b47525cac38e.fbx"
 }

@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_greta.glb",
+  "bytes": 2368840,
+  "sha256": "33f236dca6373f170501f0d51e89f0e0d058322fcdf4069fe69b5bb250de5166",
+  "heightBlocks": 1.8,
+  "scale": 1.973105008129998,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12306,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/3c08aafd-1793013792541_35____/tripo_convert_1f8ccd4e-b9cd-40d0-85e9-34451161af0d.fbx"
+}

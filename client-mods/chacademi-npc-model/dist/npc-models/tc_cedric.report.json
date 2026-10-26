@@ -1,27 +1,31 @@
 {
   "warnings": [],
   "out": "out/tc_cedric.glb",
-  "bytes": 2746756,
-  "sha256": "dd63f67b2afaf34dda6409ca58349a09043c6a118bb7a6ea5fd2cc38ce186722",
+  "bytes": 2838060,
+  "sha256": "ae07052a977431c2015b5ee128e1875938d33a6e91c3e6e5497582b825ca18b6",
   "heightBlocks": 1.8,
-  "scale": 1.976621419594451,
-  "yawDegrees": -0.0,
+  "scale": 1.9809880543148348,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
-      "seconds": 15.625,
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     },
     "walk": {
-      "seconds": 2.375,
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 14822,
+  "triangles": 14684,
   "joints": 65,
   "textures": [
     [
       2048,
-      1024
+      2048
+    ],
+    [
+      2048,
+      2048
     ]
   ],
   "proportion": {
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "a7d0b5fc-1793002929272_43__________/43_세드릭_교수_수정.glb"
+  "input": "src/8b7d26c5-1793013777877_43______/tripo_convert_4c2ca012-2d3c-4748-9514-ae2f322714db.fbx"
 }

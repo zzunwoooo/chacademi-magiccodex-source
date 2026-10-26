@@ -1,0 +1,39 @@
+{
+  "warnings": [
+    "깨진(NaN) 스킨 웨이트 정점 1개 → 가장 가까운 정점 웨이트로 고침"
+  ],
+  "out": "out/st_gaeun.glb",
+  "bytes": 2829436,
+  "sha256": "c6416641e3f4fd980217ab4d552bbfabe7f09ef0a06a83868c341204545b6fe9",
+  "heightBlocks": 1.8,
+  "scale": 1.7986008289541604,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13301,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/b5d5bec7-1793013777871_14___/tripo_convert_7f3161af-5acf-41b2-aa31-af06cf6c19fd.fbx"
+}

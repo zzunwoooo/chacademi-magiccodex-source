@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_jaewon.glb",
+  "bytes": 2735984,
+  "sha256": "2c6f62bf2b4d648a239b8abe0dcb77354f8fc23d63b1c6c55fc0743155e2ee73",
+  "heightBlocks": 1.8,
+  "scale": 1.867942048157222,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13604,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/d4702962-1793013792546_09___/tripo_convert_c421028c-ecb1-4554-a246-9b96611af8f9.fbx"
+}

@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_mia.glb",
+  "bytes": 3013100,
+  "sha256": "282c857ec614b1cd701e3081e2d168ec28402676c39cf3b83802812f0c472767",
+  "heightBlocks": 1.8,
+  "scale": 1.8343241121833525,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13182,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/fc8451d6-1793013792545_50___/tripo_convert_ece23274-e275-43b7-8a6c-9ba619bd251f.fbx"
+}

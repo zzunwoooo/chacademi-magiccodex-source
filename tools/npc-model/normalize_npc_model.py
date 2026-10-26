@@ -199,11 +199,72 @@ def find_texture(tex_dir: Path | None, node_name: str):
 
 # ---------------------------------------------------------------- 본 작업
 
+def sanitize_weights(js: dict, bin_: bytes) -> tuple[bytes, int]:
+    """WEIGHTS_0 의 NaN/무한/음수를 0 으로, 합이 0 이 된 정점은 첫 뼈 100% 로 (모드는 NaN 웨이트 파일을 거부함)."""
+    buf = bytearray(bin_)
+    fixed = 0
+    seen = set()
+    for mesh in js.get("meshes", []):
+        for p in mesh.get("primitives", []):
+            ai = p.get("attributes", {}).get("WEIGHTS_0")
+            if ai is None or ai in seen:
+                continue
+            seen.add(ai)
+            acc = js["accessors"][ai]
+            if acc.get("componentType") != 5126 or "bufferView" not in acc:
+                continue
+            bv = js["bufferViews"][acc["bufferView"]]
+            off = bv.get("byteOffset", 0) + acc.get("byteOffset", 0)
+            stride = bv.get("byteStride", 16)
+            if stride != 16:
+                continue
+            n = acc["count"]
+            w = np.frombuffer(bytes(buf[off:off + n * 16]), np.float32).reshape(n, 4).copy()
+            badrow = ~np.isfinite(w).all(1) | (w < 0).any(1)
+            if not badrow.any():
+                continue
+            # 깨진 정점은 가장 가까운 정상 정점의 뼈·웨이트를 그대로 복사 (첫 뼈 고정은 엉뚱한 곳으로 늘어남)
+            pa = js["accessors"][p["attributes"]["POSITION"]]
+            pv = js["bufferViews"][pa["bufferView"]]
+            poff = pv.get("byteOffset", 0) + pa.get("byteOffset", 0)
+            pos = np.frombuffer(bytes(buf[poff:poff + n * 12]), np.float32).reshape(n, 3) if pv.get("byteStride", 12) == 12 else None
+            ja = js["accessors"][p["attributes"]["JOINTS_0"]] if "JOINTS_0" in p["attributes"] else None
+            joints = None
+            if ja is not None:
+                jv = js["bufferViews"][ja["bufferView"]]
+                jdt = {5121: np.uint8, 5123: np.uint16}[ja["componentType"]]
+                jsz = np.dtype(jdt).itemsize * 4
+                joff = jv.get("byteOffset", 0) + ja.get("byteOffset", 0)
+                if jv.get("byteStride", jsz) == jsz:
+                    joints = np.frombuffer(bytes(buf[joff:joff + n * jsz]), jdt).reshape(n, 4).copy()
+            good = np.where(~badrow)[0]
+            for v in np.where(badrow)[0]:
+                if pos is not None and len(good) and np.isfinite(pos[v]).all():
+                    src_v = good[np.argmin(((pos[good] - pos[v]) ** 2).sum(1))]
+                    w[v] = w[src_v]
+                    if joints is not None:
+                        joints[v] = joints[src_v]
+                else:
+                    w[v] = np.where(np.isfinite(w[v]) & (w[v] >= 0), w[v], 0)
+                    if w[v].sum() <= 0:
+                        w[v] = [1, 0, 0, 0]
+            fixed += int(badrow.sum())
+            buf[off:off + n * 16] = w.astype(np.float32).tobytes()
+            if joints is not None:
+                buf[joff:joff + joints.nbytes] = joints.tobytes()
+            acc.pop("min", None)
+            acc.pop("max", None)
+    return buf if isinstance(bin_, bytearray) else bytes(buf), fixed
+
+
 def normalize(src: Path, out: Path, tex_dir: Path | None, height: float | None, scale: float | None,
               max_tex: int, root_bone: str, jpeg_q: int, pad: int, forced_yaw: float | None = None) -> dict:
     js, bin_ = read_glb(src)
-    g = Gltf(js, bin_)
     report = {"warnings": []}
+    bin_, fixed = sanitize_weights(js, bin_)
+    if fixed:
+        report["warnings"].append(f"깨진(NaN) 스킨 웨이트 정점 {fixed}개 → 가장 가까운 정점 웨이트로 고침")
+    g = Gltf(js, bin_)
     if js.get("extensionsRequired"):
         raise SystemExit(f"필수 확장 미지원: {js['extensionsRequired']}")
     if not js.get("skins"):
@@ -235,6 +296,11 @@ def normalize(src: Path, out: Path, tex_dir: Path | None, height: float | None, 
             else:
                 pts.append((Ph @ worlds[ni].T)[:, :3])
     pts = np.concatenate(pts)
+    finite = np.isfinite(pts).all(1)
+    if not finite.all():
+        # 웨이트·뼈 행렬이 깨진 정점 몇 개가 NaN 이면 키 계산 전체가 NaN 이 됨 → 그 정점만 빼고 측정
+        report["warnings"].append(f"키 측정에서 NaN 정점 {int((~finite).sum())}개 제외")
+        pts = pts[finite]
 
     # 2) 정면 방향: 발끝 - 발목 (없으면 +Z 유지)
     name_to_node = {n.get("name", ""): i for i, n in enumerate(js["nodes"])}

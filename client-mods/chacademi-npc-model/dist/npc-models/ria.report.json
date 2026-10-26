@@ -1,27 +1,31 @@
 {
   "warnings": [],
   "out": "out/ria.glb",
-  "bytes": 1642188,
-  "sha256": "880e43e1c29e5fcfbb3d91d9497c0e61296f1350638192dc478edcc8d11fe60b",
+  "bytes": 2424220,
+  "sha256": "b101b40170d8890ad570b6b9768e72b7a8a577e2f796443e7f0ef6856424c8ad",
   "heightBlocks": 1.8,
-  "scale": 1.6117171338224785,
-  "yawDegrees": -0.0,
+  "scale": 1.595339592780378,
+  "yawDegrees": -1.06,
   "clips": {
-    "look_around": {
-      "seconds": 15.5833,
-      "rootSpeed": 0.0
-    },
     "walk": {
       "seconds": 2.3333,
       "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
     }
   },
-  "triangles": 14147,
+  "triangles": 14087,
   "joints": 65,
   "textures": [
     [
       2048,
-      1024
+      2048
+    ],
+    [
+      2048,
+      2048
     ]
   ],
   "proportion": {
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "94d75988-1793002929271_07______/07_리아/07_리아_수정.glb"
+  "input": "src/63602b48-1793013777874_07___/tripo_convert_4acdbd5c-2c97-41af-9691-e792757a32cd.fbx"
 }

@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_elsa.glb",
+  "bytes": 3008060,
+  "sha256": "38566de522fa1391274daa31dea92a1237da7bf60397365bdb2a0c96579755b4",
+  "heightBlocks": 1.8,
+  "scale": 1.9089877014599665,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13379,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/3eb5b8a4-1793013777872_39___/tripo_convert_fa5a7417-9657-4047-99af-1e9af56a9690.fbx"
+}

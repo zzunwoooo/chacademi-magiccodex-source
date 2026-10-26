@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_bomi.glb",
+  "bytes": 2289868,
+  "sha256": "38b2fd00d019b7fbec440660334455ac0b0b96a3f726daaf3ce3713456fd12c6",
+  "heightBlocks": 1.8,
+  "scale": 1.9007372689910575,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13296,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/b3891754-1793013777871_18___/tripo_convert_914f5485-af91-424d-b5e0-b750c9babc37.fbx"
+}

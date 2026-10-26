@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_minho.glb",
+  "bytes": 2732688,
+  "sha256": "ac92ba96bbe2cac0ae33f174d8aa5e1150fb25433412a572ac6059cea0064d47",
+  "heightBlocks": 1.8,
+  "scale": 1.9352902644570271,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14083,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/44374382-1793013792544_05___/tripo_convert_f9de05cc-de1a-48aa-99aa-e70bd2893fb8.fbx"
+}

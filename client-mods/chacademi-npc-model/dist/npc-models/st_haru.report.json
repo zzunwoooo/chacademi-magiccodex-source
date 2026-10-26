@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_haru.glb",
+  "bytes": 2434888,
+  "sha256": "bffe687f1573aa58faf6a4fe9032c5fc7003fdcaf8a43070687f5ebee112f070",
+  "heightBlocks": 1.8,
+  "scale": 1.8750909680036143,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14326,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/7dffe97c-1793013792544_12___/tripo_convert_0616b8ca-cd7f-4027-a89a-29a3fa390bdc.fbx"
+}

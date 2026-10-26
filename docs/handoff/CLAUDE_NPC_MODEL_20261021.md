@@ -162,3 +162,11 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - models.json: 대기 look_around, 걷기 walk, walkSpeed 1.2 (피피와 같은 걷기 클립). 총 18개 모델.
 - 서버 npc-models.yml: models 목록 + 캐릭터 11개 기본값 추가.
 - 변환 도구 수정: 정사각형이 아닌 텍스처(2048×1024)에서 UV 마스크 크기 오류로 실패하던 문제 → 가로·세로 따로 처리.
+
+## 20. 2026-10-26 — NPC 36명 Tripo FBX 일괄 (기존 덮어쓰기) → 총 41개 모델
+
+- 사용자 요청: 중복은 새 파일로 덮어씀. Tripo FBX 36개 → 키 1.8 정규화, 대기 = 각 파일의 대기 클립(look_around / idle / standing_relax), 걷기 = walk, walkSpeed 1.2.
+- '야수교수'(이름 미상 파일) = 하르바(teacher_harva, 베스티아즈·매) — 사용자 확인. 같은 배치의 31_하르바 파일은 쓰지 않음.
+- 로테 = vl_lotte (sf_dorothea 아님).
+- 변환 도구: (1) NaN 스킨 웨이트(칼·에덴·봉구·가은 각 1~4정점) → 가장 가까운 정상 정점의 뼈·웨이트 복사 (모드는 NaN 웨이트 파일을 거부), (2) 키 측정에서 NaN 정점 제외.
+- 에덴 원본에 떨어진 작은 삼각형 하나(몸에서 약 1블록) 남음 — 원본 메쉬 문제.

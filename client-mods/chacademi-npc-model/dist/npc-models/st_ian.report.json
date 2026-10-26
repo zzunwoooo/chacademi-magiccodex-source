@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_ian.glb",
+  "bytes": 2559640,
+  "sha256": "9c3725a95ae11fb2a4b07c83fd6d1c1efbf4846f11c2e033e1fb981cd36b51a9",
+  "heightBlocks": 1.8,
+  "scale": 1.9227307476140842,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14259,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/daa54b3f-1793013777873_10___/tripo_convert_8a5a92bd-cbfd-4329-929a-4b3f44d0004c.fbx"
+}

@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_hayul.glb",
+  "bytes": 2727204,
+  "sha256": "418be9c1cdf87eac0a86faac1d73141586edbd24c717e698f923d90d51e8c77b",
+  "heightBlocks": 1.8,
+  "scale": 1.8371596753064763,
+  "yawDegrees": 2.77,
+  "clips": {
+    "idle": {
+      "seconds": 15.3333,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13504,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/bccc814a-1793013777869_11___/tripo_convert_ca055111-259d-4887-bf1c-406fe1995f3e.fbx"
+}

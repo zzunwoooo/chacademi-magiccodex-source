@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/noel.glb",
+  "bytes": 2631388,
+  "sha256": "39bd23a1c2b2b0e6787ddb83709db86b21e3279e27bb52ef6d57edafdef83347",
+  "heightBlocks": 1.8,
+  "scale": 1.9122244006679405,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12892,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/9d6bbb85-1793013777872_03___/tripo_convert_3d19715f-c2ba-416b-bec6-d9e96b6c7c86.fbx"
+}

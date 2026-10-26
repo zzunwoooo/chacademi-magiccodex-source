@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_bert.glb",
+  "bytes": 3284988,
+  "sha256": "dd8df1d8da97cea30a8c7029f328fb238efd93a0c1c174067cbf3539f3a7a0c6",
+  "heightBlocks": 1.8,
+  "scale": 1.8133648751240972,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14661,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/a5e77ee0-1793013792541_46____/tripo_convert_39e41574-f841-4a5d-bb2a-e64652e99f75.fbx"
+}

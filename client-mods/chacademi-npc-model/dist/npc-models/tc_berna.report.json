@@ -1,27 +1,31 @@
 {
   "warnings": [],
   "out": "out/tc_berna.glb",
-  "bytes": 2690876,
-  "sha256": "4d9e1eedeb61f3ebd21d4b067c5f73d2a2a9a5a7948e10b09746ed3b09015881",
+  "bytes": 2954108,
+  "sha256": "7958faad250975d778278b2b9c4059d554533fc0f506868f587299b7c5afda17",
   "heightBlocks": 1.8,
-  "scale": 1.927530373326324,
-  "yawDegrees": -0.0,
+  "scale": 1.948168064556487,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
-      "seconds": 15.625,
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     },
     "walk": {
-      "seconds": 2.375,
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 12804,
+  "triangles": 12756,
   "joints": 65,
   "textures": [
     [
       2048,
-      1024
+      2048
+    ],
+    [
+      2048,
+      2048
     ]
   ],
   "proportion": {
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "aa98ec65-1793002929268_42__________/42_베르나_교수_수정.glb"
+  "input": "src/e881aa4a-1793013777877_42______/tripo_convert_f38b6edc-22b1-449e-a6ab-b49f2b1ad6f7.fbx"
 }

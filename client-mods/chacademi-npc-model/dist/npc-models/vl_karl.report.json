@@ -1,0 +1,39 @@
+{
+  "warnings": [
+    "깨진(NaN) 스킨 웨이트 정점 3개 → 가장 가까운 정점 웨이트로 고침"
+  ],
+  "out": "out/vl_karl.glb",
+  "bytes": 3289312,
+  "sha256": "fd44258aaa3fa893a03283dfb164a1c5863ecc2ba9e1326cde17e1ad760a255c",
+  "heightBlocks": 1.8,
+  "scale": 1.8706683984549353,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 19473,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/100a004b-1793013792542_25__/tripo_convert_36dace00-d081-4edc-a59c-439540a1a1b7.fbx"
+}

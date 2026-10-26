@@ -1,24 +1,28 @@
 {
   "warnings": [],
   "out": "out/teacher_harva.glb",
-  "bytes": 2430304,
-  "sha256": "d6a0d8da5f4504208253ef8d278665cdb31b8fd9b5e2eafa3f2d7a1115f71930",
+  "bytes": 2257292,
+  "sha256": "a80247aa6122b7e6a6fca34cf63bef7d59233ab38a7983333d49ddf1aa5e0d10",
   "heightBlocks": 1.8,
-  "scale": 1.9573368340748405,
-  "yawDegrees": -0.0,
+  "scale": 1.8408121076444626,
+  "yawDegrees": 5.04,
   "clips": {
-    "look_around": {
-      "seconds": 15.625,
+    "walk": {
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     },
-    "walk": {
-      "seconds": 2.375,
+    "look_around": {
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 14571,
+  "triangles": 13708,
   "joints": 65,
   "textures": [
+    [
+      2048,
+      2048
+    ],
     [
       2048,
       2048
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "b7023c71-1793002929270_31__________/31_하르바_교수/31_하르바_교수.glb"
+  "input": "src/85fe8687-1793013792540______merged/tripo_convert_da35cc45-0487-44ac-a3c1-bd4d1fa72a81.fbx"
 }

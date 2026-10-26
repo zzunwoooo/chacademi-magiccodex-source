@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_gibeom.glb",
+  "bytes": 2340816,
+  "sha256": "1ac470e34d821386c0a1a96bf05d937c639288de58d25361e2938841f885b8bf",
+  "heightBlocks": 1.8,
+  "scale": 1.8688536498625963,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14479,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/4a458f29-1793013777873_01___/tripo_convert_9233da31-bcce-4bcf-b221-cd36838a38aa.fbx"
+}

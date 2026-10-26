@@ -1,24 +1,28 @@
 {
   "warnings": [],
   "out": "out/vl_selma.glb",
-  "bytes": 2882556,
-  "sha256": "c395f07a0e24a0d30976affdd47b153b92cdc9383ad6c2415e815d6d94fece55",
+  "bytes": 3096012,
+  "sha256": "e6f5d38c6557cbd377bf4a171c87511db54bc38b46d2f0242ed6cd3641047580",
   "heightBlocks": 1.8,
-  "scale": 1.8840599002741092,
-  "yawDegrees": -0.0,
+  "scale": 1.9057347067866521,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
-      "seconds": 15.625,
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     },
     "walk": {
-      "seconds": 2.375,
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 14607,
+  "triangles": 14411,
   "joints": 65,
   "textures": [
+    [
+      2048,
+      2048
+    ],
     [
       2048,
       2048
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "6daf9f49-1793002929270_55______/55_셀마/55_셀마.glb"
+  "input": "src/88ff1e81-1793013777878_55___/tripo_convert_39e4d684-230e-418b-b6a8-0e83c25c35c3.fbx"
 }

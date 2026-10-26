@@ -1,24 +1,28 @@
 {
   "warnings": [],
   "out": "out/vl_ole.glb",
-  "bytes": 3114108,
-  "sha256": "19f6934aee58a0ebcb778de69656ec8bd743540f39cde6ad329137568053b000",
+  "bytes": 3614928,
+  "sha256": "fc72ec7f810d09314b08be4c192c660f3ab6e90bf62f8146c6fd9f455ff661dd",
   "heightBlocks": 1.8,
-  "scale": 1.9758259576764539,
-  "yawDegrees": -0.0,
+  "scale": 1.985087914196221,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
-      "seconds": 15.625,
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     },
     "walk": {
-      "seconds": 2.375,
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 16020,
+  "triangles": 15448,
   "joints": 65,
   "textures": [
+    [
+      2048,
+      2048
+    ],
     [
       2048,
       2048
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "3cad68ea-1793002929270_41______/41_올레/41_올레.glb"
+  "input": "src/c2bb8987-1793013777879_41___/tripo_convert_25fcec81-b580-48a3-a8f4-8dcae499208e.fbx"
 }

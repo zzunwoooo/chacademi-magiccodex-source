@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_clara.glb",
+  "bytes": 2930428,
+  "sha256": "2419d1d9eb876dab73afba6b42eab50ca346313a611f5e1b3acb226e41f99ac3",
+  "heightBlocks": 1.8,
+  "scale": 1.8831862027215323,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13293,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/d1c0559c-1793013792544_48____/tripo_convert_685d8491-1fff-4edf-b958-8cb8de7a4806.fbx"
+}

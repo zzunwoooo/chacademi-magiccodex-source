@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_geonho.glb",
+  "bytes": 2292968,
+  "sha256": "6a895be05b19e424c26ff02bfb6870e489c49c180a4806bce25dabb5d0254e1c",
+  "heightBlocks": 1.8,
+  "scale": 1.8516302186102178,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13213,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/4748ec20-1793013792543_13___/tripo_convert_34fe0dee-af4f-4ee4-bccb-bd7da15c0749.fbx"
+}

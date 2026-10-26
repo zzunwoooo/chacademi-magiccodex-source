@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_rosa.glb",
+  "bytes": 2908496,
+  "sha256": "8e85c7081c15d49ef3a06a33d45afa5dc6349536cffacfb198b026b33721531f",
+  "heightBlocks": 1.8,
+  "scale": 1.864680226965611,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 11955,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/6dac2e14-1793013792542_53___/tripo_convert_c9a44c01-3f77-48b2-9ec6-851628a4b874.fbx"
+}

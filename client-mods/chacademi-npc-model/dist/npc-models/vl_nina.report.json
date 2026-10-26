@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/vl_nina.glb",
+  "bytes": 2827356,
+  "sha256": "6da5e4a09dd2cc8afdb739f08bf2f146cf4530cf08ff08b433fd1269cc5a64e0",
+  "heightBlocks": 1.8,
+  "scale": 1.7977178831627783,
+  "yawDegrees": -1.06,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12412,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/d1197efd-1793013792545_51___/tripo_convert_e0077090-4756-4d5e-a8d1-82b2691746bc.fbx"
+}

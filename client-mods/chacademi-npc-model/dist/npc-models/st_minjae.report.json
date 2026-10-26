@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "out/st_minjae.glb",
+  "bytes": 2131940,
+  "sha256": "73a50dc5329b66289eb03b327dec3a2c2a10040bd97a304196e663bdf3b366b8",
+  "heightBlocks": 1.8,
+  "scale": 1.9423434763319438,
+  "yawDegrees": 2.77,
+  "clips": {
+    "standing_relax": {
+      "seconds": 17.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 15361,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/ef20c3c1-1793013792546_04___/tripo_convert_b82d6133-6740-4a53-a2e7-fb40ab94fa11.fbx"
+}

@@ -1,11 +1,11 @@
 {
   "warnings": [],
   "out": "out/vice_gregor.glb",
-  "bytes": 1711628,
-  "sha256": "2aa034df95baa44c41b35499ebfab7780cd6a012ca39869844d492dc8b21b053",
+  "bytes": 2510980,
+  "sha256": "34f3ba92a84bfd67617a620f2d6bc428157dcb5832409d50fd0eeed4496a7d56",
   "heightBlocks": 1.8,
-  "scale": 1.9119071851508072,
-  "yawDegrees": -0.0,
+  "scale": 1.9227391423022313,
+  "yawDegrees": 2.77,
   "clips": {
     "look_around": {
       "seconds": 15.5833,
@@ -21,7 +21,11 @@
   "textures": [
     [
       2048,
-      1024
+      2048
+    ],
+    [
+      2048,
+      2048
     ]
   ],
   "proportion": {
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "bac70233-1793002929271_36__________/36_그레고르+교감/36_그레고르+교감_수정.glb"
+  "input": "src/f4973279-1793013777876_36_______/tripo_convert_279ef9e6-0029-45a0-87ae-a1839dc10370.fbx"
 }

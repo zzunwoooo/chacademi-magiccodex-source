@@ -1,0 +1,39 @@
+{
+  "warnings": [
+    "깨진(NaN) 스킨 웨이트 정점 4개 → 가장 가까운 정점 웨이트로 고침"
+  ],
+  "out": "out/st_eden.glb",
+  "bytes": 2651848,
+  "sha256": "cf742e1f8ce1ef214a80ef621f9a68c9436d68f1d5b32f24af117400c3c506a3",
+  "heightBlocks": 1.8,
+  "scale": 2.6009144604650927,
+  "yawDegrees": 2.77,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12748,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/53f96ec2-1793013792542_15___/tripo_convert_dfd2bc64-0246-40c9-9482-e759aa9b9b58.fbx"
+}

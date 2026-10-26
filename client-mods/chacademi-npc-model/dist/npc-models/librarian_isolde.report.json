@@ -1,24 +1,28 @@
 {
   "warnings": [],
   "out": "out/librarian_isolde.glb",
-  "bytes": 2404156,
-  "sha256": "818dc6f35118132fb992f00382761e5bb139d8c2376631f55397341bfb2764b9",
+  "bytes": 2239576,
+  "sha256": "645f9d22a86694df11c5a48f873743d170d53c2532341d817a7616ee545f3639",
   "heightBlocks": 1.8,
-  "scale": 1.5913664484186982,
-  "yawDegrees": -0.0,
+  "scale": 1.5932344511064052,
+  "yawDegrees": -1.06,
   "clips": {
-    "look_around": {
-      "seconds": 15.625,
+    "walk": {
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     },
-    "walk": {
-      "seconds": 2.375,
+    "look_around": {
+      "seconds": 15.5833,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 13972,
+  "triangles": 13400,
   "joints": 65,
   "textures": [
+    [
+      2048,
+      2048
+    ],
     [
       2048,
       2048
@@ -29,5 +33,5 @@
     "torso": 1.0,
     "arms": 1.0
   },
-  "input": "4d5c67b7-1793002929270_57_______/57_이솔데/57_이솔데.glb"
+  "input": "src/afefe097-1793013777879_57____/tripo_convert_a409e9ab-b0f7-48eb-9925-f91acd67b471.fbx"
 }
