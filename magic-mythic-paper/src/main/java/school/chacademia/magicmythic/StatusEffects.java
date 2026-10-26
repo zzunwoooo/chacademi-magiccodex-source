@@ -361,8 +361,10 @@ final class StatusEffects implements Listener, AutoCloseable {
         Entity src = e.source == null ? null : Bukkit.getEntity(e.source);
         bursting = true;
         try {
-            if (src instanceof LivingEntity caster && caster.isValid() && !caster.equals(t) && plugin.targets().enemy(caster, t)) plugin.protection().damage(caster, t, amount);
-            else if (!friendlySource(src, t)) plugin.protection().sourceless(t, amount, src instanceof Player && t instanceof Player && !src.equals(t), false); // #23: 그사이 같은 파티가 된 시전자의 화상은 터지지 않음 · 전투 스펙: 플레이어끼리는 마법 방어
+            // 전투 스펙 2026-10-26: 화상 폭발 = 화상 중 실제로 받은 피해(이미 마법 방어로 줄어든 값) × 비율 → 플레이어끼리는 다시 줄이지 않음 (FLAT, 이중 감소 방지).
+            if (src instanceof LivingEntity caster && caster.isValid() && !caster.equals(t) && plugin.targets().enemy(caster, t))
+                plugin.protection().damage(caster, t, amount, MagicProtection.pvp(caster, t) ? MagicProtection.Mode.FLAT : MagicProtection.Mode.VANILLA);
+            else if (!friendlySource(src, t)) plugin.protection().sourceless(t, amount, false, src instanceof Player && t instanceof Player && !src.equals(t)); // #23: 그사이 같은 파티가 된 시전자의 화상은 터지지 않음
         } finally { bursting = false; }
     }
 

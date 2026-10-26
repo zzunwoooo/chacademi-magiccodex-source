@@ -181,7 +181,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
 
     /** /서버관리 새로고침 몹마법 */
     void reloadAll() {
-        reloadConfig(); QuidditchCombat.current = QuidditchCombat.load(getConfig().getConfigurationSection("quidditch-combat")); MagicArmor.current = MagicArmor.Settings.load(getConfig().getConfigurationSection("pvp")); // 전투 스펙 2026-10-26 targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
+        reloadConfig(); QuidditchCombat.current = QuidditchCombat.load(getConfig().getConfigurationSection("quidditch-combat")); MagicArmor.current = MagicArmor.Settings.load(getConfig().getConfigurationSection("pvp")); /* 전투 스펙 2026-10-26 */ targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
     }
 
     /** /서버관리 상태 의 몹마법 줄 */
