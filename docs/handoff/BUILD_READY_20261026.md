@@ -40,6 +40,9 @@
 - 전투 스펙·장신구 강화 (§34) — Bridge·MagicMythic·MythicMobs 스킬·클라 모드(EnhancementScreen·도감). 데이터팩 필요 없음.
 - 뽑기 상자 API 상자 (§36) — Bridge + protocol + 클라 모드 (새 채널, 상자 PNG 5장 리소스 포함). 공통 지급 함수 RewardDelivery 로 우편 수령·낚시·퀘스트·연금술·환불 경로가 바뀜.
 - NPC 통계 (§19 추가) — ChacaNPC + Bridge.
+- 마력 재구성 (§37·§37 추가) — 재구성 프로토콜에 kind 가 붙음(장신구 재구성), 재구성·강화 창 아이템 미리보기. **Bridge + protocol + 클라 모드 같이.**
+- 뽑기권 상자 3개 (§38) — 가구 보상 종류 추가 (Bridge + ChacaHousing).
+- 아이템 5종 (§39) — Bridge·MagicMythic·ChacaPortrait. 클라 변경 없음.
 
 ## 3. 서버 파일 (jar 가 안 덮어씀)
 - `deployment/operating-config/**` 전부 overlay 대로 (MagicCodexBridge·MythicMobs·PortableVFX·ChacademyStory).
@@ -48,6 +51,7 @@
 - NPC 일과표 85명: `docs/plans/npc-schedules/` → 학교 `plugins/ChacaNPC/npcs/` (먼저 places.yml 에 34곳 등록 — docs/plans/npc-places.md), `/서버관리 새로고침 NPC`.
 - 뽑기 상자: `plugins/MagicCodexBridge/loot-boxes.yml` (overlay 는 꺼진 예시 상자만 — 실제 상자는 운영자가 `/상자관리 생성`·`관리` 로 만듦). 서버 `audit.yml` 에 새 종류 "뽑기상자" 반영(§36).
 - 책 (#105): `MagicCodexBridge/books.yml` overlay 교체 → `/서버관리 새로고침 책` (§35, 블록 연결은 오너가 docs/plans/library-books.md 대로).
+- 아이템 기능 (§37~§39): `MagicCodexBridge/loot-boxes.yml` 은 가구·낚시도구·몬스터 전리품 상자 3개가 들어간 overlay 로 교체(§38). `utility-items.yml` 은 자동 생성 → `/서버관리 새로고침 사용아이템`. `ChAcademiaMagicMythic/config.yml` 에 `mana-potion`·`health-potion`·`potion-cooldown-overlay` 키, `ChacaPortrait/config.yml` 의 `reroll.item-id` = `item:cutscene_ticket` 손으로 반영(§39). 바뀐 id: 귀환권 `item:home_ticket`, 인기도 해제권 `item:popularity_reset`, 체력 포션 `item:health_potion` (부록 A-2).
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - TAB 한글 닉 (#110): `deployment/tab/`.
 
@@ -67,6 +71,9 @@
 ## 6. 오너 검수 대기 (빌드에는 포함, 수치는 바뀔 수 있음)
 - 전투 스펙: 재계산 결과 적당 vs 한계 1.90배 (강화 상승량 = 단계값 × 코어 품질 배율 "섞기", §34 추가) (목표 1.6배 초과 — 펫 도감 20·마나 회복 8 유지 때문). 대충끼리 95초. 조정안은 docs/plans/combat-spec.md.
 - 책 67권 (#105), 아공간 배낭 잠긴 쪽 (§33), 뽑기 상자 판단 6가지(§36: 10개 대표 등급 = 최고 등급, 열쇠 10개 미만이면 10연 거절, 안 보이는 잠금 해제 쪽엔 안 넣고 우편, 쪽 넘김 중 퀘스트·연금술 잠깐 거절, 환불 넘치면 바닥 대신 우편, 기록 종류 이름).
+
+- 뽑기권 상자 확률 (§38): 낚시 일반 60.12/고급 28.06/유일 9.82/전설 2.00 %, 몹 전리품 1·2·3성 70/24/6 % (내용물은 임시 바닐라), 가구 97종 같은 확률·가진 것 다시 뽑기.
+- 재화 주머니 금액표 (§39, 30분 노동치 ≈ 6,000 G 가정, 평균 약 780 G). 마법 힌트권은 타로 UI 가 저장소에 없어 깨달음의 빛 연출로 임시.
 
 ## 7. 컴파일 확인 상태
 - 70044a79 이후 바뀐 Java 352개 전부 문법 검사 통과. 타입 검사는 못 함 → 첫 빌드 컴파일 오류는 각 § "확인 필요" 참고, 고친 뒤 오너에게 보고.
