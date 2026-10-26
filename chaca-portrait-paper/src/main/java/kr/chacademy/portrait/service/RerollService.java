@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 다시 그리기 아이템 (ItemsAdder item:reroll 우클릭).
+ * 다시 그리기 아이템 (ItemsAdder item:cutscene_ticket, 컷신 변경권 우클릭).
  * 흐름: 우클릭 → 입력창(HUD) 또는 채팅 입력 → 문장 검사 → 같은 칸에 아이템이 그대로 있으면 1개 차감 → 기록(PENDING) → 대기열
  * → 작업 차례가 와서 첫 유료 호출 직전에 STARTED("생성 시작") → 성공하면 DONE.
  * <p>정책(운영 결정): 시도 자체가 아이템을 쓴다.
