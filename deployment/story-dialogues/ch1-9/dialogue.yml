@@ -1,0 +1,44 @@
+# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-8)
+format: 1
+id: "ch1-9"
+title: "1-9. 피피의 잡화점"
+description: "피피네 잡화점에서 입학 준비물 이야기를 들어 보세요."
+chapter: "1장 · 차카데미아"
+start: a
+dim: 0.35
+type_speed: 0.03
+type_sound: default
+type_sound_volume: 0.5
+speakers:
+  me:
+    name: "{player}"
+  pipi:
+    name: "피피"
+    npc: "pipi"
+    portraits:
+      "기본": "pipi-neutral.png"
+scenes:
+  a:
+    name: "어서 와요"
+    lines:
+      - {who: pipi, face: "기본", text: "어서 와요, 어서 와! 어머, 그 안내서! 차카데미아 신입생이구나?"}
+      - {who: me, face: "", text: "네. 준비물을 사러 왔는데요."}
+      - {who: pipi, face: "기본", text: "교복 한 벌, 견습 지팡이 하나, 빈 마법서 한 권. 해마다 똑같다라구!"}
+      - {who: pipi, face: "기본", text: "요즘 신입생이 통 없어서, 너 같은 손님은 하늘이 내린 손님이라구."}
+    choices:
+      - {text: "신입생이 왜 없어요?", to: "b"}
+      - {text: "빨리 주세요!", to: "c"}
+  b:
+    name: "옛날 이야기"
+    lines:
+      - {who: pipi, face: "기본", text: "왜긴… 학교가 예전 같지 않으니까. 백 년 전엔 대륙 최고였다는데."}
+    next: d
+  c:
+    name: "급한 손님"
+    lines:
+      - {who: pipi, face: "기본", text: "어머, 급하기도 해라! 알았어, 알았어."}
+    next: d
+  d:
+    name: "구경하기"
+    lines:
+      - {who: pipi, face: "기본", text: "물건은 나한테 말 걸면 보여 줄게! 천천히 골라 보라구."}
