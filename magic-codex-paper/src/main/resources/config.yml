@@ -16,8 +16,8 @@ wallet:
 # 신규 플레이어 기본값. 기존 플레이어 수치는 저장되며 관리자 명령으로 변경합니다.
 # 정상 TPS에서 20틱마다 회복합니다. 사망 중·오프라인에는 회복하지 않습니다.
 mana:
-  default-maximum: 100
-  default-regeneration: 5
+  default-maximum: 300
+  default-regeneration: 8
   default-haste: 0
 
 # 바이옴 계산은 추후 연결합니다. 지금은 기본값 또는 관리자/API 지정 온도를 전송합니다.
