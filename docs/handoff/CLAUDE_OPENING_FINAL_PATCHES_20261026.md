@@ -1587,3 +1587,9 @@ spells:
 - 조건 문구 3곳(discoveries.yml·manual-conditions.yml·도감 233) = "하르바 교수의 「숲의 짐승 달래기」 수업 듣기." 도감 known-hashes 갱신, 힌트 2성 문장 수정.
 - 2장 초안의 "이솔데 교화 수업"(ch2-2)은 빠짐 → 2장은 이미 교화를 아는 상태에서 시작.
 - 배포: 서버 `MagicCodexBridge/books.yml`(overlay)·`lessons.yml`(jar 가 안 덮음 → 손으로 하르바 목록에 한 줄)·MagicDiscovery 두 yml 교체.
+
+### §48·§49 추가 — 튜토리얼 서버 없음, 튜토리얼 맵은 school 서버 안 (오너 2026-10-26 15:23 "튜토리얼맵 그냥 school에 넣을테니까")
+- 스토리 steps.yml(운영·기본) 모든 단계 `서버: school`, ch1-8 `서버이동` 없음 → 배 컷신(`ch1_harbor_arrival`) 뒤 ch1-8 시작명령 `essentials:warp harbor {player}` 로 같은 서버 안에서 항구로. 스토리 config `quest-server-id: school` 그대로.
+- 스토리 진행 공유 DB 작업(§50 예정)은 **취소** — 1장이 한 서버라 로컬 기록 그대로.
+- Velocity TutorialRouter 기본 `tutorial-servers=` 빈 값 = 분산·튜토리얼 라우팅 꺼짐 (서버에 tutorial.properties 가 있으면 값을 비우거나 지울 것). ChacaPortrait `auto.server-ids` 는 school 포함이라 그대로 동작.
+- 대화 파일(`deployment/story-dialogues/`)은 전부 school 서버 `plugins/ChacademyStory/dialogues/` 에.

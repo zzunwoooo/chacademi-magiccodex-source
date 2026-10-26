@@ -48,7 +48,7 @@ final class TutorialRouter {
         try {
             if (Files.exists(path)) try (var r = Files.newBufferedReader(path)) { p.load(r); }
             else {
-                p.setProperty("tutorial-servers", "tutorial"); p.setProperty("balance-tolerance", "0"); p.setProperty("sticky", "true");
+                p.setProperty("tutorial-servers", ""); p.setProperty("balance-tolerance", "0"); p.setProperty("sticky", "true");
                 try (var w = Files.newBufferedWriter(path)) { p.store(w, "튜토리얼 서버 분산: tutorial-servers = Velocity 서버 이름 (쉼표). 1개(기본 tutorial)·빈 값이면 분산 꺼짐, 2개 이상이면 인원 분산. 고친 뒤 프록시 재시작."); }
             }
         } catch (IOException e) { log.warn("tutorial.properties 읽기 실패 — 튜토리얼 분산 꺼짐", e); return; }

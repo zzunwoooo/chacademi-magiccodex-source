@@ -59,6 +59,7 @@
 - API 상자 2종 + 호감도 선물 뽑기권 상자 (§42): loot-boxes.yml overlay 교체 → `/상자관리 새로고침`. 새 ItemsAdder 아이템 `item:gift_ticket`(오너가 만듦). 묶음(×5·×3) 아이템 최대 스택 확인.
 - 별풍선 후원 (§43): `plugins/MagicCodexBridge/donation.yml` 자동 생성 (학교·야생·아레나 같은 내용) → 고치면 `/서버관리 새로고침 후원`. 서버 `audit.yml` 에 새 종류 "후원" (kinds 에 `후원: true`). `plugins/donation/config.yml` 의 `acceptAllDonations: true` 확인. 예전 Skript `api` 스크립트는 지워도 됨(남아 있어도 안 돎). 아레나(큐디치)는 `servers` 에 넣지 않음 = 후원 안 받음.
 - 야생2 연결 (오너 2026-10-26): 서버의 `MagicCodexBridge/travel.yml` 은 jar 가 안 덮으므로 학교·야생1·야생2 모두 손으로 — `servers.wild2.enabled: true`, `points.wild2_spawn` (server wild2, spawn: true, from: [school]) 추가. 야생2 서버는 server-id: wild2, Velocity 이름 wild2. 야생2 세계 스폰은 `/mv setspawn`.
+- **튜토리얼 서버 없음 (오너 15:23)**: 튜토리얼 맵은 school 안. 스토리 steps.yml·대화 전부 school 서버에만. Velocity `tutorial.properties` 의 tutorial-servers 는 비움 (FINAL_PATCHES §48·§49 추가). 위 §48 의 tutorial 서버 등록 안내는 무시.
 - 스토리 장 공개 (오너 2026-10-26 "첫날엔 1장에서 막자"): 서버 `ChacademyStory/config.yml` 은 jar 가 안 덮음 → `chapter-release.open-through: 1`, `chapters.2.open: false` 로 손으로 (2장 여는 날 `/대화관리 장공개 열기 2`).
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - 마법 발견 조건 v2 (§45): **학교·야생·아레나 `plugins/MagicDiscovery/discoveries.yml`·`manual-conditions.yml` 을 저장소 파일로 교체** (안 바꾸면 옛 조건 그대로) → `/서버관리 새로고침 마법발견`. books.yml overlay(대기 책 16권 켬) · ChacademyStory `steps.yml` ch1-13 시작명령(길잡이 별) 같이. MagicDiscovery·Bridge·MagicMythic·모션 플러그인·클라 모드(도감 문구) 같은 빌드로.
