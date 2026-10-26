@@ -1,8 +1,8 @@
-# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-13)
+# 차카데미 대화 — Claude 작성 2026-10-27 (오너 흐름: 정문에서 루카와 이야기 → 멀리서 그레고르가 부름)
 format: 1
 id: "ch1-16"
-title: "1-16. 입학"
-description: "언덕 위 차카데미아 정문에서 입학 수속을 밟으세요."
+title: "1-16. 정문의 루카"
+description: "언덕 위 정문에서 또 다른 신입생 루카를 만나요."
 chapter: "1장 · 차카데미아"
 start: a
 dim: 0.35
@@ -29,27 +29,15 @@ scenes:
       - {who: luka, face: "기본", text: "저, 저기! 혹시 너도 신입생이야? 다행이다… 나 혼자인 줄 알았어."}
       - {who: luka, face: "기본", text: "나는 루카! 너는?"}
       - {who: me, face: "", text: "나는 {player}. 만나서 반가워."}
-      - {who: luka, face: "기본", text: "여기 교감 선생님이 엄청 무섭대. 틀리면 첫날부터 벌점이래…"}
-      - {who: gregor, face: "기본", text: "…새로 온 학생들인가."}
-      - {who: luka, face: "기본", text: "헉! 안, 안녕하세요!"}
-      - {who: gregor, face: "기본", text: "차카데미아 교감 그레고르다. 입학을 환영한다."}
-      - {who: gregor, face: "기본", text: "{player}. 엘레나 교수에게 이야기는 들었다. 첫날 상승기류를 발현했다고."}
-      - {who: luka, face: "기본", text: "뭐? 첫날에? 나는 아직 하나도 못 했는데…"}
+      - {who: luka, face: "기본", text: "있지, 여기 교감 선생님이 엄청 무섭대. 그레고르 영감이라고…"}
+      - {who: luka, face: "기본", text: "눈썹이 이~만하고, 웃는 걸 본 사람이 아무도 없대. 틀리면 첫날부터 벌점이고…"}
     choices:
-      - {text: "운이 좋았을 뿐이에요.", to: "b"}
-      - {text: "감사합니다!", to: "c"}
+      - {text: "설마… 그 정도야?", to: "b"}
+      - {text: "(뒤에서 누가 보는 것 같은데…)", to: "b"}
   b:
-    name: "운"
+    name: "들렸다"
     lines:
-      - {who: gregor, face: "기본", text: "운이든 아니든, 발현했다는 게 중요하다."}
-    next: e
-  c:
-    name: "칭찬"
-    lines:
-      - {who: gregor, face: "기본", text: "칭찬이 아니다. 할 일을 알려 주는 것뿐이다."}
-    next: e
-  e:
-    name: "기숙사로"
-    lines:
-      - {who: gregor, face: "기본", text: "백 년 전 우리는 수많은 기록과 사람을 잃었다. 학생 하나하나가 이 학교의 빈칸을 채운다."}
-      - {who: gregor, face: "기본", text: "먼저 기숙사를 정할 차례다. 따라오도록."}
+      - {who: gregor, face: "기본", text: "(멀리서) …누가 문 앞에서 그렇게 떠드나."}
+      - {who: luka, face: "기본", text: "헉…! 들, 들렸나 봐…!"}
+      - {who: gregor, face: "기본", text: "(멀리서) 신입생들인가. 거기 서 있지 말고 안으로 들어오도록."}
+      - {who: luka, face: "기본", text: "가, 가자! 빨리! 늦으면 진짜 벌점일지도 몰라!"}

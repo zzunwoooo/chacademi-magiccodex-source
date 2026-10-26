@@ -32,6 +32,8 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
     private record Spell(String name,String permission,long points){}
     private Map<String,Spell> spells=Map.of();
     private final Map<UUID,Long> limits=new HashMap<>(),viewers=new HashMap<>();
+    /** 그레고르 대화(ch1-17)에서 고른 희망 기숙사 0~3. 배정되면 지움 (서버 재시작 때는 사라짐 → 가산점 없이 분류). */
+    private final Map<UUID,Integer> sortingWishes=new java.util.concurrent.ConcurrentHashMap<>();
     private long revision=1;private int pending;private boolean closing;
     private boolean shared,refreshing;
     private SchoolExpansion expansion;
@@ -175,6 +177,11 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         if(ChacaApi.ready())ChacaApi.fail(to,message,cause);
         else{to.sendMessage(message);if(cause!=null)plugin.getLogger().log(java.util.logging.Level.WARNING,"[기숙사분류] "+message,cause);}
     }
+    /** 희망 기숙사 가산점 (config house-sorting.wish-bonus, 기본 1, 0~6). 잘못된 값이면 1. */
+    private int sortingWishBonus(){
+        Object raw=plugin.getConfig().get("house-sorting.wish-bonus",1);
+        return raw instanceof Integer v&&v>=0&&v<=6?v:1;
+    }
     private int sortingTolerance(){
         Object raw=plugin.getConfig().get("house-sorting.population-tolerance",2);
         if(!(raw instanceof Integer value))throw new SortingInput("config 의 house-sorting.population-tolerance 는 정수여야 해요");
@@ -196,6 +203,14 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                     rows.add(" 최대-최소 차이: "+gap+"명"+(gap>5?" · 경고: 기숙사 인원 차이가 5명을 넘었어요":""));
                     if(ChacaApi.ready())CodexCommands.lines(sender,"── 기숙사 인원 ──",rows);else rows.forEach(sender::sendMessage);},failTo(sender));return true;
             }
+            if(a.length==3&&a[0].equals("희망")){
+                Player player=plugin.names().resolve(a[1]);if(player==null||!player.isOnline())throw new SortingInput("현재 서버에 접속한 유저를 지정해 주세요");
+                String w=a[2].toLowerCase(Locale.ROOT);if(w.startsWith("w_"))w=w.substring(2);
+                int wish=HouseSorting.IDS.indexOf(w);if(wish<0)wish=SchoolProtocol.HOUSES.indexOf(a[2]);
+                if(wish<0)throw new SortingInput("희망 기숙사는 w_arkeon·w_lumina·w_bestiaz·w_noxer (또는 한글 이름)이에요");
+                sortingWishes.put(player.getUniqueId(),wish);
+                plugin.getLogger().info("[기숙사분류] "+player.getName()+" 희망 "+SchoolProtocol.HOUSES.get(wish));return true;
+            }
             if(a.length==2&&a[0].equals("시작")||a.length==3&&a[0].equals("결정")){
                 Player player=plugin.names().resolve(a[1]);if(player==null||!player.isOnline())throw new SortingInput("현재 서버에 접속한 유저를 지정해 주세요");
                 UUID id=player.getUniqueId();
@@ -204,26 +219,26 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
                 if(a[0].equals("시작")){
                     work(()->store.sortingStart(id),start->{
                         // 창시자 연출은 관리자가 미리 정한 유저만. 이미 분류된 일반 유저(발표 중 접속 끊김 등)는 결과 발표를 다시
-                        if(start.house()!=null)sortingDialogue(sender,player,(start.preset()?"ch1-17f-":"ch1-17r-")+HouseSorting.IDS.get(start.house()),false);
+                        if(start.house()!=null)sortingDialogue(sender,player,(start.preset()?"ch1-19f-":"ch1-19r-")+HouseSorting.IDS.get(start.house()),false);
                         else if(outside>=0)adopt(sender,player,outside);
-                        else sortingDialogue(sender,player,"ch1-17",false);
+                        else sortingDialogue(sender,player,"ch1-19",false);
                     },failTo(sender));
                 }
                 else{
                     if(!a[2].matches("p_[0-3][0-3]"))throw new SortingInput("결과는 p_00~p_33 형식이며 T,D는 각각 0~3이에요");
-                    int t=a[2].charAt(2)-'0',d=a[2].charAt(3)-'0',tolerance=sortingTolerance();
+                    int t=a[2].charAt(2)-'0',d=a[2].charAt(3)-'0',tolerance=sortingTolerance(),bonus=sortingWishBonus();Integer wishBox=sortingWishes.get(id);int wish=wishBox==null?-1:wishBox;
                     if(outside>=0){adopt(sender,player,outside);return true;}
-                    work(()->store.assignHouse(id,t,d,tolerance),result->{
+                    work(()->store.assignHouse(id,t,d,tolerance,wish,bonus),result->{sortingWishes.remove(id);
                         // Database has committed before signals or Bukkit commands run on the main thread.
-                        if(result.created()){assigned(sender,id);AuditLog.log(id,AuditLog.기숙사,"기숙사 배정 · "+SchoolProtocol.HOUSES.get(result.house())+(result.house()!=result.preferred()?" (인원 맞춤, 원래 "+SchoolProtocol.HOUSES.get(result.preferred())+")":""),"기숙사",SchoolProtocol.HOUSES.get(result.house()),"성향",SchoolProtocol.HOUSES.get(result.preferred()),"경로","분류의 거울","진행",sender.getName());}
+                        if(result.created()){assigned(sender,id);AuditLog.log(id,AuditLog.기숙사,"기숙사 배정 · "+SchoolProtocol.HOUSES.get(result.house())+(result.house()!=result.preferred()?" (인원 맞춤, 원래 "+SchoolProtocol.HOUSES.get(result.preferred())+")":"")+(wish>=0?" · 희망 "+SchoolProtocol.HOUSES.get(wish):""),"기숙사",SchoolProtocol.HOUSES.get(result.house()),"성향",SchoolProtocol.HOUSES.get(result.preferred()),"경로","분류의 거울","진행",sender.getName());}
                         reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
-                        sortingDialogue(sender,player,"ch1-17"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
+                        sortingDialogue(sender,player,"ch1-19"+(!result.created()||result.house()==result.preferred()?"r-":"m-")+HouseSorting.IDS.get(result.house()),true);
                     },failTo(sender));
                 }return true;
             }
         }catch(SortingInput input){sortFail(sender,input.getMessage(),null);return true;}
         catch(Exception error){sortFail(sender,"명령어 사용에 실패했습니다",error);return true;}
-        sortFail(sender,"/기숙사분류 시작 <유저> · 결정 <유저> <p_TD> · 현황 · 허용치 <0~1000000>",null);return true;
+        sortFail(sender,"/기숙사분류 시작 <유저> · 희망 <유저> <w_기숙사> · 결정 <유저> <p_TD> · 현황 · 허용치 <0~1000000>",null);return true;
     }
     private void assigned(CommandSender sender,UUID id){
         try{DiscoveryLink.signal(id,"dormitory.assigned",1);}catch(RuntimeException error){sortFail(sender,"소속은 저장됐지만 배정 신호 처리에 실패했어요",error);}
@@ -234,7 +249,7 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
         work(()->store.adoptHouse(id,house),result->{
             if(result.created())assigned(sender,id);
             reply(player,new Request(SchoolProtocol.IDENTITY,0,0,""),"");
-            sortingDialogue(sender,player,"ch1-17r-"+HouseSorting.IDS.get(result.house()),true);
+            sortingDialogue(sender,player,"ch1-19r-"+HouseSorting.IDS.get(result.house()),true);
         },failTo(sender));
     }
     private void sortingDialogue(CommandSender sender,Player player,String dialogue,boolean saved){
@@ -245,9 +260,10 @@ final class SchoolBridge implements PluginMessageListener,Listener,org.bukkit.co
     }
     private List<String> sortingTabs(CommandSender sender,String[] a){
         if(!sortingAdmin(sender)||a.length==0)return List.of();Collection<String> choices=List.of();
-        if(a.length==1)choices=List.of("시작","결정","현황","허용치");
-        else if(a.length==2&&Set.of("시작","결정").contains(a[0]))choices=Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
+        if(a.length==1)choices=List.of("시작","희망","결정","현황","허용치");
+        else if(a.length==2&&Set.of("시작","희망","결정").contains(a[0]))choices=Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         else if(a.length==2&&a[0].equals("허용치"))choices=List.of("0","1","2","3","5");
+        else if(a.length==3&&a[0].equals("희망"))choices=HouseSorting.IDS.stream().map(h->"w_"+h).toList();
         else if(a.length==3&&a[0].equals("결정")){var values=new ArrayList<String>();for(int t=0;t<4;t++)for(int d=0;d<4;d++)values.add("p_"+t+d);choices=values;}
         String prefix=a[a.length-1].toLowerCase(Locale.ROOT);return choices.stream().filter(v->v.toLowerCase(Locale.ROOT).startsWith(prefix)).sorted().toList();
     }

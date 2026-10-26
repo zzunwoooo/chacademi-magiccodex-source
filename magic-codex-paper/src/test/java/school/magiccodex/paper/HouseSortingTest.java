@@ -26,6 +26,15 @@ class HouseSortingTest {
   assertThrows(IllegalArgumentException.class,()->HouseSorting.tolerance(-1));
   assertThrows(IllegalArgumentException.class,()->HouseSorting.tolerance(1000001));
  }
+ @Test void wishAddsBonusButDoesNotOverrideStrongProfileOrPopulation(){
+  assertArrayEquals(new int[]{2,4,3,4},HouseSorting.scores(1,1,1,1));
+  assertEquals(1,HouseSorting.choose(1,1,new long[4],2,1,1));   // 2,3,3,4 → 루미나 +1 = 4 동점, 선언 순서로 루미나
+  assertEquals(0,HouseSorting.choose(3,3,new long[4],2,3,1));   // 6,3,3,0 → 노크세르 +1 로는 못 뒤집음
+  assertEquals(1,HouseSorting.preferred(1,1,1,1));
+  assertEquals(3,HouseSorting.choose(1,1,new long[]{0,3,0,0},2,1,1)); // 희망이어도 인원 허용치가 먼저
+  assertEquals(HouseSorting.choose(2,1,new long[4],2),HouseSorting.choose(2,1,new long[4],2,-1,1));
+  assertThrows(IllegalArgumentException.class,()->HouseSorting.scores(0,0,4,1));
+ }
  @Test void emptyHousesCountAndExistingAssignmentNeverRewrites()throws Exception{
   Path file=dir.resolve("sort.db");UUID id=UUID.randomUUID();
   try(var s=new SchoolStore(file)){

@@ -51,3 +51,5 @@ first-nickname:
 # Population ceiling is checked BEFORE adding the new student.
 house-sorting:
   population-tolerance: 2
+  # 그레고르 "가고 싶은 곳이 있나?"(대화 ch1-17)에서 고른 기숙사 점수 가산 (0~6, 기숙사 점수는 0~6점). 0 = 끔
+  wish-bonus: 1

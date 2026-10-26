@@ -8,7 +8,7 @@ commands:
   기숙사분류:
     description: Administrator house sorting and population balance.
     permission: magiccodex.school.admin
-    usage: /기숙사분류 시작|결정|현황|허용치
+    usage: /기숙사분류 시작|희망|결정|현황|허용치
 permissions:
   magiccodex.chunkclaim.bypass:
     description: 청크 점유(chunk-claims.yml) 보호를 받지 않음 — 남의 땅에서도 활동 (관리자)

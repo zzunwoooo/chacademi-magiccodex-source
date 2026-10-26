@@ -1,8 +1,8 @@
-# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-14m-noxer)
+# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-14f-noxer)
 format: 1
-id: "ch1-17m-noxer"
-title: "1-17. 기숙사 발표"
-description: "분류의 거울이 고민 끝에 노크세르에 배정했어요."
+id: "ch1-19f-noxer"
+title: "1-19. 분류의 거울"
+description: "분류의 거울이 질문도 없이 노크세르를 외쳤어요."
 chapter: "1장 · 차카데미아"
 start: a
 dim: 0.35
@@ -26,11 +26,13 @@ speakers:
     name: "분류의 거울"
 scenes:
   a:
-    name: "흔들림"
+    name: "창시자의 마나"
     lines:
-      - {who: mirror, face: "", text: "음… 하지만 네 마음 한구석은, 다른 곳을 원하고 있군?"}
-      - {who: mirror, face: "", text: "…아니. 다시 보니, 역시 여기도 잘 어울려."}
-      - {who: mirror, face: "", text: "…어둠, 비밀과 대가."}
+      - {who: gregor, face: "기본", text: "거울 앞에 서도록. 거짓말은 통하지 않는다."}
+      - {who: mirror, face: "", text: "…오호. 오랜만에 묵직한 마나로구나. 자, 그럼 질문을—"}
+      - {who: mirror, face: "", text: "…아니. 잠깐. 이 마나는… 노크세르를 처음 세운 그분과 정말 비슷하구나."}
+      - {who: gregor, face: "기본", text: "…창시자와?"}
+      - {who: mirror, face: "", text: "고민할 것도 없다!"}
       - {who: mirror, face: "", text: "노크세르."}
       - {who: luka, face: "기본", text: "(소곤소곤) 노크세르라니… 그 배신자가 있던 데잖아."}
       - {who: gregor, face: "기본", text: "루카. 입 다물도록."}

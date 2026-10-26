@@ -118,12 +118,13 @@ final class SchoolStore implements AutoCloseable {
             while(r.next()){int h=r.getInt(1);if(h<0||h>3)throw new SQLException("Invalid saved house");counts[h]=r.getLong(2);}
         }return counts;
     }
-    Assignment assignHouse(UUID id,int t,int d,int tolerance)throws SQLException{
-        int preferred=HouseSorting.preferred(t,d);HouseSorting.tolerance(tolerance);
+    Assignment assignHouse(UUID id,int t,int d,int tolerance)throws SQLException{return assignHouse(id,t,d,tolerance,-1,0);}
+    Assignment assignHouse(UUID id,int t,int d,int tolerance,int wish,int bonus)throws SQLException{
+        int preferred=HouseSorting.preferred(t,d,wish,bonus);HouseSorting.tolerance(tolerance);
         holder.begin();try{
             lockHouses();Integer existing=savedHouse(id);
             if(existing!=null){db().commit();return new Assignment(existing,preferred,false);}
-            int chosen=HouseSorting.choose(t,d,houseCounts(),tolerance);
+            int chosen=HouseSorting.choose(t,d,houseCounts(),tolerance,wish,bonus);
             writeHouse(id,chosen);db().commit();return new Assignment(chosen,preferred,true);
         }catch(SQLException|RuntimeException error){holder.rollback();throw error;}finally{holder.end();}
     }

@@ -1548,8 +1548,8 @@ final class QuestEngine implements Listener {
     // ================================================================ 명령어
 
     private static final String ID = "단계ID";
-    /** 기숙사 분류 6문항 대화 ID (SchoolBridge 가 띄움 — SchoolBridge 의 "ch1-17"·"ch1-17r/m/f-" 와 같아야 함, 2026-10-25 대화 번호 = 단계 번호로 ch1-15 → ch1-17). */
-    static final String SORTING_DIALOGUE = "ch1-17";
+    /** 기숙사 분류 6문항 대화 ID (SchoolBridge 가 띄움 — SchoolBridge 의 "ch1-19"·"ch1-19r/m/f-" 와 같아야 함. 2026-10-27 정문·그레고르·거울 앞 단계가 생겨 ch1-17 → ch1-19). */
+    static final String SORTING_DIALOGUE = "ch1-19";
 
     void registerCommands() {
         if (!ChacaLink.ready()) return;

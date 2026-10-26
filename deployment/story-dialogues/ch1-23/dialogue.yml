@@ -1,10 +1,10 @@
-# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-19, 책 고르기는 책장 블록 조건으로)
+# 차카데미 대화 — Claude 작성 2026-10-20 · 2026-10-26 1장 다시 짜기 (저장소 ch1-17)
 format: 1
 id: "ch1-23"
-title: "1-23. 이론서 세 권"
-description: "이론서 세 권을 다 읽었어요. 루카가 찾아낸 연대기를 펼쳐 보세요."
+title: "1-23. 첫 수업"
+description: "교실에서 엘레나 교수의 마법 이론 첫 수업을 들으세요."
 chapter: "1장 · 차카데미아"
-start: start
+start: a
 dim: 0.35
 type_speed: 0.03
 type_sound: default
@@ -12,43 +12,28 @@ type_sound_volume: 0.5
 speakers:
   me:
     name: "{player}"
+  elena:
+    name: "엘레나"
+    npc: "teacher_ellna"
+    portraits:
+      "기본": "elena-neutral.png"
+      "기쁨": "elena-happy.png"
+      "당황": "elena-flustered.png"
+      "분노": "elena-angry.png"
+      "설렘": "elena-excited.png"
+      "슬픔": "elena-sad.png"
   luka:
     name: "루카"
     npc: "luka"
     portraits:
       "기본": "luka-neutral.png"
-  isolde:
-    name: "이솔데"
-    npc: "librarian_isolde"
-    portraits:
-      "기본": "librarian_isolde-neutral.png"
 scenes:
-  start:
-    name: "세 권"
+  a:
+    name: "수업"
     lines:
-      - {who: me, face: "", text: "(『불을 모으는 이론』, 『물의 흐름에 관하여』, 『바람을 빚는 법』… 세 권을 다 읽었다.)"}
-      - {who: me, face: "", text: "(마나를 모아 열로, 물은 흐름에 얹고, 바람은 작게 둥글게… 머릿속에서 뭔가 떠오르는 느낌이야.)"}
-    next: luka
-  luka:
-    name: "또 발현"
-    lines:
-      - {who: luka, face: "기본", text: "너 방금 또 발현했지? 오늘만 몇 개째야…"}
-    choices:
-      - {text: "이론서가 설명을 잘 해 줘서 그래.", to: "l1"}
-      - {text: "나도 잘 모르겠어.", to: "l2"}
-  l1:
-    name: "부러움"
-    lines:
-      - {who: luka, face: "기본", text: "같은 책 보는데 나는 왜…"}
-    next: chron
-  l2:
-    name: "의심"
-    lines:
-      - {who: luka, face: "기본", text: "모르는 사람이 그렇게 해?"}
-    next: chron
-  chron:
-    name: "연대기"
-    lines:
-      - {who: luka, face: "기본", text: "난 포기할래. 역사서나 볼래. 그건 그냥 읽기만 하면 되잖아."}
-      - {who: me, face: "", text: "(역사서… 차카데미아 연대기?)"}
-      - {who: isolde, face: "기본", text: "…그 책, 잘 안 빌려 가는데. 잿빛 밤 부분은 그림이 많아요. 천천히 읽으세요."}
+      - {who: elena, face: "기쁨", text: "다들 안녕! 마법 이론을 맡은 엘레나야. 아, {player}도 있네?"}
+      - {who: elena, face: "기본", text: "오늘은 딱 하나만 기억하면 돼. 같은 이론을 배워도, 그걸 마법으로 떠올리는 건 사람마다 달라."}
+      - {who: elena, face: "기본", text: "보통 학생은 평생 몇 개만 발현하지."}
+      - {who: luka, face: "기본", text: "교수님, 그럼 마법을 많이 발현하는 방법은 없어요?"}
+      - {who: elena, face: "설렘", text: "있지. 많이 읽고, 많이 떠올려 보는 거. 그래서 다음 장소는 대도서관이야."}
+      - {who: elena, face: "기쁨", text: "오늘 과제! 이론서를 읽고 마법을 하나라도 떠올려 보기. 못 해도 괜찮아. 대부분 못 하니까!"}
