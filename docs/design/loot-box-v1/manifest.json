@@ -1,0 +1,110 @@
+{
+  "canvas": [
+    1254,
+    1254
+  ],
+  "body_bottom_anchor_approx": [
+    698,
+    1134
+  ],
+  "keep_canvas": true,
+  "generation": "built-in imagegen",
+  "direction": "viewer-left side handle visible; front star lock at right",
+  "files": [
+    {
+      "path": "assets/chest_closed.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_pixels": 1074679,
+      "partially_transparent_pixels": 497412,
+      "visible_bbox_alpha128": [
+        257,
+        478,
+        1138,
+        1134
+      ],
+      "sha256": "98dcc7235c6a00ee96f59a4a4ca2c4491d94d88bdc9f569ad9e30de4305dcecc"
+    },
+    {
+      "path": "assets/chest_open_common.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_pixels": 768309,
+      "partially_transparent_pixels": 803998,
+      "visible_bbox_alpha128": [
+        145,
+        108,
+        1138,
+        1134
+      ],
+      "sha256": "46a1b1267529679cfcdace103acfdb7e008cf7ffd0e074253a8491619bbdeeaa"
+    },
+    {
+      "path": "assets/chest_open_legendary.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_pixels": 781135,
+      "partially_transparent_pixels": 790986,
+      "visible_bbox_alpha128": [
+        145,
+        107,
+        1138,
+        1134
+      ],
+      "sha256": "9a84015a22bfbf1d9986d3c1bfa5d19c6708908862ecad3a9766b8851028f7e7"
+    },
+    {
+      "path": "assets/chest_open_rare.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_pixels": 776659,
+      "partially_transparent_pixels": 795505,
+      "visible_bbox_alpha128": [
+        143,
+        96,
+        1138,
+        1134
+      ],
+      "sha256": "21044c3e049f08cb87c2578f0f3448cdf02e5aa42fa9da81f560890a6ae494e4"
+    },
+    {
+      "path": "assets/chest_open_unique.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "mode": "RGBA",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "fully_transparent_pixels": 784901,
+      "partially_transparent_pixels": 787289,
+      "visible_bbox_alpha128": [
+        146,
+        112,
+        1135,
+        1133
+      ],
+      "sha256": "b840f4752a78a122215f5995fdf4ada25a44a7e02d7d969e9cffe5b91e71802d"
+    }
+  ]
+}
