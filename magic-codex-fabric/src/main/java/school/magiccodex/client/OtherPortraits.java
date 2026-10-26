@@ -29,8 +29,10 @@ final class OtherPortraits {
     private static final int KEEP=64, TEXTURES=4;
     private static final long TIMEOUT_MS=15_000, BUSY_RETRY_MS=2_000;
     private static final Path ROOT=FabricLoader.getInstance().getConfigDir().resolve("magiccodex/portraits/others");
-    private static final ThreadPoolExecutor IO=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,new ArrayBlockingQueue<>(8),
-            r->{Thread t=new Thread(r,"Portrait-Others-IO");t.setDaemon(true);return t;},new ThreadPoolExecutor.DiscardOldestPolicy());
+    // 리뷰 2026-10-26: 큐가 꽉 차 작업이 버려지면(DiscardOldest) 그 사람의 decoding 이 영영 true 로 남아 "불러오는 중" 이 안 끝난다.
+    // 작업 수는 정보창 열기·서버 응답 수로 한정되므로 무제한 큐로 둔다 (작업은 전부 짧은 디스크 읽기·디코드).
+    private static final ThreadPoolExecutor IO=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,new LinkedBlockingQueue<>(),
+            r->{Thread t=new Thread(r,"Portrait-Others-IO");t.setDaemon(true);return t;});
     private static final class Entry {
         String sha="";              // 캐시에 있는(또는 보여 주는) 그림 sha
         boolean asked, answered, none, first, decoding;
@@ -129,35 +131,42 @@ final class OtherPortraits {
     private static void install(UUID id,String sha,byte[] png){
         long gen=generation;var e=entries.get(id);if(e!=null)e.decoding=true;
         IO.execute(()->{
-            NativeImage image=null;
+            NativeImage image=null;PlayerTurnPortraitLayout.Bounds bounds=null;
             try{
                 if(sha.equals(sha256(png))){
                     image=PlayerPortraitTexture.decode(png,PortraitProtocol.MAX_IMAGE_SIDE);
+                    bounds=bounds(image);
                     Files.createDirectories(ROOT);
                     Path tmp=ROOT.resolve(sha+".png.tmp");Files.write(tmp,png);
                     Files.move(tmp,ROOT.resolve(sha+".png"),StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE);
                 }
             }catch(Exception ignored){}
-            upload(id,sha,image,gen,true);
+            upload(id,sha,image,bounds,gen,true);
         });
     }
     private static void decodeFromDisk(UUID id,String sha){
         if(textures.get(sha)!=null)return;
         long gen=generation;var e=entries.get(id);if(e!=null)e.decoding=true;
         IO.execute(()->{
-            NativeImage image=null;
+            NativeImage image=null;PlayerTurnPortraitLayout.Bounds bounds=null;
             try{
                 Path file=ROOT.resolve(sha+".png");
                 if(Files.isRegularFile(file)&&Files.size(file)<=PortraitProtocol.MAX_IMAGE_BYTES){
                     byte[] png=Files.readAllBytes(file);
-                    if(sha.equals(sha256(png)))image=PlayerPortraitTexture.decode(png,PortraitProtocol.MAX_IMAGE_SIDE);
+                    if(sha.equals(sha256(png))){image=PlayerPortraitTexture.decode(png,PortraitProtocol.MAX_IMAGE_SIDE);bounds=bounds(image);}
                 }
             }catch(Exception ignored){}
-            upload(id,sha,image,gen,false);
+            upload(id,sha,image,bounds,gen,false);
         });
     }
-    private static void upload(UUID id,String sha,NativeImage image,long gen,boolean fresh){
+    /** 보이는 상자(알파>0) 찾기: 최대 2048×2048 픽셀을 다 훑으므로 IO 스레드에서만 (PortraitClient 와 같음 — 리뷰 2026-10-26, 렌더 스레드 멈춤 방지). */
+    private static PlayerTurnPortraitLayout.Bounds bounds(NativeImage scan){
+        return PlayerTurnPortraitLayout.bounds(scan.getWidth(),scan.getHeight(),(x,y)->scan.getColorArgb(x,y)>>>24);
+    }
+    private static void upload(UUID id,String sha,NativeImage decoded,PlayerTurnPortraitLayout.Bounds bounds,long gen,boolean fresh){
         var c=MinecraftClient.getInstance();
+        if(decoded!=null&&bounds==null){decoded.close();decoded=null;} // 상자 계산이 실패한 그림은 쓰지 않음 (NPE 방지)
+        NativeImage image=decoded;
         c.execute(()->{
             var e=entries.get(id);
             if(gen!=generation||e==null){if(image!=null)image.close();return;}
@@ -168,11 +177,8 @@ final class OtherPortraits {
                 return;
             }
             try{
-                if(textures.get(sha)==null){
-                    NativeImage scan=image;
-                    var bounds=PlayerTurnPortraitLayout.bounds(scan.getWidth(),scan.getHeight(),(x,y)->scan.getColorArgb(x,y)>>>24);
-                    textures.put(sha,PlayerPortraitTexture.upload(image,bounds));
-                }else image.close();
+                if(textures.get(sha)==null)textures.put(sha,PlayerPortraitTexture.upload(image,bounds));
+                else image.close();
                 e.sha=sha;e.first=false;e.none=false;
                 if(fresh)touch(id,sha);
                 evict();
