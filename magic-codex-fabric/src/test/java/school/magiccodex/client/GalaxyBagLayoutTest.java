@@ -88,10 +88,6 @@ class GalaxyBagLayoutTest {
             // 링을 흐리게 덮는 판(최대 26 바깥)도 핫바 구분선 위에서 끝난다.
             assertTrue(s.bottom() + 18 + 26 < GalaxyBagLayout.DIVIDER_Y);
         }
-        float title = GalaxyBagLayout.lockTitleY();
-        assertTrue(title - 17 > GalaxyBagLayout.BORDER_TOP_Y, "제목은 테두리 선 아래");
-        assertTrue(title + 17 < a[1], "제목은 첫 줄 링 위 — 겹치지 않음");
-        assertTrue(GalaxyBagLayout.lockStack(23, 15).top() - 26 > title + 17, "제목과 자물쇠 묶음도 따로");
     }
 
     @Test void pagerTextAndRecipePages() {

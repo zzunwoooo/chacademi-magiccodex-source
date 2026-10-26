@@ -252,10 +252,25 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         panelWanted = false;
         searchFocused = false;
         ghost = null;
-        for (int i = 0; i < 4; i++) {
-            Slot slot = handler.getSlot(GalaxyBagLayout.INPUT_START + i);
-            if (slot.hasStack()) onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
-        }
+        returningGrid = true;
+        try {
+            for (int i = 0; i < 4; i++) {
+                Slot slot = handler.getSlot(GalaxyBagLayout.INPUT_START + i);
+                if (slot.hasStack()) onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
+            }
+        } finally { returningGrid = false; }
+    }
+
+    private boolean returningGrid;
+
+    /**
+     * 2026-10-26 오너: 잠긴 쪽에서는 Shift+클릭(빠른 이동)·두 번 클릭 모으기를 막는다 — 바닐라 규칙대로면 보이지 않는
+     * 27칸(잠긴 쪽)으로 옮겨지거나 거기서 모여 아이템이 사라진 것처럼 보인다. 패널 닫을 때 2x2 되돌리기만 예외.
+     */
+    @Override
+    protected void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType) {
+        if (lockedView() && !returningGrid && (actionType == SlotActionType.QUICK_MOVE || actionType == SlotActionType.PICKUP_ALL)) return;
+        super.onMouseClick(slot, slotId, button, actionType);
     }
 
     private void turnPage(int delta) {
@@ -397,11 +412,10 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
                 if (!has) HudMesh.disk(c, e.cx(), e.cy(), 2.4f, locked ? DOT_DIM : DOT);
             }
             if (locked) {
-                // 2026-10-26 오너: 제목은 한 번만, 테두리 선과 첫 줄 링 사이 가운데 (첫 줄 링과 겹치지 않게).
+                // 2026-10-26 오너: 잠긴 쪽에 "아공간 배낭" 제목을 그리지 않는다 (자물쇠·문구만).
                 // 자물쇠·문구 묶음은 27칸 영역(핫바 제외)의 정중앙 — 글자 높이는 실제 글꼴 잉크로 재서 GalaxyBagLayout 이 배치.
                 var lock = lockStack(text);
                 float cx = lock.cx(), size = GalaxyBagLayout.LOCK_ICON;
-                text.draw(c, "아공간 배낭", cx, GalaxyBagLayout.lockTitleY(), 34, TEXT, SERIF, true);
                 // Like the lock reference: the dim rings fade out behind the padlock and the two lines of text.
                 float top = lock.top(), bottom = lock.bottom();
                 for (int k = 0; k < 4; k++) {
