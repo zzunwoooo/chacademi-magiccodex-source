@@ -1,7 +1,7 @@
 # [BUILD-READY] 오픈 최종 2차 — GPT 빌드·배포 지시 (Claude 2026-10-26)
 
 
-브랜치 `claude/opening-final-20261025` 의 **이 파일이 들어간 커밋**을 빌드한다 (커밋 메시지에 `[BUILD-READY]`).
+브랜치 `claude/opening-final-20261025` 의 ****가장 최근 `[BUILD-READY]` 커밋****을 빌드한다 (커밋 메시지에 `[BUILD-READY]`).
 기준: `70044a79` (2026-10-25 밤 운영 배포) 이후 모든 패치. 자세한 내용·파일 위치는 [CLAUDE_OPENING_FINAL_PATCHES_20261026](CLAUDE_OPENING_FINAL_PATCHES_20261026.md) (§번호), 오너 결정은 [CLAUDE_OPENING_PREP_REVIEW_20261025](CLAUDE_OPENING_PREP_REVIEW_20261025.md).
 
 이 환경에는 Gradle·Paper·Fabric 이 없어 **컴파일·테스트를 못 했다** (Java 문법 검사·생성기 실행·운영 overlay `check` = "차이 없음" 만 함). 첫 빌드에서 컴파일 오류가 나면 해당 § 의 "확인 필요" 줄부터 볼 것. 처음 쓰는 Paper/Fabric API 는 각 § 에 적어 둠.
@@ -62,7 +62,7 @@
 - 운영 jar 에 저장소에 없는 장신구 강화가 이미 있으면 오너에게 알리고 이 구현과 합칠 것 (오너: "이미 있다").
 
 ## 6. 오너 검수 대기 (빌드에는 포함, 수치는 바뀔 수 있음)
-- 전투 스펙: 재계산 결과 적당 vs 한계 1.81배 (목표 1.6배 초과 — 펫 도감 20·마나 회복 8 유지 때문). 대충끼리 95초. 조정안은 docs/plans/combat-spec.md.
+- 전투 스펙: 재계산 결과 적당 vs 한계 1.90배 (강화 상승량 = 단계값 × 코어 품질 배율 "섞기", §34 추가) (목표 1.6배 초과 — 펫 도감 20·마나 회복 8 유지 때문). 대충끼리 95초. 조정안은 docs/plans/combat-spec.md.
 - 책 67권 (#105), 아공간 배낭 잠긴 쪽 (§33).
 
 ## 7. 컴파일 확인 상태

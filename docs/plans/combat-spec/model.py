@@ -19,14 +19,15 @@ ULT_MANA = {'궁극(쉬움)': 450, '궁극(연계)': 600}
 def affinity(stat, primary):  # magic-codex-protocol CoreAffinity.multiplier (0 지능 · 1 마나 · 2 가속/회복)
     return (1 if stat == primary else .5) / (1 if stat == 0 else .5)
 
-def build(wand, wand_succ, acc, acc_succ, acc_core, pet_hp, armor, epf, art, wand_core=0):
-    s = WAND_STAGE[:wand_succ]
+def build(wand, wand_succ, acc, acc_succ, acc_core, pet_hp, armor, epf, art, wand_core=0, q=1.0):
+    # q = 코어 품질 배율 (섞기, 오너 2026-10-26: 3노드 1.0 → 10노드 1.15)
+    s = [x * q for x in WAND_STAGE[:wand_succ]]
     I = WAND[wand][0] + sum(s) * WAND_GAIN['power'] * affinity(0, wand_core)
     mana = BASE_MANA + WAND[wand][1] + sum(s) * WAND_GAIN['mana'] * affinity(1, wand_core)
     haste = WAND[wand][2] + sum(s) * WAND_GAIN['haste'] * affinity(2, wand_core)
     regen, hp = BASE_REGEN, 20 + pet_hp
     for g in acc:
-        a = ACC[g]; t = sum(ACC_STAGE[:acc_succ])
+        a = ACC[g]; t = sum(ACC_STAGE[:acc_succ]) * q
         I += a[0] + t * ACC_GAIN['power'] * affinity(0, acc_core)
         hp += a[1]
         mana += a[2] + t * ACC_GAIN['mana'] * affinity(1, acc_core)
@@ -37,8 +38,8 @@ def build(wand, wand_succ, acc, acc_succ, acc_core, pet_hp, armor, epf, art, wan
 # 세 수준 (가정은 제안서 §5와 같음. 펫 도감 체력: 대충 +5 · 적당 +10 · 한계 +20(최대, 오너: 20 유지))
 L = {
     '대충': build('수습', 1, [], 0, 0, 5, 15, 0, 1.0),
-    '적당': build('고급', 7, ['고급'] * 3, 3, 0, 10, 20, 10, 1.08),
-    '한계': build('전설', 10, ['전설'] * 3, 5, 0, 20, 20, 16, 1.12),
+    '적당': build('고급', 7, ['고급'] * 3, 3, 0, 10, 20, 10, 1.08, q=1.04),  # 보통 3~5노드 코어
+    '한계': build('전설', 10, ['전설'] * 3, 5, 0, 20, 20, 16, 1.12, q=1.15),  # 10노드 코어
 }
 N = list(L)
 # 손에 초급 3 · 중급 2 · 고급 1, 기본 쿨타임마다 사용(평균 쿨 9.5 / 18.5 / 55초, 평균 마나 24.6 / 77 / 276.5), 명중률 50%

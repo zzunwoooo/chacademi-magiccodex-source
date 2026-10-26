@@ -18,6 +18,7 @@ final class EnhancementBridge implements Listener,PluginMessageListener,AutoClos
  private static final Set<String> ACC_TYPES=Set.of("ring","earring","necklace");
  record WandGrade(String name,double[] stats){}
  private final MagicCodexBridge plugin;private YamlConfiguration config;
+ private double[] qualityMultipliers=new double[11];
  private List<Double> wandStages=List.of(),accStages=List.of();private Map<String,WandGrade> wandGrades=Map.of();private Map<String,double[]> accGrades=Map.of();
  private final Map<UUID,Session> sessions=new HashMap<>();private final Map<UUID,Long> limits=new HashMap<>();
  private static long now(){return System.nanoTime()/1_000_000;}
@@ -59,7 +60,14 @@ final class EnhancementBridge implements Listener,PluginMessageListener,AutoClos
   if(acc!=null)for(String g:acc.getKeys(false)){List<Double> st=acc.getDoubleList(g);
    if(g.isBlank()||g.length()>16||st.size()!=5)throw new IllegalArgumentException("accessory-grades."+g);
    double[] v=new double[5];for(int i=0;i<5;i++){double x=st.get(i);if(!Double.isFinite(x)||x<0||x>(i==1?200:100000))throw new IllegalArgumentException("accessory-grades."+g);v[i]=x;}ag.put(g,v);}
-  config=c;wandStages=ws;accStages=as;wandGrades=Collections.unmodifiableMap(wg);accGrades=Collections.unmodifiableMap(ag);
+  config=c;qualityMultipliers=qualities(c);wandStages=ws;accStages=as;wandGrades=Collections.unmodifiableMap(wg);accGrades=Collections.unmodifiableMap(ag);
+ }
+ /** core-quality-multiplier: 노드 수(1~10) → 배율. 없거나 잘못되면 기본(1·2노드 0.9·0.95, 3노드 1.0 → 10노드 1.15 직선). */
+ private static double[] qualities(YamlConfiguration c){
+  double[] out=new double[11];for(int n=1;n<=10;n++)out[n]=EnhancementRules.defaultQuality(n);
+  var sec=c.getConfigurationSection("core-quality-multiplier");if(sec==null)return out;
+  for(int n=1;n<=10;n++){double v=sec.getDouble(String.valueOf(n),out[n]);if(Double.isFinite(v)&&v>0&&v<=10)out[n]=v;}
+  return out;
  }
  private static List<Double> stages(YamlConfiguration c,String k,boolean required){
   if(!c.contains(k)){if(required)throw new IllegalArgumentException(k);return List.of();}
@@ -118,6 +126,7 @@ final class EnhancementBridge implements Listener,PluginMessageListener,AutoClos
   String[] k=keys(kind);s.before=List.of(number(w,k[0]),number(w,k[1]),number(w,k[2]));
   List<Double> stages=kind==WAND?wandStages:accStages;double factor=number(s.core,"core_stat_gain");if(stages.isEmpty()&&(factor<=0||factor>10000)){refuseOpen(p,"코어의 상승량 정보가 올바르지 않아요");return;}
   double stage=EnhancementRules.stageGain(stages,integer(w,"enhance_successes",0),factor);
+  if(!stages.isEmpty())stage*=EnhancementRules.qualityMultiplier(qualityMultipliers,s.nodes); // 섞기 (오너 2026-10-26): 단계값 × 코어 품질 배율
   double[] gain=kind==WAND?new double[]{config.getDouble("gain.power"),config.getDouble("gain.mana"),config.getDouble("gain.haste")}:new double[]{config.getDouble("accessory.gain.power"),config.getDouble("accessory.gain.mana"),config.getDouble("accessory.gain.regen")};
   double[] g=EnhancementRules.gains(stage,gain,integer(s.core,"core_affinity",0));s.gains=List.of(g[0],g[1],g[2]);for(int i=0;i<3;i++)if(s.before.get(i)+s.gains.get(i)>100000){refuseOpen(p,"능력치 상한을 넘어요");return;}
   String name=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(w.displayName());s.name=name.length()>60?name.substring(0,60):name;
