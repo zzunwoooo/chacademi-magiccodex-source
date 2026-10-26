@@ -5,7 +5,7 @@ description: 조준한 적의 발밑 그림자에서 날카로운 송곳니가 �
 icon: ''
 permission: magic.learned.shadow_fang
 discovery:
-  description: 밤에 몬스터 50마리 처치
+  description: 밤에 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 shadow_fang

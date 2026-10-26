@@ -5,7 +5,7 @@ description: 빛 고리를 던집니다. 처음 맞은 적을 3초 동안 느리
 icon: ''
 permission: magic.learned.halo_throw
 discovery:
-  description: 교화 10번 성공
+  description: 교화에 10번 성공하기.
 research: ''
 cast:
   command: 마법 halo_throw

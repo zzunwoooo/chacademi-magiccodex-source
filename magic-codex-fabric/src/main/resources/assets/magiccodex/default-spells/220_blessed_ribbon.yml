@@ -5,7 +5,7 @@ description: 손에 든 선물 하나에 축복의 리본을 묶습니다. 리�
 icon: ''
 permission: magic.learned.blessed_ribbon
 discovery:
-  description: 아무 NPC와 호감도 30 달성
+  description: 아무 NPC와 호감도 30 달성하기.
 research: ''
 cast:
   command: 마법 blessed_ribbon

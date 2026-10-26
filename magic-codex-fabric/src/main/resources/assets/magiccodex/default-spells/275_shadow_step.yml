@@ -5,7 +5,7 @@ description: 그림자가 되어 앞쪽 5블록을 순식간에 지나갑니다.
 icon: ''
 permission: magic.learned.shadow_step
 discovery:
-  description: 옅은 은신 상태로 누적 10분
+  description: 옅은 은신을 30번 사용하기.
 research: ''
 cast:
   command: 마법 shadow_step

@@ -5,7 +5,7 @@ description: 옆으로 미끄러지며 제자리에 일렁이는 허상을 남�
 icon: ''
 permission: magic.learned.heat_haze
 discovery:
-  description: 여름 계절에 사막 바이옴 방문
+  description: 사막 바이옴에서 누적 10분 머무르기.
 research: ''
 cast:
   command: 마법 heat_haze

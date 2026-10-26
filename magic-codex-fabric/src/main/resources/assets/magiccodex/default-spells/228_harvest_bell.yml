@@ -5,7 +5,7 @@ description: 풍년을 부르는 종을 울립니다. 1분 동안 내가 거둔 
 icon: ''
 permission: magic.learned.harvest_bell
 discovery:
-  description: 살아난 작물 처음 처치
+  description: 살아난 작물을 10마리 처치하기.
 research: ''
 cast:
   command: 마법 harvest_bell

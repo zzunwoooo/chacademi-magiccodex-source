@@ -5,7 +5,7 @@ description: 멀리 있는 반사 거울이나 회전 다이얼을 90도 돌립�
 icon: magiccodex:textures/spells/gimmick/mirror_tune.png
 permission: magic.learned.mirror_tune
 discovery:
-  description: 아이템 액자 속 물건을 8번 돌려 처음 모양으로 되돌리기.
+  description: 도서관에서 「거울과 빛의 길」 책 읽기.
 research: 한 칸 돌리면 다른 길이 열린다. 네 번 돌리면 처음으로 돌아온다.
 cast:
   command: 마법 mirror_tune

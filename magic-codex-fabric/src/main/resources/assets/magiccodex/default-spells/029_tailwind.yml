@@ -5,7 +5,7 @@ description: 등 뒤로 순풍을 불러 주변 파티원의 빗자루 균형을
 icon: ''
 permission: magic.learned.tailwind
 discovery:
-  description: 빗자루에서 10번 낙마
+  description: 빗자루에서 10번 떨어지기.
 research: ''
 cast:
   command: 마법 tailwind

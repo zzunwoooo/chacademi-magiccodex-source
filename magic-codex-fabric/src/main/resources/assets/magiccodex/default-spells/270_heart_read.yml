@@ -5,7 +5,7 @@ description: 바라보는 NPC의 마음을 살짝 엿봅니다. 그 NPC가 좋�
 icon: ''
 permission: magic.learned.heart_read
 discovery:
-  description: NPC에게 선물 10번 주기
+  description: NPC에게 선물을 10번 주기.
 research: ''
 cast:
   command: 마법 heart_read

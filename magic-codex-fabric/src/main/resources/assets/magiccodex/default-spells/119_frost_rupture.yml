@@ -5,7 +5,7 @@ description: 대상 위치에 얼음 시계를 새기고 1초 뒤 사람 키 정
 icon: magiccodex:textures/spells/expansion/frost_rupture.png
 permission: magic.learned.frost_rupture
 discovery:
-  description: 눈덩이를 몬스터에게 누적 50번 명중하기.
+  description: 눈덩이를 몬스터에게 누적 50번 맞히기.
 research: 눈싸움 중 눈덩이에 돌을 넣어 던지는 행위는 명백한 불법이다.
 cast:
   command: 마법 frost_rupture

@@ -5,7 +5,7 @@ description: 바라보는 장치를 바로 직전 상태로 되돌립니다. 1�
 icon: magiccodex:textures/spells/gimmick/rewind.png
 permission: magic.learned.rewind
 discovery:
-  description: 시계를 들고 같은 자리를 10번 오가기.
+  description: 도서관에서 「되돌리는 장치에 관하여」 책 읽기.
 research: 시간을 되돌리는 것은 아니다. 장치가 방금 전의 모습을 기억해 낼 뿐이다.
 cast:
   command: 마법 rewind

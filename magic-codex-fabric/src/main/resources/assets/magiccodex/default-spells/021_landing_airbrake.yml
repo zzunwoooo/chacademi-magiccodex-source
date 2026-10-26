@@ -5,7 +5,7 @@ description: 빗자루를 탄 채로 바라보는 방향 약 6블록 앞으로 �
 icon: magiccodex:textures/spells/reviewed_20261020/landing_airbrake.png
 permission: magic.learned.landing_airbrake
 discovery:
-  description: 비행 중 텔레포트 마법 사용
+  description: 빗자루를 타고 누적 1,000블록 날기.
 research: 바람이 지나간 자리에, 잠시 접힌 하늘의 틈이 남았다.
 cast:
   command: 마법 landing_airbrake

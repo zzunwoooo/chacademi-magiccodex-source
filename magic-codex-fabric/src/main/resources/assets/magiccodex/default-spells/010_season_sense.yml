@@ -5,7 +5,7 @@ description: 바람에 실린 계절의 기운을 읽습니다. 지금 계절과
 icon: ''
 permission: magic.learned.season_sense
 discovery:
-  description: 계절이 바뀌는 순간 접속해 있기
+  description: 도서관에서 「계절 관측 일지」 책 읽기.
 research: ''
 cast:
   command: 마법 season_sense

@@ -5,7 +5,7 @@ description: 발밑에 실제로 서 있을 수 있는 작은 마법 발판을 2
 icon: magiccodex:textures/spells/expansion_2/air_step.png
 permission: magic.learned.air_step
 discovery:
-  description: 비행 금지 구역에서 비행 마법 25회 사용.
+  description: 비행 마법을 50번 사용하기.
 research: 날 수 없는 곳에서 거듭 도약한 발은, 허공에도 잠시 머물 자리를 찾아냈다.
 cast:
   command: 마법 air_step

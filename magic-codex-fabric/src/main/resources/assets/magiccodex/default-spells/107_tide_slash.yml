@@ -5,7 +5,7 @@ description: 물살을 칼날처럼 휘둘러 앞쪽 반원을 벱니다. 맞은
 icon: ''
 permission: magic.learned.tide_slash
 discovery:
-  description: 물속에서 몬스터 20마리 처치
+  description: 물속에서 몬스터 20마리 처치하기.
 research: ''
 cast:
   command: 마법 tide_slash

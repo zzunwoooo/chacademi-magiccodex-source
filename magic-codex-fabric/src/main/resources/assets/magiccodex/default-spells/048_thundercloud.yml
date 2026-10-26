@@ -5,7 +5,7 @@ description: 대상 머리 위에 6초 동안 먹구름을 띄웁니다. 먹구�
 icon: ''
 permission: magic.learned.thundercloud
 discovery:
-  description: 뇌우 중 라이트닝 쇼크 20번 적중
+  description: 라이트닝 쇼크로 몬스터 50마리 처치하기.
 research: ''
 cast:
   command: 마법 thundercloud

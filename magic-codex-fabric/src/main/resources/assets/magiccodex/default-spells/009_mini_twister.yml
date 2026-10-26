@@ -5,7 +5,7 @@ description: 작은 회오리를 땅 위로 굴려 보냅니다. 회오리는 �
 icon: ''
 permission: magic.learned.mini_twister
 discovery:
-  description: 윈드 푸쉬로 적 50번 밀어내기
+  description: 윈드 푸쉬를 50번 사용하기.
 research: ''
 cast:
   command: 마법 mini_twister

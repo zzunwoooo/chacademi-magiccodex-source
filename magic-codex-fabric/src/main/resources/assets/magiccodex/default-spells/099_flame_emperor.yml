@@ -5,7 +5,7 @@ description: 3초 동안 영창한 뒤 8초 동안 화염의 화신이 됩니다
 icon: ''
 permission: magic.learned.flame_emperor
 discovery:
-  description: 화염 마법 30종 습득
+  description: 화염 마법 30종 습득하기.
 research: ''
 cast:
   command: 마법 flame_emperor

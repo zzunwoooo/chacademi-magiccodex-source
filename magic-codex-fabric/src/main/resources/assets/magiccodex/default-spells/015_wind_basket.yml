@@ -5,7 +5,7 @@ description: 주변 10블록 안의 바닥 아이템을 시전자 쪽으로 끌�
 icon: magiccodex:textures/spells/novice/wind_basket.png
 permission: magic.learned.wind_basket
 discovery:
-  description: 아이템 1,000개 줍기.
+  description: 아이템 300개 줍기.
 research: 흩어진 물건을 수없이 주워 온 손은, 바람에게도 그 일을 맡기는 법을 깨닫는다.
 cast:
   command: 마법 wind_basket

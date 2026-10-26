@@ -5,7 +5,7 @@ description: 땅을 내리쳐 앞으로 균열을 보내고, 그 위로 불기�
 icon: ''
 permission: magic.learned.eruption_line
 discovery:
-  description: 용암 봉합 20번 사용
+  description: 용암 봉합을 20번 사용하기.
 research: ''
 cast:
   command: 마법 eruption_line

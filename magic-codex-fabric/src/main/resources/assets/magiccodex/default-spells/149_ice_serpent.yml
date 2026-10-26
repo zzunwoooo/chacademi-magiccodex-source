@@ -5,7 +5,7 @@ description: 얼음 뱀이 땅 위를 S자로 휘저으며 20블록을 나아갑
 icon: ''
 permission: magic.learned.ice_serpent
 discovery:
-  description: 바다 바이옴에서 고급 이상 물고기 10마리 낚기
+  description: 고급 이상 물고기를 30마리 낚기.
 research: ''
 cast:
   command: 마법 ice_serpent

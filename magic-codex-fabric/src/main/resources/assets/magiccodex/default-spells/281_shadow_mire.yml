@@ -5,7 +5,7 @@ description: 조준한 곳에 4초 동안 그림자 늪을 펼칩니다. 늪에 
 icon: ''
 permission: magic.learned.shadow_mire
 discovery:
-  description: 늪 바이옴에서 몬스터 30마리 처치
+  description: 늪 바이옴에서 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 shadow_mire

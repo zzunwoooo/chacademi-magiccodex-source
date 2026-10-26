@@ -5,7 +5,7 @@ description: 휘파람 같은 바람으로 가축을 부릅니다. 주변의 동
 icon: ''
 permission: magic.learned.herding_breeze
 discovery:
-  description: 줄로 동물을 끌고 누적 100블록 이동
+  description: 끈으로 동물을 묶어 끌고 누적 100블록 걷기.
 research: ''
 cast:
   command: 마법 herding_breeze

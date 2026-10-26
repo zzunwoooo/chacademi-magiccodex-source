@@ -5,7 +5,7 @@ description: 지정한 5블록 영역을 6초 동안 수압으로 짓눌러 이�
 icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
 permission: magic.learned.abyssal_pressure
 discovery:
-  description: 물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기.
+  description: 깊은 바다 바이옴의 물속에서 누적 10분 머무르기.
 research: 수면 아래가 조용하다고 아무 일도 없는 것은 아니다. 깊은 바다는 물의 무게만으로 모든 것을 짓누른다.
 cast:
   command: 마법 abyssal_pressure

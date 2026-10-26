@@ -5,7 +5,7 @@ description: 바람 칼날로 베고, 2초 안에 다시 쓰면 한 번 더 베�
 icon: ''
 permission: magic.learned.gale_combo
 discovery:
-  description: 근접 공격으로 몬스터 100마리 처치
+  description: 근접 공격으로 몬스터 50마리 처치하기.
 research: ''
 cast:
   command: 마법 gale_combo

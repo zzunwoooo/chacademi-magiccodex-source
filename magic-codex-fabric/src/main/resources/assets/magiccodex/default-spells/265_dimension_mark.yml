@@ -5,7 +5,7 @@ description: 텔레포트 게이트에 표식을 새깁니다. 다른 게이트�
 icon: magiccodex:textures/spells/gimmick/dimension_mark.png
 permission: magic.learned.dimension_mark
 discovery:
-  description: 엔더 진주로 순간이동 10회.
+  description: 엔더 진주로 순간 이동 10번 하기.
 research: 두 문 사이의 거리는 접을 수 있다. 양쪽에 같은 이름을 새겨 두기만 하면.
 cast:
   command: 마법 dimension_mark

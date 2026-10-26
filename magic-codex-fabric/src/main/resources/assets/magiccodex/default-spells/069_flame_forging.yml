@@ -7,7 +7,7 @@ description: '손에 든 아이템을 특별한 재료로 단조한다.
 icon: magiccodex:textures/spells/intermediate/flame_forging.png
 permission: magic.learned.flame_forging
 discovery:
-  description: 대장간의 모루를 살펴보기.
+  description: 용광로에서 주괴를 32개 꺼내기.
 research: 불은 예로부터 다양한 도구를 만드는 데에 필수적인 재료였다.
 cast:
   command: 마법 flame_forging

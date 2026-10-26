@@ -5,7 +5,7 @@ description: 연금로를 미리 데워 둡니다. 10분 안에 하는 다음 �
 icon: ''
 permission: magic.learned.alchemy_preheat
 discovery:
-  description: 연금 제작 10번 성공
+  description: 연금술로 물건을 10번 만들기.
 research: ''
 cast:
   command: 마법 alchemy_preheat

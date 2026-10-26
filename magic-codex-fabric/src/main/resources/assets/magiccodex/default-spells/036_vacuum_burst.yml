@@ -5,7 +5,7 @@ description: 조준한 곳의 공기를 0.8초 동안 한 점으로 끌어모았
 icon: ''
 permission: magic.learned.vacuum_burst
 discovery:
-  description: 중력지대로 적 3마리 이상 끌어당기기 10번
+  description: 바람 마법으로 몬스터 100마리 처치하기.
 research: ''
 cast:
   command: 마법 vacuum_burst

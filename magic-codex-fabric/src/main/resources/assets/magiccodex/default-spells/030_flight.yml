@@ -5,7 +5,7 @@ description: 빗자루에 탑승하여 자유롭게 하늘을 비행합니다. �
 icon: magiccodex:textures/spells/intermediate/flight.png
 permission: magic.learned.flight
 discovery:
-  description: 비행 실습 참가하기.
+  description: 도서관에서 「비행 연구 기록」 책 읽기.
 research: 몸을 바람에 맡기는 순간, 익숙한 균형이 하늘을 향한 날개가 된다.
 cast:
   command: 마법 flight

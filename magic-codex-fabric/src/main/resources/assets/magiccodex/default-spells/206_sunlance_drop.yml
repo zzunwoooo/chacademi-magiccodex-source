@@ -5,7 +5,7 @@ description: 조준한 적의 머리 위에 작은 해 문양을 띄우고, 잠�
 icon: ''
 permission: magic.learned.sunlance_drop
 discovery:
-  description: 맑은 날 낮에 빛 마법으로 몬스터 50마리 처치
+  description: 빛 마법으로 몬스터 20마리 처치하기.
 research: ''
 cast:
   command: 마법 sunlance_drop

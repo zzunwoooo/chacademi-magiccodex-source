@@ -5,7 +5,7 @@ description: 바닥에서 어둠의 생물이 튀어나와 지정한 곳의 적�
 icon: magiccodex:textures/spells/expansion_2/void_maw.png
 permission: magic.learned.void_maw
 discovery:
-  description: 학교 도서관 숨겨진 텅 빈 것의 식욕 책 읽기 유지
+  description: 도서관에 숨겨진 「텅 빈 것의 식욕」 책 읽기.
 research: 아무것도 없는 곳에서 무엇인가 입을 벌렸다.
 cast:
   command: 마법 void_maw

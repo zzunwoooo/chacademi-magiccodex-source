@@ -5,7 +5,7 @@ description: 마법을 등록해 두면 처치한 몬스터의 전리품이 제�
 icon: magiccodex:textures/spells/expansion_2/inverted_offering.png
 permission: magic.learned.inverted_offering
 discovery:
-  description: 바닐라 경험치 레벨 30 달성
+  description: 경험치 레벨 30 달성하기.
 research: 몸에 쌓인 경험이 깊어지자, 전리품 속에서도 같은 빛이 보였다.
 cast:
   command: 마법 inverted_offering

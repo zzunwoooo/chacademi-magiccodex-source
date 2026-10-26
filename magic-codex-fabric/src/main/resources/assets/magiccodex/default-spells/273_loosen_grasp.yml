@@ -5,7 +5,7 @@ description: 플레이어의 손에 든 칸을 다른 칸으로 바꿔 버리거
 icon: magiccodex:textures/spells/expansion_2/loosen_grasp.png
 permission: magic.learned.loosen_grasp
 discovery:
-  description: 휠 또는 숫자키로 슬롯 변경 누적 1,000회
+  description: 도서관에서 「손아귀를 푸는 법」 책 읽기.
 research: 손에서 힘이 빠지는 그 짧은 순간이면 충분하다.
 cast:
   command: 마법 loosen_grasp

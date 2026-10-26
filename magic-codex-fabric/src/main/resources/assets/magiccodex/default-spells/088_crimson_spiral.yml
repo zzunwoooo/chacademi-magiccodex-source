@@ -5,7 +5,7 @@ description: 두 화염 줄기가 서로 감기며 앞으로 18블록을 꿰뚫�
 icon: ''
 permission: magic.learned.crimson_spiral
 discovery:
-  description: 화염 마법 1,000번 시전
+  description: 화염 마법을 300번 사용하기.
 research: ''
 cast:
   command: 마법 crimson_spiral

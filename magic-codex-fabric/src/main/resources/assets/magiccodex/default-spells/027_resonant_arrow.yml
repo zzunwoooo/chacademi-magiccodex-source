@@ -5,7 +5,7 @@ description: 마법 슬롯에 장착하면 직접 공격 적중 시 추가 바�
 icon: magiccodex:textures/spells/expansion_2/resonant_arrow.png
 permission: magic.learned.resonant_arrow
 discovery:
-  description: 미라지 슈터로 누적 마나 10,000 소모.
+  description: 미라지 슈터의 바람 화살로 적을 300번 맞히기.
 research: 수없이 흘려보낸 마나가 공명의 결을 남겼다. 한층 깊어진 신기루가 다시 적을 꿰뚫는다.
 cast:
   command: 마법 resonant_arrow

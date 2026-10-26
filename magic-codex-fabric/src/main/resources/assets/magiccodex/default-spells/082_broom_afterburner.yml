@@ -5,7 +5,7 @@ description: 빗자루 솔 끝에 불꽃을 붙여 3초 동안 최고 속도를 
 icon: ''
 permission: magic.learned.broom_afterburner
 discovery:
-  description: 빗자루로 누적 10km 비행
+  description: 빗자루를 타고 누적 5,000블록 날기.
 research: ''
 cast:
   command: 마법 broom_afterburner

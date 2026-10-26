@@ -5,7 +5,7 @@ description: 팬텀 세 마리를 불러 10초 동안 주변의 적을 쫓아 �
 icon: magiccodex:textures/spells/expansion_2/night_lullaby.png
 permission: magic.learned.night_lullaby
 discovery:
-  description: 팬텀 누적 30마리 처치
+  description: 팬텀 30마리 처치하기.
 research: 잠 못 드는 밤의 손님에게 먼저 자장가를 불러 주었다.
 cast:
   command: 마법 night_lullaby

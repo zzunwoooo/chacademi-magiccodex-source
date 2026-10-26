@@ -5,7 +5,7 @@ description: 하늘에 오로라를 12초 동안 펼칩니다. 오로라 아래�
 icon: ''
 permission: magic.learned.aurora_veil
 discovery:
-  description: 빛 마법 30종 습득
+  description: 빛 마법 30종 습득하기.
 research: ''
 cast:
   command: 마법 aurora_veil

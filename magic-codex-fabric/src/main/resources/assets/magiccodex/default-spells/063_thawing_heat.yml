@@ -5,7 +5,7 @@ description: 얼음 봉인을 바라보고 3초 동안 열기를 불어넣어 �
 icon: magiccodex:textures/spells/gimmick/thawing_heat.png
 permission: magic.learned.thawing_heat
 discovery:
-  description: 얼음 위에 화로를 피워 둔 채로 30초 머무르기.
+  description: 화염 실습실에서 「얼음을 녹이는 열」 책 읽기.
 research: 얼음은 한 번에 녹지 않는다. 손바닥의 온기가 끝까지 머물러야 한다.
 cast:
   command: 마법 thawing_heat

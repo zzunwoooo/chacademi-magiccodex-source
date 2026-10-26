@@ -5,7 +5,7 @@ description: 대상에게 물결 표식을 남깁니다. 3초 뒤 대상은 표�
 icon: ''
 permission: magic.learned.ebb_mark
 discovery:
-  description: 해일로 적 50번 밀어내기
+  description: 해일로 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 ebb_mark

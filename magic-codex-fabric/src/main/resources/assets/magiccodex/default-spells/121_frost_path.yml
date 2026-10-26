@@ -5,7 +5,7 @@ description: 발을 굴러 앞으로 얼음길을 깝니다. 길 위의 적은 �
 icon: ''
 permission: magic.learned.frost_path
 discovery:
-  description: 얼음 다리로 물 위 200블록 걷기
+  description: 얼음 위를 누적 500블록 걷기.
 research: ''
 cast:
   command: 마법 frost_path

@@ -1,25 +1,7 @@
-# Manual replacement approved 2026-10-11. No automatic counters/chance for these conditions.
+# 수동 조건 (2026-10-26 v2 정리). 여기 있는 마법은 discoveries.yml 의 자동 판정을 쓰지 않고,
+# 수업 책·도서관 책·스토리가 "/유저관리 <닉네임> 마법조건 주기 <id>" 를 해 줄 때만 얻는다 (지급처는 docs/plans/discovery-conditions-v2.md).
+# 서버의 plugins/MagicDiscovery/manual-conditions.yml 은 jar 를 바꿔도 덮어쓰지 않는다 → 이 파일로 직접 바꾼 뒤 /서버관리 새로고침 마법발견.
 spells:
-  wind_basket:
-    name: "바람 바구니"
-    permission: "magic.learned.wind_basket"
-    icon: "magiccodex:textures/spells/novice/wind_basket.png"
-    category: "wind"
-    condition-text: "떨어진 아이템을 누적 1000개 줍기."
-    requirements:
-      "trace.condition.wind_basket": 1
-    chance: 1.0
-    prerequisites: []
-  harvest_wind:
-    name: "수확의 바람"
-    permission: "magic.learned.harvest_wind"
-    icon: "magiccodex:textures/spells/novice/harvest_wind.png"
-    category: "wind"
-    condition-text: "자라지 않은 밀·당근·감자를 각각 12개씩 잘라내기."
-    requirements:
-      "trace.condition.harvest_wind": 1
-    chance: 1.0
-    prerequisites: []
   wind_push:
     name: "윈드 푸쉬"
     permission: "magic.learned.wind_push"
@@ -30,24 +12,14 @@ spells:
       "trace.condition.wind_push": 1
     chance: 1.0
     prerequisites: []
-  light_leap:
-    name: "상승 기류"
-    permission: "magic.learned.light_leap"
-    icon: "magiccodex:textures/spells/novice_extra/light_leap.png"
+  season_sense:
+    name: "계절 예보"
+    permission: "magic.learned.season_sense"
+    icon: "magiccodex:textures/element/wind.png"
     category: "wind"
-    condition-text: "달리면서 점프한 횟수를 30번 채우기."
+    condition-text: "도서관에서 「계절 관측 일지」 책 읽기."
     requirements:
-      "trace.condition.light_leap": 1
-    chance: 1.0
-    prerequisites: []
-  flight:
-    name: "비행"
-    permission: "magic.learned.flight"
-    icon: "magiccodex:textures/spells/intermediate/flight.png"
-    category: "wind"
-    condition-text: "학교 도서관에서 비행 연구 기록을 읽기."
-    requirements:
-      "trace.condition.flight": 1
+      "trace.condition.season_sense": 1
     chance: 1.0
     prerequisites: []
   far_touch:
@@ -55,7 +27,7 @@ spells:
     permission: "magic.learned.far_touch"
     icon: "magiccodex:textures/spells/intermediate/far_touch.png"
     category: "wind"
-    condition-text: "학교 도서관에서 '기계에 대한 이해' 책을 읽기"
+    condition-text: "학교 도서관에서 '기계에 대한 이해' 책을 읽기."
     requirements:
       "trace.condition.far_touch": 1
     chance: 1.0
@@ -70,14 +42,24 @@ spells:
       "trace.condition.vacuum_cleave": 1
     chance: 1.0
     prerequisites: []
-  gale_dash:
-    name: "바람 걸음"
-    permission: "magic.learned.gale_dash"
-    icon: "magiccodex:textures/spells/expansion/gale_dash.png"
+  cross_breeze:
+    name: "바람 화살"
+    permission: "magic.learned.cross_breeze"
+    icon: "magiccodex:textures/spells/expansion_2/cross_breeze.png"
     category: "wind"
-    condition-text: "달리기로 누적 1,000블록 이동하기."
+    condition-text: "하르바 교수의 바람 마법 기초 수업 듣기."
     requirements:
-      "trace.condition.gale_dash": 1
+      "trace.condition.cross_breeze": 1
+    chance: 1.0
+    prerequisites: []
+  flight:
+    name: "비행"
+    permission: "magic.learned.flight"
+    icon: "magiccodex:textures/spells/intermediate/flight.png"
+    category: "wind"
+    condition-text: "도서관에서 「비행 연구 기록」 책 읽기."
+    requirements:
+      "trace.condition.flight": 1
     chance: 1.0
     prerequisites: []
   returning_wind:
@@ -90,84 +72,34 @@ spells:
       "trace.condition.returning_wind": 1
     chance: 1.0
     prerequisites: []
-  wind_grooming:
-    name: "바람 털빗"
-    permission: "magic.learned.wind_grooming"
-    icon: "magiccodex:textures/spells/expansion/wind_grooming.png"
-    category: "wind"
-    condition-text: "가위로 양털을 10번 깎기."
-    requirements:
-      "trace.condition.wind_grooming": 1
-    chance: 1.0
-    prerequisites: []
-  weightless_zone:
-    name: "무중력 지대"
-    permission: "magic.learned.weightless_zone"
-    icon: "magiccodex:textures/spells/expansion/weightless_zone.png"
-    category: "wind"
-    condition-text: "하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
-    requirements:
-      "trace.condition.weightless_zone": 1
-    chance: 1.0
-    prerequisites: []
-  leaf_cleanup:
-    name: "잎새 청소"
-    permission: "magic.learned.leaf_cleanup"
-    icon: "magiccodex:textures/spells/expansion_2/leaf_cleanup.png"
-    category: "wind"
-    condition-text: "종류에 상관없이 묘묙을 20개 심기."
-    requirements:
-      "trace.condition.leaf_cleanup": 1
-    chance: 1.0
-    prerequisites: []
-  feather_rustle:
-    name: "깃털 털기"
-    permission: "magic.learned.feather_rustle"
-    icon: "magiccodex:textures/spells/expansion_2/feather_rustle.png"
-    category: "wind"
-    condition-text: "닭에게 씨앗을 누적 16번 먹이기."
-    requirements:
-      "trace.condition.feather_rustle": 1
-    chance: 1.0
-    prerequisites: []
-  cross_breeze:
-    name: "바람 화살"
-    permission: "magic.learned.cross_breeze"
-    icon: "magiccodex:textures/spells/expansion_2/cross_breeze.png"
-    category: "wind"
-    condition-text: "하르바 교수의 바람 마법 기초 수업 듣기."
-    requirements:
-      "trace.condition.cross_breeze": 1
-    chance: 1.0
-    prerequisites: []
-  returning_blade:
-    name: "되돌이 칼날"
-    permission: "magic.learned.returning_blade"
-    icon: "magiccodex:textures/spells/expansion_2/returning_blade.png"
-    category: "wind"
-    condition-text: "윈드커터 50회 사용"
-    requirements:
-      "trace.condition.returning_blade": 1
-    chance: 1.0
-    prerequisites: []
   pressure_press:
     name: "윈드 프레스"
     permission: "magic.learned.pressure_press"
     icon: "magiccodex:textures/spells/expansion_2/pressure_press.png"
     category: "wind"
-    condition-text: "앵무새를 1회 공격하기."
+    condition-text: "바람 교실에서 「떨어지는 것들의 역학」 책 읽기."
     requirements:
       "trace.condition.pressure_press": 1
     chance: 1.0
     prerequisites: []
-  air_step:
-    name: "허공 디딤"
-    permission: "magic.learned.air_step"
-    icon: "magiccodex:textures/spells/expansion_2/air_step.png"
+  pressure_rupture:
+    name: "토네이도 스핀"
+    permission: "magic.learned.pressure_rupture"
+    icon: "magiccodex:textures/spells/expansion_2/pressure_rupture.png"
     category: "wind"
-    condition-text: "비행 금지 구역에서 비행 마법 25번 사용"
+    condition-text: "바람 교실에서 「회오리의 축」 책 읽기."
     requirements:
-      "trace.condition.air_step": 1
+      "trace.condition.pressure_rupture": 1
+    chance: 1.0
+    prerequisites: []
+  storm_command:
+    name: "폭풍의 지휘"
+    permission: "magic.learned.storm_command"
+    icon: "magiccodex:textures/spells/advanced/storm_command.png"
+    category: "wind"
+    condition-text: "하르바 교수와 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
+    requirements:
+      "trace.condition.storm_command": 1
     chance: 1.0
     prerequisites: []
   arrested_orbit:
@@ -180,44 +112,14 @@ spells:
       "trace.condition.arrested_orbit": 1
     chance: 1.0
     prerequisites: []
-  crossfire:
-    name: "크로스 애로우"
-    permission: "magic.learned.crossfire"
-    icon: "magiccodex:textures/spells/expansion_2/crossfire.png"
+  weightless_zone:
+    name: "중력지대"
+    permission: "magic.learned.weightless_zone"
+    icon: "magiccodex:textures/spells/expansion/weightless_zone.png"
     category: "wind"
-    condition-text: "바람 마법으로 몬스터를 일격에 100회 처치."
+    condition-text: "하르바 교수와 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
     requirements:
-      "trace.condition.crossfire": 1
-    chance: 1.0
-    prerequisites: []
-  resonant_arrow:
-    name: "미스틱 슈터"
-    permission: "magic.learned.resonant_arrow"
-    icon: "magiccodex:textures/spells/expansion_2/resonant_arrow.png"
-    category: "wind"
-    condition-text: "미라지 슈터로 소모한 마나 10000 달성"
-    requirements:
-      "trace.condition.resonant_arrow": 1
-    chance: 1.0
-    prerequisites: []
-  pressure_rupture:
-    name: "토네이도 스핀"
-    permission: "magic.learned.pressure_rupture"
-    icon: "magiccodex:textures/spells/expansion_2/pressure_rupture.png"
-    category: "wind"
-    condition-text: "움직이지 않는 상태에서 시선을 돌려 10바퀴 회전"
-    requirements:
-      "trace.condition.pressure_rupture": 1
-    chance: 1.0
-    prerequisites: []
-  hearth_touch:
-    name: "손끝의 화로"
-    permission: "magic.learned.hearth_touch"
-    icon: "magiccodex:textures/spells/novice/hearth_touch.png"
-    category: "fire"
-    condition-text: "화로에서 직접 구운 음식을 누적 16개 꺼내기."
-    requirements:
-      "trace.condition.hearth_touch": 1
+      "trace.condition.weightless_zone": 1
     chance: 1.0
     prerequisites: []
   ember_bolt:
@@ -240,76 +142,6 @@ spells:
       "trace.condition.ember_trap": 1
     chance: 1.0
     prerequisites: []
-  fire_curtain:
-    name: "플레어 월"
-    permission: "magic.learned.fire_curtain"
-    icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
-    category: "fire"
-    condition-text: "세드릭 교수의 화염 마법 중급 수업 듣기."
-    requirements:
-      "trace.condition.fire_curtain": 1
-    chance: 1.0
-    prerequisites: []
-  living_furnace:
-    name: "살아 있는 화로"
-    permission: "magic.learned.living_furnace"
-    icon: "magiccodex:textures/spells/advanced/living_furnace.png"
-    category: "fire"
-    condition-text: "손끝의 화로 마법으로 64번 구워내기"
-    requirements:
-      "trace.condition.living_furnace": 1
-    chance: 1.0
-    prerequisites: []
-  flame_lash:
-    name: "화염 채찍"
-    permission: "magic.learned.flame_lash"
-    icon: "magiccodex:textures/spells/expansion/flame_lash.png"
-    category: "fire"
-    condition-text: "세드릭 교수와(과) 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
-    requirements:
-      "trace.condition.flame_lash": 1
-    chance: 1.0
-    prerequisites: []
-  palm_fireworks:
-    name: "손바닥 폭죽"
-    permission: "magic.learned.palm_fireworks"
-    icon: "magiccodex:textures/spells/expansion/palm_fireworks.png"
-    category: "fire"
-    condition-text: "폭죽 로켓을 10번 발사하기."
-    requirements:
-      "trace.condition.palm_fireworks": 1
-    chance: 1.0
-    prerequisites: []
-  ash_brand:
-    name: "재의 낙인"
-    permission: "magic.learned.ash_brand"
-    icon: "magiccodex:textures/spells/expansion/ash_brand.png"
-    category: "fire"
-    condition-text: "화염 마법으로 적 30회 처치"
-    requirements:
-      "trace.condition.ash_brand": 1
-    chance: 1.0
-    prerequisites: []
-  flame_leap:
-    name: "블레이즈 킥"
-    permission: "magic.learned.flame_leap"
-    icon: "magiccodex:textures/spells/expansion/flame_leap.png"
-    category: "fire"
-    condition-text: "학교 도서관에서 숨겨진 '체술 강화' 책 읽기."
-    requirements:
-      "trace.condition.flame_leap": 1
-    chance: 1.0
-    prerequisites: []
-  wick_trimming:
-    name: "심지 줄이기"
-    permission: "magic.learned.wick_trimming"
-    icon: "magiccodex:textures/spells/expansion_2/wick_trimming.png"
-    category: "fire"
-    condition-text: "촛불 10회 소화"
-    requirements:
-      "trace.condition.wick_trimming": 1
-    chance: 1.0
-    prerequisites: []
   glass_firing:
     name: "광석 재련"
     permission: "magic.learned.glass_firing"
@@ -318,6 +150,26 @@ spells:
     condition-text: "세드릭 교수의 화염 마법 고급 수업 듣기."
     requirements:
       "trace.condition.glass_firing": 1
+    chance: 1.0
+    prerequisites: []
+  thawing_heat:
+    name: "해빙의 열기"
+    permission: "magic.learned.thawing_heat"
+    icon: "magiccodex:textures/spells/gimmick/thawing_heat.png"
+    category: "fire"
+    condition-text: "화염 실습실에서 「얼음을 녹이는 열」 책 읽기."
+    requirements:
+      "trace.condition.thawing_heat": 1
+    chance: 1.0
+    prerequisites: []
+  steam_ignition:
+    name: "증기 점화"
+    permission: "magic.learned.steam_ignition"
+    icon: "magiccodex:textures/spells/gimmick/steam_ignition.png"
+    category: "fire"
+    condition-text: "화염 실습실에서 「증기 기관 입문」 책 읽기."
+    requirements:
+      "trace.condition.steam_ignition": 1
     chance: 1.0
     prerequisites: []
   charcoal_conversion:
@@ -330,54 +182,34 @@ spells:
       "trace.condition.charcoal_conversion": 1
     chance: 1.0
     prerequisites: []
-  boiling_armor:
-    name: "끓는 갑주"
-    permission: "magic.learned.boiling_armor"
-    icon: "magiccodex:textures/spells/expansion_2/boiling_armor.png"
+  flame_lash:
+    name: "화염 채찍"
+    permission: "magic.learned.flame_lash"
+    icon: "magiccodex:textures/spells/expansion/flame_lash.png"
     category: "fire"
-    condition-text: "입고있는 갑옷 2회 파괴"
+    condition-text: "세드릭 교수와 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
     requirements:
-      "trace.condition.boiling_armor": 1
+      "trace.condition.flame_lash": 1
     chance: 1.0
     prerequisites: []
-  kiln_breath:
-    name: "가마 숨결"
-    permission: "magic.learned.kiln_breath"
-    icon: "magiccodex:textures/spells/expansion_2/kiln_breath.png"
+  cinder_skipring:
+    name: "불꽃 줄넘기"
+    permission: "magic.learned.cinder_skipring"
+    icon: "magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png"
     category: "fire"
-    condition-text: "대장간에서 아이템 제작 3회"
+    condition-text: "세드릭 교수와 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
     requirements:
-      "trace.condition.kiln_breath": 1
+      "trace.condition.cinder_skipring": 1
     chance: 1.0
     prerequisites: []
-  glaze_coating:
-    name: "화염의 정복자"
-    permission: "magic.learned.glaze_coating"
-    icon: "magiccodex:textures/spells/expansion_2/glaze_coating.png"
+  fire_curtain:
+    name: "플레어 월"
+    permission: "magic.learned.fire_curtain"
+    icon: "magiccodex:textures/spells/intermediate/fire_curtain.png"
     category: "fire"
-    condition-text: "받은 화염 도트 데미지 100 달성"
+    condition-text: "세드릭 교수의 화염 마법 중급 수업 듣기."
     requirements:
-      "trace.condition.glaze_coating": 1
-    chance: 1.0
-    prerequisites: []
-  explosive_wedge:
-    name: "폭발 쐐기"
-    permission: "magic.learned.explosive_wedge"
-    icon: "magiccodex:textures/spells/expansion_2/explosive_wedge.png"
-    category: "fire"
-    condition-text: "불붙은 몬스터를 근접 공격으로 20번 처치하기."
-    requirements:
-      "trace.condition.explosive_wedge": 1
-    chance: 1.0
-    prerequisites: []
-  heat_recovery:
-    name: "열량 보존"
-    permission: "magic.learned.heat_recovery"
-    icon: "magiccodex:textures/spells/expansion_2/heat_recovery.png"
-    category: "fire"
-    condition-text: "학교 도서관에서 '에너지에 관하여' 책 읽기."
-    requirements:
-      "trace.condition.heat_recovery": 1
+      "trace.condition.fire_curtain": 1
     chance: 1.0
     prerequisites: []
   firebird_hunt:
@@ -385,29 +217,19 @@ spells:
     permission: "magic.learned.firebird_hunt"
     icon: "magiccodex:textures/spells/expansion_2/firebird_hunt.png"
     category: "fire"
-    condition-text: "학교 도서관에서 '불사조, 주작, 가루다' 책 읽기."
+    condition-text: "불사조·주작·가루다 관련 책을 읽기."
     requirements:
       "trace.condition.firebird_hunt": 1
     chance: 1.0
     prerequisites: []
-  lava_suture:
-    name: "용암 봉합"
-    permission: "magic.learned.lava_suture"
-    icon: "magiccodex:textures/spells/expansion_2/lava_suture.png"
+  flame_leap:
+    name: "블레이즈 킥"
+    permission: "magic.learned.flame_leap"
+    icon: "magiccodex:textures/spells/expansion/flame_leap.png"
     category: "fire"
-    condition-text: "용암에 물을 부어 흑요석을 누적 32개 만들기."
+    condition-text: "도서관에서 '체술강화' 책을 읽기."
     requirements:
-      "trace.condition.lava_suture": 1
-    chance: 1.0
-    prerequisites: []
-  flame_sword_dance:
-    name: "화염 검무"
-    permission: "magic.learned.flame_sword_dance"
-    icon: "magiccodex:textures/spells/expansion_2/flame_sword_dance.png"
-    category: "fire"
-    condition-text: "발화가 인첸트 된 검으로 몬스터 50회 처치"
-    requirements:
-      "trace.condition.flame_sword_dance": 1
+      "trace.condition.flame_leap": 1
     chance: 1.0
     prerequisites: []
   incandescent_break:
@@ -425,19 +247,19 @@ spells:
     permission: "magic.learned.blue_bonfire"
     icon: "magiccodex:textures/spells/expansion_2/blue_bonfire.png"
     category: "fire"
-    condition-text: "학교 도서관에서 '불꽃의 색과 마력' 책 읽기."
+    condition-text: "도서관에서 '불꽃의 색과 마력' 책을 읽기."
     requirements:
       "trace.condition.blue_bonfire": 1
     chance: 1.0
     prerequisites: []
-  tide_stride:
-    name: "물살 타기"
-    permission: "magic.learned.tide_stride"
-    icon: "magiccodex:textures/spells/novice/tide_stride.png"
-    category: "water"
-    condition-text: "수영으로 누적 500블록 이동하기."
+  heat_recovery:
+    name: "열량 보존"
+    permission: "magic.learned.heat_recovery"
+    icon: "magiccodex:textures/spells/expansion_2/heat_recovery.png"
+    category: "fire"
+    condition-text: "도서관에서 '에너지에 관하여' 책을 읽기."
     requirements:
-      "trace.condition.tide_stride": 1
+      "trace.condition.heat_recovery": 1
     chance: 1.0
     prerequisites: []
   water_bolt:
@@ -450,34 +272,74 @@ spells:
       "trace.condition.water_bolt": 1
     chance: 1.0
     prerequisites: []
-  quench:
-    name: "불길 씻기"
-    permission: "magic.learned.quench"
-    icon: "magiccodex:textures/spells/novice_extra/quench.png"
+  cauldron_fill:
+    name: "가마솥 채우기"
+    permission: "magic.learned.cauldron_fill"
+    icon: "magiccodex:textures/spells/expansion/cauldron_fill.png"
     category: "water"
-    condition-text: "불이 붙은 상태에서 물에 들어가 불 끄기 5회."
+    condition-text: "도서관에서 '화학기초' 책을 읽기."
     requirements:
-      "trace.condition.quench": 1
+      "trace.condition.cauldron_fill": 1
     chance: 1.0
     prerequisites: []
-  purifying_wave:
-    name: "정화의 물결"
-    permission: "magic.learned.purifying_wave"
-    icon: "magiccodex:textures/spells/intermediate/purifying_wave.png"
+  wash_letters:
+    name: "글씨 씻기"
+    permission: "magic.learned.wash_letters"
+    icon: "magiccodex:textures/spells/expansion_2/wash_letters.png"
     category: "water"
-    condition-text: "독에 걸린 상태에서 우유를 마시기 3회."
+    condition-text: "도서관에서 「서기관의 지우개」 책 읽기."
     requirements:
-      "trace.condition.purifying_wave": 1
+      "trace.condition.wash_letters": 1
     chance: 1.0
     prerequisites: []
-  spring_unseal:
-    name: "수맥 개방"
-    permission: "magic.learned.spring_unseal"
-    icon: "magiccodex:textures/spells/intermediate/spring_unseal.png"
+  waterwheel_shield:
+    name: "물레 방패"
+    permission: "magic.learned.waterwheel_shield"
+    icon: "magiccodex:textures/spells/expansion_2/waterwheel_shield.png"
     category: "water"
-    condition-text: "물 양동이로 가마솥을 누적 30번 채우기."
+    condition-text: "엘레나 교수의 물 마법 응용 수업 듣기."
     requirements:
-      "trace.condition.spring_unseal": 1
+      "trace.condition.waterwheel_shield": 1
+    chance: 1.0
+    prerequisites: []
+  ripple_guard:
+    name: "파문방벽"
+    permission: "magic.learned.ripple_guard"
+    icon: "magiccodex:textures/spells/reviewed_20261016/ripple_guard.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 응용 수업 듣기."
+    requirements:
+      "trace.condition.ripple_guard": 1
+    chance: 1.0
+    prerequisites: []
+  bouncing_droplet:
+    name: "도약하는 물방울"
+    permission: "magic.learned.bouncing_droplet"
+    icon: "magiccodex:textures/spells/reviewed_20261016/bouncing_droplet.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.bouncing_droplet": 1
+    chance: 1.0
+    prerequisites: []
+  droplet_relay:
+    name: "물방울 인계"
+    permission: "magic.learned.droplet_relay"
+    icon: "magiccodex:textures/spells/reviewed_20261020/droplet_relay.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.droplet_relay": 1
+    chance: 1.0
+    prerequisites: []
+  folding_tideplane:
+    name: "접히는 수면"
+    permission: "magic.learned.folding_tideplane"
+    icon: "magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png"
+    category: "water"
+    condition-text: "엘레나 교수의 물 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.folding_tideplane": 1
     chance: 1.0
     prerequisites: []
   water_elemental:
@@ -485,7 +347,7 @@ spells:
     permission: "magic.learned.water_elemental"
     icon: "magiccodex:textures/spells/advanced/water_elemental.png"
     category: "water"
-    condition-text: "'정령계약서 - 수' 도서 읽기"
+    condition-text: "'정령계약서-수' 책을 읽기."
     requirements:
       "trace.condition.water_elemental": 1
     chance: 1.0
@@ -500,268 +362,76 @@ spells:
       "trace.condition.eternal_ice_prison": 1
     chance: 1.0
     prerequisites: []
-  cauldron_fill:
-    name: "가마솥 채우기"
-    permission: "magic.learned.cauldron_fill"
-    icon: "magiccodex:textures/spells/expansion/cauldron_fill.png"
-    category: "water"
-    condition-text: "도서관에서 '화학 기초' 책 읽기"
-    requirements:
-      "trace.condition.cauldron_fill": 1
-    chance: 1.0
-    prerequisites: []
-  dye_rinse:
-    name: "염색 씻기"
-    permission: "magic.learned.dye_rinse"
-    icon: "magiccodex:textures/spells/expansion/dye_rinse.png"
-    category: "water"
-    condition-text: "가마솥으로 가죽 장비의 염색을 3번 지우기."
-    requirements:
-      "trace.condition.dye_rinse": 1
-    chance: 1.0
-    prerequisites: []
-  fish_lure:
-    name: "물고기 유인"
-    permission: "magic.learned.fish_lure"
-    icon: "magiccodex:textures/spells/expansion/fish_lure.png"
-    category: "water"
-    condition-text: "낚시로 물고기를 누적 30마리 낚기."
-    requirements:
-      "trace.condition.fish_lure": 1
-    chance: 1.0
-    prerequisites: []
-  frost_rupture:
-    name: "서리 파열"
-    permission: "magic.learned.frost_rupture"
-    icon: "magiccodex:textures/spells/expansion/frost_rupture.png"
-    category: "water"
-    condition-text: "눈덩이를 몬스터에게 누적 50번 명중하기."
-    requirements:
-      "trace.condition.frost_rupture": 1
-    chance: 1.0
-    prerequisites: []
-  moist_farmland:
-    name: "촉촉한 밭"
-    permission: "magic.learned.moist_farmland"
-    icon: "magiccodex:textures/spells/expansion_2/moist_farmland.png"
-    category: "water"
-    condition-text: "물에서 떨어진 마른 경작지에 씨앗을 20번 심기."
-    requirements:
-      "trace.condition.moist_farmland": 1
-    chance: 1.0
-    prerequisites: []
-  wash_letters:
-    name: "글씨 씻기"
-    permission: "magic.learned.wash_letters"
-    icon: "magiccodex:textures/spells/expansion_2/wash_letters.png"
-    category: "water"
-    condition-text: "같은 표지판의 글씨를 10번 고쳐 쓰기."
-    requirements:
-      "trace.condition.wash_letters": 1
-    chance: 1.0
-    prerequisites: []
-  dew_gathering:
-    name: "이슬 모으기"
-    permission: "magic.learned.dew_gathering"
-    icon: "magiccodex:textures/spells/expansion_2/dew_gathering.png"
-    category: "water"
-    condition-text: "빈 병으로 물을 10번 뜨기."
-    requirements:
-      "trace.condition.dew_gathering": 1
-    chance: 1.0
-    prerequisites: []
-  quiet_mooring:
-    name: "노아의 방주"
-    permission: "magic.learned.quiet_mooring"
-    icon: "magiccodex:textures/spells/expansion_2/quiet_mooring.png"
-    category: "water"
-    condition-text: "보트 설치 5회."
-    requirements:
-      "trace.condition.quiet_mooring": 1
-    chance: 1.0
-    prerequisites: []
-  potion_mist:
-    name: "약액 분무"
-    permission: "magic.learned.potion_mist"
-    icon: "magiccodex:textures/spells/expansion_2/potion_mist.png"
-    category: "water"
-    condition-text: "서로 다른 종류의 물약 5종을 직접 양조하기."
-    requirements:
-      "trace.condition.potion_mist": 1
-    chance: 1.0
-    prerequisites: []
-  miners_rhythm:
-    name: "광부의 박자"
-    permission: magic.learned.miners_rhythm
-    icon: magiccodex:textures/spells/novice_extra/miners_rhythm.png
-    category: earth
-    condition-text: "곡괭이로 돌과 심층암을 합쳐 누적 300개 채굴하기."
-    requirements:
-      "trace.condition.miners_rhythm": 1
-    chance: 1.0
-    prerequisites: []
-  ore_whisper:
-    name: "땅의 속삭임"
-    permission: magic.learned.ore_whisper
-    icon: magiccodex:textures/spells/novice/ore_whisper.png
-    category: earth
-    condition-text: "석탄 광석 32개와 철 광석 16개 직접 채굴하기."
-    requirements:
-      "trace.condition.ore_whisper": 1
-    chance: 1.0
-    prerequisites: []
-  pebble_toss:
-    name: "조약돌 던지기"
-    permission: magic.learned.pebble_toss
-    icon: magiccodex:textures/spells/novice_extra/pebble_toss.png
-    category: earth
-    condition-text: "베르나 교수의 대지 마법 기초 수업 듣기."
-    requirements:
-      "trace.condition.pebble_toss": 1
-    chance: 1.0
-    prerequisites: []
   tidal_wave:
     name: "해일"
-    permission: magic.learned.tidal_wave
-    icon: magiccodex:textures/spells/expansion_2/tidal_wave.png
-    category: water
+    permission: "magic.learned.tidal_wave"
+    icon: "magiccodex:textures/spells/expansion_2/tidal_wave.png"
+    category: "water"
     condition-text: "엘레나 교수의 물 마법 고급 수업 듣기."
     requirements:
       "trace.condition.tidal_wave": 1
     chance: 1.0
     prerequisites: []
-  verdant_touch:
-    name: "풍요의 손길"
-    permission: magic.learned.verdant_touch
-    icon: magiccodex:textures/spells/novice/verdant_touch.png
-    category: earth
-    condition-text: "다 자란 밀·당근·감자를 각각 20개 수확하기."
+  pebble_toss:
+    name: "조약돌 던지기"
+    permission: "magic.learned.pebble_toss"
+    icon: "magiccodex:textures/spells/novice_extra/pebble_toss.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 기초 수업 듣기."
     requirements:
-      "trace.condition.verdant_touch": 1
+      "trace.condition.pebble_toss": 1
     chance: 1.0
     prerequisites: []
-  waterwheel_shield:
-    name: "물레 방패"
-    permission: magic.learned.waterwheel_shield
-    icon: magiccodex:textures/spells/expansion_2/waterwheel_shield.png
-    category: water
-    condition-text: "엘레나 교수의 물 마법 응용 수업 듣기."
+  conduit_turn:
+    name: "도관 회전"
+    permission: "magic.learned.conduit_turn"
+    icon: "magiccodex:textures/spells/gimmick/conduit_turn.png"
+    category: "earth"
+    condition-text: "장치 실습실에서 「마력 도관 설계」 책 읽기."
     requirements:
-      "trace.condition.waterwheel_shield": 1
+      "trace.condition.conduit_turn": 1
     chance: 1.0
     prerequisites: []
-  feather_fall:
-    name: "feather fall"
-    permission: magic.learned.feather_fall
-    icon: magiccodex:textures/spells/novice/feather_step.png
-    category: wind
-    condition-text: "낙하 피해를 받은 뒤 1회 사망하기."
+  moss_coating:
+    name: "이끼 입히기"
+    permission: "magic.learned.moss_coating"
+    icon: "magiccodex:textures/spells/reviewed_20261020/moss_coating.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
     requirements:
-      "trace.condition.feather_fall": 1
+      "trace.condition.moss_coating": 1
     chance: 1.0
     prerequisites: []
-  pressure_lance:
-    name: "수압창"
-    permission: magic.learned.pressure_lance
-    icon: minecraft:textures/item/book.png
-    category: water
-    condition-text: "물방울 탄환으로 몬스터를 30마리 처치하기."
+  dormant_seed:
+    name: "동면의 씨앗"
+    permission: "magic.learned.dormant_seed"
+    icon: "magiccodex:textures/spells/reviewed_20261020/dormant_seed.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
     requirements:
-      "trace.condition.pressure_lance": 1
+      "trace.condition.dormant_seed": 1
     chance: 1.0
     prerequisites: []
-  healing_rain:
-    name: "치유의 비"
-    permission: magic.learned.healing_rain
-    icon: minecraft:textures/item/book.png
-    category: water
-    condition-text: "치유 포션을 10회 마시기."
+  flint_sorting:
+    name: "돌 고르기"
+    permission: "magic.learned.flint_sorting"
+    icon: "magiccodex:textures/spells/reviewed_20261020/flint_sorting.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 기초 수업 듣기."
     requirements:
-      "trace.condition.healing_rain": 1
+      "trace.condition.flint_sorting": 1
     chance: 1.0
     prerequisites: []
-  bubble_aria:
-    name: "물거품 아리아"
-    permission: magic.learned.bubble_aria
-    icon: minecraft:textures/item/book.png
-    category: water
-    condition-text: "비 오는 날 몬스터를 10마리 처치하기."
+  stone_weight:
+    name: "무게추"
+    permission: "magic.learned.stone_weight"
+    icon: "magiccodex:textures/spells/gimmick/stone_weight.png"
+    category: "earth"
+    condition-text: "장치 실습실에서 「무게와 균형」 책 읽기."
     requirements:
-      "trace.condition.bubble_aria": 1
+      "trace.condition.stone_weight": 1
     chance: 1.0
     prerequisites: []
-  concrete_curing:
-    name: "콘크리트 양생"
-    permission: magic.learned.concrete_curing
-    icon: minecraft:textures/item/book.png
-    category: water
-    condition-text: "물로 콘크리트 가루를 32개 굳히기."
-    requirements:
-      "trace.condition.concrete_curing": 1
-    chance: 1.0
-    prerequisites: []
-  ripple_guard:
-    name: "파문방벽"
-    permission: magic.learned.ripple_guard
-    icon: minecraft:textures/item/book.png
-    category: water
-    condition-text: "엘레나 교수의 물 마법 응용 수업 듣기."
-    requirements:
-      "trace.condition.ripple_guard": 1
-    chance: 1.0
-    prerequisites: []
-  abyssal_pressure:
-    name: "심해의 압력"
-    permission: magic.learned.abyssal_pressure
-    icon: magiccodex:textures/spells/expansion_2/abyssal_pressure.png
-    category: water
-    condition-text: "물결 숨결을 사용한 상태에서 깊은 바다에 누적 60초 머무르기."
-    requirements:
-      "trace.condition.abyssal_pressure": 1
-    chance: 1.0
-    prerequisites: []
-  trajectory_acceleration:
-    name: "미라지 슈터"
-    permission: magic.learned.trajectory_acceleration
-    icon: magiccodex:textures/spells/expansion/trajectory_acceleration.png
-    category: wind
-    condition-text: "네 계절의 이상현상을 모두 마주하기."
-    requirements:
-      "trace.condition.trajectory_acceleration": 1
-    chance: 1.0
-    prerequisites: []
-  air_stacking:
-    name: "허공 쌓기"
-    permission: magic.learned.air_stacking
-    icon: magiccodex:textures/spells/expansion_2/air_stacking.png
-    category: wind
-    condition-text: "아카데미 건물의 모든 스팟 확인하기."
-    requirements:
-      "trace.condition.air_stacking": 1
-    chance: 1.0
-    prerequisites: []
-  flame_forging:
-    name: "불꽃 단조"
-    permission: magic.learned.flame_forging
-    icon: magiccodex:textures/spells/intermediate/flame_forging.png
-    category: fire
-    condition-text: "대장간의 모루를 살펴보기."
-    requirements:
-      "trace.condition.flame_forging": 1
-    chance: 1.0
-    prerequisites: []
-  rainbow_collar:
-    name: "교화"
-    permission: "magic.learned.rainbow_collar"
-    icon: "magiccodex:textures/spells/expansion_2/rainbow_collar.png"
-    category: "light"
-    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
-    requirements:
-      "trace.condition.rainbow_collar": 1
-    chance: 1.0
-    prerequisites: []
-
-# 2026-10-14 101~167 수업·도서관 책 조건 (수동 지급 명령)
   stone_wall:
     name: "석벽"
     permission: "magic.learned.stone_wall"
@@ -770,6 +440,16 @@ spells:
     condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
     requirements:
       "trace.condition.stone_wall": 1
+    chance: 1.0
+    prerequisites: []
+  material_exchange:
+    name: "자재 치환"
+    permission: "magic.learned.material_exchange"
+    icon: "magiccodex:textures/spells/reviewed_20261020/material_exchange.png"
+    category: "earth"
+    condition-text: "베르나 교수의 대지 마법 고급 수업 듣기."
+    requirements:
+      "trace.condition.material_exchange": 1
     chance: 1.0
     prerequisites: []
   earth_elemental:
@@ -802,34 +482,24 @@ spells:
       "trace.condition.forest_throne": 1
     chance: 1.0
     prerequisites: []
-  minor_heal:
-    name: "작은 치유"
-    permission: "magic.learned.minor_heal"
-    icon: "magiccodex:textures/spells/novice_extra/minor_heal.png"
-    category: "light"
-    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
+  primordial_stone:
+    name: "원초의 돌"
+    permission: "magic.learned.primordial_stone"
+    icon: "magiccodex:textures/spells/expansion_2/primordial_stone.png"
+    category: "earth"
+    condition-text: "베르나 교수와(과) 친해진 뒤(호감도 30) 대지 비전 수업 듣기."
     requirements:
-      "trace.condition.minor_heal": 1
+      "trace.condition.primordial_stone": 1
     chance: 1.0
     prerequisites: []
-  protective_ward:
-    name: "보호 결계"
-    permission: "magic.learned.protective_ward"
-    icon: "magiccodex:textures/spells/intermediate/protective_ward.png"
+  guiding_star:
+    name: "길잡이 별"
+    permission: "magic.learned.guiding_star"
+    icon: "magiccodex:textures/spells/novice/guiding_star.png"
     category: "light"
-    condition-text: "이솔데 교수의 빛 마법 중급 수업 듣기."
+    condition-text: "1장에서 어부 올레 아저씨에게 첫 물고기를 보여 주고 배우기."
     requirements:
-      "trace.condition.protective_ward": 1
-    chance: 1.0
-    prerequisites: []
-  memory_lantern:
-    name: "기억의 등불"
-    permission: "magic.learned.memory_lantern"
-    icon: "magiccodex:textures/spells/nova/memory_lantern.png"  # 신규 마법 아이콘 아직 없음 (도감 icon: '')
-    category: "light"
-    condition-text: "이솔데 교수의 빛 마법 중급 수업 듣기."
-    requirements:
-      "trace.condition.memory_lantern": 1
+      "trace.condition.guiding_star": 1
     chance: 1.0
     prerequisites: []
   companion_return:
@@ -842,115 +512,54 @@ spells:
       "trace.condition.companion_return": 1
     chance: 1.0
     prerequisites: []
-  starlight_survey:
-    name: "별빛 측량"
-    permission: "magic.learned.starlight_survey"
-    icon: "magiccodex:textures/spells/expansion_2/starlight_survey.png"
+  minor_heal:
+    name: "작은 치유"
+    permission: "magic.learned.minor_heal"
+    icon: "magiccodex:textures/spells/novice_extra/minor_heal.png"
     category: "light"
-    condition-text: "학교 건축 수업을 1회 마칩니다."
+    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
     requirements:
-      "trace.condition.starlight_survey": 1
+      "trace.condition.minor_heal": 1
     chance: 1.0
     prerequisites: []
-  shadow_bind:
-    name: "그림자 매듭"
-    permission: "magic.learned.shadow_bind"
-    icon: "magiccodex:textures/spells/novice_extra/shadow_bind.png"
-    category: "dark"
-    condition-text: "그레고르 교감의 어둠 마법 기초 수업 듣기."
-    requirements:
-      "trace.condition.shadow_bind": 1
-    chance: 1.0
-    prerequisites: []
-  # 2026-10-25 오너: 1장 어부 올레가 가르쳐 주는 마법 — 스토리 끝 명령 "유저관리 {player} 마법조건 주기 guiding_star" 로 발견
-  guiding_star:
-    name: "길잡이 별"
-    permission: "magic.learned.guiding_star"
-    icon: "magiccodex:textures/spells/novice/guiding_star.png"
+  mirror_tune:
+    name: "반사 조율"
+    permission: "magic.learned.mirror_tune"
+    icon: "magiccodex:textures/spells/gimmick/mirror_tune.png"
     category: "light"
-    condition-text: "1장에서 어부 올레 아저씨에게 배웁니다."
+    condition-text: "도서관에서 「거울과 빛의 길」 책 읽기."
     requirements:
-      "trace.condition.guiding_star": 1
+      "trace.condition.mirror_tune": 1
     chance: 1.0
     prerequisites: []
-  storm_command:
-    name: "폭풍의 지휘"
-    permission: "magic.learned.storm_command"
-    icon: "magiccodex:textures/spells/advanced/storm_command.png"
-    category: "wind"
-    condition-text: "하르바 교수와(과) 친해진 뒤(호감도 30) 바람 비전 수업 듣기."
+  prism_tint:
+    name: "프리즘 물들이기"
+    permission: "magic.learned.prism_tint"
+    icon: "magiccodex:textures/spells/gimmick/prism_tint.png"
+    category: "light"
+    condition-text: "도서관에서 「프리즘 연구」 책 읽기."
     requirements:
-      "trace.condition.storm_command": 1
+      "trace.condition.prism_tint": 1
     chance: 1.0
     prerequisites: []
-  cinder_skipring:
-    name: "불꽃 줄넘기"
-    permission: "magic.learned.cinder_skipring"
-    icon: "magiccodex:textures/spells/reviewed_20261020/cinder_skipring.png"
-    category: "fire"
-    condition-text: "세드릭 교수와(과) 친해진 뒤(호감도 30) 화염 비전 수업 듣기."
+  memory_lantern:
+    name: "기억의 등불"
+    permission: "magic.learned.memory_lantern"
+    icon: "magiccodex:textures/element/light.png"
+    category: "light"
+    condition-text: "이솔데 교수의 빛 마법 중급 수업 듣기."
     requirements:
-      "trace.condition.cinder_skipring": 1
+      "trace.condition.memory_lantern": 1
     chance: 1.0
     prerequisites: []
-  bouncing_droplet:
-    name: "도약하는 물방울"
-    permission: "magic.learned.bouncing_droplet"
-    icon: "magiccodex:textures/spells/reviewed_20261016/bouncing_droplet.png"
-    category: "water"
-    condition-text: "엘레나 교수의 물 마법 중급 수업 듣기."
+  insight_flash:
+    name: "영감의 섬광"
+    permission: "magic.learned.insight_flash"
+    icon: "magiccodex:textures/element/light.png"
+    category: "light"
+    condition-text: "연금술 공방에서 「연금술사의 번뜩임」 책 읽기."
     requirements:
-      "trace.condition.bouncing_droplet": 1
-    chance: 1.0
-    prerequisites: []
-  flint_sorting:
-    name: "돌 고르기"
-    permission: "magic.learned.flint_sorting"
-    icon: "magiccodex:textures/spells/reviewed_20261020/flint_sorting.png"
-    category: "earth"
-    condition-text: "베르나 교수의 대지 마법 기초 수업 듣기."
-    requirements:
-      "trace.condition.flint_sorting": 1
-    chance: 1.0
-    prerequisites: []
-  dormant_seed:
-    name: "동면의 씨앗"
-    permission: "magic.learned.dormant_seed"
-    icon: "magiccodex:textures/spells/reviewed_20261020/dormant_seed.png"
-    category: "earth"
-    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
-    requirements:
-      "trace.condition.dormant_seed": 1
-    chance: 1.0
-    prerequisites: []
-  moss_coating:
-    name: "이끼 입히기"
-    permission: "magic.learned.moss_coating"
-    icon: "magiccodex:textures/spells/reviewed_20261020/moss_coating.png"
-    category: "earth"
-    condition-text: "베르나 교수의 대지 마법 중급 수업 듣기."
-    requirements:
-      "trace.condition.moss_coating": 1
-    chance: 1.0
-    prerequisites: []
-  material_exchange:
-    name: "자재 치환"
-    permission: "magic.learned.material_exchange"
-    icon: "magiccodex:textures/spells/reviewed_20261020/material_exchange.png"
-    category: "earth"
-    condition-text: "베르나 교수의 대지 마법 고급 수업 듣기."
-    requirements:
-      "trace.condition.material_exchange": 1
-    chance: 1.0
-    prerequisites: []
-  primordial_stone:
-    name: "원초의 돌"
-    permission: "magic.learned.primordial_stone"
-    icon: "magiccodex:textures/spells/expansion_2/primordial_stone.png"
-    category: "earth"
-    condition-text: "베르나 교수와(과) 친해진 뒤(호감도 30) 대지 비전 수업 듣기."
-    requirements:
-      "trace.condition.primordial_stone": 1
+      "trace.condition.insight_flash": 1
     chance: 1.0
     prerequisites: []
   merciful_arrow:
@@ -961,6 +570,36 @@ spells:
     condition-text: "이솔데 교수의 빛 마법 고급 수업 듣기."
     requirements:
       "trace.condition.merciful_arrow": 1
+    chance: 1.0
+    prerequisites: []
+  light_beam:
+    name: "빛줄기"
+    permission: "magic.learned.light_beam"
+    icon: "magiccodex:textures/spells/gimmick/light_beam.png"
+    category: "light"
+    condition-text: "도서관에서 「곧은 빛에 관한 소론」 책 읽기."
+    requirements:
+      "trace.condition.light_beam": 1
+    chance: 1.0
+    prerequisites: []
+  protective_ward:
+    name: "보호 결계"
+    permission: "magic.learned.protective_ward"
+    icon: "magiccodex:textures/spells/intermediate/protective_ward.png"
+    category: "light"
+    condition-text: "이솔데 교수의 빛 마법 중급 수업 듣기."
+    requirements:
+      "trace.condition.protective_ward": 1
+    chance: 1.0
+    prerequisites: []
+  rainbow_collar:
+    name: "교화"
+    permission: "magic.learned.rainbow_collar"
+    icon: "magiccodex:textures/spells/expansion_2/rainbow_collar.png"
+    category: "light"
+    condition-text: "이솔데 교수의 빛 마법 기초 수업 듣기."
+    requirements:
+      "trace.condition.rainbow_collar": 1
     chance: 1.0
     prerequisites: []
   mana_deposit:
@@ -983,6 +622,36 @@ spells:
       "trace.condition.constellation_blessing": 1
     chance: 1.0
     prerequisites: []
+  shadow_bind:
+    name: "그림자 매듭"
+    permission: "magic.learned.shadow_bind"
+    icon: "magiccodex:textures/spells/novice_extra/shadow_bind.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 기초 수업 듣기."
+    requirements:
+      "trace.condition.shadow_bind": 1
+    chance: 1.0
+    prerequisites: []
+  statue_wake:
+    name: "석상 깨우기"
+    permission: "magic.learned.statue_wake"
+    icon: "magiccodex:textures/spells/gimmick/statue_wake.png"
+    category: "dark"
+    condition-text: "대강당에서 「석상 관리 일지」 책 읽기."
+    requirements:
+      "trace.condition.statue_wake": 1
+    chance: 1.0
+    prerequisites: []
+  sealing_thread:
+    name: "봉인의 실"
+    permission: "magic.learned.sealing_thread"
+    icon: "magiccodex:textures/spells/intermediate/sealing_thread.png"
+    category: "dark"
+    condition-text: "기숙사 입구에서 「자물쇠 장인의 비밀」 책 읽기."
+    requirements:
+      "trace.condition.sealing_thread": 1
+    chance: 1.0
+    prerequisites: []
   life_siphon:
     name: "생명 갈취"
     permission: "magic.learned.life_siphon"
@@ -993,44 +662,14 @@ spells:
       "trace.condition.life_siphon": 1
     chance: 1.0
     prerequisites: []
-  night_chain:
-    name: "밤의 사슬"
-    permission: "magic.learned.night_chain"
-    icon: "magiccodex:textures/spells/expansion/night_chain.png"
+  rewind:
+    name: "되감기"
+    permission: "magic.learned.rewind"
+    icon: "magiccodex:textures/spells/gimmick/rewind.png"
     category: "dark"
-    condition-text: "그레고르 교감의 어둠 마법 고급 수업 듣기."
+    condition-text: "도서관에서 「되돌리는 장치에 관하여」 책 읽기."
     requirements:
-      "trace.condition.night_chain": 1
-    chance: 1.0
-    prerequisites: []
-  forbidden_contract:
-    name: "금서의 계약"
-    permission: "magic.learned.forbidden_contract"
-    icon: "magiccodex:textures/spells/advanced/forbidden_contract.png"
-    category: "dark"
-    condition-text: "그레고르 교감와(과) 친해진 뒤(호감도 30) 어둠 비전 수업 듣기."
-    requirements:
-      "trace.condition.forbidden_contract": 1
-    chance: 1.0
-    prerequisites: []
-  droplet_relay:
-    name: "물방울 인계"
-    permission: "magic.learned.droplet_relay"
-    icon: "magiccodex:textures/spells/reviewed_20261020/droplet_relay.png"
-    category: "water"
-    condition-text: "엘레나 교수의 물 마법 심화 수업 듣기."
-    requirements:
-      "trace.condition.droplet_relay": 1
-    chance: 1.0
-    prerequisites: []
-  folding_tideplane:
-    name: "접히는 수면"
-    permission: "magic.learned.folding_tideplane"
-    icon: "magiccodex:textures/spells/reviewed_20261020/folding_tideplane.png"
-    category: "water"
-    condition-text: "엘레나 교수의 물 마법 심화 수업 듣기."
-    requirements:
-      "trace.condition.folding_tideplane": 1
+      "trace.condition.rewind": 1
     chance: 1.0
     prerequisites: []
   misfortune_whisper:
@@ -1043,6 +682,26 @@ spells:
       "trace.condition.misfortune_whisper": 1
     chance: 1.0
     prerequisites: []
+  loosen_grasp:
+    name: "손아귀 풀기"
+    permission: "magic.learned.loosen_grasp"
+    icon: "magiccodex:textures/spells/expansion_2/loosen_grasp.png"
+    category: "dark"
+    condition-text: "도서관에서 「손아귀를 푸는 법」 책 읽기."
+    requirements:
+      "trace.condition.loosen_grasp": 1
+    chance: 1.0
+    prerequisites: []
+  shadow_double:
+    name: "그림자 분신"
+    permission: "magic.learned.shadow_double"
+    icon: "magiccodex:textures/spells/intermediate/shadow_double.png"
+    category: "dark"
+    condition-text: "도서관에서 「그림자는 두 번 선다」 책 읽기."
+    requirements:
+      "trace.condition.shadow_double": 1
+    chance: 1.0
+    prerequisites: []
   healing_seal:
     name: "회복 봉인"
     permission: "magic.learned.healing_seal"
@@ -1051,6 +710,16 @@ spells:
     condition-text: "그레고르 교감의 어둠 마법 응용 수업 듣기."
     requirements:
       "trace.condition.healing_seal": 1
+    chance: 1.0
+    prerequisites: []
+  wound_accounting:
+    name: "상처 회계"
+    permission: "magic.learned.wound_accounting"
+    icon: "magiccodex:textures/spells/expansion_2/wound_accounting.png"
+    category: "dark"
+    condition-text: "그레고르 교감의 어둠 마법 심화 수업 듣기."
+    requirements:
+      "trace.condition.wound_accounting": 1
     chance: 1.0
     prerequisites: []
   discord:
@@ -1063,13 +732,43 @@ spells:
       "trace.condition.discord": 1
     chance: 1.0
     prerequisites: []
-  wound_accounting:
-    name: "상처 회계"
-    permission: "magic.learned.wound_accounting"
-    icon: "magiccodex:textures/spells/expansion_2/wound_accounting.png"
+  night_chain:
+    name: "밤의 사슬"
+    permission: "magic.learned.night_chain"
+    icon: "magiccodex:textures/spells/expansion/night_chain.png"
     category: "dark"
-    condition-text: "그레고르 교감의 어둠 마법 심화 수업 듣기."
+    condition-text: "그레고르 교감의 어둠 마법 고급 수업 듣기."
     requirements:
-      "trace.condition.wound_accounting": 1
+      "trace.condition.night_chain": 1
+    chance: 1.0
+    prerequisites: []
+  warning_thread:
+    name: "경고의 실"
+    permission: "magic.learned.warning_thread"
+    icon: "magiccodex:textures/spells/expansion_2/warning_thread.png"
+    category: "dark"
+    condition-text: "도서관에서 「경계를 긋는 실」 책 읽기."
+    requirements:
+      "trace.condition.warning_thread": 1
+    chance: 1.0
+    prerequisites: []
+  forbidden_contract:
+    name: "금서의 계약"
+    permission: "magic.learned.forbidden_contract"
+    icon: "magiccodex:textures/spells/advanced/forbidden_contract.png"
+    category: "dark"
+    condition-text: "그레고르 교감와(과) 친해진 뒤(호감도 30) 어둠 비전 수업 듣기."
+    requirements:
+      "trace.condition.forbidden_contract": 1
+    chance: 1.0
+    prerequisites: []
+  void_maw:
+    name: "공허의 입"
+    permission: "magic.learned.void_maw"
+    icon: "magiccodex:textures/spells/expansion_2/void_maw.png"
+    category: "dark"
+    condition-text: "도서관에 숨겨진 「텅 빈 것의 식욕」 책 읽기."
+    requirements:
+      "trace.condition.void_maw": 1
     chance: 1.0
     prerequisites: []
