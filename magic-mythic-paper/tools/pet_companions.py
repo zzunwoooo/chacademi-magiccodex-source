@@ -20,6 +20,9 @@ MCPETS = os.path.join(REPO, 'reference/output/custom-creatures-v1/server/plugins
 MOBSK = yaml.safe_load(open(os.path.join(ROOT, 'mythicmobs/Skills/chacademi_mob_skills.yml'), encoding='utf-8'))
 
 DAMAGE_SCALE = 0.5            # 펫 피해 = 원래 몹 스킬 flat × 이 값 (올림, 최소 1)
+# 몹 스펙 #109 (2026-10-26): 몹 스킬 flat 은 등급 배율로 올렸지만 펫 피해는 그대로 → '원래 flat' 은 몹 스펙 적용 전 값(baseline.json)
+_BASE = os.path.join(REPO, 'docs/plans/mob-spec/baseline.json')
+BASE_FLAT = {k: v['flat'] for k, v in json.load(open(_BASE, encoding='utf-8'))['skills'].items()} if os.path.exists(_BASE) else {}
 # 도감 체력 (오너 2026-10-26 수정): 꺼낸 펫이 아니라 '교화해 보유한 펫'이 많을수록 최대 체력이 누적으로 오름.
 # 점수 = 보유 펫 등급 점수 합 (변색종도 같은 점수, 바닐라 펫은 pets.yml 별 기준). 체력 = 최대 × (점수 / 전체 점수)^곡선, 반올림.
 # 전체 점수 = 변색종을 뺀 모든 펫(커스텀 + 바닐라) 점수 합 → 이걸 다 모으면 +20.
@@ -88,7 +91,7 @@ KEEP_STATUS = ('burn', 'poison')
 def pet_skill_lines(name):
     lines = MOBSK[name]['Skills']
     if any(s in l for l in lines for s in SKIP_SKILL): return None
-    out = []; dmg = 0
+    out = []; dmg = 0; fi = 0; base = BASE_FLAT.get(name)
     for l in lines:
         if l.startswith(DROP_LINES): continue
         if l.startswith('delay'):
@@ -105,7 +108,8 @@ def pet_skill_lines(name):
                 if not keep: continue
                 v = ','.join(keep)
             if k == 'flat':
-                n = max(1, -(-float(v) * DAMAGE_SCALE // 1)); dmg += n; v = str(int(n))
+                orig = base[fi] if base and fi < len(base) else float(v); fi += 1
+                n = max(1, -(-orig * DAMAGE_SCALE // 1)); dmg += n; v = str(int(n))
             params.append(f'{k}={v}')
         params += ['mult=0', 'hits=enemies', 'warn=false', 'spell=pet_skill']
         out.append(f"{m.group(1)}{{{';'.join(params)}}} @trigger")

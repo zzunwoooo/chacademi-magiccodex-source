@@ -29,8 +29,9 @@ public final class MagicProtection implements Listener {
   * 전투 스펙 2026-10-26 (MagicArmor): VANILLA = 예전 그대로 (몹이 쓰거나 몹이 맞는 마법).
   * PVP = 플레이어→플레이어 마법: 마법 방어·저항을 여기서 계산해 줄인 값을 넣고, 바닐라 방어·보호 인첸트·저항은 0으로 (rewrite).
   * EXECUTE = 처형: 감소 0. FLAT = 이미 줄어든 피해(피해 나눠 받기): 더 줄이지 않음.
+  * MOB = 몹 스펙 #109: 몹이 플레이어에게 쓰는 마법(몹 스킬) — PVP 와 같은 마법 방어·저항, 무적 시간 초기화는 안 함(여러 발이 한 번에 다 들어가지 않게, 예전처럼).
   */
- enum Mode { VANILLA, PVP, EXECUTE, FLAT }
+ enum Mode { VANILLA, PVP, EXECUTE, FLAT, MOB }
  private static final class Hit { final LivingEntity caster,target; final Mode mode; EntityDamageEvent event; Hit(LivingEntity c,LivingEntity t,Mode m){caster=c;target=t;mode=m;} }
  public void register(){
   flag=claim(WorldGuard.getInstance().getFlagRegistry());ready=true;
@@ -92,13 +93,15 @@ public final class MagicProtection implements Listener {
  boolean procDamage(LivingEntity caster,LivingEntity target,double amount){procDepth++;try{return damage(caster,target,amount);}finally{procDepth--;}}
  /** 플레이어가 다른 플레이어를 맞히는 마법인가 (전투 스펙 PvP 경로). */
  static boolean pvp(LivingEntity caster,LivingEntity target){return MagicArmor.current.enabled()&&caster instanceof Player&&target instanceof Player&&!caster.equals(target);}
- boolean damage(LivingEntity caster,LivingEntity target,double amount){return damage(caster,target,amount,pvp(caster,target)?Mode.PVP:Mode.VANILLA);}
+ /** 몹(플레이어가 아닌 시전자)이 플레이어를 맞히는 마법인가 (몹 스펙 #109, config pvp.mob-magic-armor). */
+ static boolean mobMagic(LivingEntity caster,LivingEntity target){var s=MagicArmor.current;return s.enabled()&&s.mobMagicArmor()&&caster!=null&&!(caster instanceof Player)&&target instanceof Player;}
+ boolean damage(LivingEntity caster,LivingEntity target,double amount){return damage(caster,target,amount,pvp(caster,target)?Mode.PVP:mobMagic(caster,target)?Mode.MOB:Mode.VANILLA);}
  /** 처형: 방어·저항·흡수까지 넘는 피해, 감소 0 (몹 대상도 같은 경로 — 보호된 대상은 HitMech 가 미리 거름). */
  boolean execute(LivingEntity caster,LivingEntity target,double amount){return damage(caster,target,amount,Mode.EXECUTE);}
  boolean damage(LivingEntity caster,LivingEntity target,double amount,Mode mode){
   if(!harm(caster,target))return false;
   if(amount<=0){var probe=new EntityDamageByEntityEvent(caster,target,EntityDamageEvent.DamageCause.MAGIC,0);Bukkit.getPluginManager().callEvent(probe);return accepted(probe);}
-  double applied=mode==Mode.PVP?pvpReduced(target,amount):amount;
+  double applied=mode==Mode.PVP||mode==Mode.MOB?pvpReduced(target,amount):amount;
   Hit h=new Hit(caster,target,mode);hits.push(h);
   boolean ok;
   // 마법 발견 v2: 이 타격으로 죽어도 그 마법 처치로 세도록 피해 전에 기록 (체력이 가득 찬 상태였는지 = 한 방 처치 판정)
@@ -121,7 +124,7 @@ public final class MagicProtection implements Listener {
   try{resetInvulnerability(target,mode);target.damage(applied);return accepted(h.event);}finally{hits.pop();}
  }
  /** 플레이어 대상 다단 히트가 바닐라 무적 시간(10틱)에 먹히지 않게: PvP 마법 타격 직전에 무적 시간을 0으로 (맞은 뒤에는 바닐라가 다시 채움). */
- private static void resetInvulnerability(LivingEntity target,Mode mode){if(mode!=Mode.VANILLA&&target instanceof Player&&MagicArmor.current.resetInvulnerability())target.setNoDamageTicks(0);}
+ private static void resetInvulnerability(LivingEntity target,Mode mode){if(mode!=Mode.VANILLA&&mode!=Mode.MOB&&target instanceof Player&&MagicArmor.current.resetInvulnerability())target.setNoDamageTicks(0);}
  /** 마법 방어 + 저항 (MagicArmor). 방어력 = ARMOR 속성, EPF = 갑옷 4칸 보호 인첸트 레벨 합. */
  static double pvpReduced(LivingEntity target,double amount){
   var s=MagicArmor.current;

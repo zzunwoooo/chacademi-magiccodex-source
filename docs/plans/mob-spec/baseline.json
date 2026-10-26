@@ -1,0 +1,3963 @@
+{
+ "_comment": "몹 스펙 #109 적용 전 원래 값 (tools/mob_spec.py baseline, 2026-10-26). 규칙은 항상 이 값에서 계산.",
+ "minions": {
+  "CHA_MINION_skeleton": {
+   "Damage": 3.0,
+   "Health": 16.0
+  },
+  "CHA_MINION_wolf": {
+   "Damage": 3.0,
+   "Health": 14.0
+  }
+ },
+ "skills": {
+  "CHA_MOB_aim_shot_ncr_archer_skeleton": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "ncr_archer_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_aim_shot_ncr_archer_skeleton_shiny": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "ncr_archer_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_bite_raptor_nightmare": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "raptor_nightmare",
+   "tier": "3"
+  },
+  "CHA_MOB_bite_raptor_nightmare_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "raptor_nightmare",
+   "tier": "3"
+  },
+  "CHA_MOB_bite_raptor_red": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "raptor_red",
+   "tier": "2"
+  },
+  "CHA_MOB_bite_raptor_red_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "raptor_red",
+   "tier": "2"
+  },
+  "CHA_MOB_bite_raptor_undead": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "raptor_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_bite_raptor_undead_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "raptor_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_bone_arrows_ncr_archer_skeleton": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_archer_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_bone_arrows_ncr_archer_skeleton_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_archer_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_bone_call_ncr_mage_skeleton": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "ncr_mage_skeleton",
+   "tier": "3"
+  },
+  "CHA_MOB_bone_call_ncr_mage_skeleton_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "ncr_mage_skeleton",
+   "tier": "3"
+  },
+  "CHA_MOB_bone_grasp_ncr_mage_skeleton": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "ncr_mage_skeleton",
+   "tier": "3"
+  },
+  "CHA_MOB_bone_grasp_ncr_mage_skeleton_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "ncr_mage_skeleton",
+   "tier": "3"
+  },
+  "CHA_MOB_chain_arrow_mf_warden_archer": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_archer",
+   "tier": "3"
+  },
+  "CHA_MOB_chain_arrow_mf_warden_archer_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_archer",
+   "tier": "3"
+  },
+  "CHA_MOB_chain_shot_mf_warden_archer": {
+   "flat": [
+    5.0
+   ],
+   "kind": "big",
+   "mob": "mf_warden_archer",
+   "tier": "3"
+  },
+  "CHA_MOB_chain_shot_mf_warden_archer_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "big",
+   "mob": "mf_warden_archer",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_aether": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_aether",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_aether_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_aether",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_dusk": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_dusk",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_dusk_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_dusk",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_soul": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_soul",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_soul_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_soul",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_venom": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_venom",
+   "tier": "3"
+  },
+  "CHA_MOB_claw_roar_manticore_venom_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "manticore_venom",
+   "tier": "3"
+  },
+  "CHA_MOB_club_swing_ogre_axe": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ogre_axe",
+   "tier": "2"
+  },
+  "CHA_MOB_club_swing_ogre_axe_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ogre_axe",
+   "tier": "2"
+  },
+  "CHA_MOB_club_swing_ogre_club": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ogre_club",
+   "tier": "2"
+  },
+  "CHA_MOB_club_swing_ogre_club_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ogre_club",
+   "tier": "2"
+  },
+  "CHA_MOB_club_swing_ogre_hammer": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ogre_hammer",
+   "tier": "3"
+  },
+  "CHA_MOB_club_swing_ogre_hammer_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ogre_hammer",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_jade": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_jade",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_jade_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_jade",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_magma": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_magma_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_solar": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_solar",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_solar_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_solar",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_spectral": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_spectral",
+   "tier": "3"
+  },
+  "CHA_MOB_coil_spin_sky_serpent_spectral_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "sky_serpent_spectral",
+   "tier": "3"
+  },
+  "CHA_MOB_croc_bite_crocodile": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "crocodile",
+   "tier": "2"
+  },
+  "CHA_MOB_croc_bite_crocodile_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "crocodile",
+   "tier": "2"
+  },
+  "CHA_MOB_dash_slash_ncr_warrior_skeleton": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "ncr_warrior_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_dash_slash_ncr_warrior_skeleton_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "ncr_warrior_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_domain_seal_stag_demonic": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_demonic_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_heavenly": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_heavenly",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_heavenly_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_heavenly",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_rune": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_rune",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_rune_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_rune",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_void": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_void",
+   "tier": "3"
+  },
+  "CHA_MOB_domain_seal_stag_void_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "stag_void",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_desert": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_desert",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_desert_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_desert",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_glacial": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_glacial",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_glacial_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_glacial",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_nether": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_nether",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_nether_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_nether",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_sculk": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_sculk",
+   "tier": "3"
+  },
+  "CHA_MOB_dragon_breath_dragon_sculk_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "dragon_sculk",
+   "tier": "3"
+  },
+  "CHA_MOB_earth_stomp_tusker_demonic": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "tusker_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_earth_stomp_tusker_demonic_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "tusker_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_earth_stomp_tusker_dreamlight": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "tusker_dreamlight",
+   "tier": "2"
+  },
+  "CHA_MOB_earth_stomp_tusker_dreamlight_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "tusker_dreamlight",
+   "tier": "2"
+  },
+  "CHA_MOB_earth_stomp_tusker_forest": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "tusker_forest",
+   "tier": "2"
+  },
+  "CHA_MOB_earth_stomp_tusker_forest_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "tusker_forest",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_flowersprite": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_flowersprite",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_flowersprite_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_flowersprite",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_lakefairy": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_lakefairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_lakefairy_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_lakefairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_leaffairy": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_leaffairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_leaffairy_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_leaffairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_mushroomfairy": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_mushroomfairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_dust_lostasset_mob2_mushroomfairy_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob2_mushroomfairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_flowersprite": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_flowersprite",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_flowersprite_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_flowersprite",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_lakefairy": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_lakefairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_lakefairy_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_lakefairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_leaffairy": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_leaffairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_leaffairy_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_leaffairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_mushroomfairy": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_mushroomfairy",
+   "tier": "2"
+  },
+  "CHA_MOB_fairy_orbs_lostasset_mob2_mushroomfairy_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob2_mushroomfairy",
+   "tier": "2"
+  },
+  "CHA_MOB_feather_barrage_phoenix_darkflame": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_darkflame",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_darkflame_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_darkflame",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_flame": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_flame",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_flame_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_flame",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_light": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_light",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_light_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_light",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_thunder": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_thunder",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_barrage_phoenix_thunder_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "phoenix_thunder",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_common": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_common",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_common_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_common",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_crystal": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_crystal",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_crystal_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_crystal",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_fallen": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_fallen_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_royal": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_feather_storm_hippogryph_royal_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "hippogryph_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_darkflame": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_darkflame",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_darkflame_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_darkflame",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_flame": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_flame",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_flame_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_flame",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_light": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_light",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_light_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_light",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_thunder": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_thunder",
+   "tier": "3"
+  },
+  "CHA_MOB_fire_feathers_phoenix_thunder_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "phoenix_thunder",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_blink_kitsune_demonic": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "kitsune_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_blink_kitsune_demonic_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "kitsune_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_blink_kitsune_inferno": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "kitsune_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_blink_kitsune_inferno_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "kitsune_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_blink_kitsune_normal": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "kitsune_normal",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_blink_kitsune_normal_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "kitsune_normal",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_charm_kitsune_demonic": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "kitsune_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_charm_kitsune_demonic_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "kitsune_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_charm_kitsune_inferno": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "kitsune_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_charm_kitsune_inferno_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "kitsune_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_charm_kitsune_normal": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "kitsune_normal",
+   "tier": "3"
+  },
+  "CHA_MOB_fox_charm_kitsune_normal_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "kitsune_normal",
+   "tier": "3"
+  },
+  "CHA_MOB_foxfire_orbit_kitsune_demonic": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "kitsune_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_foxfire_orbit_kitsune_demonic_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "kitsune_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_foxfire_orbit_kitsune_inferno": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "kitsune_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_foxfire_orbit_kitsune_inferno_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "kitsune_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_foxfire_orbit_kitsune_normal": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "kitsune_normal",
+   "tier": "3"
+  },
+  "CHA_MOB_foxfire_orbit_kitsune_normal_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "kitsune_normal",
+   "tier": "3"
+  },
+  "CHA_MOB_frost_cross_ice_knight": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ice_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_frost_cross_ice_knight_shiny": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ice_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_frost_field_ice_knight": {
+   "flat": [
+    5.0
+   ],
+   "kind": "big",
+   "mob": "ice_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_frost_field_ice_knight_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "big",
+   "mob": "ice_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_frost_laser": {
+   "flat": [
+    8.0
+   ],
+   "kind": "hand",
+   "mob": "glacialcore",
+   "tier": "boss"
+  },
+  "CHA_MOB_frost_laser_shiny": {
+   "flat": [
+    8.0
+   ],
+   "kind": "hand",
+   "mob": "glacialcore",
+   "tier": "boss"
+  },
+  "CHA_MOB_gale_wings_horse_pegasus": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "horse_pegasus",
+   "tier": "3"
+  },
+  "CHA_MOB_gale_wings_horse_pegasus_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "horse_pegasus",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_dire": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_dire",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_dire_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_dire",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_fallen": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_fallen_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_fullmoon": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_fullmoon",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_fullmoon_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_fullmoon",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_stormcloud": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_stormcloud",
+   "tier": "3"
+  },
+  "CHA_MOB_glide_dive_wolfhawk_stormcloud_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "wolfhawk_stormcloud",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_arcane": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_arcane",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_arcane_shiny": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_arcane",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_corrupted": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_corrupted",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_corrupted_shiny": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_corrupted",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_magma": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_magma_shiny": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_royal": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_gravity_slam_golem_royal_shiny": {
+   "flat": [
+    8.0
+   ],
+   "kind": "big",
+   "mob": "golem_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_ground_quake_ogre_axe": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "ogre_axe",
+   "tier": "2"
+  },
+  "CHA_MOB_ground_quake_ogre_axe_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "ogre_axe",
+   "tier": "2"
+  },
+  "CHA_MOB_ground_quake_ogre_club": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "ogre_club",
+   "tier": "2"
+  },
+  "CHA_MOB_ground_quake_ogre_club_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "ogre_club",
+   "tier": "2"
+  },
+  "CHA_MOB_ground_quake_ogre_hammer": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "ogre_hammer",
+   "tier": "3"
+  },
+  "CHA_MOB_ground_quake_ogre_hammer_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "ogre_hammer",
+   "tier": "3"
+  },
+  "CHA_MOB_horn_ray_horse_unicorn": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "horse_unicorn",
+   "tier": "3"
+  },
+  "CHA_MOB_horn_ray_horse_unicorn_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "horse_unicorn",
+   "tier": "3"
+  },
+  "CHA_MOB_ice_shards_glacialcore": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "glacialcore",
+   "tier": "boss"
+  },
+  "CHA_MOB_ice_shards_glacialcore_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "glacialcore",
+   "tier": "boss"
+  },
+  "CHA_MOB_jaw_bite_crocodile": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "crocodile",
+   "tier": "2"
+  },
+  "CHA_MOB_jaw_bite_crocodile_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "crocodile",
+   "tier": "2"
+  },
+  "CHA_MOB_jaw_bite_raptor_nightmare": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "raptor_nightmare",
+   "tier": "3"
+  },
+  "CHA_MOB_jaw_bite_raptor_nightmare_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "raptor_nightmare",
+   "tier": "3"
+  },
+  "CHA_MOB_jaw_bite_raptor_red": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "raptor_red",
+   "tier": "2"
+  },
+  "CHA_MOB_jaw_bite_raptor_red_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "raptor_red",
+   "tier": "2"
+  },
+  "CHA_MOB_jaw_bite_raptor_undead": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "raptor_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_jaw_bite_raptor_undead_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "raptor_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_demonic": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_demonic_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_heavenly": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_heavenly",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_heavenly_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_heavenly",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_rune": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_rune",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_rune_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_rune",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_void": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_void",
+   "tier": "3"
+  },
+  "CHA_MOB_light_horns_stag_void_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "stag_void",
+   "tier": "3"
+  },
+  "CHA_MOB_moon_wind_horse_pegasus": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "horse_pegasus",
+   "tier": "3"
+  },
+  "CHA_MOB_moon_wind_horse_pegasus_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "horse_pegasus",
+   "tier": "3"
+  },
+  "CHA_MOB_oblivion_orbs_ncr_mage_skeleton": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_mage_skeleton",
+   "tier": "3"
+  },
+  "CHA_MOB_oblivion_orbs_ncr_mage_skeleton_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_mage_skeleton",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_dire": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_dire",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_dire_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_dire",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_fallen": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_fallen_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_fullmoon": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_fullmoon",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_fullmoon_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_fullmoon",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_stormcloud": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_stormcloud",
+   "tier": "3"
+  },
+  "CHA_MOB_pack_call_wolfhawk_stormcloud_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wolfhawk_stormcloud",
+   "tier": "3"
+  },
+  "CHA_MOB_paw_maul_bear": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "bear",
+   "tier": "2"
+  },
+  "CHA_MOB_paw_maul_bear_black": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "bear_black",
+   "tier": "2"
+  },
+  "CHA_MOB_paw_maul_bear_black_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "bear_black",
+   "tier": "2"
+  },
+  "CHA_MOB_paw_maul_bear_polar": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "bear_polar",
+   "tier": "2"
+  },
+  "CHA_MOB_paw_maul_bear_polar_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "bear_polar",
+   "tier": "2"
+  },
+  "CHA_MOB_paw_maul_bear_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "bear",
+   "tier": "2"
+  },
+  "CHA_MOB_poison_flask_lostasset_mob3_herbthief": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob3_herbthief",
+   "tier": "1"
+  },
+  "CHA_MOB_poison_flask_lostasset_mob3_herbthief_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob3_herbthief",
+   "tier": "1"
+  },
+  "CHA_MOB_pounce_sabertooth_arctic": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "sabertooth_arctic",
+   "tier": "2"
+  },
+  "CHA_MOB_pounce_sabertooth_arctic_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "sabertooth_arctic",
+   "tier": "2"
+  },
+  "CHA_MOB_pounce_sabertooth_midnight": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "sabertooth_midnight",
+   "tier": "2"
+  },
+  "CHA_MOB_pounce_sabertooth_midnight_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "sabertooth_midnight",
+   "tier": "2"
+  },
+  "CHA_MOB_pounce_sabertooth_savanna": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "sabertooth_savanna",
+   "tier": "2"
+  },
+  "CHA_MOB_pounce_sabertooth_savanna_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "sabertooth_savanna",
+   "tier": "2"
+  },
+  "CHA_MOB_roar_leap_manticore_aether": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_aether",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_aether_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_aether",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_dusk": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_dusk",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_dusk_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_dusk",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_soul": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_soul",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_soul_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_soul",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_venom": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_venom",
+   "tier": "3"
+  },
+  "CHA_MOB_roar_leap_manticore_venom_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "manticore_venom",
+   "tier": "3"
+  },
+  "CHA_MOB_root_bind_lostasset_mob3_herbgolem": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob3_herbgolem",
+   "tier": "3"
+  },
+  "CHA_MOB_root_bind_lostasset_mob3_herbgolem_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob3_herbgolem",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_arcane": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_arcane",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_arcane_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_arcane",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_corrupted": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_corrupted",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_corrupted_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_corrupted",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_magma": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_magma_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_royal": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_rune_boulder_golem_royal_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "golem_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_charge_mf_warden_knight": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "mf_warden_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_charge_mf_warden_knight_shiny": {
+   "flat": [
+    7.0
+   ],
+   "kind": "big",
+   "mob": "mf_warden_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_circle": {
+   "flat": [
+    4.0
+   ],
+   "kind": "hand",
+   "mob": "mf_warden_mage",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_circle_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "hand",
+   "mob": "mf_warden_mage",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_pull_mf_warden_mage": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "mf_warden_mage",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_pull_mf_warden_mage_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "mf_warden_mage",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_talismans_mf_warden_mage": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_mage",
+   "tier": "3"
+  },
+  "CHA_MOB_seal_talismans_mf_warden_mage_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_mage",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_jade": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_jade",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_jade_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_jade",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_magma": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_magma_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_solar": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_solar",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_solar_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_solar",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_spectral": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_spectral",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_breath_sky_serpent_spectral_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "big",
+   "mob": "sky_serpent_spectral",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_jade": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_jade",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_jade_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_jade",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_magma": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_magma_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_magma",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_solar": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_solar",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_solar_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_solar",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_spectral": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_spectral",
+   "tier": "3"
+  },
+  "CHA_MOB_serpent_pull_sky_serpent_spectral_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "sky_serpent_spectral",
+   "tier": "3"
+  },
+  "CHA_MOB_shield_bash_mf_warden_tank": {
+   "flat": [
+    5.0
+   ],
+   "kind": "big",
+   "mob": "mf_warden_tank",
+   "tier": "3"
+  },
+  "CHA_MOB_shield_bash_mf_warden_tank_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "big",
+   "mob": "mf_warden_tank",
+   "tier": "3"
+  },
+  "CHA_MOB_shield_rush_mf_warden_tank": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_tank",
+   "tier": "3"
+  },
+  "CHA_MOB_shield_rush_mf_warden_tank_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_tank",
+   "tier": "3"
+  },
+  "CHA_MOB_shield_slam_mf_warden_knight": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_shield_slam_mf_warden_knight_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "mf_warden_knight",
+   "tier": "3"
+  },
+  "CHA_MOB_smoke_bomb_lostasset_mob3_herbthief": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob3_herbthief",
+   "tier": "1"
+  },
+  "CHA_MOB_smoke_bomb_lostasset_mob3_herbthief_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "big",
+   "mob": "lostasset_mob3_herbthief",
+   "tier": "1"
+  },
+  "CHA_MOB_soul_blink_phantom_ender": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "phantom_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_blink_phantom_ender_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "phantom_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_blink_phantom_ghost": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "phantom_ghost",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_blink_phantom_ghost_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "special",
+   "mob": "phantom_ghost",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_drain_phantom_ender": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "phantom_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_drain_phantom_ender_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "phantom_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_drain_phantom_ghost": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "phantom_ghost",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_drain_phantom_ghost_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "big",
+   "mob": "phantom_ghost",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_scythe_phantom_ender": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "phantom_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_scythe_phantom_ender_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "phantom_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_scythe_phantom_ghost": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "phantom_ghost",
+   "tier": "3"
+  },
+  "CHA_MOB_soul_scythe_phantom_ghost_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "phantom_ghost",
+   "tier": "3"
+  },
+  "CHA_MOB_spear_spin_ncr_spear_skeleton": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_spear_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_spear_spin_ncr_spear_skeleton_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_spear_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_spear_throw_ncr_spear_skeleton": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "ncr_spear_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_spear_throw_ncr_spear_skeleton_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "ncr_spear_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_spike_volley_wyvern_ender": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_ender_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_green": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_green",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_green_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_green",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_inferno": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_inferno_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_undead": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_spike_volley_wyvern_undead_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "wyvern_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_star_fall_horse_unicorn": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "horse_unicorn",
+   "tier": "3"
+  },
+  "CHA_MOB_star_fall_horse_unicorn_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "horse_unicorn",
+   "tier": "3"
+  },
+  "CHA_MOB_swipe_bear": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "bear",
+   "tier": "2"
+  },
+  "CHA_MOB_swipe_bear_black": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "bear_black",
+   "tier": "2"
+  },
+  "CHA_MOB_swipe_bear_black_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "bear_black",
+   "tier": "2"
+  },
+  "CHA_MOB_swipe_bear_polar": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "bear_polar",
+   "tier": "2"
+  },
+  "CHA_MOB_swipe_bear_polar_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "bear_polar",
+   "tier": "2"
+  },
+  "CHA_MOB_swipe_bear_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "bear",
+   "tier": "2"
+  },
+  "CHA_MOB_tail_spikes_wyvern_ender": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_ender_shiny": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_green": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_green",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_green_shiny": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_green",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_inferno": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_inferno_shiny": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_undead": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spikes_wyvern_undead_shiny": {
+   "flat": [
+    4.0,
+    4.0,
+    4.0
+   ],
+   "kind": "big",
+   "mob": "wyvern_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_desert": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_desert",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_desert_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_desert",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_glacial": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_glacial",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_glacial_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_glacial",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_nether": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_nether",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_nether_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_nether",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_sculk": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_sculk",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_spin_dragon_sculk_shiny": {
+   "flat": [
+    5.0
+   ],
+   "kind": "basic",
+   "mob": "dragon_sculk",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_sweep_basilisk_obsidian": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "basilisk_obsidian",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_sweep_basilisk_obsidian_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "basilisk_obsidian",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_sweep_basilisk_snowstorm": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "basilisk_snowstorm",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_sweep_basilisk_snowstorm_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "basilisk_snowstorm",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_sweep_basilisk_wild": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "basilisk_wild",
+   "tier": "3"
+  },
+  "CHA_MOB_tail_sweep_basilisk_wild_shiny": {
+   "flat": [
+    6.0
+   ],
+   "kind": "big",
+   "mob": "basilisk_wild",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_common": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_common",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_common_shiny": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_common",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_crystal": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_crystal",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_crystal_shiny": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_crystal",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_fallen": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_fallen_shiny": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_royal": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_talon_rake_hippogryph_royal_shiny": {
+   "flat": [
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "hippogryph_royal",
+   "tier": "3"
+  },
+  "CHA_MOB_triple_claw_sabertooth_arctic": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "sabertooth_arctic",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_claw_sabertooth_arctic_shiny": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "sabertooth_arctic",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_claw_sabertooth_midnight": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "sabertooth_midnight",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_claw_sabertooth_midnight_shiny": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "sabertooth_midnight",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_claw_sabertooth_savanna": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "sabertooth_savanna",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_claw_sabertooth_savanna_shiny": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "sabertooth_savanna",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_slash_ncr_warrior_skeleton": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_warrior_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_triple_slash_ncr_warrior_skeleton_shiny": {
+   "flat": [
+    3.0,
+    3.0,
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "ncr_warrior_skeleton",
+   "tier": "2"
+  },
+  "CHA_MOB_tusk_upper_tusker_demonic": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "tusker_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_tusk_upper_tusker_demonic_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "tusker_demonic",
+   "tier": "3"
+  },
+  "CHA_MOB_tusk_upper_tusker_dreamlight": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "tusker_dreamlight",
+   "tier": "2"
+  },
+  "CHA_MOB_tusk_upper_tusker_dreamlight_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "tusker_dreamlight",
+   "tier": "2"
+  },
+  "CHA_MOB_tusk_upper_tusker_forest": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "tusker_forest",
+   "tier": "2"
+  },
+  "CHA_MOB_tusk_upper_tusker_forest_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "tusker_forest",
+   "tier": "2"
+  },
+  "CHA_MOB_venom_spit_basilisk_obsidian": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "basilisk_obsidian",
+   "tier": "3"
+  },
+  "CHA_MOB_venom_spit_basilisk_obsidian_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "basilisk_obsidian",
+   "tier": "3"
+  },
+  "CHA_MOB_venom_spit_basilisk_snowstorm": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "basilisk_snowstorm",
+   "tier": "3"
+  },
+  "CHA_MOB_venom_spit_basilisk_snowstorm_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "basilisk_snowstorm",
+   "tier": "3"
+  },
+  "CHA_MOB_venom_spit_basilisk_wild": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "basilisk_wild",
+   "tier": "3"
+  },
+  "CHA_MOB_venom_spit_basilisk_wild_shiny": {
+   "flat": [
+    3.0
+   ],
+   "kind": "basic",
+   "mob": "basilisk_wild",
+   "tier": "3"
+  },
+  "CHA_MOB_vine_whip_lostasset_mob3_herbgolem": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob3_herbgolem",
+   "tier": "3"
+  },
+  "CHA_MOB_vine_whip_lostasset_mob3_herbgolem_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "lostasset_mob3_herbgolem",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_dire": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_dire",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_dire_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_dire",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_fallen": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_fallen_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_fallen",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_fullmoon": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_fullmoon",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_fullmoon_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_fullmoon",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_stormcloud": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_stormcloud",
+   "tier": "3"
+  },
+  "CHA_MOB_wind_blade_wolfhawk_stormcloud_shiny": {
+   "flat": [
+    4.0
+   ],
+   "kind": "basic",
+   "mob": "wolfhawk_stormcloud",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_ender": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_ender_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_ender",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_green": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_green",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_green_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_green",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_inferno": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_inferno_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_inferno",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_undead": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_undead",
+   "tier": "3"
+  },
+  "CHA_MOB_wyvern_pull_wyvern_undead_shiny": {
+   "flat": [
+    2.0
+   ],
+   "kind": "special",
+   "mob": "wyvern_undead",
+   "tier": "3"
+  }
+ },
+ "wild": {
+  "CA_Wild_alpha_boar": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_alpha_boar_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_baby_polar_bear": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_baby_polar_bear_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_baby_yeti": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_baby_yeti_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_basilisk_obsidian": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_basilisk_obsidian_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_basilisk_snowstorm": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_basilisk_snowstorm_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_basilisk_wild": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_basilisk_wild_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_bear": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bear_black": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bear_black_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bear_polar": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bear_polar_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bear_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_boar": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_boar_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_buffalo": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_buffalo_alpha": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_buffalo_alpha_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_buffalo_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bulb_amethyst": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bulb_amethyst_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bulb_crimsonspore": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bulb_crimsonspore_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bulb_dripleaf": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_bulb_dripleaf_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_bulb_lilypad": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_bulb_lilypad_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_bulb_warpedfungus": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_bulb_warpedfungus_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_butterfly": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_butterfly_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_capybara": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_capybara_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_catfish": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_catfish_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_crab": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_crab_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_crocodile": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_crocodile_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_dragon_desert": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_desert_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_glacial": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_glacial_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_nether": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_nether_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_sculk": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_dragon_sculk_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_elk": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_elk_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_frog": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_frog_green": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_frog_green_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_frog_permafrost": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_frog_permafrost_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_frog_royal": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_frog_royal_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_frog_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_frost_ferret": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_frost_ferret_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_gangster_snowman": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_gangster_snowman_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_glacialcore": {
+   "Damage": 18.9,
+   "Health": 1050.0
+  },
+  "CA_Wild_glacialcore_shiny": {
+   "Damage": 18.9,
+   "Health": 1050.0
+  },
+  "CA_Wild_golem_arcane": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_arcane_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_corrupted": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_corrupted_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_magma": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_magma_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_royal": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_golem_royal_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hedgehog": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_hedgehog_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_hippogryph_common": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_common_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_crystal": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_crystal_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_fallen": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_fallen_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_royal": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_hippogryph_royal_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_horse_glacial": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_horse_glacial_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_horse_magma": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_horse_magma_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_horse_pegasus": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_horse_pegasus_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_horse_spartan": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_horse_spartan_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_horse_unicorn": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_horse_unicorn_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_ice_knight": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_ice_knight_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_jellyfish_blue": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_jellyfish_blue_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_jellyfish_green": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_jellyfish_green_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_jellyfish_pink": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_jellyfish_pink_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_jellyfish_yellow": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_jellyfish_yellow_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_kitsune_demonic": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_kitsune_demonic_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_kitsune_inferno": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_kitsune_inferno_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_kitsune_normal": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_kitsune_normal_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_lil_bird": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lil_bird_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lizard_aqua": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lizard_aqua_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lizard_lava": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lizard_lava_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob1_chicken": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob1_chicken_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob1_rabbit": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob1_rabbit_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob1_sheep": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob1_sheep_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob1_wolf": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob1_wolf_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_flowersprite": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_flowersprite_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_lakefairy": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_lakefairy_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_leaffairy": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_leaffairy_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_mushroomfairy": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob2_mushroomfairy_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob3_herbgolem": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_lostasset_mob3_herbgolem_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_lostasset_mob3_herbthief": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob3_herbthief_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob3_mossyboar": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob3_mossyboar_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_lostasset_mob3_timberpile": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_lostasset_mob3_timberpile_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_manticore_aether": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_aether_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_dusk": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_dusk_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_soul": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_soul_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_venom": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_manticore_venom_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_archer": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_archer_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_knight": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_knight_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_mage": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_mage_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_tank": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_mf_warden_tank_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_ncr_archer_skeleton": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ncr_archer_skeleton_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ncr_mage_skeleton": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_ncr_mage_skeleton_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_ncr_spear_skeleton": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ncr_spear_skeleton_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ncr_warrior_skeleton": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ncr_warrior_skeleton_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_nocsy_cat1": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat1_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat2": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat2_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat3": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat3_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat4": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat4_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat5": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat5_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat6": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat6_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_nocsy_cat_fallen": {
+   "Damage": 0.0,
+   "Health": 195.0
+  },
+  "CA_Wild_nocsy_cat_fallen_shiny": {
+   "Damage": 0.0,
+   "Health": 195.0
+  },
+  "CA_Wild_ogre_axe": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ogre_axe_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ogre_club": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ogre_club_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_ogre_hammer": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_ogre_hammer_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_owl": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_owl_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_panda_normal": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_panda_normal_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_phantom_ender": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phantom_ender_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phantom_ghost": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phantom_ghost_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_darkflame": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_darkflame_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_flame": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_flame_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_light": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_light_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_thunder": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_phoenix_thunder_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_piranha": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_piranha_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_raccoon": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_raccoon_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_raptor_nightmare": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_raptor_nightmare_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_raptor_red": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_raptor_red_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_raptor_undead": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_raptor_undead_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sabertooth_arctic": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_sabertooth_arctic_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_sabertooth_midnight": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_sabertooth_midnight_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_sabertooth_savanna": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_sabertooth_savanna_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_seahorse_blue": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_seahorse_blue_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_seahorse_green": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_seahorse_green_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_seahorse_pink": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_seahorse_pink_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_seahorse_yellow": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_seahorse_yellow_shiny": {
+   "Damage": 0.0,
+   "Health": 55.0
+  },
+  "CA_Wild_skunk": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_skunk_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_sky_serpent_jade": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_jade_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_magma": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_magma_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_solar": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_solar_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_spectral": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_sky_serpent_spectral_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_squirrel": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_squirrel_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_stag_demonic": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_demonic_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_heavenly": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_heavenly_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_rune": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_rune_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_void": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_stag_void_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_swordfish": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_swordfish_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_timber_wolf": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_timber_wolf_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_tortoise": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_tortoise_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_tusker_demonic": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_tusker_demonic_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_tusker_dreamlight": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_tusker_dreamlight_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_tusker_forest": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_tusker_forest_shiny": {
+   "Damage": 5.0,
+   "Health": 55.0
+  },
+  "CA_Wild_voxelspawns_pug": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_voxelspawns_pug_shiny": {
+   "Damage": 0.0,
+   "Health": 20.0
+  },
+  "CA_Wild_wolfhawk_dire": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_dire_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_fallen": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_fallen_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_fullmoon": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_fullmoon_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_stormcloud": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wolfhawk_stormcloud_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_ender": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_ender_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_green": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_green_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_inferno": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_inferno_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_undead": {
+   "Damage": 12.15,
+   "Health": 195.0
+  },
+  "CA_Wild_wyvern_undead_shiny": {
+   "Damage": 12.15,
+   "Health": 195.0
+  }
+ }
+}

@@ -2,8 +2,8 @@
 CHA_MINION_wolf:
   Type: WOLF
   Display: '&7무리 늑대'
-  Health: 14
-  Damage: 3
+  Health: 30
+  Damage: 4
   Options:
     PreventOtherDrops: true
     PreventRandomEquipment: true
@@ -15,8 +15,8 @@ CHA_MINION_wolf:
 CHA_MINION_skeleton:
   Type: HUSK
   Display: '&7망각의 뼈병사'
-  Health: 16
-  Damage: 3
+  Health: 30
+  Damage: 4
   Options:
     PreventOtherDrops: true
     PreventRandomEquipment: true
