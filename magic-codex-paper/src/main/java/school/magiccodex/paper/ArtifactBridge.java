@@ -57,8 +57,8 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
     private String summonItem = "item:random_artifact", shardItem = "item:artifact_shard", summonItemName = "유물함 열쇠";
     private int summonCost = 1;
     /** 등급 확정 뽑기권 (#98): 등급 번호(0 일반 ~ 3 전설) → ItemsAdder 키·표시 이름. 빈 키 = 그 등급 확정권 없음. */
-    private final String[] ticketItem = {"", "item:artifact_ticket_rare", "item:artifact_ticket_unique", "item:artifact_ticket_legendary"};
-    private final String[] ticketName = {"", "고급 확정 뽑기권", "유일 확정 뽑기권", "전설 확정 뽑기권"};
+    private final String[] ticketItem = {"item:artifact_ticket_common", "item:artifact_ticket_rare", "item:artifact_ticket_unique", "item:artifact_ticket_legendary"};
+    private final String[] ticketName = {"일반 확정 뽑기권", "고급 확정 뽑기권", "유일 확정 뽑기권", "전설 확정 뽑기권"};
     private final double[] weights = {5, 3, 1, 0.1};
     /** Grades shown on the four unpicked chests: cosmetic only, tilted toward high grades for a near-miss feel. */
     private final double[] decoyWeights = {4, 3, 2, 1};
@@ -141,9 +141,9 @@ final class ArtifactBridge implements PluginMessageListener, Listener {
         }
         if (total <= 0) throw new IllegalArgumentException("summon.weights 합이 0");
         if (decoyTotal <= 0) throw new IllegalArgumentException("summon.decoy-weights 합이 0");
-        // 등급 확정 뽑기권: summon.tickets.<등급>.item / .name. tickets 칸이 없으면 기본값(고급·유일·전설), 등급을 빼면 그 확정권 없음.
-        String[] ti = {"", "item:artifact_ticket_rare", "item:artifact_ticket_unique", "item:artifact_ticket_legendary"};
-        String[] tn = {"", "고급 확정 뽑기권", "유일 확정 뽑기권", "전설 확정 뽑기권"};
+        // 등급 확정 뽑기권: summon.tickets.<등급>.item / .name. tickets 칸이 없으면 기본값(일반·고급·유일·전설), 등급을 빼면 그 확정권 없음.
+        String[] ti = {"item:artifact_ticket_common", "item:artifact_ticket_rare", "item:artifact_ticket_unique", "item:artifact_ticket_legendary"};
+        String[] tn = {"일반 확정 뽑기권", "고급 확정 뽑기권", "유일 확정 뽑기권", "전설 확정 뽑기권"};
         var ts = sm == null ? null : sm.getConfigurationSection("tickets");
         if (ts != null) {
             Arrays.fill(ti, ""); Arrays.fill(tn, "");

@@ -13,7 +13,7 @@
   },
   {
     "path": "deployment/operating-config/MagicCodexBridge/artifacts.yml",
-    "sha256": "7205aafa54b8cd79eef550f88382138025cf883073698a24f22ca43acb7aaf45",
+    "sha256": "15f87b3323e7fd2e4ec371aebb5c8d90e35734ebca48d02df6a257660cf501d2",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },
