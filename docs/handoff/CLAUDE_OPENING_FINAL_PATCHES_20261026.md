@@ -36,7 +36,7 @@ GPT 가 이 문서 하나만 보고 빌드·배포할 수 있게 정리했다. *
 
 ## 2. 빌드할 것과 놓을 곳
 
-70044a79 뒤에 바뀐 모듈만 적었다. "서버" 칸의 학교·야생·아레나 = `C:\Chacademi\network\<school|wild|arena>\plugins\`. 튜토리얼 서버(tutorial_1·2)는 아직 없음 — 만들면 **학교와 같은 묶음**.
+70044a79 뒤에 바뀐 모듈만 적었다. "서버" 칸의 학교·야생·아레나 = `C:\Chacademi\network\<school|wild|arena>\plugins\`. 튜토리얼 서버(`tutorial`, 하나 — §48)는 아직 없음 — 만들면 **학교와 같은 묶음**.
 
 | Gradle 모듈 | 빌드 | 플러그인/모드 이름 | 놓을 곳 |
 |---|---|---|---|
@@ -301,7 +301,7 @@ python3 tools/operating_overlay.py regenerate && python3 tools/operating_overlay
 
 **다른 플러그인 연결**: `ChacaApi.audit(UUID, 종류, 설명, Map<String,String>)` (아무 스레드). MagicDiscovery·ChacademyStory 는 ChacaLink.audit 로 리플렉션 호출 (브리지 없으면 조용히 건너뜀).
 
-**배치**: MagicCodexBridge·MagicDiscovery·ChacademyStory·Kyudichi jar 다시 빌드 → 학교·야생·아레나·튜토리얼 전부. 서버마다 `audit.yml server-name` 을 `school`/`wild1`/`wild2`/`arena1`/`tutorial_1` … 로 (또는 quests.yml server-id 가 이미 다르면 비워 둠). `database.properties` 가 같은 MariaDB 여야 한 표로 모임 (아니면 서버별 audit.db).
+**배치**: MagicCodexBridge·MagicDiscovery·ChacademyStory·Kyudichi jar 다시 빌드 → 학교·야생·아레나·튜토리얼 전부. 서버마다 `audit.yml server-name` 을 `school`/`wild1`/`wild2`/`arena1`/`tutorial` … 로 (또는 quests.yml server-id 가 이미 다르면 비워 둠). `database.properties` 가 같은 MariaDB 여야 한 표로 모임 (아니면 서버별 audit.db).
 
 연결 못 한 것: 유저 간 거래·유저 우편 보내기는 기능이 없어 해당 없음 (우편은 시스템·관리자 발송뿐 — 관리자 발송은 '관리자' 종류로 남음). 퀘스트 보상 명령어·스토리 시작 명령 안에서 다른 플러그인이 주는 것(아이템 등)은 그 명령 문자열만 남음. ChacaNPC 쪽 독자 동작은 호감도가 MagicCodex 로 오므로 그쪽에서 남음. MCPets 자체 GUI 로 펫 꺼내기/넣기는 남기지 않음.
 
@@ -388,7 +388,7 @@ Essentials 비슷한 한글 명령. 새 파일 `ConvenienceCommands.java`(등록
 
 | `codex_server_status` 열 | 형식 | 뜻 |
 |---|---|---|
-| server_id (PK) | VARCHAR(48) | school·wild·arena·tutorial_1… |
+| server_id (PK) | VARCHAR(48) | school·wild·arena·tutorial… |
 | state | VARCHAR(12) | running / stopped |
 | updated_at · started_at | BIGINT | epoch ms |
 | source | VARCHAR(8) | spark / bukkit |
@@ -1494,3 +1494,27 @@ spells:
 - [ ] 힌트권 3성: 조건 문구 + "현재 ○○님은 N회 달성했어요." 숫자가 `/유저관리 <닉> 마법조건 진행 보기` 값과 맞는지 (블록 조건은 cm ÷ 100).
 - [ ] 힌트권 1·2성 = 파일 문장. 파일에서 그 마법을 지우고 새로고침 → 예전 자동 문장.
 - [ ] 깨달음의 빛 = 2성 문장. NPC(호감도 친한 사이 이상)에게 마법 물어보기 → 재료 없는 힌트도 2성 문장 내용으로 돌려 말하는지.
+
+## 48. 튜토리얼 서버 하나 (tutorial) (2026-10-26, 오너)
+
+**오너**: 튜토리얼 서버는 **하나**, Velocity 서버 이름·server-id 모두 `tutorial` (예전 두 대 계획 취소). 튜토리얼 서버 = **시작의 섬** (1장 시작, 첫 접속이 여기로). 학교 가는 배를 타면 컷신이 나오고, 그 뒤로는 `school` 서버.
+
+**바꾼 것**
+- Velocity `TutorialRouter` (chacademi-party-velocity): `tutorial.properties` 를 처음 만들 때 기본 `tutorial-servers=tutorial`. 1개라 분산은 꺼지고(로그 "튜토리얼 서버가 1개라 분산하지 않습니다 (tutorial)") 접속은 velocity.toml 이 정한 그대로. 코드 동작은 그대로 — 나중에 2개 이상 적으면 예전처럼 인원 분산. 테스트는 이름만 바꾸고 1개 목록 확인 추가.
+- ChacaPortrait: `auto.server-ids` 기본 `[school, tutorial]` (config.yml·코드 기본값·`PortraitSettingsTest`).
+- `ServerHeartbeatTest` 폴더 이름 예시 `tutorial`. 대시보드 `ops-dashboard.properties.example` 튜토리얼 주석 블록 하나 (`server.tutorial.*`, 포트 25569·RCON 25579).
+- 문서의 두 대 이름 표기 정리 (PREP_20261025, PREP_REVIEW 결정 줄, OPS_DASHBOARD, 이 문서 §표·audit·하트비트 표).
+
+**넣지 않은 것 (Claude 판단)**: MagicCodexBridge 설정의 `servers:` 목록에 tutorial 을 넣지 않음.
+- `chunk-claims.yml` (야생만) · `inventory-save.yml` (인벤세이브·사망 시 배낭 드롭) · `combat-lock.yml` · `house-board.yml` (학교) — 야생·학교 전용 기능이라 시작의 섬에는 안 켬.
+- `donation.yml servers: [school, wild, wild2]` — 튜토리얼에서 받을 이유가 분명하지 않아 뺌 (튜토리얼 중 후원은 보상 없이 무시). 받게 하려면 `tutorial` 추가.
+- `travel.yml` — 지도 이동 목록에 넣지 않음 (튜토리얼 → 학교는 배·컷신으로만). 튜토리얼 서버의 travel.yml 은 `server-id: tutorial` 만.
+- 스토리 진행은 공유 DB 라 서버 목록 설정 필요 없음.
+
+**손으로 할 것 (서버)**
+- Velocity `velocity.toml` `[servers]` 에 `tutorial = "127.0.0.1:<포트>"`, 첫 접속 `try = ["tutorial", …]` (또는 forced-hosts). 예전 두 대 줄이 있으면 지우기.
+- 프록시 `plugins/<파티>/tutorial.properties` 가 이미 있으면 jar 가 안 덮음 → `tutorial-servers=tutorial` 로 고치고 프록시 재시작 (`tutorial-assigned.properties` 는 지워도 됨).
+- 튜토리얼 서버 `plugins/ChacaPortrait/config.yml` `server-id: tutorial`, 학교·튜토리얼 모두 `auto.server-ids: [school, tutorial]` (운영 파일은 jar 가 안 덮음).
+- 대시보드를 쓰면 `servers=` 에 `tutorial` 추가 + 주석 풀기, MagicCodexBridge `server-heartbeat.yml` server-id `tutorial`(또는 폴더 이름 tutorial).
+
+**검증**: 바뀐 Java 문법 검사 통과. GPT 빌드 때 `TutorialRouterTest`·`PortraitSettingsTest`·`ServerHeartbeatTest` 확인.

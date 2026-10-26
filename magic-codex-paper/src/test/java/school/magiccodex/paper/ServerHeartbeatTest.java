@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class ServerHeartbeatTest {
     @Test void serverIdFallsBackToFolderName() {
         assertEquals("school", ServerHeartbeat.serverId("", Path.of("C:/Chacademi/network/school")));
-        assertEquals("tutorial_1", ServerHeartbeat.serverId(" ", Path.of("/srv/tutorial_1/")));
+        assertEquals("tutorial", ServerHeartbeat.serverId(" ", Path.of("/srv/tutorial/")));
         assertEquals("wild", ServerHeartbeat.serverId("Wild", Path.of("/x/school")));
         assertEquals("a_b", ServerHeartbeat.serverId("a b", null));
         assertEquals("server", ServerHeartbeat.serverId("", null));

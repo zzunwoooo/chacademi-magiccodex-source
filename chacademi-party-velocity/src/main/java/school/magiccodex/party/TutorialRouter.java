@@ -14,7 +14,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * 튜토리얼 서버 분산 (2026-10-25, 오픈 메모 #3). tutorial.properties:
  * <pre>
- *   tutorial-servers = tutorial_1,tutorial_2 Velocity 서버 이름 (쉼표, 2026-10-25 오너 확정 이름이 기본값). 비우거나 1개면 아무것도 바꾸지 않는다 (예전과 같음).
+ *   tutorial-servers = tutorial            Velocity 서버 이름 (쉼표). 2026-10-26 오너: 튜토리얼 서버(시작의 섬)는 하나 → 기본 tutorial 1개.
+ *                                          비우거나 1개면 아무것도 바꾸지 않는다 (분산 꺼짐, 접속은 velocity.toml 그대로). 나중에 늘리면 2개 이상 적기.
  *   balance-tolerance = 0                   처음 가려던 튜토리얼 서버가 가장 적은 곳보다 이 인원 넘게 많을 때만 옮긴다.
  *   sticky = true                           한 번 배정된 튜토리얼 서버로 계속 보낸다 (그 서버가 꺼져 있으면 다른 곳).
  * </pre>
@@ -47,8 +48,8 @@ final class TutorialRouter {
         try {
             if (Files.exists(path)) try (var r = Files.newBufferedReader(path)) { p.load(r); }
             else {
-                p.setProperty("tutorial-servers", "tutorial_1,tutorial_2"); p.setProperty("balance-tolerance", "0"); p.setProperty("sticky", "true");
-                try (var w = Files.newBufferedWriter(path)) { p.store(w, "튜토리얼 서버 분산: tutorial-servers = Velocity 서버 이름 2개 이상 (쉼표). 비우거나 1개면 꺼짐. 고친 뒤 프록시 재시작."); }
+                p.setProperty("tutorial-servers", "tutorial"); p.setProperty("balance-tolerance", "0"); p.setProperty("sticky", "true");
+                try (var w = Files.newBufferedWriter(path)) { p.store(w, "튜토리얼 서버 분산: tutorial-servers = Velocity 서버 이름 (쉼표). 1개(기본 tutorial)·빈 값이면 분산 꺼짐, 2개 이상이면 인원 분산. 고친 뒤 프록시 재시작."); }
             }
         } catch (IOException e) { log.warn("tutorial.properties 읽기 실패 — 튜토리얼 분산 꺼짐", e); return; }
         servers = parseList(p.getProperty("tutorial-servers", ""));
