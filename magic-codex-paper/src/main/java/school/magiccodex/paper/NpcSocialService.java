@@ -188,6 +188,8 @@ final class NpcSocialService implements Listener, AutoCloseable {
     private void titleHook(UUID player, Map<String, Integer> scores) {
         var titles = plugin.titleService();
         if (titles != null && Bukkit.isPrimaryThread()) titles.affinity(player, scores);
+        // 마법 발견 v2 축복의 리본: 아무 NPC와 호감도 30 (접속 때 읽은 값도 포함)
+        if (Bukkit.isPrimaryThread() && scores.values().stream().anyMatch(v -> v != null && v >= 30)) DiscoveryLink.signal(player, "affinity.any_30", 1);
     }
 
     private void load(UUID player) {

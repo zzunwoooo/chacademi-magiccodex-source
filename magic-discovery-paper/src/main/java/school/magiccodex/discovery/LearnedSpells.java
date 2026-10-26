@@ -35,11 +35,11 @@ final class LearnedSpells {
 
     boolean meets(Definitions.Spell spell, Map<String, Double> progress, boolean verifiedAction) {
         if (!retrying(spell.id())) return Definitions.meets(spell, progress);
-        boolean hasCounter = spell.requirements().keySet().stream().anyMatch(key -> !key.startsWith("state."));
+        boolean hasCounter = spell.requirements().keySet().stream().anyMatch(key -> !ConditionRules.stateLike(key));
         if (!spell.requirements().entrySet().stream().allMatch(entry -> {
             String key = entry.getKey();
             double value = progress.getOrDefault(key, 0d);
-            return (key.startsWith("state.") ? value : value - baseline(spell.id(), key)) >= entry.getValue();
+            return (ConditionRules.stateLike(key) ? value : value - baseline(spell.id(), key)) >= entry.getValue();
         })) return false;
         // Merely republishing the same state after reconnect must not undo an admin reset.
         return hasCounter || verifiedAction || spell.requirements().isEmpty() || spell.requirements().keySet().stream()

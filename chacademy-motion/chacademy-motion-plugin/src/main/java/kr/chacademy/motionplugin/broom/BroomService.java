@@ -74,6 +74,8 @@ public final class BroomService implements Listener, PluginMessageListener {
         final CarrierVelocity carrier = new CarrierVelocity();
         Location last;
         int secondTicks;
+        /** 마법 발견 v2: 아직 통계로 안 보낸 비행 거리 (블록) */
+        double flown;
         /** 큐디치 매달림 중 (늦게 시야에 들어온 사람에게도 매달린 자세를 보여 주려고 기억) */
         boolean hanging;
         /** 속도 검사 여유 배율 (아티팩트: 폭풍 날개 최고 속도, 빗자루 끈·별의 잔향 가속) */
@@ -399,6 +401,7 @@ public final class BroomService implements Listener, PluginMessageListener {
             }
             if (reason == BroomCodec.STATE_FALL) {
                 catches.put(id, new PendingCatch(s.type, s.remaining, s.prevAllowFlight, tick + catchWindow));
+                kr.chacademy.motionplugin.ChacaLink.stat(id, "빗자루낙마", 1); // 서버 통계 + 마법 발견 v2 (순풍)
             }
         }
         if (debug) plugin.getLogger().info(p.getName() + " 빗자루 하차 (reason " + reason + ")");
@@ -443,7 +446,9 @@ public final class BroomService implements Listener, PluginMessageListener {
             if (s.last != null && s.last.getWorld() == now.getWorld()) {
                 s.carrier.sample(now.getX() - s.last.getX(), now.getY() - s.last.getY(), now.getZ() - s.last.getZ());
                 double cap = s.type.maxSpeed() * s.guardMul * (s.speedUntil >= tick ? s.speedMult : 1) * 1.45 + 0.6; // 부스트·급강하·구르기 여유 (아티팩트 여유 + 속도 버프)
-                if (s.guard.tick(s.last.distance(now), cap)) {
+                double step = s.last.distance(now);
+                if (step < 10) s.flown += step;
+                if (s.guard.tick(step, cap)) {
                     plugin.getLogger().warning(p.getName() + " 빗자루 속도 상한 초과로 비행 종료 (" + s.type.id() + ")");
                     stop(s.id, BroomCodec.STATE_NORMAL, false);
                 sendList(p);
@@ -458,6 +463,8 @@ public final class BroomService implements Listener, PluginMessageListener {
             if (++s.secondTicks >= 20) {
                 s.secondTicks = 0;
                 store.addSecond(s.id);
+                int whole = (int) s.flown;
+                if (whole > 0) { s.flown -= whole; kr.chacademy.motionplugin.ChacaLink.stat(s.id, "빗자루비행", whole); } // 서버 통계 + 마법 발견 v2 (빗자루 차원이동·불꽃 추진)
             }
             if (s.limited && --s.remaining <= 0) {
                 stop(s.id, BroomCodec.STATE_TIMEOUT, false);

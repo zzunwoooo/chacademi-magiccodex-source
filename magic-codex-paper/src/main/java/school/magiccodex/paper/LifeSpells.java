@@ -430,8 +430,8 @@ final class LifeSpells implements Listener, AutoCloseable {
      * 미구현 조건(Definitions.PENDING). 번호를 다시 매겨도 id 는 그대로라 여기 목록은 가중치 10 이 바뀔 때만 고친다.
      */
     static final Set<String> NO_HINT = Set.of(
-            "abyss_gate", "aurora_veil", "crimson_breath", "crossfire", "eclipse_eye", "flame_emperor", "heaven_cyclone", "leviathan_rise", "titan_stride",
-            "crimson_heart", "feather_step", "wind_vault", "handful_of_snow", "wet_footprints", "pressure_weight", "cold_storage");
+            "abyss_gate", "aurora_veil", "crimson_breath", "crossfire", "eclipse_eye", "flame_emperor", "heaven_cyclone", "leviathan_rise", "titan_stride");
+    // 2026-10-26 발견 조건 v2: 홍련의 심장 판정 구현(PENDING 비움), 300종 밖 옛 마법(feather_step·wind_vault 등)은 discoveries.yml 에서 삭제
 
     private record Hint(String spell, String permission, String condition) {}
     private List<Hint> hints = List.of();

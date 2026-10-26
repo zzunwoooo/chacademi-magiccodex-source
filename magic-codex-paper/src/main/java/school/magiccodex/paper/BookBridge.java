@@ -271,6 +271,8 @@ final class BookBridge implements Listener, PluginMessageListener, AutoCloseable
             catch (RuntimeException | LinkageError error) { failed++; plugin.getLogger().warning("책 " + book.id() + " 명령 오류: " + line + " → " + error); }
         }
         plugin.getLogger().info("책 " + book.id() + ": " + p.getName() + " 님 읽음 → 명령 " + book.commands().size() + "개 실행" + (failed > 0 ? " (실패 " + failed + ")" : ""));
+        // 마법 발견 v2 잔향 읽기: 명령이 있는 책(= 마법이 적힌 책)을 처음 읽은 횟수. 수업 책(lesson_*)은 빼고 센다.
+        if (!book.id().startsWith("lesson_")) DiscoveryLink.signal(p.getUniqueId(), "book.read", 1);
     }
 
     @EventHandler public void onQuit(PlayerQuitEvent e) {

@@ -683,6 +683,7 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
                     else returnFailed(id, "이동이 막혔어요");
                     if (!p.isOnline()) return;
                     if (done) { p.setFallDistance(0); if (!isSpawn(t.point())) lastTravel.put(id, System.currentTimeMillis()); arrivedEffect(p); }
+                    if (done && m != null && m.charged()) AuditStats.add(id, "개인지점이동", 1); // 공간 도약 개인 지점 이동 (마법 발견 v2 섬광 도약)
                     result(p, op, done ? TravelProtocol.STAGE_DONE : TravelProtocol.STAGE_FAILED, done ? "도착했어요" : "이동이 막혔어요 (이 구역에서는 이동할 수 없어요)");
                 }));
     }

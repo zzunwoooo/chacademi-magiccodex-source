@@ -17,7 +17,7 @@ import school.magiccodex.protocol.DiscoveryProtocol;
 import school.magiccodex.database.DatabaseSettings;
 
 public final class MagicDiscovery extends JavaPlugin implements Listener,PluginMessageListener {
-    Definitions definitions;DiscoveryStore store;NativeConditions nativeConditions;ExpansionConditions expansionConditions;TitleRewards rewards;
+    Definitions definitions;DiscoveryStore store;NativeConditions nativeConditions;ExpansionConditions expansionConditions;LifeConditions lifeConditions;TitleRewards rewards;
     final Map<UUID,Session> sessions=new HashMap<>();private DiscoveryService api;
     private record LearnedKey(UUID player,String spell){}
     private final Map<LearnedKey,Long> learnedVersions=new HashMap<>(),adminPending=new HashMap<>();
@@ -32,6 +32,8 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         // inFlight: 지금 저장 중인 키(퇴장 시 결과를 못 받으므로 다시 쓴다). circleTouched: 로드 뒤 이 서버에서 state.circle을 받았는지.
         Set<String> inFlight=Set.of();boolean circleTouched;
         PermissionAttachment attachment;boolean loaded,saving,noticeReady;long nextHello;int acks;long ackWindow;String learnedSignature="";
+        /** 배운 마법 수 (learned.<원소>) 캐시: 30초마다 또는 새로 배운 뒤에만 다시 센다 (2026-10-26 v2). */
+        Map<String,Double> counts=Map.of();int countsTick=Integer.MIN_VALUE/2;
         Session(UUID id){this.id=id;}
     }
     static void main(){if(!Bukkit.isPrimaryThread())throw new IllegalStateException("Use server thread");}
@@ -45,9 +47,9 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             // 설정 파일이 없으면 조용히 SQLite가 되므로 시작할 때 한 줄로 남긴다.
             getLogger().info("DB 설정 파일 "+databaseFile.toAbsolutePath()+" : "+(java.nio.file.Files.exists(databaseFile)?"있음":"없음 → SQLite 기본값")+", 저장 모드="+(settings.mariaDb()?"MariaDB":"SQLite(discoveries.db)"));
             store=new DiscoveryStore(getDataFolder().toPath().resolve("discoveries.db"),settings);crossServer=settings.mariaDb();
-            refreshAdminCatalog();rewards=new TitleRewards(this);nativeConditions=new NativeConditions(this);expansionConditions=new ExpansionConditions(this);api=new DiscoveryService(this);
+            refreshAdminCatalog();rewards=new TitleRewards(this);nativeConditions=new NativeConditions(this);expansionConditions=new ExpansionConditions(this);lifeConditions=new LifeConditions(this);api=new DiscoveryService(this);
             Bukkit.getServicesManager().register(DiscoveryService.class,api,this,ServicePriority.Normal);
-            Bukkit.getPluginManager().registerEvents(this,this);Bukkit.getPluginManager().registerEvents(nativeConditions,this);Bukkit.getPluginManager().registerEvents(expansionConditions,this);
+            Bukkit.getPluginManager().registerEvents(this,this);Bukkit.getPluginManager().registerEvents(nativeConditions,this);Bukkit.getPluginManager().registerEvents(expansionConditions,this);Bukkit.getPluginManager().registerEvents(lifeConditions,this);
             Bukkit.getMessenger().registerIncomingPluginChannel(this,DiscoveryProtocol.REQUEST,this);Bukkit.getMessenger().registerOutgoingPluginChannel(this,DiscoveryProtocol.RESPONSE);
             if(ChacaLink.ready()){try{new DiscoveryCommands(this).register();}catch(RuntimeException e){getLogger().log(java.util.logging.Level.WARNING,"명령어 허브에 마법 발견 명령을 붙이지 못했습니다",e);}}
             else getLogger().warning("MagicCodexBridge 명령어 허브가 없어 마법 발견 관리·테스트 명령을 등록하지 않았습니다 (발견 판정은 그대로 동작).");
@@ -125,7 +127,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             if(s.progress.getOrDefault(key,0d)!=value){s.progress.put(key,value);changes.put(Definitions.conditionPermission(id),value>0);}
         }
         s.learnedSignature=skipped?null:data.learnedSignature();
-        if(!changes.isEmpty()){syncPermissions(s.id,changes);checkMeta(s);}
+        if(!changes.isEmpty()){s.countsTick=Integer.MIN_VALUE/2;syncPermissions(s.id,changes);checkMeta(s);}
     }
     /** 1분마다: 오래된 버전 기록 정리 + (MariaDB) 접속자 전체의 습득 상태 요약값을 한 번에 조회해 달라진 사람만 다시 읽는다. */
     private void minute(){
@@ -149,6 +151,19 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         // 연결 장애(SQLException)는 원인 한 줄만, 그 밖의 예외는 버그일 수 있으므로 스택까지 남긴다.
         if(cause instanceof java.sql.SQLException)getLogger().warning(line+": "+cause);else getLogger().log(java.util.logging.Level.WARNING,line,cause);
         lastStorageLog=now==0?1:now;suppressedStorageLogs=0;
+    }
+    /** 그 키를 세는 (수동 목록이 아닌) 마법이 있는지. 무거운 확인 전에 먼저 본다. */
+    boolean counting(String key){return definitions.index.containsKey(key);}
+    /** 판정에 쓸 값: learned.* 조건이 있는 마법이면 진행도에 배운 마법 수를 더한 사본, 아니면 진행도 그대로. */
+    private Map<String,Double> values(Player p,Session s,Definitions.Spell spell){
+        if(!definitions.hasCounts(spell))return s.progress;
+        int now=Bukkit.getCurrentTick();
+        if(now-s.countsTick>=600){
+            var categories=new HashMap<String,String>();for(var sp:definitions.spells.values())categories.put(sp.id(),sp.category());
+            var perms=new HashMap<String,String>();for(var sp:definitions.spells.values())perms.put(sp.id(),sp.permission());
+            s.counts=Map.copyOf(ConditionRules.learnedCounts(categories,id->p.hasPermission(perms.get(id))));s.countsTick=now;
+        }
+        var view=new HashMap<>(s.progress);view.putAll(s.counts);return view;
     }
     Session session(Player p){var s=sessions.get(p.getUniqueId());return s!=null&&s.loaded?s:null;}
     boolean eligible(Player p){return p!=null&&p.isOnline()&&!p.isDead()&&(p.getGameMode()==GameMode.SURVIVAL||p.getGameMode()==GameMode.ADVENTURE);}
@@ -174,7 +189,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         store.setLearned(id,spellId,learned,required,progress).whenComplete((baseline,error)->later(()->{
             if(error!=null){failure(error);recoverAdminFailure(key,version,spell,completion);return;}
             if(!Objects.equals(learnedVersions.get(key),version)){completion.accept("더 최근의 관리자 변경이 적용되어 이 요청은 대체되었습니다.");return;}
-            adminPending.remove(key,version);var session=sessions.get(id);if(session!=null){session.learned.set(spellId,learned,baseline);var player=Bukkit.getPlayer(id);if(!learned&&session.loaded&&player!=null)nativeConditions.restart(player,spellId);}
+            adminPending.remove(key,version);var session=sessions.get(id);if(session!=null){session.learned.set(spellId,learned,baseline);session.countsTick=Integer.MIN_VALUE/2;var player=Bukkit.getPlayer(id);if(!learned&&session.loaded&&player!=null)nativeConditions.restart(player,spellId);}
             syncPermission(id,spell.permission(),learned).whenComplete((ok,permissionError)->later(()->{
                 if(permissionError!=null){failure(permissionError);completion.accept("습득 상태는 저장했지만 권한 동기화에 실패했습니다. 재접속하거나 다시 시도해 주세요.");return;}
                 if(!Objects.equals(learnedVersions.get(key),version)){completion.accept("더 최근의 관리자 변경이 적용되어 이 요청은 대체되었습니다.");return;}
@@ -216,7 +231,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             adminPending.remove(key,version);
             if(error!=null){storageFailure("수동 조건 저장 실패",error);done.accept("저장 실패: 조건 지급으로 처리하지 않았습니다. 다시 시도하세요.");return;}
             var current=sessions.get(id);var online=Bukkit.getPlayer(id);
-            if(current!=null){current.progress.put(progressKey,grant?1d:0d);if(grant){if(award.acquisition()!=null)current.acquired.putIfAbsent(spellId,award.acquisition());current.learned.set(spellId,true,Map.of());}else if(reset)current.learned.set(spellId,false,Map.of());}
+            if(current!=null){current.countsTick=Integer.MIN_VALUE/2;current.progress.put(progressKey,grant?1d:0d);if(grant){if(award.acquisition()!=null)current.acquired.putIfAbsent(spellId,award.acquisition());current.learned.set(spellId,true,Map.of());}else if(reset)current.learned.set(spellId,false,Map.of());}
             var nodes=new LinkedHashMap<String,Boolean>();nodes.put(node,grant);if(grant||reset)nodes.put(spell.permission(),grant);
             syncPermissions(id,nodes).whenComplete((ignored,permissionError)->later(()->{
                 if(permissionError!=null){done.accept("DB 저장 완료, 권한 동기화 실패. 재접속 또는 동일 명령으로 복구하세요.");return;}
@@ -235,7 +250,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         if(definitions.index.get(key).stream().noneMatch(sp->needed(p,sp.id())))return true;
         double cap=definitions.index.get(key).stream().mapToDouble(sp->sp.requirements().get(key)+s.learned.baseline(sp.id(),key)).max().orElse(1e9);
         double before=s.progress.getOrDefault(key,0d),after=Math.max(before,Math.min(cap,before+amount));s.progress.put(key,after);if(after!=before)s.dirtyKeys.add(key);
-        for(var spell:definitions.index.get(key))if(s.learned.meets(spell,s.progress)&&spell.prerequisites().stream().allMatch(p::hasPermission)){
+        for(var spell:definitions.index.get(key))if(s.learned.meets(spell,values(p,s,spell))&&spell.prerequisites().stream().allMatch(p::hasPermission)){
             // 서버 통계 #96: 조건은 채웠지만 확률(chance)에서 떨어진 시도 = "발견시도실패:<마법>", 통과 = acquire
             if(ThreadLocalRandom.current().nextDouble()<spell.chance())acquire(p,s,spell);else if(needed(p,spell.id()))ChacaLink.stat(id,"발견시도실패:"+spell.id(),1);}
         return true;
@@ -245,11 +260,13 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         main();if(!Set.of("state.circle","state.temperature","state.flight_prohibited","state.mana_maximum","state.friends","state.travel_waypoints").contains(key)||!Double.isFinite(value)||Math.abs(value)>1e6)return false;
         if(key.equals("state.circle")&&(value<1||value>9||value!=Math.floor(value)))return false;
         var s=sessions.get(id);if(s==null||!s.loaded)return false;Double previous=s.progress.put(key,value);if(key.equals("state.circle")){s.circleTouched=true;if(!Objects.equals(previous,value))s.dirtyKeys.add(key);}var p=Bukkit.getPlayer(id);
-        if(p!=null)for(var spell:definitions.index.getOrDefault(key,List.of()))if(s.learned.meets(spell,s.progress,verifiedAction))acquire(p,s,spell);return true;
+        if(p!=null)for(var spell:definitions.index.getOrDefault(key,List.of()))if(s.learned.meets(spell,values(p,s,spell),verifiedAction))acquire(p,s,spell);return true;
     }
     public void cast(UUID id,String spell,double spent){
         main();var s=sessions.get(id);var p=Bukkit.getPlayer(id);if(s==null||!s.loaded||!eligible(p)||spell==null||!spell.matches("[a-z0-9_-]{1,64}")||!Double.isFinite(spent)||spent<0)return;
         signal(id,"cast."+spell,1);if(spent>0)signal(id,"mana."+spell,spent);
+        // 2026-10-26 v2 홍염 나선 "화염 마법 300번 사용": 성공한 시전 1번 = 그 마법 원소(discoveries.yml category) 1번
+        var known=definitions.spells.get(spell);if(known!=null&&ConditionRules.ELEMENTS.contains(known.category()))signal(id,"cast.element."+known.category(),1);
         if(spell.equals("pressure_press")&&s.progress.getOrDefault("state.circle",0d)>=6)signal(id,"cast.pressure_press.circle6",1);
         if(spell.equals("flight")&&s.progress.getOrDefault("state.flight_prohibited",0d)>0)signal(id,"cast.flight.prohibited",1);
         if(spell.equals("light_leap")&&s.progress.getOrDefault("state.temperature",-100d)>=30)nativeConditions.armHotRotation(p);
@@ -260,6 +277,8 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
     private void checkMeta(Session s){checkMeta(s,false);}
     private void checkMeta(Session s,boolean verifiedAction){var p=Bukkit.getPlayer(s.id);if(!eligible(p))return;
         for(var spell:definitions.meta)if(!spell.prerequisites().isEmpty()&&s.learned.canCheckMeta(spell,verifiedAction)&&spell.prerequisites().stream().allMatch(p::hasPermission))acquire(p,s,spell);
+        // 2026-10-26 v2: "<원소> 마법 N종 습득" (learned.*). 아직 필요한 사람만 세고, 관리자가 잊게 한 마법은 실제 행동(시전·습득) 뒤에만 다시 본다.
+        for(var spell:definitions.counted)if(s.learned.canCheckMeta(spell,verifiedAction)&&needed(p,spell.id())&&spell.prerequisites().stream().allMatch(p::hasPermission)&&s.learned.meets(spell,values(p,s,spell),verifiedAction))acquire(p,s,spell);
     }
     private void acquire(Player p,Session s,Definitions.Spell spell){
         if(!needed(p,spell.id())||!spell.prerequisites().stream().allMatch(p::hasPermission))return;s.pending.add(spell.id());var key=new LearnedKey(s.id,spell.id());long version=learnedVersions.getOrDefault(key,0L);
@@ -267,7 +286,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             s.pending.remove(spell.id());if(error!=null){storageFailure("마법 획득 저장 실패 — 획득 처리하지 않았고 조건을 다시 충족하면 재시도합니다",error);return;}if(sessions.get(s.id)!=s)return;
             s.acquired.putIfAbsent(spell.id(),award.acquisition());
             if(learnedVersions.getOrDefault(key,0L)!=version)return;
-            s.learned.set(spell.id(),true,Map.of());syncPermission(s.id,spell.permission(),true);
+            s.learned.set(spell.id(),true,Map.of());syncPermission(s.id,spell.permission(),true);s.countsTick=Integer.MIN_VALUE/2;
             audit(s.id,(award.created()?"마법 발견 · ":"마법 다시 습득 · ")+spell.name(),"마법",spell.id(),"이름",spell.name(),"경로",award.created()?"발견":"다시습득","조건",String.join(",",spell.requirements().keySet()));
             if(award.created()){ChacaLink.stat(s.id,"마법발견",1);if(s.noticeReady)sendPending(p,s);else ChacaLink.notify(p,"shop","discovery:"+spell.id(),"새로운 마법 발견",spell.name(),0);rewards.claim(p,s,false);discoveryFirst(s.id,spell.id());}
             else ChacaLink.notify(p,"system","discovery-relearn:"+spell.id(),"마법을 다시 습득했어요",spell.name(),0);
@@ -341,7 +360,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
     }
     @EventHandler public void join(PlayerJoinEvent e){load(e.getPlayer());}
     @EventHandler public void respawn(PlayerRespawnEvent e){later(()->{var p=e.getPlayer();var s=session(p);if(s!=null)rewards.claim(p,s,false);});}
-    @EventHandler public void quit(PlayerQuitEvent e){var s=sessions.remove(e.getPlayer().getUniqueId());if(s!=null&&s.loaded)finalSave(s.id,takeFinal(s),0);nativeConditions.quit(e.getPlayer());if(expansionConditions!=null)expansionConditions.quit(e.getPlayer());}
+    @EventHandler public void quit(PlayerQuitEvent e){var s=sessions.remove(e.getPlayer().getUniqueId());if(s!=null&&s.loaded)finalSave(s.id,takeFinal(s),0);nativeConditions.quit(e.getPlayer());if(expansionConditions!=null)expansionConditions.quit(e.getPlayer());if(lifeConditions!=null)lifeConditions.quit(e.getPlayer());}
     /** 기존 /칭호수령: 받을 수 있는 마법 발견 칭호 아이템을 지급한다. MagicCodexBridge의 /칭호 수령이 리플렉션으로 부른다(메인 스레드). */
     public void claimTitles(Player p){
         if(p==null||!p.isOnline())return;
@@ -394,7 +413,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
             if(error!=null){failed.accept(error);return;}
             var current=sessions.get(id);var p=Bukkit.getPlayer(id);
             if(current!=null&&current.loaded&&p!=null)for(var spell:definitions.index.getOrDefault(key,List.of()))
-                if(current.learned.meets(spell,current.progress)&&spell.prerequisites().stream().allMatch(p::hasPermission))acquire(p,current,spell);
+                if(current.learned.meets(spell,values(p,current,spell))&&spell.prerequisites().stream().allMatch(p::hasPermission))acquire(p,current,spell);
             done.accept(null);
         }));
     }
@@ -408,7 +427,7 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
     List<String> eventKeys(){return definitions.index.keySet().stream().filter(key->!key.startsWith("state.")).sorted().toList();}
 
     @Override public void onDisable(){
-        if(nativeConditions!=null)nativeConditions.close();if(expansionConditions!=null)expansionConditions.close();Bukkit.getScheduler().cancelTasks(this);Bukkit.getServicesManager().unregisterAll(this);
+        if(nativeConditions!=null)nativeConditions.close();if(expansionConditions!=null)expansionConditions.close();if(lifeConditions!=null)lifeConditions.close();Bukkit.getScheduler().cancelTasks(this);Bukkit.getServicesManager().unregisterAll(this);
         for(var s:sessions.values()){if(store!=null&&s.loaded)store.save(s.id,takeFinal(s)).exceptionally(error->{storageFailure("종료 시 진행도 저장 실패",error);return null;});if(s.attachment!=null){var p=Bukkit.getPlayer(s.id);if(p!=null)p.removeAttachment(s.attachment);}}
         sessions.clear();if(store!=null)try{store.close();}catch(Exception e){failure(e);}
     }
