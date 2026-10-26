@@ -138,3 +138,4 @@ buttons:
 | — | 전투 스펙·장신구 강화 | 마법봉 수습 24·마나 100/5·바닐라 방어가 마법 피해 81~90% 감소·PvP 원킬 | 오너 승인 제안 적용 + 장신구 강화, 마나 회복 8·펫 도감 20 유지 ([FINAL_PATCHES §34](CLAUDE_OPENING_FINAL_PATCHES_20261026.md), [combat-spec](../plans/combat-spec.md)) | 완료 (빌드 전, 오너 검수 대기) |
 | — | 뽑기 상자(API 상자)·운영 GUI | 없음 | 오너 납품 UI + `/상자관리 생성·관리`, yml 저장, 아공간 포함 자동 지급, 기존 우편 지급 경로 통일 | 완료 (빌드 전) |
 | — | 일반 확정권·재구성 주문서·미리보기·재구성 멈춤 | 확정권 고급~전설만, 재구성은 관리자 크레딧뿐, 미리보기 빈칸, 만료 뒤 요청 무시로 창 멈춤 | `item:artifact_ticket_common` 추가, 주문서 I~III(`core_scroll_red/blue/purple`) 인벤 차감(크레딧 먼저), 재구성·강화 창 아이템 표시, 만료·유실 요청 재응답 ([FINAL_PATCHES §37](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 완료 (빌드 전) |
+| — | 장신구 재구성 | 재구성은 마법봉만 | 주 손 장신구(반지·귀걸이·목걸이)도 강화 초기화·실패 복구, 성향 변경은 장신구 기준 표시, 같은 주문서·창, 프로토콜 kind(마법봉 바이트 그대로) ([FINAL_PATCHES §37 추가](CLAUDE_OPENING_FINAL_PATCHES_20261026.md)) | 완료 (빌드 전) |
