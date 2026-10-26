@@ -161,7 +161,8 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
 
     private boolean visible(Element e) {
         return switch (e.kind()) {
-            case MAIN, HOTBAR -> !lockedView();
+            case MAIN -> !lockedView();
+            case HOTBAR -> true;   // 핫바는 잠긴 쪽에서도 그대로 (2026-10-26 오너)
             case INPUT, RESULT -> GalaxyBagLayout.panelInteractive(panel);
         };
     }
@@ -336,8 +337,14 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
         text.beginFrame();
         try {
             super.render(c, mouseX, mouseY, delta);
+            // 2026-10-26 오너 제보 "아이템에 마우스를 올려도 툴팁이 안 보인다": 바닐라 HandledScreen#render 는 툴팁을 그리지 않고
+            // 각 화면(InventoryScreen 등)이 super.render 뒤에 drawMouseoverTooltip 을 직접 부른다. 이 화면은 처음(f088c59b)부터
+            // 그 호출이 빠져 있었다. focusedSlot 은 isPointWithinBounds(배낭 배치·보이는 칸만) 로 정해지므로 배낭 27칸·핫바·
+            // 제작 2x2·결과 칸 모두 해당. 그리기는 HandledItemTooltipMixin → ItemTooltipRenderer(등급 연출 툴팁),
+            // 커서에 아이템을 들고 있으면 바닐라 규칙대로 안 띄운다(묶음 꾸러미만 예외).
+            drawMouseoverTooltip(c, mouseX, mouseY);
             var card = recipes.at(hoveredCard);
-            if (card != null && handler.getCursorStack().isEmpty()) {
+            if (card != null && focusedSlot == null && handler.getCursorStack().isEmpty()) {
                 c.getMatrices().push();
                 c.getMatrices().translate(0, 0, 400);
                 // Same tooltip look as slots (HandledItemTooltipMixin → ItemTooltipRenderer), vanilla as fallback.
@@ -390,25 +397,28 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
                 if (!has) HudMesh.disk(c, e.cx(), e.cy(), 2.4f, locked ? DOT_DIM : DOT);
             }
             if (locked) {
-                float cx = GalaxyBagLayout.MAIN_X0 + 4 * GalaxyBagLayout.MAIN_STEP_X, size = GalaxyBagLayout.LOCK_ICON;
-                text.draw(c, "아공간 배낭", cx, GalaxyBagLayout.LOCK_TITLE_Y, 34, TEXT, SERIF, true);
+                // 2026-10-26 오너: 제목은 한 번만, 테두리 선과 첫 줄 링 사이 가운데 (첫 줄 링과 겹치지 않게).
+                // 자물쇠·문구 묶음은 27칸 영역(핫바 제외)의 정중앙 — 글자 높이는 실제 글꼴 잉크로 재서 GalaxyBagLayout 이 배치.
+                var lock = lockStack(text);
+                float cx = lock.cx(), size = GalaxyBagLayout.LOCK_ICON;
+                text.draw(c, "아공간 배낭", cx, GalaxyBagLayout.lockTitleY(), 34, TEXT, SERIF, true);
                 // Like the lock reference: the dim rings fade out behind the padlock and the two lines of text.
-                float top = GalaxyBagLayout.LOCK_ICON_Y - size * 0.5f, bottom = GalaxyBagLayout.LOCK_HINT_Y + 18;
+                float top = lock.top(), bottom = lock.bottom();
                 for (int k = 0; k < 4; k++) {
                     float grow = 26 - k * 8;
                     roundRect(c, cx - 128 - grow, top - grow, 256 + grow * 2, bottom - top + grow * 2, 30 + grow, 0x401E2152);
                 }
-                image(c, PADLOCK, cx - size / 2, GalaxyBagLayout.LOCK_ICON_Y - size / 2, size, size, PADLOCK_PNG, PADLOCK_PNG, 0xFFFFFFFF);
-                text.draw(c, "잠긴 공간", cx, GalaxyBagLayout.LOCK_TEXT_Y, 30, TEXT, SERIF, true);
-                text.draw(c, "가방 확장권으로 개방", cx, GalaxyBagLayout.LOCK_HINT_Y, 20, TEXT_SOFT, SERIF, true);
-            } else {
-                HudMesh.line(c, GalaxyBagLayout.DIVIDER_X0, GalaxyBagLayout.DIVIDER_Y, GalaxyBagLayout.DIVIDER_X1, GalaxyBagLayout.DIVIDER_Y, 1.4f, RULE);
-                for (int i = 0; i < 9; i++) {
-                    Element e = GalaxyBagLayout.element(GalaxyBagLayout.HOTBAR_START + i);
-                    ring(c, e.cx(), e.cy(), e.radius(), hoveredId == e.slotId() ? RING_HOVER : RING, hoveredId == e.slotId() ? 2.2f : 1.5f);
-                    if (!handler.getSlot(e.slotId()).hasStack()) HudMesh.disk(c, e.cx(), e.cy(), 2.4f, DOT);
-                    text.draw(c, Integer.toString(i + 1), e.cx(), GalaxyBagLayout.HOTBAR_NUMBER_Y, 22, TEXT_SOFT, MEDIUM, true);
-                }
+                image(c, PADLOCK, cx - size / 2, lock.iconY() - size / 2, size, size, PADLOCK_PNG, PADLOCK_PNG, 0xFFFFFFFF);
+                text.draw(c, LOCK_TEXT, cx, lock.textY(), LOCK_TEXT_SIZE, TEXT, SERIF, true);
+                text.draw(c, LOCK_HINT, cx, lock.hintY(), LOCK_HINT_SIZE, TEXT_SOFT, SERIF, true);
+            }
+            // 핫바 9칸은 쪽과 무관하게 그대로 (2026-10-26 오너: 잠긴 쪽에서도 보이고 쓸 수 있게).
+            HudMesh.line(c, GalaxyBagLayout.DIVIDER_X0, GalaxyBagLayout.DIVIDER_Y, GalaxyBagLayout.DIVIDER_X1, GalaxyBagLayout.DIVIDER_Y, 1.4f, RULE);
+            for (int i = 0; i < 9; i++) {
+                Element e = GalaxyBagLayout.element(GalaxyBagLayout.HOTBAR_START + i);
+                ring(c, e.cx(), e.cy(), e.radius(), hoveredId == e.slotId() ? RING_HOVER : RING, hoveredId == e.slotId() ? 2.2f : 1.5f);
+                if (!handler.getSlot(e.slotId()).hasStack()) HudMesh.disk(c, e.cx(), e.cy(), 2.4f, DOT);
+                text.draw(c, Integer.toString(i + 1), e.cx(), GalaxyBagLayout.HOTBAR_NUMBER_Y, 22, TEXT_SOFT, MEDIUM, true);
             }
             // Pager: shown page / pages. Arrows fade when there is nowhere to go.
             int pages = BagPagesClient.pages(), page = Math.min(viewPage, pages);
@@ -420,6 +430,19 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             roundButton(c, GalaxyBagLayout.EQUIP_X, GalaxyBagLayout.EQUIP_Y, SHIRT, false, mx, my);
             roundButton(c, GalaxyBagLayout.CRAFT_BTN_X, GalaxyBagLayout.CRAFT_BTN_Y, TABLE, panelWanted, mx, my);
         } finally { m.pop(); }
+    }
+
+    private static final String LOCK_TEXT = "잠긴 공간", LOCK_HINT = "가방 확장권으로 개방";
+    private static final float LOCK_TEXT_SIZE = 30, LOCK_HINT_SIZE = 20;
+    private GalaxyBagLayout.LockStack lockStack;
+
+    /** 잠긴 쪽 묶음 배치 (글자 잉크 높이는 글꼴이 바뀌지 않는 한 같으니 한 번만 잰다). */
+    private GalaxyBagLayout.LockStack lockStack(CodexTypography text) {
+        if (lockStack == null) {
+            float[] t = text.ink(LOCK_TEXT, LOCK_TEXT_SIZE, SERIF), h = text.ink(LOCK_HINT, LOCK_HINT_SIZE, SERIF);
+            lockStack = GalaxyBagLayout.lockStack(t[1] - t[0], h[1] - h[0]);
+        }
+        return lockStack;
     }
 
     private void drawPanel(DrawContext c, double mouseX, double my) {
@@ -527,7 +550,7 @@ public final class GalaxyBagScreen extends HandledScreen<PlayerScreenHandler> im
             int heldButton = ((school.magiccodex.mixin.HandledScreenAccessor) (Object) this).magiccodex$heldButtonType();
             float panelAlpha = GalaxyBagLayout.ease(panel);
             for (Element e : GalaxyBagLayout.elements()) {
-                boolean show = e.inPanel() ? panel > 0.001f : !lockedView();
+                boolean show = e.inPanel() ? panel > 0.001f : e.kind() == Kind.HOTBAR || !lockedView();
                 if (!show) continue;
                 Slot slot = handler.getSlot(e.slotId());
                 ItemStack stack = slot.getStack();

@@ -69,6 +69,31 @@ class GalaxyBagLayoutTest {
         assertEquals(-1, GalaxyBagLayout.card(GalaxyBagLayout.CARD_X[0] - 6, GalaxyBagLayout.CARD_Y[0], 1));
     }
 
+    /** 2026-10-26 오너: 잠긴 쪽 자물쇠·문구 묶음은 27칸 영역(핫바 제외) 정중앙, 제목은 링과 겹치지 않음, 핫바와도 안 겹침. */
+    @Test void lockedPageStackIsCentredOnTheMainAreaAndClearOfTitleAndHotbar() {
+        float[] a = GalaxyBagLayout.mainArea();
+        var first = GalaxyBagLayout.element(GalaxyBagLayout.MAIN_START);
+        var last = GalaxyBagLayout.element(GalaxyBagLayout.MAIN_START + 26);
+        assertEquals(first.cx() - first.radius(), a[0], 1e-3);
+        assertEquals(last.cy() + last.radius(), a[3], 1e-3);
+        for (float[] h : new float[][]{{23, 15}, {30, 20}, {18, 12}}) {
+            var s = GalaxyBagLayout.lockStack(h[0], h[1]);
+            assertEquals((a[0] + a[2]) / 2, s.cx(), 1e-3);
+            assertEquals((a[1] + a[3]) / 2, (s.top() + s.bottom()) / 2, 1e-3);
+            // 묶음의 위끝 = 자물쇠 그림 위끝, 아래끝 = 안내 문구 아래끝.
+            assertEquals(s.top(), s.iconY() - GalaxyBagLayout.LOCK_ICON / 2 + GalaxyBagLayout.LOCK_INK_TOP, 1e-3);
+            assertEquals(s.bottom(), s.hintY() + h[1] / 2, 1e-3);
+            assertTrue(s.textY() + h[0] / 2 < s.hintY() - h[1] / 2, "두 줄 문구는 겹치지 않음");
+            assertTrue(s.top() > a[1] && s.bottom() < a[3], "묶음은 27칸 영역 안");
+            // 링을 흐리게 덮는 판(최대 26 바깥)도 핫바 구분선 위에서 끝난다.
+            assertTrue(s.bottom() + 18 + 26 < GalaxyBagLayout.DIVIDER_Y);
+        }
+        float title = GalaxyBagLayout.lockTitleY();
+        assertTrue(title - 17 > GalaxyBagLayout.BORDER_TOP_Y, "제목은 테두리 선 아래");
+        assertTrue(title + 17 < a[1], "제목은 첫 줄 링 위 — 겹치지 않음");
+        assertTrue(GalaxyBagLayout.lockStack(23, 15).top() - 26 > title + 17, "제목과 자물쇠 묶음도 따로");
+    }
+
     @Test void pagerTextAndRecipePages() {
         assertEquals("1 / 3", GalaxyBagLayout.pager(1, 3));
         assertEquals(1, GalaxyBagLayout.recipePages(0));

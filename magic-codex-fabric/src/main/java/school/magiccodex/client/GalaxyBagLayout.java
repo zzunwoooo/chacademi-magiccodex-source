@@ -44,8 +44,42 @@ final class GalaxyBagLayout {
     static final float DIVIDER_Y = 392.5f, DIVIDER_X0 = 194, DIVIDER_X1 = 1062.5f;
     static final float PAGER_Y = 539.5f, PAGER_PREV_X = 532.5f, PAGER_NEXT_X = 713.5f, PAGER_LABEL_X = 623, PAGER_R = 22.5f;
     static final float EQUIP_X = 1059, EQUIP_Y = 106, CRAFT_BTN_X = 1115, CRAFT_BTN_Y = 150, ROUND_BTN_R = 29;
-    // locked page (owner's lock reference, rescaled to this bag's row spacing)
-    static final float LOCK_TITLE_Y = 103, LOCK_ICON_Y = 216, LOCK_ICON = 120, LOCK_TEXT_Y = 300, LOCK_HINT_Y = 331;
+    // locked page (owner's lock reference). 2026-10-26 오너: 자물쇠·"잠긴 공간"·안내 문구 묶음은 27칸 영역(핫바 제외)의
+    // 가로·세로 정중앙, 핫바 줄은 잠긴 쪽에서도 그대로. 제목 "아공간 배낭"은 한 번만 — 테두리 선과 첫 줄 링 사이 가운데라
+    // 링·자물쇠와 겹치지 않는다 (예전 y=103 은 첫 줄 링 바로 위에 붙어 겹쳐 보였다).
+    static final float LOCK_ICON = 120;
+    /** locked_page_padlock.png(384) 의 실제 그림(알파) 범위 y 54..335 를 120 크기로 — 빈 여백 말고 그림 기준으로 가운데. */
+    static final float LOCK_INK_TOP = 54 / 384f * LOCK_ICON, LOCK_INK_H = (335 - 54) / 384f * LOCK_ICON;
+    /** 자물쇠 그림 아래 → "잠긴 공간", "잠긴 공간" → 안내 문구 사이 간격 (예전 배치의 간격 그대로). */
+    static final float LOCK_GAP_TEXT = 28, LOCK_GAP_HINT = 12;
+    /** 테두리 PNG 가운데 열의 위쪽 선(PNG 행 60)이 놓이는 캔버스 y. */
+    static final float BORDER_TOP_Y = 60 * BAG_SY + BAG_Y;
+
+    /** 27칸 링이 차지하는 영역 (링 바깥 끝 기준, 핫바 제외): {left, top, right, bottom}. */
+    static float[] mainArea() {
+        return new float[]{MAIN_X0 - MAIN_R, MAIN_Y0 - MAIN_R, MAIN_X0 + 8 * MAIN_STEP_X + MAIN_R, MAIN_Y0 + 2 * MAIN_STEP_Y + MAIN_R};
+    }
+
+    /** 잠긴 쪽 제목 "아공간 배낭"의 세로 가운데: 테두리 위쪽 선과 첫 줄 링 위끝 사이 가운데. */
+    static float lockTitleY() { return (BORDER_TOP_Y + mainArea()[1]) / 2; }
+
+    /** 잠긴 쪽 묶음 위치. iconY = 자물쇠 그림 상자(LOCK_ICON)의 가운데, textY/hintY = 글자 잉크의 가운데. */
+    record LockStack(float cx, float iconY, float textY, float hintY, float top, float bottom) {}
+
+    /**
+     * 자물쇠 그림 + 간격 + "잠긴 공간"(잉크 높이 textH) + 간격 + 안내 문구(잉크 높이 hintH) 를 한 덩어리로 보고
+     * 그 덩어리의 가운데를 27칸 영역의 가운데에 맞춘다. top/bottom = 덩어리의 실제 위·아래 끝.
+     */
+    static LockStack lockStack(float textH, float hintH) {
+        float[] a = mainArea();
+        float cx = (a[0] + a[2]) / 2, cy = (a[1] + a[3]) / 2;
+        float total = LOCK_INK_H + LOCK_GAP_TEXT + textH + LOCK_GAP_HINT + hintH;
+        float top = cy - total / 2;
+        float iconY = top - LOCK_INK_TOP + LOCK_ICON / 2;
+        float textY = top + LOCK_INK_H + LOCK_GAP_TEXT + textH / 2;
+        float hintY = textY + textH / 2 + LOCK_GAP_HINT + hintH / 2;
+        return new LockStack(cx, iconY, textY, hintY, top, top + total);
+    }
 
     // ---- crafting panel contents
     static final float CRAFT_TITLE_X = 1250 + PANEL_DX, CRAFT_TITLE_Y = 100, BOOK_X = 1361 + PANEL_DX, BOOK_Y = 96, BOOK_SIZE = 52;
