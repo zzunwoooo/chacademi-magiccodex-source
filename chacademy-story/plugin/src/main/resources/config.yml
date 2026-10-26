@@ -29,7 +29,6 @@ on-finish: {}
 
 # 탭 자동완성용 컷신 id (선택)
 cutscenes:
-  - ch0_forgotten_dream
   - magic_tutorial
   - ch1_harbor_arrival
   - ch1_ashen_night

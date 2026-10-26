@@ -5,9 +5,9 @@
 
 | 폴더 | 단계 | 상태 |
 |---|---|---|
-| `ch1_harbor_arrival` | ch1-7 (브람 "출항이다!" 다음) → 끝나면 ch1-8 시작명령 `essentials:warp harbor` | 오너 납품 2026-10-26 (3장면·자막 없음·BGM, 약 5초 — 단순하게 감) |
-| `ch0_forgotten_dream` | tutorial 단계 | 미제작 |
-| `magic_tutorial` | ch1-4 | 미제작 |
-| `ch1_ashen_night` | ch1-23 | 미제작 (`chacademy-story/example/ch1_ashen_night` 는 예제) |
+| `ch1_harbor_arrival` | ch1-7 (브람 "출항이다!" 다음) → 끝나면 ch1-8 `essentials:warp harbor` | **새로 배포** (오너 납품 2026-10-26) |
+| `ch1_ashen_night` | 튜토리얼 맨 처음 (tutorial 단계) | 런처에 이미 있음 (그대로) |
+| `magic_tutorial` | ch1-4 | 런처에 이미 있음 (그대로) |
 
-컷신 파일이 런처에 없으면 그 단계에서 컷신 대기가 반복될 수 있음 (system-audit D-3) — 미제작 컷신은 steps.yml `컷신:` 을 비워 두거나 파일을 먼저 넣을 것.
+1장 끝(ch1-23)에는 컷신 없음.
+

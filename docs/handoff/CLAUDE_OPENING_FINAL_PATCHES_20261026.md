@@ -1593,3 +1593,6 @@ spells:
 - 스토리 진행 공유 DB 작업(§50 예정)은 **취소** — 1장이 한 서버라 로컬 기록 그대로.
 - Velocity TutorialRouter 기본 `tutorial-servers=` 빈 값 = 분산·튜토리얼 라우팅 꺼짐 (서버에 tutorial.properties 가 있으면 값을 비우거나 지울 것). ChacaPortrait `auto.server-ids` 는 school 포함이라 그대로 동작.
 - 대화 파일(`deployment/story-dialogues/`)은 전부 school 서버 `plugins/ChacademyStory/dialogues/` 에.
+
+### §49 추가 — 컷신 정정 (오너 2026-10-26 15:39)
+- 튜토리얼 맨 처음 = `ch1_ashen_night` (런처에 이미 있음), ch1-4 = `magic_tutorial` (이미 있음), ch1-7 뒤 = `ch1_harbor_arrival` (새로 배포, `deployment/cutscenes/`). `ch0_forgotten_dream` 폐기, ch1-23 컷신 없음. steps.yml(운영·기본)·config 자동완성 목록 반영.
