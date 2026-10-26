@@ -123,10 +123,14 @@ quest-server-id: school
 waiting-dialogue-cooldown-seconds: 60
 
 chapter-release:
-  open-through: 2
+  # 오너 2026-10-26: 오픈 첫날은 1장까지만 → 2장부터 잠금. 둘째 날 /대화관리 장공개 열기 2 (또는 아래 open-at 에 둘째 날 시각)
+  open-through: 1
   locked-title: "아직 열리지 않은 이야기입니다"
   locked-body: "다음 이야기가 공개되면 이어서 진행할 수 있어요."
   chapters:
+    2:
+      open: false
+      open-at: ""
     3:
       open: false
       open-at: ""
