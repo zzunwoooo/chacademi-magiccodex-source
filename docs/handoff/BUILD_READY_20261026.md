@@ -43,6 +43,7 @@
 - 마력 재구성 (§37·§37 추가) — 재구성 프로토콜에 kind 가 붙음(장신구 재구성), 재구성·강화 창 아이템 미리보기. **Bridge + protocol + 클라 모드 같이.**
 - 뽑기권 상자 3개 (§38) — 가구 보상 종류 추가 (Bridge + ChacaHousing).
 - 아이템 5종 (§39) — Bridge·MagicMythic·ChacaPortrait. 클라 변경 없음.
+- 리턴권·텔포권·인벤세이브 + 사망 시 배낭 다른 쪽 떨어뜨리기 (§40) — 텔포권 고르기 창 새 채널 `magiccodex:tp_pick_request/response`. **Bridge + protocol + 클라 모드 같이.** 공유 DB 새 표 `codex_travel_presence`·`codex_travel_death` 자동 생성. `travel-items.yml`·`inventory-save.yml` 자동 생성. 아레나 server-id 가 travel.yml `use-servers`·`servers` 에 없어야 함.
 
 ## 3. 서버 파일 (jar 가 안 덮어씀)
 - `deployment/operating-config/**` 전부 overlay 대로 (MagicCodexBridge·MythicMobs·PortableVFX·ChacademyStory).
@@ -74,6 +75,8 @@
 
 - 뽑기권 상자 확률 (§38): 낚시 일반 60.12/고급 28.06/유일 9.82/전설 2.00 %, 몹 전리품 1·2·3성 70/24/6 % (내용물은 임시 바닐라), 가구 97종 같은 확률·가진 것 다시 뽑기.
 - 재화 주머니 금액표 (§39, 30분 노동치 ≈ 6,000 G 가정, 평균 약 780 G). 마법 힌트권은 타로 UI 가 저장소에 없어 깨달음의 빛 연출로 임시.
+
+- 사망 시 배낭 처리 (§40): 인벤세이브 없이 죽으면 잠금 해제된 다른 쪽까지 전부 죽은 자리에 떨어짐(오너 확정). 첫 운영 때 사망 1번으로 확인 — 동기화 중이면 8초까지 재시도 후 그대로 둠, DB 오류면 배낭 잠김(운영자 처리, `bag-death-drops/` 증거 파일).
 
 ## 7. 컴파일 확인 상태
 - 70044a79 이후 바뀐 Java 352개 전부 문법 검사 통과. 타입 검사는 못 함 → 첫 빌드 컴파일 오류는 각 § "확인 필요" 참고, 고친 뒤 오너에게 보고.

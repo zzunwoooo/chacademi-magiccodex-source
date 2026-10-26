@@ -22,6 +22,8 @@ import school.magiccodex.database.DatabaseSettings;
  *                         expires_at, state (PENDING → ARRIVING → DONE | FAILED), reason, finished_at — one live move
  *   codex_travel_log      id, uuid, ticket, point, from/to server, result, reason, at       — every finished move
  *   codex_travel_server   server PK, heartbeat, online, max_players, worlds ("name=uid;..."), config_hash
+ *   codex_travel_presence server PK, at, players (줄마다 uuid·세계·닉네임·기숙사 — 텔포권 목록, 2026-10-26)
+ *   codex_travel_death    uuid PK, server, world, world_uid, x y z yaw pitch, at — 리턴권: 마지막 야생 사망 자리 (2026-10-26)
  * Rows are never deleted because a server or a point left travel.yml.
  */
 final class TravelStore implements AutoCloseable {
@@ -90,6 +92,10 @@ final class TravelStore implements AutoCloseable {
                     + "to_server VARCHAR(48) NOT NULL,result VARCHAR(12) NOT NULL,reason VARCHAR(120) NOT NULL,at BIGINT NOT NULL)" + tail);
             st.execute("CREATE TABLE IF NOT EXISTS codex_travel_server(server VARCHAR(48) NOT NULL PRIMARY KEY,heartbeat BIGINT NOT NULL,online INT NOT NULL,max_players INT NOT NULL,"
                     + "worlds VARCHAR(2048) NOT NULL,config_hash VARCHAR(16) NOT NULL)" + tail);
+            // 리턴권·텔포권 (2026-10-26): 새 표 두 개 (기존 표는 그대로)
+            st.execute("CREATE TABLE IF NOT EXISTS codex_travel_presence(server VARCHAR(48) NOT NULL PRIMARY KEY,at BIGINT NOT NULL,players MEDIUMTEXT NOT NULL)" + tail);
+            st.execute("CREATE TABLE IF NOT EXISTS codex_travel_death(uuid VARCHAR(36) NOT NULL PRIMARY KEY,server VARCHAR(48) NOT NULL,world VARCHAR(64) NOT NULL,world_uid VARCHAR(36) NOT NULL,"
+                    + "x DOUBLE NOT NULL,y DOUBLE NOT NULL,z DOUBLE NOT NULL,yaw FLOAT NOT NULL,pitch FLOAT NOT NULL,at BIGINT NOT NULL)" + tail);
             ready = true;
         } catch (Exception e) { log.severe("지도 이동 테이블 준비 실패: " + e.getMessage()); }
     }
@@ -343,6 +349,7 @@ final class TravelStore implements AutoCloseable {
         try {
             io.submit(() -> {
                 try (var q = db().prepareStatement("UPDATE codex_travel_server SET heartbeat=0 WHERE server=?")) { q.setString(1, server); q.executeUpdate(); }
+                try (var q = db().prepareStatement("UPDATE codex_travel_presence SET at=0 WHERE server=?")) { q.setString(1, server); q.executeUpdate(); }
                 return null;
             }).get(3, TimeUnit.SECONDS);
         } catch (Exception ignored) {}
@@ -358,6 +365,56 @@ final class TravelStore implements AutoCloseable {
                 }
             }
             return out;
+        }, null, done);
+    }
+
+    // ------------------------------------------------------------------ 리턴권·텔포권 (2026-10-26)
+
+    /** 이 서버 접속자 한 줄 쓰기 (서버 상태와 같은 15초마다 + 들어오고 나갈 때 몰아서). */
+    void presence(String server, String packed) {
+        submit("접속자 쓰기", c -> {
+            String sql = settings.mariaDb()
+                    ? "INSERT INTO codex_travel_presence(server,at,players) VALUES(?,?,?) ON DUPLICATE KEY UPDATE at=VALUES(at),players=VALUES(players)"
+                    : "INSERT OR REPLACE INTO codex_travel_presence(server,at,players) VALUES(?,?,?)";
+            try (var q = c.prepareStatement(sql)) { q.setString(1, server); q.setLong(2, System.currentTimeMillis()); q.setString(3, packed); q.executeUpdate(); }
+            return true;
+        }, false, null);
+    }
+    /** 모든 서버 접속자 줄 (서버 수만큼, 몇 줄 안 됨). null = 읽기 실패. */
+    void presenceAll(Consumer<List<TravelItemRules.Presence>> done) {
+        submit("접속자 읽기", c -> {
+            var out = new ArrayList<TravelItemRules.Presence>();
+            try (var q = c.prepareStatement("SELECT server,at,players FROM codex_travel_presence"); var r = q.executeQuery()) {
+                while (r.next()) out.add(new TravelItemRules.Presence(r.getString(1), r.getLong(2), TravelItemRules.unpack(r.getString(3))));
+            }
+            return out;
+        }, null, done);
+    }
+    /** 마지막 야생 사망 자리 바꾸기 (플레이어마다 한 줄). */
+    void saveDeath(UUID player, TravelItemRules.DeathPoint d, Consumer<Boolean> done) {
+        submit("사망 자리 저장", c -> {
+            String sql = settings.mariaDb()
+                    ? "INSERT INTO codex_travel_death(uuid,server,world,world_uid,x,y,z,yaw,pitch,at) VALUES(?,?,?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE "
+                      + "server=VALUES(server),world=VALUES(world),world_uid=VALUES(world_uid),x=VALUES(x),y=VALUES(y),z=VALUES(z),yaw=VALUES(yaw),pitch=VALUES(pitch),at=VALUES(at)"
+                    : "INSERT OR REPLACE INTO codex_travel_death(uuid,server,world,world_uid,x,y,z,yaw,pitch,at) VALUES(?,?,?,?,?,?,?,?,?,?)";
+            try (var q = c.prepareStatement(sql)) {
+                q.setString(1, player.toString()); q.setString(2, d.server()); q.setString(3, d.world()); q.setString(4, d.worldUid());
+                q.setDouble(5, d.x()); q.setDouble(6, d.y()); q.setDouble(7, d.z()); q.setFloat(8, d.yaw()); q.setFloat(9, d.pitch()); q.setLong(10, d.at());
+                q.executeUpdate(); return true;
+            }
+        }, false, done);
+    }
+    /** 마지막 야생 사망 자리. 빈 Optional = 기록 없음, null = 읽기 실패. */
+    void death(UUID player, Consumer<Optional<TravelItemRules.DeathPoint>> done) {
+        submit("사망 자리 읽기", c -> {
+            try (var q = c.prepareStatement("SELECT server,world,world_uid,x,y,z,yaw,pitch,at FROM codex_travel_death WHERE uuid=?")) {
+                q.setString(1, player.toString());
+                try (var r = q.executeQuery()) {
+                    if (!r.next()) return Optional.<TravelItemRules.DeathPoint>empty();
+                    return Optional.of(new TravelItemRules.DeathPoint(r.getString(1), r.getString(2), r.getString(3), r.getDouble(4), r.getDouble(5), r.getDouble(6),
+                            r.getFloat(7), r.getFloat(8), r.getLong(9)));
+                }
+            }
         }, null, done);
     }
 

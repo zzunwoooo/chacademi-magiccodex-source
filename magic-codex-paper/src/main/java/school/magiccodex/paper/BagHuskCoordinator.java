@@ -165,7 +165,7 @@ final class BagHuskCoordinator implements BagHuskSnapshotLink.Authority {
   return true;
  }
  String switchPage(Player p,int target){
-  UUID owner=p.getUniqueId();var h=holders.get(owner);if(h==null||!inputReady(owner))return "배낭 동기화 중이거나 재조정이 필요해요";
+  UUID owner=p.getUniqueId();if(deathPending.contains(owner))return DEATH_BUSY;var h=holders.get(owner);if(h==null||!inputReady(owner))return "배낭 동기화 중이거나 재조정이 필요해요";
   UUID op;byte[][] next;byte[] targetBytes;org.bukkit.inventory.ItemStack[] incoming;UUID nextHead=UUID.randomUUID();long nextSeq=h.row.sequence()+1;
   try{
    op=h.session.beginSwitch(h.user.isLocked());api.getPlugin().lockPlayer(owner);bags.sharedBlocked(owner);
@@ -197,7 +197,7 @@ final class BagHuskCoordinator implements BagHuskSnapshotLink.Authority {
   * check = compute only. Null = started (or sortable); otherwise the refusal.
   */
  String sortPages(Player p,int unlocked,boolean check){
-  UUID owner=p.getUniqueId();var h=holders.get(owner);if(h==null||!inputReady(owner))return "배낭 동기화 중이에요. 잠시 뒤 다시 해 주세요";
+  UUID owner=p.getUniqueId();if(deathPending.contains(owner))return DEATH_BUSY;var h=holders.get(owner);if(h==null||!inputReady(owner))return "배낭 동기화 중이에요. 잠시 뒤 다시 해 주세요";
   var base=h.row;int active=base.active();if(active<1||active>unlocked||active>3)return "지금 쪽에서는 정리할 수 없어요";
   org.bukkit.inventory.ItemStack[][] sorted;byte[][] next;byte[] targetBytes;
   try{
@@ -235,6 +235,86 @@ final class BagHuskCoordinator implements BagHuskSnapshotLink.Authority {
   }catch(Exception ex){block(owner,"Sort CAS failed; WAL retained: "+ex.getClass().getSimpleName());}});
   return null;
  }
+ // ------------------------------------------------------------------ 사망: 다른 쪽 떨어뜨리기 (오너 2026-10-26)
+ static final String DEATH_BUSY="쓰러진 뒤 배낭을 정리하는 중이에요. 잠시 뒤 다시 해 주세요";
+ enum DeathDrop{NOTHING,STARTED,NOT_READY,FAILED}
+ /** 사망 떨어뜨리기를 기다리거나 진행 중인 사람 — 그동안 쪽 넘기기·정리를 막는다 (InventorySaveBridge 가 켜고 끔). */
+ private final Set<UUID> deathPending=ConcurrentHashMap.newKeySet();
+ void deathPending(UUID owner,boolean on){if(on)deathPending.add(owner);else deathPending.remove(owner);}
+ boolean deathBusy(UUID owner){return deathPending.contains(owner);}
+ /**
+  * 인벤세이브 없이 죽음: 지금 인벤토리에 없는 쪽(잠금 해제된 다른 쪽 + 혹시 남은 잠긴 쪽)을 전부 공유 DB 에서 비우고 그 아이템을
+  * 죽은 자리에 떨어뜨린다. 쪽 넘기기와 같은 길 — READY·HuskSync 잠금 아님 확인, beginSwitch + lockPlayer, WAL + 영수증,
+  * lease/head/seq CAS, 플레이어 표시 + saveData, committedSwitch. 다른 점: 인벤토리는 건드리지 않는다 (지금 쪽 아이템은 바닐라가
+  * 이미 떨어뜨림), CAS 전에 비울 쪽 원본을 증거 파일(bag-death-drops/)로 fsync, 그리고 <b>CAS 가 된 뒤에만</b> 떨어뜨린다.
+  * CAS 가 안 되면 아이템은 공유 DB 에 그대로 남는다 (복제·분실 없음, 대신 이번 사망에서는 안 떨어짐). 사망 이벤트 다음 틱에 부른다
+  * (HuskSync 사망 저장·바닐라 드롭이 끝난 뒤). NOT_READY = 지금은 못 함(동기화·쪽 넘기는 중·잠김) — 부른 쪽이 잠시 뒤 다시.
+  */
+ DeathDrop dropOnDeath(Player p,org.bukkit.Location at){
+  UUID owner=p.getUniqueId();var h=holders.get(owner);if(h==null||!inputReady(owner))return DeathDrop.NOT_READY;
+  var base=h.row;int active=base.active();if(active<1||active>3)return DeathDrop.FAILED;
+  List<Integer> drop;var items=new ArrayList<org.bukkit.inventory.ItemStack>();
+  try{
+   drop=BagDeathDrops.pagesToDrop(base.pages(),active);
+   for(int page:drop)for(var it:BagPagesBridge.items(base.pages()[page-1]))if(it!=null&&!it.getType().isAir())items.add(it);
+  }catch(RuntimeException ex){plugin.getLogger().warning("Shared bag death drop skipped "+owner+": page unreadable ("+ex.getClass().getSimpleName()+"); items kept");return DeathDrop.FAILED;}
+  if(drop.isEmpty())return DeathDrop.NOTHING;
+  byte[][] next=BagDeathDrops.emptied();UUID nextHead=UUID.randomUUID();long nextSeq=base.sequence()+1;Path evidence;
+  Path root=plugin.getDataFolder().toPath().resolve("bag-death-drops");
+  try{evidence=BagDeathDrops.save(root,new BagDeathDrops.Evidence(owner,nextSeq,AuditLog.where(at),base.pages().clone()));}
+  catch(Exception ex){plugin.getLogger().warning("Shared bag death drop skipped "+owner+": evidence write failed ("+ex.getClass().getSimpleName()+"); items kept");return DeathDrop.FAILED;}
+  UUID op;
+  try{op=h.session.beginSwitch(h.user.isLocked());}catch(IllegalStateException ex){deleteQuietly(evidence);return DeathDrop.NOT_READY;}
+  try{
+   api.getPlugin().lockPlayer(owner);bags.sharedBlocked(owner);
+   journal.save(owner,"shared",active,nextSeq,next);
+   Path receipt=plugin.getDataFolder().toPath().resolve("bag-shared-pending").resolve(owner+"-operation.txt");
+   Files.writeString(receipt,"lease="+h.session.lease()+"\nbase="+base.head()+"\nhead="+nextHead+"\nseq="+nextSeq+"\ndeath=1\nevidence="+evidence.getFileName()+"\n");
+   try(var channel=java.nio.channels.FileChannel.open(receipt,StandardOpenOption.WRITE)){channel.force(true);}
+  }catch(Exception ex){block(owner,"Death drop preparation failed: "+ex.getClass().getSimpleName());return DeathDrop.FAILED;}
+  deathPending.add(owner);   // 적용이 끝날 때까지 (쪽 넘기기·정리·서버 이동 막음)
+  io.execute(()->{
+   boolean cas;
+   try{cas=shared.switchPages(owner,h.session.lease(),base.head(),nextHead,nextSeq,active,next);}
+   catch(Exception ex){deathPending.remove(owner);block(owner,"Death drop CAS outcome unknown; evidence "+evidence.getFileName()+" and WAL retained: "+ex.getClass().getSimpleName());return;}
+   if(!cas){deathPending.remove(owner);deleteQuietly(evidence);block(owner,"Death drop CAS rejected; items stay in the shared page");return;}
+   BagSharedSql.Row loaded;try{loaded=shared.load(owner);}catch(Exception ex){loaded=null;}
+   var row=loaded;
+   main(()->{
+    // CAS 됨 = 공유 DB 에는 더 없음 → 적용이 실패해도 떨어뜨린다 (안 떨어뜨리면 사라짐).
+    spill(owner,at,items,evidence);
+    try{
+     if(row==null||h.user.hasDisconnected()||h.session.phase()!=BagSyncSession.Phase.SWITCHING)throw new IllegalStateException("Player left before death drop apply");
+     p.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(plugin,"bag_page_commit"),org.bukkit.persistence.PersistentDataType.LONG,nextSeq);
+     p.saveData();h.session.committedSwitch(op,nextHead,nextSeq,active);h.row=row;
+     api.getPlugin().unlockPlayer(owner);bags.sharedReady(owner,row,bags.sharedUnlocked(owner));
+    }catch(RuntimeException ex){block(owner,"Death drop apply incomplete; WAL retained: "+ex.getClass().getSimpleName());}
+    finally{deathPending.remove(owner);}
+   });
+  });
+  return DeathDrop.STARTED;
+ }
+ /** CAS 가 끝난 아이템을 죽은 자리에 (청크는 비동기로 불러서). 세계가 없으면 공통 지급(우편)으로 — 버리지 않는다. 다 놓으면 증거 파일 삭제. */
+ private void spill(UUID owner,org.bukkit.Location at,List<org.bukkit.inventory.ItemStack> items,Path evidence){
+  var w=at.getWorld();
+  if(w==null||Bukkit.getWorld(w.getUID())==null){mailInstead(owner,items,evidence,"world missing");return;}
+  w.getChunkAtAsync(at).whenComplete((chunk,error)->main(()->{
+   if(error!=null||Bukkit.getWorld(w.getUID())==null){mailInstead(owner,items,evidence,"chunk load failed");return;}
+   for(var it:items)w.dropItemNaturally(at,it);
+   deleteQuietly(evidence);
+   plugin.getLogger().info("Shared bag death drop "+owner+": "+items.size()+" stacks at "+AuditLog.where(at));
+   var detail=new LinkedHashMap<String,String>();detail.put("위치",AuditLog.where(at));detail.put("묶음",String.valueOf(items.size()));
+   ChacaApi.audit(owner,AuditLog.사망,"사망 · 아공간 배낭 다른 쪽 아이템 "+items.size()+"묶음 떨굼",detail);
+  }));
+ }
+ private void mailInstead(UUID owner,List<org.bukkit.inventory.ItemStack> items,Path evidence,String why){
+  var delivery=RewardDelivery.get();
+  if(delivery==null){plugin.getLogger().severe("Shared bag death drop "+owner+": could not drop ("+why+") and no delivery; evidence "+evidence.getFileName()+" retained for manual restore");return;}
+  delivery.give(owner,items,"bag-death-drop:"+owner+":"+evidence.getFileName(),"아공간 배낭","쓰러진 자리에 떨어뜨리지 못한 배낭 아이템이에요.",null);
+  deleteQuietly(evidence);
+  plugin.getLogger().warning("Shared bag death drop "+owner+": "+why+"; "+items.size()+" stacks sent by delivery instead");
+ }
+ private static void deleteQuietly(Path f){try{Files.deleteIfExists(f);}catch(Exception ignored){}}
  void beforeBridgeDisable(){
   closing=true;for(var h:holders.values())if(!h.drained)save(h.user,DataSnapshot.SaveCause.SERVER_SHUTDOWN);
   // A standalone plugin disable must not leave a drained no-op syncer in an otherwise running server.

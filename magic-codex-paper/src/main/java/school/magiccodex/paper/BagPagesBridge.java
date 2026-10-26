@@ -225,6 +225,20 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         return refused;
     }
 
+    /**
+     * 사망 (인벤세이브 없음, 오너 2026-10-26, InventorySaveBridge): 지금 인벤토리에 없는 쪽 아이템을 죽은 자리에 떨어뜨린다.
+     * 쪽 넘기기와 같은 공유 DB 길(BagHuskCoordinator.dropOnDeath). 배낭 정보를 아직 못 읽었거나 확장권 처리 중이면 NOT_READY.
+     */
+    BagHuskCoordinator.DeathDrop dropOnDeath(Player p, org.bukkit.Location at) {
+        var e = entries.get(p.getUniqueId());
+        if (e == null || !e.loaded || unlocking.contains(p.getUniqueId())) return BagHuskCoordinator.DeathDrop.NOT_READY;
+        return coordinator.dropOnDeath(p, at);
+    }
+    /** 사망 떨어뜨리기를 기다리는 동안 쪽 넘기기·정리 막기. */
+    void deathPending(UUID id, boolean on) { coordinator.deathPending(id, on); }
+    /** 사망 떨어뜨리기를 기다리거나 진행 중 (TravelBridge 가 그동안 서버 이동을 미룸 — 옮기는 중 저장이 전환과 겹치면 배낭이 잠김). */
+    boolean deathBusy(UUID id) { return coordinator.deathBusy(id); }
+
     /** 27 slots → page bytes (null / air = empty slot). */
     static byte[] encode(ItemStack[] items) {
         var slots = new ArrayList<byte[]>(BagPageCodec.SLOTS);

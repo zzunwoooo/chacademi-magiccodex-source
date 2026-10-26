@@ -61,6 +61,7 @@ public final class MagicCodexClient implements ClientModInitializer {
         FishShopClient.initialize();
         BookClient.initialize();
         MegaphoneClient.initialize();
+        TeleportPickClient.initialize();   // 텔포권 유저 고르기 창 (2026-10-26)
         BookMarks.initialize();
         TravelClient.initialize();
         ChunkClaimClient.initialize();   // 야생 청크 점유 (메모 #88)
