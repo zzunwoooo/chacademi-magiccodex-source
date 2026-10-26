@@ -26,6 +26,20 @@ class LootBoxJournalTest {
         assertTrue(new LootBoxJournal(temp).pending(new ArrayList<>()).isEmpty());
     }
 
+    @Test void furnitureGrantsSurviveRestartAndOldRecordsHaveNone() throws Exception {
+        var journal = new LootBoxJournal(temp);
+        String op = UUID.randomUUID().toString(), old = UUID.randomUUID().toString();
+        journal.save(op, UUID.randomUUID(), "furniture_ticket", "가구뽑기권", 10, 0, List.of(new byte[]{1}, new byte[]{2}), new int[]{0, 0}, List.of(), List.of("sofa", "piano"));
+        journal.save(old, UUID.randomUUID(), "box", "API 상자", 1, 0, List.of(new byte[]{1}), new int[]{0}, List.of());
+        var all = new LootBoxJournal(temp).pending(new ArrayList<>());
+        var byOp = new HashMap<String, LootBoxJournal.Opening>();
+        for (var o : all) byOp.put(o.operation(), o);
+        assertEquals(List.of("sofa", "piano"), byOp.get(op).furniture());
+        assertTrue(byOp.get(old).furniture().isEmpty());
+        assertThrows(java.io.IOException.class, () -> journal.save(UUID.randomUUID().toString(), UUID.randomUUID(), "b", "t", 1, 0,
+                List.of(new byte[]{1}), new int[]{0}, List.of(), List.of("../x")));
+    }
+
     @Test void brokenFilesAreReportedNotProcessed() throws Exception {
         var journal = new LootBoxJournal(temp);
         Files.writeString(temp.resolve(UUID.randomUUID() + ".properties"), "operation=nope");

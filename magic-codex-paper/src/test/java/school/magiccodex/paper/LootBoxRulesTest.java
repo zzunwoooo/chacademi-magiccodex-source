@@ -27,6 +27,23 @@ class LootBoxRulesTest {
         assertNull(LootBoxRules.drawMany(new int[]{0}, 10, new SplittableRandom(1)));
     }
 
+    @Test void uniqueRewardsSkipOwnedAndNeverRepeatInOneOpening() {
+        int[] w = {10, 10, 10, 5};
+        String[] u = {"bed", "sofa", "lamp", null};
+        var random = new SplittableRandom(3);
+        for (int t = 0; t < 2000; t++) {
+            var out = LootBoxRules.drawUnique(w, u, Set.of("bed"), 3, random);
+            assertNotNull(out);
+            var seen = new HashSet<String>();
+            for (int i : out) { assertNotEquals(0, i); if (u[i] != null) assertTrue(seen.add(u[i])); }
+        }
+        // 가질 수 있는 가구 2개 + 일반 보상 0 → 3개는 못 뽑음
+        assertNull(LootBoxRules.drawUnique(new int[]{1, 1, 1}, new String[]{"a", "b", "c"}, Set.of("a"), 3, random));
+        assertEquals(2, LootBoxRules.uniqueLeft(new int[]{1, 1, 1}, new String[]{"a", "b", "c"}, Set.of("a")));
+        // 모두 가졌으면 하나도 못 뽑음
+        assertNull(LootBoxRules.drawUnique(new int[]{1}, new String[]{"a"}, Set.of("a"), 1, random));
+    }
+
     @Test void representativeIsHighestGrade() {
         assertEquals(3, LootBoxRules.representative(new int[]{0, 0, 3, 1}));
         assertEquals(0, LootBoxRules.representative(new int[]{0}));

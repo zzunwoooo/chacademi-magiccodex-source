@@ -186,8 +186,21 @@ final class LootBoxScreen extends Screen {
         } finally { m.pop(); }
     }
 
-    /** 고해상도 아이콘은 그 크기로 새로 그리고(ExactItemIcons), 없으면 일반 아이템 그리기 — 가방 창과 같은 규칙. */
+    /**
+     * 가구 보상(2026-10-26 가구 뽑기권)의 표시용 아이템에 서버가 붙인 그림 경로 (PDC magiccodexbridge:lootbox_icon), 없으면 null.
+     * 하우징 보관함과 같은 가구 PNG(magiccodex:textures/gui/housing/...)를 그 크기로 그린다.
+     */
+    static String rewardIcon(ItemStack stack) {
+        var d = stack.get(net.minecraft.component.DataComponentTypes.CUSTOM_DATA);
+        if (d == null) return null;
+        String path = d.copyNbt().getCompound("PublicBukkitValues").getString("magiccodexbridge:lootbox_icon");
+        return path.isBlank() || path.length() > 96 || !path.startsWith("magiccodex:textures/") || !path.endsWith(".png") ? null : path;
+    }
+
+    /** 고해상도 아이콘은 그 크기로 새로 그리고(ExactItemIcons), 없으면 일반 아이템 그리기 — 가방 창과 같은 규칙. 가구 보상은 가구 그림. */
     private static void drawStack(DrawContext c, ItemStack stack, float cx, float cy, float size) {
+        String icon = rewardIcon(stack);
+        if (icon != null && UiResources.images().drawCentered(c, icon, cx, cy, Math.round(size), 0xFFFFFFFF)) return;
         var m = c.getMatrices(); m.push();
         try {
             if (!ExactItemIcons.draw(c, stack, cx - size / 2, cy - size / 2, size)) {

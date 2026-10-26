@@ -1067,3 +1067,10 @@ boxes:
 - [ ] 장착 칸에 낀 장신구만 있고 주 손이 비면 대상 아님(인벤 마법봉이 잡히거나 "…필요합니다").
 - [ ] 창 열고 주 손 칸을 다른 칸으로 바꾼 뒤 적용 → 거절, 반지 그대로.
 - [ ] 장신구 들고 성향 변경 탭 → "마나 회복 중심/보조" 표시. 마법봉 재구성은 예전과 똑같이.
+## 38. 뽑기권 상자 3개 미리 등록 · 가구 보상 종류 (2026-10-26, 확률 오너 검수 대기)
+오너: 가구·낚시도구·몬스터 전리품 뽑기권을 §36 뽑기 상자로. 내용·확률표·근거·검수 항목은 [docs/plans/loot-box-contents.md](../plans/loot-box-contents.md). API 상자 2종은 오너가 직접 만듦(안 넣음).
+- `loot-boxes.yml`(소스 기본값 + overlay 같은 내용, `operating_overlay.py check` 차이 없음)에 `furniture_ticket`(가구뽑기권, 열쇠 `item:furniture_ticket`, 가구 97종 같은 확률·전부 일반) · `fishing_ticket`(낚시도구뽑기권, `item:fishing_ticket`, 장비 27종, 일반 60·고급 28·유일 10·전설 2 %) · `monster_loot_ticket`(몬스터전리품뽑기권, `item:monster_loot_ticket`, 18종, 1성 70·2성 24·3성 6 %) — 모두 enabled.
+- **새 보상 종류 `furniture: <가구 id>`** (+ `label` 이름 필수, `icon` 그림, amount 1): 아이템 대신 LuckPerms `chacademi.housing.furniture.<id>` 권한. 개봉 기록(lootbox-receipts)에 `furniture=` 줄 → ②(열쇠·영수증) 뒤 ③에서 권한 → 우편 → 정리. 영수증 있으면 복구 때 다시 줌(권한은 여러 번 줘도 같음). 실패 시 1분 뒤 3번 + 다음 시작·접속, `/상자관리 대기` 에 표시.
+- **이미 가진 가구는 추첨에서 뺌**(이번 10개 열기에서 나온 것도) = 가지지 않은 것 중 다시 뽑기. 다 모으면 "모두 모았어요"로 안 열림(열쇠 그대로). OP 는 모든 가구를 가진 것으로 보여 거절됨 → 확인은 OP 아닌 계정, 화면만은 `/상자관리 테스트 가구뽑기권 10`.
+- 고친 파일: `LootBoxStore`(furniture·icon 필드, 표시용 아이템 PAINTING + PDC `magiccodexbridge:lootbox_icon`), `LootBoxRules.drawUnique/uniqueLeft`, `LootBoxJournal`(furniture 줄, 예전 기록 = 없음), `LootBoxBridge`(settle·grantFurniture), 클라 `LootBoxScreen`·`LootBoxAdminScreen`(PDC 그림 경로가 있으면 그 PNG). 테스트 `LootBoxRulesTest`·`LootBoxJournalTest` 추가. 프로토콜 변경 없음 — 옛 클라는 가구가 그림 아이템 아이콘으로만 보임.
+- 확인: ① 뽑기권 3종 ItemsAdder id 가 운영과 같은지(다르면 관리 창 「열쇠 다시 지정」) ② OP 아닌 계정으로 가구뽑기권 1개 → 결과 칸 가구 그림, 내 방 꾸미기 보관함에 생김, 콘솔 `LOOTBOX FURNITURE granted` ③ `/상자관리 테스트 낚시도구뽑기권 10 지급` (미끼 10개 묶음이 만들어지는지) ④ 몬스터 전리품은 **임시 바닐라 아이템**(야생 몹 전용 전리품·드롭 테이블이 아직 없음, 메모 #55) — 전용 아이템이 생기면 관리 창에서 교체.

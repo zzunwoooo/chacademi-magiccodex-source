@@ -24,9 +24,17 @@ final class LootBoxStore {
         }
         boolean empty() { return itemsadder == null && material == null && item == null; }
     }
-    /** 보상: itemsadder | vanilla | item(base64) 중 하나 + amount·grade(0~3)·weight. label = 사람이 읽기용 메모(지급과 무관). */
-    record Reward(String itemsadder, String vanilla, String item, int amount, int grade, int weight, String label) {
+    /**
+     * 보상: itemsadder | vanilla | item(base64) | furniture(하우징 가구 id) 중 하나 + amount·grade(0~3)·weight.
+     * label = 사람이 읽기용 메모(지급과 무관) — 단 furniture 는 label 이 화면에 보일 가구 이름(필수), icon = 화면에 그릴 가구 그림(선택).
+     * furniture 보상은 아이템이 아니라 LuckPerms 권한(chacademi.housing.furniture.&lt;id&gt;)으로 지급한다 (LootBoxBridge.settle).
+     */
+    record Reward(String itemsadder, String vanilla, String item, int amount, int grade, int weight, String label, String furniture, String icon) {
+        Reward(String itemsadder, String vanilla, String item, int amount, int grade, int weight, String label) {
+            this(itemsadder, vanilla, item, amount, grade, weight, label, null, null);
+        }
         String spec() {
+            if (furniture != null) return "가구 " + furniture + (label == null || label.isBlank() ? "" : " (" + label + ")");
             if (itemsadder != null) return "ItemsAdder " + itemsadder;
             if (vanilla != null) return vanilla;
             return label == null || label.isBlank() ? "등록 원본 아이템" : label;
@@ -60,6 +68,11 @@ final class LootBoxStore {
                     grade: 고급          # 일반 / 고급 / 유일 / 전설 (결과 칸 색·연출 빛)
                     weight: 30           # 확률 = weight / 모든 weight 합
                     label: "마나 물약"    # (선택) 사람이 읽기용 메모, 지급과 무관
+                  - furniture: sofa      # 하우징 가구 (아이템이 아니라 가구 보유 권한으로 지급, amount 는 1)
+                    icon: "magiccodex:textures/gui/housing/furniture/sofa.png"   # (선택) 결과 칸에 그릴 가구 그림
+                    label: "2인 소파"     # 가구 보상은 label 이 화면 이름 (필수)
+                    grade: 일반
+                    weight: 10           # 이미 가진 가구는 나오지 않음 (가지지 않은 가구 중에서 같은 비율로 다시 뽑음)
             """;
 
     private final ItemsAdderItems itemsAdder;
@@ -130,17 +143,25 @@ final class LootBoxStore {
             String ia = blank(String.valueOf(raw.get("itemsadder") == null ? "" : raw.get("itemsadder")));
             String vanilla = blank(String.valueOf(raw.get("vanilla") == null ? "" : raw.get("vanilla")));
             String item = blank(String.valueOf(raw.get("item") == null ? "" : raw.get("item")));
+            String furniture = blank(String.valueOf(raw.get("furniture") == null ? "" : raw.get("furniture")));
+            String icon = blank(String.valueOf(raw.get("icon") == null ? "" : raw.get("icon")));
             String label = raw.get("label") == null ? null : String.valueOf(raw.get("label"));
             int amount = number(raw.get("amount"), 1), weight = number(raw.get("weight"), 0);
             int grade = LootBoxRules.grade(raw.get("grade") == null ? "일반" : String.valueOf(raw.get("grade")));
-            int kinds = (ia != null ? 1 : 0) + (vanilla != null ? 1 : 0) + (item != null ? 1 : 0);
-            if (kinds != 1) problems.add(n + "번 보상: itemsadder / vanilla / item 중 하나만");
+            int kinds = (ia != null ? 1 : 0) + (vanilla != null ? 1 : 0) + (item != null ? 1 : 0) + (furniture != null ? 1 : 0);
+            if (kinds != 1) problems.add(n + "번 보상: itemsadder / vanilla / item / furniture 중 하나만");
+            if (furniture != null) {
+                if (!school.magiccodex.protocol.HousingRules.validId(furniture)) problems.add(n + "번 보상: furniture 는 가구 id (영문 소문자·숫자·_ 32자까지): " + furniture);
+                if (label == null || label.isBlank() || label.length() > 60) problems.add(n + "번 보상: 가구 보상은 label(화면 이름, 60자까지)이 필요해요");
+                if (amount != 1) problems.add(n + "번 보상: 가구 보상은 amount 1");
+            }
+            if (icon != null && (furniture == null || icon.length() > 96 || !icon.matches("[a-z0-9_.-]+:[a-z0-9_./-]+\\.png"))) problems.add(n + "번 보상: icon 은 가구 보상에만, \"magiccodex:textures/....png\" 형식");
             if (vanilla != null) { var m = Material.matchMaterial(vanilla); if (m == null || !m.isItem() || m.isAir()) problems.add(n + "번 보상: 알 수 없는 vanilla 아이템 " + vanilla); }
             if (item != null && decode(item) == null) problems.add(n + "번 보상: item(base64) 을 읽을 수 없음");
             if (amount < 1 || amount > 64) problems.add(n + "번 보상: amount 는 1~64");
             if (weight < 0 || weight > 1_000_000) problems.add(n + "번 보상: weight 는 0~1000000");
             if (grade < 0) { problems.add(n + "번 보상: grade 는 일반/고급/유일/전설"); grade = 0; }
-            rewards.add(new Reward(ia, vanilla, item, amount, grade, weight, label));
+            rewards.add(new Reward(ia, vanilla, item, amount, grade, weight, label, furniture, icon));
         }
         if (rewards.size() > 200) problems.add("보상은 200개까지");
         return new Box(id, name, enabled, key, List.copyOf(rewards), speed, List.copyOf(problems));
@@ -177,6 +198,8 @@ final class LootBoxStore {
                 if (r.itemsadder() != null) m.put("itemsadder", r.itemsadder());
                 if (r.vanilla() != null) m.put("vanilla", r.vanilla());
                 if (r.item() != null) m.put("item", r.item());
+                if (r.furniture() != null) m.put("furniture", r.furniture());
+                if (r.icon() != null) m.put("icon", r.icon());
                 m.put("amount", r.amount());
                 m.put("grade", LootBoxRules.gradeName(r.grade()));
                 m.put("weight", r.weight());
@@ -230,7 +253,7 @@ final class LootBoxStore {
         if (index < 0 || index >= b.rewards().size()) throw new IllegalArgumentException("그 보상이 없어요. 새로고침해 주세요");
         var old = b.rewards().get(index);
         var list = new ArrayList<>(b.rewards());
-        list.set(index, new Reward(old.itemsadder(), old.vanilla(), old.item(), amount, grade, weight, old.label()));
+        list.set(index, new Reward(old.itemsadder(), old.vanilla(), old.item(), amount, grade, weight, old.label(), old.furniture(), old.icon()));
         put(new Box(b.id(), b.name(), b.enabled(), b.key(), List.copyOf(list), b.speed(), b.problems()));
     }
 
@@ -264,8 +287,28 @@ final class LootBoxStore {
         return new Reward(null, null, encode(picked), amount, grade, weight, label);
     }
 
-    /** 보상 아이템 실물 (메인 스레드). 만들 수 없으면 null. */
+    /** 가구 보상 표시용 아이템에 붙이는 그림 경로 (클라 LootBoxScreen·LootBoxAdminScreen 이 읽어 그 PNG 를 그린다). */
+    static final org.bukkit.NamespacedKey ICON = new org.bukkit.NamespacedKey("magiccodexbridge", "lootbox_icon");
+
+    /**
+     * 가구 보상의 표시용 아이템 (연출·결과 채팅·관리 창 미리보기·영수증 기록용 — 인벤토리에 넣지 않는다).
+     * 그림(icon)이 있으면 클라가 그 PNG 를 그리고, 없거나 모드가 없으면 그림 아이템으로 보인다.
+     */
+    static ItemStack furnitureDisplay(Reward r) {
+        var out = new ItemStack(Material.PAINTING);
+        var meta = out.getItemMeta();
+        meta.displayName(net.kyori.adventure.text.Component.text(r.label() == null ? r.furniture() : r.label(), net.kyori.adventure.text.format.NamedTextColor.WHITE)
+                .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false));
+        meta.lore(List.of(net.kyori.adventure.text.Component.text("하우징 가구 · 내 방 꾸미기 보관함에 바로 들어가요", net.kyori.adventure.text.format.NamedTextColor.GRAY)
+                .decoration(net.kyori.adventure.text.format.TextDecoration.ITALIC, false)));
+        if (r.icon() != null) meta.getPersistentDataContainer().set(ICON, org.bukkit.persistence.PersistentDataType.STRING, r.icon());
+        out.setItemMeta(meta);
+        return out;
+    }
+
+    /** 보상 아이템 실물 (메인 스레드). 만들 수 없으면 null. 가구 보상은 표시용 아이템. */
     ItemStack create(Reward r) {
+        if (r.furniture() != null) return furnitureDisplay(r);
         ItemStack out;
         if (r.itemsadder() != null) out = itemsAdder == null ? null : itemsAdder.create(r.itemsadder(), 1);
         else if (r.vanilla() != null) { var m = Material.matchMaterial(r.vanilla()); out = m == null ? null : new ItemStack(m); }

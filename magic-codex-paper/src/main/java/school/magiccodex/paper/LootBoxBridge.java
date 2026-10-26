@@ -37,6 +37,9 @@ import school.magiccodex.protocol.LootBoxProtocol;
  *       영수증(PDC) + saveData, 남은 것만 우편. 그 다음에야 클라에 연출(PLAY)을 보낸다. 확인 버튼·연출 끝(DONE)은 지급과 무관.</li>
  *   <li>모드 없는 클라: 연출 없이 같은 지급 + 채팅 결과.</li>
  *   <li>/상자관리 생성·관리·목록·삭제·확률·테스트·새로고침·대기. 정의는 plugins/MagicCodexBridge/loot-boxes.yml.</li>
+ *   <li>가구 보상(furniture, 2026-10-26 가구 뽑기권): 아이템이 아니라 하우징 가구 권한. 이미 가진 가구·이번 개봉에서 이미 나온 가구는
+ *       추첨에서 빠진다(가지지 않은 것 중 같은 비율로 다시 뽑기, {@link LootBoxRules#drawUnique}). 권한은 ②(열쇠 차감·영수증) 뒤 ③에서
+ *       우편과 함께 주고({@link #settle}), 영수증이 있으면 복구 때 다시 준다 (권한은 여러 번 줘도 같음).</li>
  * </ul>
  * 서버 부담: 우클릭 때 열쇠 재질 집합으로 먼저 거르고, 파일·영수증 IO 는 전용 스레드 하나. 게임 스레드는 추첨·칸 계산(36칸)만.
  */
@@ -57,6 +60,9 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
     private final Map<String, LootBoxJournal.Opening> pending = new LinkedHashMap<>();
     private final Set<String> mailing = new HashSet<>();
     private final Map<String, Integer> retries = new HashMap<>();
+    /** 가구 권한 주는 중 / 이번 실행에서 다 준 개봉 (op). 메인 스레드. */
+    private final Set<String> granting = new HashSet<>(), granted = new HashSet<>();
+    private final Map<String, Integer> grantRetries = new HashMap<>();
     private final List<Path> broken = new ArrayList<>();
     private Set<Material> keyMaterials;
     private long keyRevision = -1;
@@ -188,9 +194,23 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         else if (box.totalWeight() <= 0) refused = "아직 보상이 없는 상자예요";
         else if (!plugin.playerStateReady(p) || p.isDead() || p.getGameMode() == GameMode.SPECTATOR) refused = "지금은 열 수 없어요. 잠시 뒤 다시 해 주세요";
         if (refused != null) { refuse(p, admin, refused); return; }
-        int[] picks = LootBoxRules.drawMany(box.weights(), count, ThreadLocalRandom.current());
+        String[] unique = box.rewards().stream().map(LootBoxStore.Reward::furniture).toArray(String[]::new);
+        boolean hasFurniture = Arrays.stream(unique).anyMatch(Objects::nonNull);
+        int[] picks;
+        if (grant && hasFurniture) {
+            var owned = ownedFurniture(p, unique);
+            picks = LootBoxRules.drawUnique(box.weights(), unique, owned, count, ThreadLocalRandom.current());
+            if (picks == null) {
+                int left = LootBoxRules.uniqueLeft(box.weights(), unique, owned);
+                refuse(p, admin, left == 0 ? "이 상자의 가구를 모두 모았어요 (열쇠는 그대로예요)"
+                        : "받을 수 있는 가구가 " + left + "개 남아 " + count + "개 열기는 할 수 없어요. 1개씩 열어 주세요 (열쇠는 그대로예요)");
+                return;
+            }
+        } else picks = LootBoxRules.drawMany(box.weights(), count, ThreadLocalRandom.current());
         if (picks == null) { refuse(p, admin, "아직 보상이 없는 상자예요"); return; }
-        var stacks = new ArrayList<ItemStack>(count);
+        var stacks = new ArrayList<ItemStack>(count);   // 화면·기록용 (가구는 표시용 아이템)
+        var items = new ArrayList<ItemStack>(count);    // 실제로 인벤토리·우편으로 가는 아이템
+        var furniture = new ArrayList<String>();        // 권한으로 주는 하우징 가구
         int[] grades = new int[count];
         for (int i = 0; i < count; i++) {
             var reward = box.rewards().get(picks[i]);
@@ -201,6 +221,12 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
                 return;
             }
             stacks.add(stack); grades[i] = reward.grade();
+            if (reward.furniture() != null) furniture.add(reward.furniture()); else items.add(stack);
+        }
+        if (grant && !furniture.isEmpty() && !(ChacaApi.ready() && Bukkit.getPluginManager().isPluginEnabled("LuckPerms"))) {
+            plugin.getLogger().severe("LOOTBOX 가구 보상을 줄 수 없음 (LuckPerms 또는 명령어 허브 없음) box=" + box.id());
+            refuse(p, admin, "지금은 가구를 받을 수 없어요. 관리자에게 알려 주세요 (열쇠는 그대로예요)");
+            return;
         }
         int grade = LootBoxRules.representative(grades);
         if (!grant) { play(p, box, ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE), grade, stacks, grades, "관리자 미리보기 · 소모·지급 없음"); return; }
@@ -220,7 +246,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
             }
             for (var e : take.entrySet()) { var s = next[e.getKey()]; int left = s.getAmount() - e.getValue(); if (left <= 0) next[e.getKey()] = null; else s.setAmount(left); }
         }
-        var left = RewardDelivery.place(next, usable, stacks, false);
+        var left = RewardDelivery.place(next, usable, items, false);
         var mail = new ArrayList<byte[]>();
         for (var part : RewardPlan.mailParts(left, RewardDelivery.STACKS)) for (var it : part) mail.add(it.serializeAsBytes());
         var results = stacks.stream().map(ItemStack::serializeAsBytes).toList();
@@ -230,7 +256,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         try {
             io.execute(() -> {
                 LootBoxJournal.Opening saved;
-                try { saved = journal.save(op, id, box.id(), box.name(), count, grade, results, grades, mail); }
+                try { saved = journal.save(op, id, box.id(), box.name(), count, grade, results, grades, mail, furniture); }
                 catch (Exception e) {
                     plugin.getLogger().severe("LOOTBOX 영수증 저장 실패 player=" + id + " box=" + box.id() + " (" + e + ") — 열지 않음");
                     main(() -> { busy.remove(id); refuse(p, admin, "지금은 열 수 없어요. 잠시 뒤 다시 해 주세요 (열쇠는 그대로예요)"); });
@@ -262,7 +288,15 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         play(p, box, opening(o.operation()), o.grade(), stacks, o.grades(), o.mail().isEmpty() ? "" : "자리가 부족한 보상은 우편으로 보냈어요");
         audit(p, box, o, stacks, consume);
         if (admin != null && admin != p) CmdKit.ok(admin, ChacaApi.name(id) + " 님에게 " + box.name() + " " + o.count() + "개 결과를 지급했어요 (열쇠 소모 없음)");
-        if (o.mail().isEmpty()) finish(o); else mail(o);
+        settle(o);
+    }
+
+    /** 이미 가진 하우징 가구 (하우징 보관함과 같은 판정: 권한) + 아직 권한을 주는 중인 이 사람의 개봉에 든 가구. 메인 스레드. */
+    private Set<String> ownedFurniture(Player p, String[] unique) {
+        var owned = new HashSet<String>();
+        for (String f : unique) if (f != null && p.hasPermission(school.magiccodex.protocol.HousingRules.permission(f))) owned.add(f);
+        for (var o : pending.values()) if (o.player().equals(p.getUniqueId())) owned.addAll(o.furniture());
+        return owned;
     }
 
     private static long opening(String op) { long v = UUID.fromString(op).getMostSignificantBits() & Long.MAX_VALUE; return v == 0 ? 1 : v; }
@@ -312,7 +346,41 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         }
     }
 
-    // ------------------------------------------------------------------ ③ 남은 것 우편 · ④ 정리
+    // ------------------------------------------------------------------ ③ 가구 권한 · 남은 것 우편 · ④ 정리
+
+    /** ③: 가구 권한(있으면) → 남은 것 우편(있으면) → ④ 정리. 복구·재접속도 여기로. */
+    private void settle(LootBoxJournal.Opening o) {
+        if (!o.furniture().isEmpty() && !granted.contains(o.operation())) { grantFurniture(o); return; }
+        if (o.mail().isEmpty()) finish(o); else mail(o);
+    }
+
+    private void grantFurniture(LootBoxJournal.Opening o) {
+        if (!granting.add(o.operation())) return;
+        CompletableFuture<Void> all;
+        try {
+            if (!ChacaApi.ready()) throw new IllegalStateException("command hub unavailable");
+            all = CompletableFuture.allOf(o.furniture().stream()
+                    .map(f -> ChacaApi.permission(o.player(), school.magiccodex.protocol.HousingRules.permission(f), true)).toArray(CompletableFuture[]::new));
+        } catch (RuntimeException e) { granting.remove(o.operation()); grantFailed(o, e); return; }
+        all.whenComplete((v, error) -> {
+            if (!plugin.isEnabled()) return; // 종료 중: 기록이 남아 다음 시작 때 다시 준다(같은 권한이라 한 번 준 것과 같음)
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                granting.remove(o.operation());
+                if (error != null) { grantFailed(o, error); return; }
+                granted.add(o.operation()); grantRetries.remove(o.operation());
+                plugin.getLogger().info("LOOTBOX FURNITURE granted player=" + o.player() + " op=" + o.operation() + " furniture=" + String.join(",", o.furniture()));
+                if (pending.containsKey(o.operation())) settle(o);
+            });
+        });
+    }
+
+    private void grantFailed(LootBoxJournal.Opening o, Throwable error) {
+        int n = grantRetries.merge(o.operation(), 1, Integer::sum);
+        plugin.getLogger().warning("LOOTBOX FURNITURE failed (kept) player=" + o.player() + " op=" + o.operation() + " try=" + n + " (" + error + ")");
+        var online = Bukkit.getPlayer(o.player());
+        if (online != null && n == 1) CmdKit.notify(online, "warning", "lootbox-furniture-wait", "가구 지급이 늦어지고 있어요", "가구는 안전하게 기록돼 있고 자동으로 다시 줘요.", 3000);
+        if (n <= 3 && !closing) Bukkit.getScheduler().runTaskLater(plugin, () -> { var cur = pending.get(o.operation()); if (cur != null) settle(cur); }, 1200L);
+    }
 
     private void mail(LootBoxJournal.Opening o) {
         if (!mailing.add(o.operation())) return;
@@ -355,7 +423,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
             try { journal.remove(o.operation()); }
             catch (Exception e) { plugin.getLogger().warning("LOOTBOX 영수증 삭제 실패 " + o.operation() + " (" + e + "); 다음 접속 때 다시 정리(우편은 한 통)"); return; }
             main(() -> {
-                pending.remove(o.operation()); retries.remove(o.operation());
+                pending.remove(o.operation()); retries.remove(o.operation()); granted.remove(o.operation()); grantRetries.remove(o.operation());
                 var online = Bukkit.getPlayer(o.player());
                 if (online != null) online.getPersistentDataContainer().remove(key(receipt(o)));
             });
@@ -377,7 +445,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
             boolean saved;
             try { saved = DeliveryReceipt.saved(playerFile(o.player()), key(receipt(o)).toString()); }
             catch (Exception x) { plugin.getLogger().warning("LOOTBOX 영수증 확인 실패 op=" + o.operation() + " (" + x + "); 접속 때 다시 확인"); continue; }
-            if (saved) { if (o.mail().isEmpty()) finish(o); else mail(o); }
+            if (saved) settle(o);
             // 디스크에 영수증이 없으면 접속 때 판정한다 (이 서버에서 접속하면 그때 버림)
         }
         for (Player p : Bukkit.getOnlinePlayers()) resolve(p);
@@ -387,8 +455,8 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
     private void resolve(Player p) {
         var pdc = p.getPersistentDataContainer();
         for (var o : List.copyOf(pending.values())) {
-            if (!o.player().equals(p.getUniqueId()) || mailing.contains(o.operation())) continue;
-            if (pdc.has(key(receipt(o)), PersistentDataType.BYTE)) { if (o.mail().isEmpty()) finish(o); else mail(o); continue; }
+            if (!o.player().equals(p.getUniqueId()) || mailing.contains(o.operation()) || granting.contains(o.operation())) continue;
+            if (pdc.has(key(receipt(o)), PersistentDataType.BYTE)) { settle(o); continue; }
             pending.remove(o.operation());
             io.execute(() -> { try { journal.remove(o.operation()); } catch (Exception e) { plugin.getLogger().warning("LOOTBOX 영수증 정리 실패 " + o.operation() + " (" + e + ")"); } });
             plugin.getLogger().warning("LOOTBOX discarded (영수증 없음: 지급 전에 멈춤, 열쇠 그대로) player=" + p.getUniqueId() + " op=" + o.operation());
@@ -476,6 +544,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
             var out = new ArrayList<String>();
             out.add("── 우편·정리가 남은 개봉 " + pending.size() + "건 ──");
             for (var o : pending.values()) out.add(" " + o.operation() + " · " + ChacaApi.name(o.player()) + " · " + o.title() + " " + o.count() + "개 · 우편 첨부 " + o.mail().size()
+                    + (o.furniture().isEmpty() ? "" : " · 가구 " + o.furniture().size() + (granted.contains(o.operation()) ? "(지급됨)" : granting.contains(o.operation()) ? "(주는 중)" : "(재시도 " + grantRetries.getOrDefault(o.operation(), 0) + "회)"))
                     + (mailing.contains(o.operation()) ? " · 보내는 중" : " · 재시도 " + retries.getOrDefault(o.operation(), 0) + "회"));
             if (!broken.isEmpty()) out.add(" 읽을 수 없는 영수증 파일 " + broken.size() + "개 (lootbox-receipts 폴더, 콘솔 LOOTBOX 로그 확인)");
             out.add(" 유저가 이 서버에 접속하면 자동으로 정리돼요 (영수증 있음 = 남은 우편만 다시, 없음 = 열지 않은 것으로)");
@@ -529,7 +598,8 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
                     case LootBoxProtocol.EDIT -> {
                         if (r.index() >= b.rewards().size()) throw new IllegalArgumentException("그 보상이 없어요. 새로고침해 주세요");
                         var old = b.rewards().get(r.index());
-                        var sample = store.create(new LootBoxStore.Reward(old.itemsadder(), old.vanilla(), old.item(), 1, old.grade(), old.weight(), old.label()));
+                        if (old.furniture() != null && r.amount() != 1) throw new IllegalArgumentException("가구 보상은 1개만 돼요");
+                        var sample = store.create(new LootBoxStore.Reward(old.itemsadder(), old.vanilla(), old.item(), 1, old.grade(), old.weight(), old.label(), old.furniture(), old.icon()));
                         if (sample != null && r.amount() > sample.getMaxStackSize()) throw new IllegalArgumentException("이 아이템은 한 칸에 " + sample.getMaxStackSize() + "개까지예요");
                         store.editReward(b, r.index(), r.amount(), r.grade(), r.weight());
                         message = (r.index() + 1) + "번 보상을 저장했어요";
