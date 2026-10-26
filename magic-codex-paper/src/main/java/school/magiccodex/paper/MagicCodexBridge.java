@@ -312,6 +312,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{lootBoxes=new LootBoxBridge(this);}catch(Exception|LinkageError error){lootBoxes=null;getLogger().severe("뽑기 상자 초기화 실패 (loot-boxes.yml 확인): "+error.getMessage());}
         try{chunkClaims=new ChunkClaimBridge(this);}catch(Exception|LinkageError error){chunkClaims=null;getLogger().severe("청크 점유 초기화 실패 (chunk-claims.yml·DB 확인): "+error.getMessage());}
         try{houseBoard=new HouseBoardBridge(this);}catch(Exception|LinkageError error){houseBoard=null;getLogger().severe("기숙사 점수 홀로그램 초기화 실패 (house-board.yml 확인): "+error.getMessage());}   // 메모 #106
+        try{new DrawBoardBridge(this);}catch(Exception|LinkageError error){getLogger().severe("행운의 뽑기판 초기화 실패 (database.properties·DB 확인): "+error.getMessage());}   // 운영자 100칸 뽑기판 (§44, 공유 DB)
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
         NameplateBootstrap.initialize(this);
         try{heartbeat=ServerHeartbeat.start(this);commandHub.status(this,"하트비트",()->heartbeat==null?"꺼짐":heartbeat.describe());}catch(Exception|LinkageError error){heartbeat=null;getLogger().warning("운영 하트비트 시작 실패 (게임은 계속): "+error);}
