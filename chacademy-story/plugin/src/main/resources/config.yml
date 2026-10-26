@@ -32,6 +32,7 @@ cutscenes:
   - magic_tutorial
   - ch1_harbor_arrival
   - ch1_ashen_night
+  - ch1_chronicle
   - ch2_ashen_eyes
 
 # 컷신별 최소 시청 시간(초). 이보다 빨리 "끝났다" 고 오면 인정하지 않고 다시 재생한다. 0 또는 없음 = 검사 안 함.

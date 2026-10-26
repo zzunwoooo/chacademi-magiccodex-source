@@ -1596,3 +1596,4 @@ spells:
 
 ### §49 추가 — 컷신 정정 (오너 2026-10-26 15:39)
 - 튜토리얼 맨 처음 = `ch1_ashen_night` (런처에 이미 있음), ch1-4 = `magic_tutorial` (이미 있음), ch1-7 뒤 = `ch1_harbor_arrival` (새로 배포, `deployment/cutscenes/`). `ch0_forgotten_dream` 폐기, ch1-23 컷신 없음. steps.yml(운영·기본)·config 자동완성 목록 반영.
+- (16:11 정정) 오너 그림 7장 연대기 컷신은 **새 id `ch1_chronicle`** — 1장 끝 ch1-23 에서 재생 (튜토리얼 시작 `ch1_ashen_night` 과 이름이 겹치지 않게). `deployment/cutscenes/ch1_chronicle/`.
