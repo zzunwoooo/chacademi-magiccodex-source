@@ -6,6 +6,15 @@
 
 이 환경에는 Gradle·Paper·Fabric 이 없어 **컴파일·테스트를 못 했다** (Java 문법 검사·생성기 실행·운영 overlay `check` = "차이 없음" 만 함). 첫 빌드에서 컴파일 오류가 나면 해당 § 의 "확인 필요" 줄부터 볼 것. 처음 쓰는 Paper/Fabric API 는 각 § 에 적어 둠.
 
+## 서버 구성 (오너 2026-10-26 15:28)
+| 호스팅 | 서버 | 메모리 |
+|---|---|---|
+| 기존 32GB / i7-12700K | Velocity 1GB · 학교 12GB · PvP1 7GB · PvP2 7GB · 공용 MariaDB·Redis 유지 | |
+| 신규 24GB / i9-14900K | 야생1 8GB · 야생2 8GB | |
+- 튜토리얼 서버 삭제 — 튜토리얼 장소는 학교 서버 안.
+- 야생1·2 는 다른 호스팅 → 공용 MariaDB·Redis(HuskSync)에 원격 접속: 기존 호스팅 방화벽에서 신규 호스팅 IP만 3306/6379 허용, 각 플러그인 database.properties·HuskSync config 의 호스트를 기존 호스팅 공인/사설 IP 로. Velocity `velocity.toml` 의 wild·wild2 주소도 신규 호스팅 IP. 지연이 생기는지(배낭 쪽 넘기기·서버 이동) 확인.
+- 서버 id: 학교 school, 야생 wild·wild2 (travel.yml·chunk-claims·inventory-save·donation 의 servers 목록과 같아야 함). PvP1·PvP2 의 server-id 는 아레나용(큐디치·결투) — 그 목록들에 넣지 않음.
+
 ## 0. 순서
 1. `git fetch && git checkout <이 커밋>` → `python3 tools/operating_overlay.py check` 가 "차이 없음"인지.
 2. 아래 §1 모듈 **전부** 빌드 (오늘 #94 한글 닉네임 패치가 거의 모든 플러그인의 `ChacaLink` 를 고쳐서, 70044a79 와 같은 모듈이 사실상 없다).
@@ -64,7 +73,8 @@
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - 마법 발견 조건 v2 (§45): **학교·야생·아레나 `plugins/MagicDiscovery/discoveries.yml`·`manual-conditions.yml` 을 저장소 파일로 교체** (안 바꾸면 옛 조건 그대로) → `/서버관리 새로고침 마법발견`. books.yml overlay(대기 책 16권 켬) · ChacademyStory `steps.yml` ch1-13 시작명령(길잡이 별) 같이. MagicDiscovery·Bridge·MagicMythic·모션 플러그인·클라 모드(도감 문구) 같은 빌드로.
 - TAB 한글 닉 (#110): `deployment/tab/`.
-- **메인 스토리 1장 다시 짜기 (§49)**: `deployment/operating-config/ChacademyStory/steps.yml` 을 **tutorial·school 두 서버** `plugins/ChacademyStory/steps.yml` 에 똑같이 (튜토리얼 서버 `ChacademyStory/config.yml` 은 `quest-server-id: tutorial` 손으로). 대화 `deployment/story-dialogues/` → 학교 `plugins/ChacademyStory/dialogues/` 에 ch1-8~ch1-24·분류 결과 12개·대기대화 7개·`server_command.yml`, 튜토리얼에는 `ch1-7` + 학교에 있던 `ch1-1`~`ch1-6` 복사 + `server_command.yml` (폴더 README). 클라 대화 사본 필요 없음(대사는 서버가 보냄, 초상화 리소스팩 — 셀마 `vl_selma-neutral.png` 확인). 넣은 뒤 두 서버 `/서버관리 새로고침 스토리` → `/대화관리 단계 점검`. 스토리 플러그인 새 jar 필요(단계 `서버:`·`서버이동:`). **스토리 진행 공유 DB(A안)가 들어가야 튜토리얼 → 학교로 진행이 이어짐.** 컷신 4개(1장)는 런처 `config/chaca_cutscene/` ([컷신 목록](../plans/story-cutscenes-ch1-ch2.md)).
+- **메인 스토리 1장 다시 짜기 (§49, 튜토리얼 서버 없음)**: `deployment/operating-config/ChacademyStory/steps.yml` → **학교** `plugins/ChacademyStory/steps.yml`. 대화 `deployment/story-dialogues/` 전부 → 학교 `plugins/ChacademyStory/dialogues/` (ch1-1~ch1-6 은 학교에 이미 있는 실서버본 유지). `quest-server-id: school` 그대로. 넣은 뒤 `/서버관리 새로고침 스토리` → `/대화관리 단계 점검`. 스토리 플러그인 새 jar. 셀마 초상화 `vl_selma-neutral.png` 리소스팩 확인.
+- **컷신 (런처)**: `deployment/cutscenes/<id>/` → 런처 `config/chaca_cutscene/<id>/`. 지금 `ch1_harbor_arrival`(오너 납품) 1개. 미제작 3개(ch0_forgotten_dream·magic_tutorial·ch1_ashen_night)는 파일이 없으면 그 단계 컷신 대기가 반복될 수 있으니, 런처에 없을 동안 steps.yml 의 `컷신:` 을 비우거나 오너 확인 (deployment/cutscenes/README.md).
 - 마법별 힌트 파일 (§46): `plugins/MagicCodexBridge/spell-hints.yml` 은 처음 켤 때 jar 에서 자동 복사 (이미 있으면 안 덮어씀 → 내용이 바뀌면 손으로 교체) → `/서버관리 새로고침 힌트`. MagicCodexBridge·MagicDiscovery(`hintProgress`)·ChacaNPC(`spellHint`) 같은 빌드로 (옛 jar 와 섞여도 예전 자동 문장으로 동작).
 - 몹 스펙 #109 (§47): MythicMobs `Skills/chacademi_mob_skills.yml`·`Mobs/chacademi_mob_minions.yml` 을 overlay 로 **교체**, 야생 `Mobs/chacademia_custom_wild.yml` 은 교체 말고 `python3 tools/mob_spec.py apply-mobs <서버 파일>` (Health·Damage 줄만) → `/mm reload`. `ChAcademiaMagicMythic/config.yml` `pvp.mob-magic-armor: true` (몹 스킬에 마법 방어, 없어도 기본 true).
 
