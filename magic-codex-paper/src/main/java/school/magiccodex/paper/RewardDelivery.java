@@ -49,9 +49,12 @@ final class RewardDelivery implements Listener, AutoCloseable {
     private final Set<String> sending = new HashSet<>();
     private final Map<String, Integer> retries = new HashMap<>();
     private boolean closing;
+    /** 이 서버 표시(mailbox-origin.txt 앞 8자리): 영수증 이름에 넣어 다른 서버가 이 서버의 영수증을 지우지 않게 한다. */
+    private final String origin;
 
     RewardDelivery(MagicCodexBridge plugin) throws Exception {
         this.plugin = plugin;
+        this.origin = NpcSocialService.serverOrigin(plugin.getDataFolder().toPath()).replace("-", "").substring(0, 8);
         this.outbox = new FishMailOutbox(plugin.getDataFolder().toPath().resolve("reward-mail-outbox"));
         Bukkit.getPluginManager().registerEvents(this, plugin);
         instance = this;
@@ -112,7 +115,8 @@ final class RewardDelivery implements Listener, AutoCloseable {
         } else left = list;
         boolean online = p != null && p.isOnline();
         // 오프라인 지급은 플레이어 데이터에 영수증을 남길 수 없다: 처음부터 우편만이므로 "영수증 없이 항상 보냄" 표시(reward_offline_)로 남긴다.
-        String receipt = online ? receiptName(source) : "reward_offline_" + receiptName(source).substring("reward_mail_".length());
+        String hash = UUID.nameUUIDFromBytes(source.getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString().replace("-", "");
+        String receipt = online ? "reward_mail_" + origin + "_" + hash : "reward_offline_" + hash;
         var entries = new ArrayList<FishMailOutbox.Entry>();
         var parts = RewardPlan.mailParts(left, STACKS);
         try {
@@ -146,7 +150,6 @@ final class RewardDelivery implements Listener, AutoCloseable {
         return Given.MAIL;
     }
 
-    static String receiptName(String source) { return "reward_mail_" + UUID.nameUUIDFromBytes(source.getBytes(java.nio.charset.StandardCharsets.UTF_8)).toString().replace("-", ""); }
     private NamespacedKey key(String receipt) { return new NamespacedKey(plugin, receipt); }
 
     /** offline = 영수증 없이 보낸 오프라인 지급(처음부터 우편만): 영수증 확인 없이 보낸다. */
@@ -218,7 +221,7 @@ final class RewardDelivery implements Listener, AutoCloseable {
         }
         String ns = plugin.getName().toLowerCase(Locale.ROOT);
         for (var k : List.copyOf(pdc.getKeys()))
-            if (k.getNamespace().equals(ns) && k.getKey().startsWith("reward_mail_") && pending.values().stream().noneMatch(x -> x.receipt().equals(k.getKey()))) pdc.remove(k);
+            if (k.getNamespace().equals(ns) && k.getKey().startsWith("reward_mail_" + origin + "_") && pending.values().stream().noneMatch(x -> x.receipt().equals(k.getKey()))) pdc.remove(k);
     }
 
     @EventHandler public void join(PlayerJoinEvent e) { resolve(e.getPlayer()); }

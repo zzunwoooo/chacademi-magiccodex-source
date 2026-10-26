@@ -61,6 +61,8 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
     private Set<Material> keyMaterials;
     private long keyRevision = -1;
     private boolean closing;
+    /** 이 서버 표시(우편과 같은 mailbox-origin.txt 앞 8자리). 영수증 이름에 넣어, 다른 서버(학교↔야생)가 이 서버의 영수증을 지우지 않게 한다. */
+    private final String origin;
 
     private record Admin(Player player, long token, long sequence, long expires) {}
     private final Map<UUID, Admin> admins = new HashMap<>();
@@ -74,6 +76,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         store.load(LootBoxStore.read(file));
         for (var b : store.boxes()) if (!b.valid()) plugin.getLogger().warning("뽑기 상자 '" + b.name() + "' (" + b.id() + ") 설정 오류: " + String.join(" / ", b.problems()));
         journal = new LootBoxJournal(plugin.getDataFolder().toPath().resolve("lootbox-receipts"));
+        origin = NpcSocialService.serverOrigin(plugin.getDataFolder().toPath()).replace("-", "").substring(0, 8);
         Bukkit.getPluginManager().registerEvents(this, plugin);
         var m = Bukkit.getMessenger();
         m.registerOutgoingPluginChannel(plugin, LootBoxProtocol.PLAY);
@@ -91,6 +94,8 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
 
     private void main(Runnable r) { if (!closing && plugin.isEnabled()) Bukkit.getScheduler().runTask(plugin, r); }
     private NamespacedKey key(String receipt) { return new NamespacedKey(plugin, receipt); }
+    /** 플레이어 데이터(PDC) 영수증 이름: lootbox_&lt;이 서버 8자리&gt;_&lt;개봉번호&gt;. */
+    private String receipt(LootBoxJournal.Opening o) { return "lootbox_" + origin + "_" + o.operation().replace("-", ""); }
     private static Path playerFile(UUID id) { return Bukkit.getWorlds().getFirst().getWorldFolder().toPath().resolve("playerdata").resolve(id + ".dat"); }
 
     // ------------------------------------------------------------------ 저장 · 새로고침
@@ -250,7 +255,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
             return;
         }
         p.getInventory().setStorageContents(next);
-        p.getPersistentDataContainer().set(key(o.receipt()), PersistentDataType.BYTE, (byte) 1);
+        p.getPersistentDataContainer().set(key(receipt(o)), PersistentDataType.BYTE, (byte) 1);
         try { p.saveData(); } catch (RuntimeException e) { plugin.getLogger().warning("LOOTBOX saveData failed player=" + id + " op=" + o.operation() + " (" + e + "); 다음 저장 때 함께 저장됨"); }
         pending.put(o.operation(), o);
         plugin.getLogger().info("LOOTBOX OPEN player=" + p.getName() + " box=" + box.id() + " count=" + o.count() + " op=" + o.operation() + " mail=" + o.mail().size() + (consume ? "" : " (관리자 테스트 지급)"));
@@ -352,7 +357,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
             main(() -> {
                 pending.remove(o.operation()); retries.remove(o.operation());
                 var online = Bukkit.getPlayer(o.player());
-                if (online != null) online.getPersistentDataContainer().remove(key(o.receipt()));
+                if (online != null) online.getPersistentDataContainer().remove(key(receipt(o)));
             });
         });
     }
@@ -370,7 +375,7 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         for (var o : List.copyOf(pending.values())) {
             if (Bukkit.getPlayer(o.player()) != null) continue;
             boolean saved;
-            try { saved = DeliveryReceipt.saved(playerFile(o.player()), key(o.receipt()).toString()); }
+            try { saved = DeliveryReceipt.saved(playerFile(o.player()), key(receipt(o)).toString()); }
             catch (Exception x) { plugin.getLogger().warning("LOOTBOX 영수증 확인 실패 op=" + o.operation() + " (" + x + "); 접속 때 다시 확인"); continue; }
             if (saved) { if (o.mail().isEmpty()) finish(o); else mail(o); }
             // 디스크에 영수증이 없으면 접속 때 판정한다 (이 서버에서 접속하면 그때 버림)
@@ -383,14 +388,14 @@ final class LootBoxBridge implements Listener, PluginMessageListener, AutoClosea
         var pdc = p.getPersistentDataContainer();
         for (var o : List.copyOf(pending.values())) {
             if (!o.player().equals(p.getUniqueId()) || mailing.contains(o.operation())) continue;
-            if (pdc.has(key(o.receipt()), PersistentDataType.BYTE)) { if (o.mail().isEmpty()) finish(o); else mail(o); continue; }
+            if (pdc.has(key(receipt(o)), PersistentDataType.BYTE)) { if (o.mail().isEmpty()) finish(o); else mail(o); continue; }
             pending.remove(o.operation());
             io.execute(() -> { try { journal.remove(o.operation()); } catch (Exception e) { plugin.getLogger().warning("LOOTBOX 영수증 정리 실패 " + o.operation() + " (" + e + ")"); } });
             plugin.getLogger().warning("LOOTBOX discarded (영수증 없음: 지급 전에 멈춤, 열쇠 그대로) player=" + p.getUniqueId() + " op=" + o.operation());
         }
         String ns = plugin.getName().toLowerCase(Locale.ROOT);
         for (var k : List.copyOf(pdc.getKeys()))
-            if (k.getNamespace().equals(ns) && k.getKey().startsWith("lootbox_") && pending.values().stream().noneMatch(o -> o.receipt().equals(k.getKey()))) pdc.remove(k);
+            if (k.getNamespace().equals(ns) && k.getKey().startsWith("lootbox_" + origin + "_") && pending.values().stream().noneMatch(o -> receipt(o).equals(k.getKey()))) pdc.remove(k); // 이 서버 것만
     }
 
     @EventHandler public void join(PlayerJoinEvent e) { resolve(e.getPlayer()); }
