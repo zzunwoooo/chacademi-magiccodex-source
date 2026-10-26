@@ -22,4 +22,4 @@ scenes:
     name: "셀마 씨"
     lines:
       - {who: pipi, face: "기본", text: "오, 낚았구나! 근데 물고기로는 계산 못 해~"}
-      - {who: pipi, face: "기본", text: "마을의 셀마 씨한테 팔고 와. 돈으로 바꿔 오면 그때 물건 보여 줄게!"}
+      - {who: pipi, face: "기본", text: "마을의 셀마 씨한테 팔고 와. 돈으로 바꿔 오면 다시 들러!"}

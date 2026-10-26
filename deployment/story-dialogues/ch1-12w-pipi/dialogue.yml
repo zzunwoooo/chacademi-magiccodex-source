@@ -22,4 +22,4 @@ scenes:
     name: "낚시는?"
     lines:
       - {who: pipi, face: "기본", text: "어라, 벌써 왔어? 올레 아저씨한테 낚싯대는 받았지?"}
-      - {who: pipi, face: "기본", text: "한 마리라도 낚아 보고 와! 돈 생기면 그때 물건 골라 줄게~"}
+      - {who: pipi, face: "기본", text: "한 마리라도 낚아 보고 와! 여비 벌면 다시 들르구~"}
