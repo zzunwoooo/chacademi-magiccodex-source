@@ -61,6 +61,7 @@
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - 마법 발견 조건 v2 (§45): **학교·야생·아레나 `plugins/MagicDiscovery/discoveries.yml`·`manual-conditions.yml` 을 저장소 파일로 교체** (안 바꾸면 옛 조건 그대로) → `/서버관리 새로고침 마법발견`. books.yml overlay(대기 책 16권 켬) · ChacademyStory `steps.yml` ch1-13 시작명령(길잡이 별) 같이. MagicDiscovery·Bridge·MagicMythic·모션 플러그인·클라 모드(도감 문구) 같은 빌드로.
 - TAB 한글 닉 (#110): `deployment/tab/`.
+- 마법별 힌트 파일 (§46): `plugins/MagicCodexBridge/spell-hints.yml` 은 처음 켤 때 jar 에서 자동 복사 (이미 있으면 안 덮어씀 → 내용이 바뀌면 손으로 교체) → `/서버관리 새로고침 힌트`. MagicCodexBridge·MagicDiscovery(`hintProgress`)·ChacaNPC(`spellHint`) 같은 빌드로 (옛 jar 와 섞여도 예전 자동 문장으로 동작).
 
 ## 4. 손으로 할 것
 - MCPets 커스텀 펫 276개 파일 삭제 (#81, `deployment/mcpets-companion-removal.json`).
