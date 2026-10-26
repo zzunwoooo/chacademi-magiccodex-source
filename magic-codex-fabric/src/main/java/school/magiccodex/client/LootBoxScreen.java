@@ -142,8 +142,8 @@ final class LootBoxScreen extends Screen {
     // ------------------------------------------------------------------ 결과
 
     private boolean single() { return items.size() == 1; }
-    private ArtifactSummonScreen.Box panel() { return single() ? new ArtifactSummonScreen.Box(W / 2 - 250, 255, 500, 390) : new ArtifactSummonScreen.Box(W / 2 - 440, 205, 880, 520); }
-    private ArtifactSummonScreen.Box confirm() { return single() ? new ArtifactSummonScreen.Box(W / 2 - 130, 548, 260, 60) : new ArtifactSummonScreen.Box(W / 2 - 130, 622, 260, 60); }
+    private ArtifactSummonScreen.Box panel() { return single() ? new ArtifactSummonScreen.Box(W / 2 - 250, 255, 500, 390) : new ArtifactSummonScreen.Box(W / 2 - 440, 205, 880, 475); }
+    private ArtifactSummonScreen.Box confirm() { return single() ? new ArtifactSummonScreen.Box(W / 2 - 130, 548, 260, 60) : new ArtifactSummonScreen.Box(W / 2 - 130, 586, 260, 60); }
     private ArtifactSummonScreen.Box cell(int i) {
         if (single()) return new ArtifactSummonScreen.Box(W / 2 - 95, 300, 190, 190);
         float size = 142, gap = 20, left = W / 2 - (5 * size + 4 * gap) / 2;
