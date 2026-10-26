@@ -133,7 +133,7 @@ public final class PortraitSettings {
         autoDelaySeconds = clamp(c.getInt("auto.delay-seconds", 20), 0, 600);
         autoMaxAttempts = clamp(c.getInt("auto.max-attempts", 3), 1, 50);
 
-        rerollItemId = c.getString("reroll.item-id", "item:reroll").trim();
+        rerollItemId = c.getString("reroll.item-id", "item:cutscene_ticket").trim();
         promptTimeoutSeconds = clamp(c.getInt("reroll.prompt-timeout-seconds", 180), 15, 1800);
         rerollCooldownSeconds = clamp(c.getInt("reroll.cooldown-seconds", 60), 0, 86400);
         rerollDailyLimit = Math.max(0, c.getInt("reroll.daily-limit", 0));

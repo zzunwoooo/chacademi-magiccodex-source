@@ -1067,6 +1067,7 @@ boxes:
 - [ ] 장착 칸에 낀 장신구만 있고 주 손이 비면 대상 아님(인벤 마법봉이 잡히거나 "…필요합니다").
 - [ ] 창 열고 주 손 칸을 다른 칸으로 바꾼 뒤 적용 → 거절, 반지 그대로.
 - [ ] 장신구 들고 성향 변경 탭 → "마나 회복 중심/보조" 표시. 마법봉 재구성은 예전과 똑같이.
+
 ## 38. 뽑기권 상자 3개 미리 등록 · 가구 보상 종류 (2026-10-26, 확률 오너 검수 대기)
 오너: 가구·낚시도구·몬스터 전리품 뽑기권을 §36 뽑기 상자로. 내용·확률표·근거·검수 항목은 [docs/plans/loot-box-contents.md](../plans/loot-box-contents.md). API 상자 2종은 오너가 직접 만듦(안 넣음).
 - `loot-boxes.yml`(소스 기본값 + overlay 같은 내용, `operating_overlay.py check` 차이 없음)에 `furniture_ticket`(가구뽑기권, 열쇠 `item:furniture_ticket`, 가구 97종 같은 확률·전부 일반) · `fishing_ticket`(낚시도구뽑기권, `item:fishing_ticket`, 장비 27종, 일반 60·고급 28·유일 10·전설 2 %) · `monster_loot_ticket`(몬스터전리품뽑기권, `item:monster_loot_ticket`, 18종, 1성 70·2성 24·3성 6 %) — 모두 enabled.
@@ -1074,3 +1075,75 @@ boxes:
 - **이미 가진 가구는 추첨에서 뺌**(이번 10개 열기에서 나온 것도) = 가지지 않은 것 중 다시 뽑기. 다 모으면 "모두 모았어요"로 안 열림(열쇠 그대로). OP 는 모든 가구를 가진 것으로 보여 거절됨 → 확인은 OP 아닌 계정, 화면만은 `/상자관리 테스트 가구뽑기권 10`.
 - 고친 파일: `LootBoxStore`(furniture·icon 필드, 표시용 아이템 PAINTING + PDC `magiccodexbridge:lootbox_icon`), `LootBoxRules.drawUnique/uniqueLeft`, `LootBoxJournal`(furniture 줄, 예전 기록 = 없음), `LootBoxBridge`(settle·grantFurniture), 클라 `LootBoxScreen`·`LootBoxAdminScreen`(PDC 그림 경로가 있으면 그 PNG). 테스트 `LootBoxRulesTest`·`LootBoxJournalTest` 추가. 프로토콜 변경 없음 — 옛 클라는 가구가 그림 아이템 아이콘으로만 보임.
 - 확인: ① 뽑기권 3종 ItemsAdder id 가 운영과 같은지(다르면 관리 창 「열쇠 다시 지정」) ② OP 아닌 계정으로 가구뽑기권 1개 → 결과 칸 가구 그림, 내 방 꾸미기 보관함에 생김, 콘솔 `LOOTBOX FURNITURE granted` ③ `/상자관리 테스트 낚시도구뽑기권 10 지급` (미끼 10개 묶음이 만들어지는지) ④ 몬스터 전리품은 **임시 바닐라 아이템**(야생 몹 전용 전리품·드롭 테이블이 아직 없음, 메모 #55) — 전용 아이템이 생기면 관리 창에서 교체.
+
+## 39. 아이템 기능 5종 — 변색종 변경권 · 컷신 변경권 · 마법 힌트권 · 재화 주머니 · 포션 (2026-10-26, 오너 결정)
+
+부록 A-2 의 "아직 코드 연결 없음" 중 5종. 모두 우클릭(포션은 기존 마나 포션 방식) · 쓸 수 없으면 알림만, 아이템 그대로.
+
+**1. 변색종 변경권 `item:shiny_change`** (MagicCodexBridge `UtilityItemsBridge`, `utility-items.yml shiny-change`)
+- 들고 야생 몹을 우클릭(몹을 직접 눌러도, 허공에서 바라봐도 됨, 6칸) → 관리자 `/월드관리 변색종 지정` 과 같은 `ShinyBridge.mark`: ModelEngine 모델 `ca_xxx` → `ca_xxx_s`, 표식(PDC·`chacademia_shiny` 태그), 이름 노란색, 반짝임·소리, 클라 변색종 체력바. 성공했을 때만 1개 사용.
+- 거절(소모 없음): 바라보는 몹 없음 · MythicMobs 이름이 `CA_Wild_` 로 시작하지 않음(설정 `mythic-prefixes`) · 교화 대상(taming.yml/taming.d)에 없음 · 이미 변색종(`_shiny` 몹이거나 표식) · 보스(교화 설정 `boss: true`) · 교화 중 · 막힌 세계(`excluded-worlds`, 기본 없음) · ModelEngine 꺼짐 · **변색종 모델(`ca_xxx_s`)이 없음**(모델 바꾸기가 실패하면 아무것도 안 바뀐 채로 거절 — ShinyModelSwap 이 되돌림).
+- 확인한 연결: 야생 변색종은 원래 별도 미몹 `CA_Wild_xxx_shiny`(스폰 1/2048) + 모델 `ca_xxx_s` + 태그 `chacademia_shiny`. 변경권은 몹을 다시 소환하지 않고 **그 몹의 모델·표식만** 바꾼다 (체력·전투 상태·추적 유지, 스폰 상한 계산은 원래 종류로). **교화하면 변색종 펫**: TamingBridge.profile 이 변색종이면 pet-id + `_shiny` (자연 변색종 `CA_Wild_xxx_shiny` 와 같은 펫 id). 다른 점: 몹 스킬 VFX·피격 스킬은 원래 몹 것(일반 색) 그대로 — 미몹 종류가 안 바뀌어서. 전부 바꾸려면 몹을 `_shiny` 미몹으로 다시 소환해야 해서 이번엔 안 함.
+
+**2. 컷신 변경권 `item:cutscene_ticket`** (ChacaPortrait)
+- 기존 "다시 그리기" 아이템이 ItemsAdder `item:reroll` 이었으므로 **그 id 를 `item:cutscene_ticket` 으로 바꿈** (`config.yml reroll.item-id`, 코드 기본값). 나머지 흐름 그대로: 우클릭 → 직접 프롬프트 입력 창(모드 없으면 채팅) → 문장 검사 → 차감(기록 먼저) → 대기열 → 생성.
+- 차감 시점은 기존 그대로: 입력·문장 검사 통과 뒤 대기열에 넣을 때 차감, **생성 시작 전 실패·취소(입력 취소·시간 초과·문장 거부·예산·대기열 가득·시작 전 서버 종료)는 차감 안 함/돌려줌**. 생성이 시작된 뒤(첫 유료 호출) 실패는 예전 오너 결정대로 소모(입력창 안내 문구 그대로).
+- **배포 주의**: 서버에 이미 있는 `plugins/ChacaPortrait/config.yml` 은 jar 가 안 덮으니 `reroll.item-id: "item:cutscene_ticket"` 으로 바꾸고 `/서버관리 새로고침 초상화`. 예전 `item:reroll` 아이템은 더는 안 열림.
+
+**3. 마법 힌트권 `item:spell_hint`** (`UtilityItemsBridge` + `LifeSpells.hintCard`, `utility-items.yml spell-hint`)
+- **타로 UI**: 저장소 전체(이 브랜치·최근 원격 브랜치·docs/design·VFX 에셋)에 타로/카드 힌트 UI 가 없음 (#65 는 "UI 레퍼런스 대기"). 그래서 **가장 가까운 기존 연출 = 깨달음의 빛(221 enlighten_hint)의 빛의 책 VFX**(PortableVFX 카탈로그 연출만, 마나·쿨 없음)를 씀 → 1.2초 뒤(책이 다 펼쳐질 때) 알림 카드 "마법 힌트 ★★☆" + 채팅 한 줄. 타로 UI 가 들어오면 `UtilityItemsBridge.showHint` 한 곳만 바꾸면 됨.
+- 힌트 후보 = 깨달음의 빛과 같음: 아직 안 배운 마법 · 궁극/미구현 제외(LifeSpells.NO_HINT) · MagicDiscovery discoveries.yml 의 발견 조건 문구가 있는 것. 남은 게 없으면 거절(소모 없음).
+- 별(타로 기획 #65 의 확률 그대로, 설정 `stars`): 1성 50% = 원소만("아직 깨치지 못한 빛 마법 하나가…"), 2성 40% = NPC·깨달음의 빛과 같은 목격담(숫자 흐림), 3성 10% = 발견 조건 문구 그대로. 1성 문장은 Claude 작성 → 오너 검수.
+- MythicMobs 가 없어 마법 실행이 꺼진 서버면 "지금은 쓸 수 없어요".
+
+**4. 재화 주머니 `item:money_pouch`** (`UtilityItemsBridge` + `MoneyPouchRules`, `utility-items.yml money-pouch`)
+- 우클릭 → 구간을 비율로 고르고 그 안에서 금액(10 G 단위 내림) → Vault 지급 → 알림 "재화 주머니 +1,240 G · 은화 한 줌". 1개 사용. Vault 없음·지급 거절 → 주머니 돌려줌. 경제 플러그인 오류로 결과를 모르면 주머니는 안 돌려주고 콘솔 SEVERE + 운영 기록(중복 지급 방지, 관리자가 `/유저관리 <닉> 돈 보기`로 확인).
+- 운영 기록: 종류 **"돈"** 으로 **금액 상관없이 전부**(money-threshold 무시) — "재화 주머니 +N G (구간)", 출처·금액·구간. 통계 `재화주머니`(횟수)·`재화주머니금액`. 서버 로그 `재화 주머니: <이름> +N G`.
+- **금액 표 (오너 검수용)**
+
+| 구간 | 확률 | 금액 | 비고 |
+|---|---|---|---|
+| 동전 몇 닢 | 45% | 100 ~ 300 G | 일반 물고기 1~4마리 |
+| 묵직한 동전 | 30% | 300 ~ 800 G | 고급 물고기 1~2마리 |
+| 은화 한 줌 | 17% | 800 ~ 2,000 G | 기본 낚시 약 5~10분 |
+| 금화 주머니 | 6.5% | 2,000 ~ 4,000 G | 기본 낚시 약 10~20분 |
+| 대박! 30분 노동치 | 1.5% | 6,000 G | 30분 노동치 (효과음 하나 더) |
+
+  평균 약 **780 G** (기본 낚시 3~4분 치). 대박은 약 67개에 1번.
+- **"30분 노동치 ≈ 6,000 G" 근거 (추정)**: ① 낚시(주 수입): 물고기 판매가 등급 기본가 일반 80 · 고급 400 · 유일 2,000 · 전설 10,000 × 크기 0.7~1.5배(평균 약 1.1). 기본 장비 얕은 물 등급 확률 76/20/3.9/0.1% → 운 좋은 유일·전설 빼면 1마리 약 160 G, 다 넣은 기댓값 약 250 G. 입질 대기 3~9초 + 약올리기 + 끌어올리기 + 실패를 합쳐 **1마리 약 40초(추정)** → 30분 약 45마리 = **약 7,000 G (보통) / 약 11,000 G (기댓값)**, 중층 장비면 기댓값 약 23,000 G. ② 광질: 피피 잡화점 판매가 철 40 · 금 80 · 다이아 400 · 석탄 20 → 30분 철 40·금 10·다이아 4·석탄 20개 가정 약 4,400 G. ③ 의뢰 기본 보상 돈 0(quests.yml), 상점 구매가는 판매가의 5배. → 초보 낚시와 광질 사이 **6,000 G** 로 잡음. 물고기 1마리 시간·광질량은 실측 아님 — 오너가 감각과 다르면 `tiers` 숫자만 고치면 됨.
+
+**5. 포션** (ChAcademiaMagicMythic `Potions` + `PotionCooldowns`, `config.yml health-potion / mana-potion / potion-cooldown-overlay`)
+- 체력 포션 `item:health_potion`: 체력 **5** 회복(하트 2.5칸, 최대 체력까지), 쿨 **10초**. 마나 포션 `item:mana_potion`: 마나 **100**(예전 50), 쿨 **15초** — 159/236 마력 예금이 만드는 그 포션도 같이 100. 쿨은 **체력·마나 따로**(서로 안 막음), 서버 메모리(나가면 지움, 10~15초라 DB 안 씀).
+- 마시는 방식은 기존 마나 포션 그대로(UtilMech.State 에 있던 처리를 `Potions` 로 옮김): 아이템 재질이 바닐라 물약(POTION)이면 마셔서, 아니면 우클릭으로 1개 사용.
+- 거절(소모 없음): 쿨 중("체력 포션은 N초 뒤에 쓸 수 있어요") · 물약봉인(기존 StatusEffects, 체력 포션도 물약봉인 대상에 추가) · 회복봉인 · 체력 가득(체력 포션만).
+- **클라 남은 쿨 표시**: 기존 방식 = 바닐라 아이템 쿨 덮개(핫바·아공간 배낭 칸, GalaxyBagScreen 이 이미 그림). 그런데 바닐라 쿨은 **재질 단위**라 ItemsAdder 두 포션의 재질이 같으면 서로 막히고, 같은 재질의 다른 아이템(예: PAPER 로 만든 귀환권)까지 막힘 → **기본 꺼 둠** (`potion-cooldown-overlay: false`). 두 포션 재질이 서로 다르고 다른 사용 아이템과 안 겹치면 `true` 로 켜면 됨. 서버 쿨은 이 값과 상관없이 항상 적용. (Paper 1.21.4 의 use_cooldown 묶음 이름 API 는 저장소에서 쓴 적이 없어 이번엔 안 씀.)
+- ItemsAdder 체력 포션에 바닐라 즉시 회복 효과가 붙어 있으면 그만큼 더 회복됨 → 아이템 쪽에서 빼기 권장.
+
+**부담**: 전부 우클릭/마실 때만 계산 (ItemsAdder id 비교 → 해당 아이템일 때만). 매 틱 작업·DB 없음. 변색종 변경권의 몹 찾기는 교화 마법과 같은 광선(근처 몹 히트박스, 클릭 0.4초에 1번). 재화 주머니 Vault 지급은 상점과 같이 메인 스레드 1번.
+
+**테스트**: `MoneyPouchRulesTest`(기본 표 평균 778 · 구간 안·10 단위 · 대박 약 1.5% · 최소 아래로 안 내림 · 잘못된 줄 거절), `PotionCooldownsTest`(체력·마나 따로 · 사람별 · 쿨 끝 · 0초 · 정리 · 남은 초 올림). Gradle 없음 — Claude 작업 폴더의 JUnit 대체 실행기로 2개(8개 검사) 통과. 나머지 서버 코드는 문법 검사만 → **GPT 빌드 때 컴파일 확인**.
+
+**바뀐 파일**
+- MagicCodexBridge(새): `UtilityItemsBridge` · `MoneyPouchRules` · `utility-items.yml` / 테스트 `MoneyPouchRulesTest`. (고침): `MagicCodexBridge`(등록 한 줄) · `TamingBridge`(`shiny()` 접근자) · `LifeSpells`(`current()`, `hintCard`, 원소 읽기).
+- ChAcademiaMagicMythic(새): `Potions` · `PotionCooldowns` / 테스트 `PotionCooldownsTest`. (고침): `UtilMech`(옛 마나 포션 마시기·우클릭 처리 삭제 → Potions) · `StatusEffects`(물약봉인 대상에 체력 포션) · `MagicMythicPlugin`(등록) · `config.yml`.
+- ChacaPortrait: `config.yml`·`PortraitSettings`(기본 id `item:cutscene_ticket`), 주석만 `RerollService`·`ChacaPortraitPlugin`·`PortraitProtocol`.
+- operating-config 변경 없음 (overlay 대상 파일 안 건드림). MythicMobs `chacademi_spells.yml` 236 주석 "사용 시 마나 50" 은 그대로(주석뿐, 실제 값은 config).
+
+**같이 배포**
+- MagicCodexBridge(모든 서버) · ChAcademiaMagicMythic(마법 쓰는 모든 서버) · ChacaPortrait. 클라 모드 변경 없음.
+- 이미 있는 설정 파일은 jar 가 안 덮음: `ChAcademiaMagicMythic/config.yml` 에 `mana-potion`(restore 100, cooldown-seconds 15)·`health-potion`·`potion-cooldown-overlay` 넣기, `ChacaPortrait/config.yml reroll.item-id` 바꾸기. `utility-items.yml` 은 처음 켤 때 자동 생성.
+
+**게임 확인**
+- [ ] 변색종 변경권: 야생 `CA_Wild_` 몹 우클릭 → 변색종 모델·노란 이름·반짝임, 1개 줄어듦, 체력바 변색종 색. 교화 → 변색종 펫.
+- [ ] 거절(개수 그대로): 이미 변색종 · 보스 · 교화 중 · 바닐라/등록 안 된 몹 · 허공 · 변색종 모델 없는 몹(콘솔 "변색종 모델 없음").
+- [ ] 컷신 변경권: 우클릭 → 프롬프트 입력 창 → 보내면 1개 줄고 생성. 입력 창 취소/시간 초과·문장 거부 → 그대로. 예산 부족 → 그대로.
+- [ ] 마법 힌트권: 빛의 책 연출 + 1.2초 뒤 "마법 힌트 ★☆☆~★★★" 카드·채팅, 1개 줄어듦. 다 배운 계정 → 거절·그대로.
+- [ ] 재화 주머니: 우클릭 → 돈 증가 = 알림 금액, `/유저관리 <닉> 기록 돈` 에 한 줄. Vault 끈 상태 → 그대로.
+- [ ] 체력 포션: 5 회복, 10초 안 다시 → "N초 뒤", 그 사이 마나 포션은 바로 됨. 체력 가득 → 거절·그대로. 마나 포션 100 회복, 15초 쿨. 물약봉인·회복봉인 → 거절. 마시는 재질/우클릭 재질 둘 다.
+
+**오너 확인 필요 / Claude 판단**
+- 재화 주머니 금액 표·"30분 = 6,000 G" 추정(위 근거).
+- 타로 UI 대신 깨달음의 빛 연출 사용, 별 1~3 문장(특히 1성 원소만).
+- 변색종 변경권은 몹을 다시 소환하지 않고 모델·표식만 바꿈(몹 스킬 VFX 색은 일반 그대로).
+- 컷신 변경권 = 기존 다시 그리기 아이템 id 교체(예전 `item:reroll` 은 더는 안 열림). 생성 시작 뒤 실패는 예전 결정대로 소모.
+- 체력 포션 쿨 덮개 표시는 기본 끔(재질 겹침 문제), 체력 가득이면 거절.

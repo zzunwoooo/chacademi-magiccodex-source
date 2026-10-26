@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 /**
  * ChacaPortrait — 플레이어 스킨을 읽어 레퍼런스 그림체의 상반신 일러스트를 만들고, MagicCodex 대화창 "내 차례"에 쓰도록 클라이언트로 보낸다.
- * 최초 접속 시 1회 자동, 이후 ItemsAdder 아이템(item:reroll) 우클릭으로 추가 요청과 함께 다시 그린다.
+ * 최초 접속 시 1회 자동, 이후 ItemsAdder 아이템(item:cutscene_ticket, 컷신 변경권) 우클릭으로 추가 요청과 함께 다시 그린다.
  */
 public final class ChacaPortraitPlugin extends JavaPlugin implements Listener {
 

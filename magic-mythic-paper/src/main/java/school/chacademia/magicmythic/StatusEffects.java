@@ -667,7 +667,7 @@ final class StatusEffects implements Listener, AutoCloseable {
         if (it == null) return false;
         var t = it.getType();
         return t == Material.POTION || t == Material.SPLASH_POTION || t == Material.LINGERING_POTION || t == Material.OMINOUS_BOTTLE
-            || UtilMech.isManaPotion(it);
+            || UtilMech.isManaPotion(it) || Potions.isHealthPotion(it);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

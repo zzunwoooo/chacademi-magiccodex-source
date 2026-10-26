@@ -151,9 +151,20 @@ return-point: {}
   # yaw: 0
   # pitch: 0
 
-# 159 마력 예금: 마나 포션(item:mana_potion) 사용 시 회복량
+# 포션 (2026-10-26 오너 결정). 쿨타임은 체력·마나 따로 돌아서 서로 막지 않습니다. 쿨 중·회복봉인·물약봉인·체력 가득이면 아이템을 쓰지 않습니다.
+# 마시는 방식: 아이템 재질이 바닐라 물약(POTION)이면 마셔서, 아니면 우클릭으로 1개 사용.
+# 마나 포션(item:mana_potion): 159 마력 예금이 만드는 포션도 같은 아이템. 회복량 예전 50 → 100.
 mana-potion:
-  restore: 50
+  restore: 100
+  cooldown-seconds: 15
+# 체력 포션: 체력 5 회복 (하트 2.5칸). 아이템 자체에 바닐라 즉시 회복 효과가 붙어 있으면 그만큼 더 회복되니 ItemsAdder 쪽에서 빼 주세요.
+health-potion:
+  item: "item:health_potion"
+  restore: 5
+  cooldown-seconds: 10
+# 클라 남은 쿨 표시(바닐라 아이템 쿨 덮개). 바닐라 쿨은 '재질' 단위라 같은 재질의 다른 아이템까지 잠깐 막힙니다 —
+# 체력·마나 포션의 ItemsAdder 재질이 서로 다르고 다른 사용 아이템과 겹치지 않을 때만 true 로 켜세요. (서버 쪽 쿨은 이 값과 상관없이 항상 적용)
+potion-cooldown-overlay: false
 
 # 132 길잡이 별: VFX 화살표가 준비되기 전까지 액션바로 방향·거리 안내
 guiding-star-text: true

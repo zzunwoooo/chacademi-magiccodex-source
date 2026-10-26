@@ -76,6 +76,8 @@ final class TamingBridge implements Listener,PluginMessageListener,AutoCloseable
     }
     String profileId(LivingEntity e){var p=baseProfile(e);return p==null?null:p.id;}
     boolean allowsShinyRoll(String id){return !noShinyRoll.contains(id);}
+    /** 변색종 (ShinyBridge) — 변색종 변경권(UtilityItemsBridge)이 씀. */
+    ShinyBridge shiny(){return shiny;}
     boolean captureLocked(LivingEntity e){return locked.contains(e.getUniqueId());}
     boolean configuredMythic(LivingEntity e){try{return activeMob!=null&&((Optional<?>)activeMob.invoke(mobManager,e.getUniqueId())).isPresent();}catch(Exception ex){return false;}}
     private Profile profile(LivingEntity e){

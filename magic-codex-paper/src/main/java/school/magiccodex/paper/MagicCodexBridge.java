@@ -303,6 +303,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{combatTag=new CombatTag(this);}catch(Exception error){getLogger().severe("전투 중 이동 막기 초기화 실패 (combat-lock.yml 확인): "+error.getMessage());}
         if(travel!=null)try{new ReturnTicketBridge(this,travel);}catch(Exception error){getLogger().severe("귀환권 초기화 실패 (return-ticket.yml 확인): "+error.getMessage());}
         try{new MegaphoneBridge(this);}catch(Exception|LinkageError error){getLogger().severe("확성기 초기화 실패 (megaphone.yml 확인): "+error.getMessage());}
+        try{new UtilityItemsBridge(this);}catch(Exception|LinkageError error){getLogger().severe("사용 아이템(변색종 변경권·마법 힌트권·재화 주머니) 초기화 실패 (utility-items.yml 확인): "+error.getMessage());}   // 2026-10-26
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
         // 뽑기 상자 (API 상자, 2026-10-26): 아공간 배낭 다음에 (지급 칸 판정이 배낭 상태를 읽음).

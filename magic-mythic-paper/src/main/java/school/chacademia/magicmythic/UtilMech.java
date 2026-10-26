@@ -28,7 +28,7 @@ import org.bukkit.util.Vector;
  *  text range=12 ticks=100 wait=600 - the next chat line the caster types (within wait ticks) is shown as glowing
  *                          text at the aim point for `ticks` (151 빛의 필사; a proper input box is a client proposal)
  *  potion                - give one mana potion (ItemsAdder item:mana_potion, vanilla fallback); drinking it
- *                          restores config mana-potion.restore mana (159 마력 예금)
+ *                          restores config mana-potion.restore mana (159 마력 예금; Potions — 쿨 mana-potion.cooldown-seconds)
  *  exp ratio=0.5         - spend all current mana, gain mana x ratio experience points (161 경험의 환전)
  *  deepdark depth=64     - is there a Deep Dark biome below the caster? answer only by VFX event found/absent (114)
  *  star                  - point at the current story step's target (ChacademyStory arrow); recast turns it off (132 길잡이 별)
@@ -512,22 +512,7 @@ final class UtilMech extends Mech {
             Bukkit.getScheduler().runTaskLater(plugin, d::remove, ticks);
         }
 
-        @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.MONITOR, ignoreCancelled = true)
-        public void drink(org.bukkit.event.player.PlayerItemConsumeEvent e) {
-            if (!isManaPotion(e.getItem())) return;
-            Links.add(e.getPlayer(), plugin.getConfig().getDouble("mana-potion.restore", 50)); // 회복봉인: Links.add refuses
-        }
-        @org.bukkit.event.EventHandler(priority = org.bukkit.event.EventPriority.HIGH)
-        public void use(org.bukkit.event.player.PlayerInteractEvent e) {
-            // ItemsAdder item that is not a drinkable vanilla potion: right-click uses it
-            if (e.getHand() != EquipmentSlot.HAND || !e.getAction().isRightClick()) return;
-            ItemStack it = e.getItem();
-            if (it == null || it.getType() == Material.POTION || !isManaPotion(it)) return;
-            e.setCancelled(true);
-            if (plugin.status().potionSealed(e.getPlayer())) { ChacaLink.notify(e.getPlayer(), "warning", "magic-mythic:potion-seal", "물약봉인 상태에서는 물약을 쓸 수 없어요", "", 2000); return; }
-            if (Links.add(e.getPlayer(), plugin.getConfig().getDouble("mana-potion.restore", 50)) && e.getPlayer().getGameMode() != GameMode.CREATIVE)
-                it.setAmount(it.getAmount() - 1);
-        }
+        // 마나 포션 마시기·우클릭은 Potions 로 옮김 (2026-10-26: 체력 포션 추가, 체력·마나 따로 쿨, 회복 100)
 
         @org.bukkit.event.EventHandler public void quit(org.bukkit.event.player.PlayerQuitEvent e) {
             UUID id = e.getPlayer().getUniqueId();

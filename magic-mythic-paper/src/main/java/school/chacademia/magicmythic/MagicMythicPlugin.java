@@ -66,6 +66,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     private ChargeInput charge;
     private Passives passives;
     private UtilMech.State utilState;
+    private Potions potions;
     private ArcanaMech.State arcanaState;
     private TrainingDummies dummies;
 
@@ -104,6 +105,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(passives, this);
         utilState = new UtilMech.State(this);
         getServer().getPluginManager().registerEvents(utilState, this);
+        potions = new Potions(this); getServer().getPluginManager().registerEvents(potions, this); // 체력·마나 포션 (2026-10-26)
         arcanaState = new ArcanaMech.State(this);
         NovaMech.enable(this); // 325~387 신규 마법 (tools/nova_spells.py)
         getServer().getPluginManager().registerEvents(arcanaState, this);
@@ -130,6 +132,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         if (slots != null) slots.unregister();
         if (charge != null) { charge.unregister(); charge = null; }
         if (utilState != null) utilState.closeAll();
+        if (potions != null) { potions.close(); potions = null; }
         if (arcanaState != null) { arcanaState.closeAll(); arcanaState = null; }
         if (guards != null) guards.closeAll();
         BuffMech.clearAll();

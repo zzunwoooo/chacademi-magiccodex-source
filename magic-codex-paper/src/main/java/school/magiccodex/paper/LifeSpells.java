@@ -59,7 +59,12 @@ final class LifeSpells implements Listener, AutoCloseable {
         ribbonKey = new NamespacedKey(plugin, RIBBON_KEY);
         itemsAdder = new ItemsAdderItems(plugin.getLogger());
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        current = this;
     }
+
+    /** 지금 켜진 생활 마법 (마법 힌트권 UtilityItemsBridge 가 힌트 고르기를 같이 씀). MythicMobs 가 없어 마법 실행이 꺼지면 null. */
+    private static LifeSpells current;
+    static LifeSpells current() { return current; }
 
     /** 386 리본 표식 (PDC BYTE 1). ChacaNPC GiftService 가 "magiccodexbridge:gift_ribbon" 으로 읽는다. */
     static final String RIBBON_KEY = "gift_ribbon";
@@ -79,7 +84,7 @@ final class LifeSpells implements Listener, AutoCloseable {
     /** 마음 읽기 하루 기준 = 호감도 일일 제한과 같은 날짜 (NpcSocialService.today, 없으면 Asia/Seoul). */
     private LocalDate readDay() { var social = plugin.npcSocial(); return social != null ? LocalDate.parse(social.today()) : LocalDate.now(DAY_ZONE); }
 
-    @Override public void close() { HandlerList.unregisterAll(this); PERKS.clear(); READ.clear(); }
+    @Override public void close() { HandlerList.unregisterAll(this); PERKS.clear(); READ.clear(); if (current == this) current = null; }
 
     // ------------------------------------------------------------------ perk store (system hooks)
 
@@ -471,6 +476,53 @@ final class LifeSpells implements Listener, AutoCloseable {
             CmdKit.notify(p, "system", "life-enlighten_hint", "깨달음의 빛", line, 0);
         });
         return true;
+    }
+
+    // ------------------------------------------------------------------ 마법 힌트권 (item:spell_hint, 2026-10-26)
+
+    /** 힌트 카드 한 장: 고른 마법 id, 별 수(1~3), 보여 줄 문장. */
+    record HintCard(String spell, int stars, String line) {}
+
+    private static final Map<String, String> ELEMENT_NAMES = Map.of("fire", "화염", "water", "물", "wind", "바람", "earth", "대지", "light", "빛", "dark", "어둠");
+    private Map<String, String> elements;
+
+    /** spell-elements.yml (jar 안, 도감 분류) 마법 id → 원소. 한 번만 읽는다. */
+    private String elementOf(String spell) {
+        if (elements == null) {
+            var map = new HashMap<String, String>();
+            try (var in = plugin.getResource("spell-elements.yml")) {
+                if (in != null) {
+                    var y = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8));
+                    var sec = y.getConfigurationSection("spells");
+                    if (sec != null) for (String id : sec.getKeys(false)) { String e = sec.getString(id); if (e != null) map.put(id, e); }
+                }
+            } catch (java.io.IOException | RuntimeException e) { plugin.getLogger().warning("마법 힌트권: spell-elements.yml 을 읽지 못했어요 (" + e.getMessage() + ")"); }
+            elements = Map.copyOf(map);
+        }
+        return ELEMENT_NAMES.get(elements.get(spell));
+    }
+
+    /**
+     * 마법 힌트권: 깨달음의 빛과 같은 후보(아직 안 배운 마법 · 궁극/미구현 제외 · discoveries.yml 발견 조건)에서 1개.
+     * 별 수(타로 기획 #65): 3성 = 발견 조건 그대로, 2성 = 깨달음의 빛·NPC 와 같은 목격담, 1성 = 원소만 막연하게.
+     * null = 남은 힌트 없음 (아이템을 쓰지 않음). 세상은 바꾸지 않는다 (연출·알림은 부르는 쪽).
+     */
+    HintCard hintCard(Player p, int stars) {
+        Hint h = pickHint(p);
+        if (h == null) return null;
+        int s = Math.clamp(stars, 1, 3);
+        String line;
+        if (s == 3) line = "카드가 또렷하게 속삭여요… 「" + h.condition().strip().replaceAll("[.。!]+$", "") + "」 그러면 새 마법을 깨칠 수 있을 거예요.";
+        else if (s == 2) {
+            Object m = npcApi("hintMaterials", new Class<?>[0]);
+            String materials = m instanceof Map<?, ?> map && map.get(h.spell()) instanceof String str && !str.isBlank() ? str : null;
+            line = witness(h.condition(), materials);
+        } else {
+            String element = elementOf(h.spell());
+            line = element == null ? "아직 깨치지 못한 마법 하나가 어딘가에서 당신을 기다리고 있는 것 같아요…"
+                    : "아직 깨치지 못한 " + element + " 마법 하나가 어딘가에서 당신을 기다리고 있는 것 같아요…";
+        }
+        return new HintCard(h.spell(), s, line);
     }
 
     private static final Pattern LESSON = Pattern.compile("^(\\S+) 마법 (\\S+) 수업을 통해.*습득$");

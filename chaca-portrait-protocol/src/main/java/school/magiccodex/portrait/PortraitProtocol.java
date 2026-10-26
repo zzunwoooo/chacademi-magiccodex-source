@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * 플레이어 일러스트 패킷 계약 (ChacaPortrait 서버 플러그인 ↔ MagicCodex Fabric UI).
  * 서버는 본인 일러스트 PNG를 조각(CHUNK)으로 보내고, 클라이언트는 SHA-256을 확인한 뒤 디스크에 캐시한다.
- * 다시 그리기 아이템(ItemsAdder item:reroll)을 쓰면 서버가 PROMPT_OPEN을 보내고 클라이언트가 입력창을 연다.
+ * 다시 그리기 아이템(ItemsAdder item:cutscene_ticket, 컷신 변경권)을 쓰면 서버가 PROMPT_OPEN을 보내고 클라이언트가 입력창을 연다.
  * 상대 정보창은 C_OTHER 로 다른 사람의 일러스트를 요청하고 S_OTHER_META/S_OTHER_CHUNK 로 받는다 (대상 UUID 로 구분, 2026-10-26).
  *
  * <p>이 소스는 magic-codex-fabric 과 chaca-portrait-paper 에만 포함된다.
