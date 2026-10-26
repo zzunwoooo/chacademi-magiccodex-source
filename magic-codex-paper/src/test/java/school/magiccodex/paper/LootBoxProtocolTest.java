@@ -10,15 +10,22 @@ class LootBoxProtocolTest {
     @Test void playRoundTripTenResults() {
         var results = new ArrayList<Result>();
         for (int i = 0; i < 10; i++) results.add(new Result(i % 4, new byte[]{(byte) i, 1}, "보상" + i));
-        var p = LootBoxProtocol.play(LootBoxProtocol.encode(new Play(5, "box", "API 상자", 3, results, "")));
+        var p = LootBoxProtocol.play(LootBoxProtocol.encode(new Play(5, "box", "API 상자", 3, results, "", 100)));
         assertEquals(10, p.results().size()); assertEquals(3, p.grade()); assertEquals(2, p.results().get(6).grade());
         assertArrayEquals(new byte[]{9, 1}, p.results().get(9).item());
+        assertEquals(100, p.speed());
+    }
+
+    @Test void playCarriesLargeRealItemsUnchanged() {
+        var results = new ArrayList<Result>();
+        for (int i = 0; i < 10; i++) results.add(new Result(0, new byte[30000], "x"));
+        assertEquals(10, LootBoxProtocol.play(LootBoxProtocol.encode(new Play(1, "b", "t", 0, results, "", 100))).results().size());
     }
 
     @Test void playRejectsEmptyAndBadGrade() {
-        byte[] empty = LootBoxProtocol.encode(new Play(1, "b", "t", 0, List.of(), ""));
+        byte[] empty = LootBoxProtocol.encode(new Play(1, "b", "t", 0, List.of(), "", 100));
         assertThrows(IllegalArgumentException.class, () -> LootBoxProtocol.play(empty));
-        byte[] bad = LootBoxProtocol.encode(new Play(1, "b", "t", 4, List.of(new Result(0, new byte[]{1}, "x")), ""));
+        byte[] bad = LootBoxProtocol.encode(new Play(1, "b", "t", 4, List.of(new Result(0, new byte[]{1}, "x")), "", 100));
         assertThrows(IllegalArgumentException.class, () -> LootBoxProtocol.play(bad));
     }
 

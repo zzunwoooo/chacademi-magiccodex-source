@@ -108,6 +108,13 @@ final class ReturnTicketBridge implements Listener, TravelBridge.ReturnTickets {
         if (one == null) { plugin.getLogger().severe("귀환권 반환 실패: 아이템을 만들 수 없어요 (" + item + ") player=" + id + " — 직접 지급 필요"); return; }
         Player p = Bukkit.getPlayer(id);
         plugin.getLogger().info("귀환권 반환: " + id + " (" + why + ")");
+        // 공통 지급 함수 (2026-10-26): 접속 중이면 넣을 수 있는 칸 → 남으면 우편, 아니면 우편.
+        var delivery = RewardDelivery.get();
+        if (delivery != null) {
+            delivery.give(id, List.of(one), "return-ticket-refund:" + id + ":" + UUID.randomUUID(), name + " 반환", "귀환하지 못해 " + name + "을 돌려드려요.", null);
+            if (p != null && p.isOnline()) CmdKit.notify(p, "warning", "return-ticket", "귀환하지 못했어요", name + "을 돌려드렸어요" + (why == null || why.isBlank() ? "" : " · " + why), 0);
+            return;
+        }
         if (p != null && p.isOnline()) {
             give(p, one);
             CmdKit.notify(p, "warning", "return-ticket", "귀환하지 못했어요", name + "을 돌려드렸어요" + (why == null || why.isBlank() ? "" : " · " + why), 0);

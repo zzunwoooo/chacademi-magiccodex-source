@@ -139,6 +139,10 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private MileageBridge mileage;
     private FishTankBridge fishTank;
     private BagPagesBridge bagPages;
+    /** 공통 지급 함수 (2026-10-26). */
+    private RewardDelivery rewardDelivery;
+    /** 뽑기 상자 (API 상자, 2026-10-26). */
+    private LootBoxBridge lootBoxes;
     /** 야생 청크 점유 (메모 #88, chunk-claims.yml servers 에 든 서버에서만 켜짐). */
     private ChunkClaimBridge chunkClaims;
     private HouseBoardBridge houseBoard;
@@ -279,6 +283,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(spellRuntime==null)getLogger().warning("Spell gameplay runtime unavailable: MythicMobs is not enabled; existing fallback routes remain active.");
         mana.bindSpellCommand();
         try { mailbox=new MailboxBridge(this); shops=new ShopBridge(this); shopAdmin=new ShopAdminBridge(this); } catch(Exception e) { getLogger().severe("Mailbox initialization failed: "+e.getClass().getSimpleName()); getServer().getPluginManager().disablePlugin(this); return; }
+        // 공통 지급 함수 (2026-10-26): 넣을 수 있는 칸(핫바 + 잠금 해제된 지금 쪽) → 남은 것만 우편. 실패해도 각 경로는 예전 방식으로 계속.
+        try{rewardDelivery=new RewardDelivery(this);}catch(Exception error){rewardDelivery=null;getLogger().severe("공통 지급(보상 우편 대기열) 초기화 실패: "+error);}
         try{mileage=new MileageBridge(this);}catch(Exception error){getLogger().severe("마일리지 상점 초기화 실패 (shop-mailbox DB 확인): "+error);}
         journal=new JournalBridge(this);
         partyRoster=new PartyRoster(this);
@@ -299,6 +305,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{new MegaphoneBridge(this);}catch(Exception|LinkageError error){getLogger().severe("확성기 초기화 실패 (megaphone.yml 확인): "+error.getMessage());}
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
+        // 뽑기 상자 (API 상자, 2026-10-26): 아공간 배낭 다음에 (지급 칸 판정이 배낭 상태를 읽음).
+        try{lootBoxes=new LootBoxBridge(this);}catch(Exception|LinkageError error){lootBoxes=null;getLogger().severe("뽑기 상자 초기화 실패 (loot-boxes.yml 확인): "+error.getMessage());}
         try{chunkClaims=new ChunkClaimBridge(this);}catch(Exception|LinkageError error){chunkClaims=null;getLogger().severe("청크 점유 초기화 실패 (chunk-claims.yml·DB 확인): "+error.getMessage());}
         try{houseBoard=new HouseBoardBridge(this);}catch(Exception|LinkageError error){houseBoard=null;getLogger().severe("기숙사 점수 홀로그램 초기화 실패 (house-board.yml 확인): "+error.getMessage());}   // 메모 #106
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);
@@ -372,6 +380,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         if(travel!=null){travel.close();travel=null;}
         if(mileage!=null){mileage.close();mileage=null;}
         if(fishing!=null){fishing.close();fishing=null;}
+        if(lootBoxes!=null){lootBoxes.close();lootBoxes=null;}
+        if(rewardDelivery!=null){rewardDelivery.close();rewardDelivery=null;}
         if(shopAdmin!=null)shopAdmin.close(); if(shops!=null)shops.close(); if(mailbox!=null)mailbox.close();
         if(spellRuntime!=null){spellRuntime.close();spellRuntime=null;}
         if(titles!=null){titles.close();titles=null;}

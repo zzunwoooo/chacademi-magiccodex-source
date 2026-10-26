@@ -297,9 +297,10 @@ final class AdminCommandBridge {
 
     private void deliver(CommandContext<CommandSourceStack> ctx, Player target, List<ItemStack> items, String what) throws CommandSyntaxException {
         if (!plugin.playerStateReady(target)) throw ChacaApi.error("캐릭터 정보를 불러오는 중이에요. 잠시 뒤 다시 해 주세요");
-        long empty = Arrays.stream(target.getInventory().getStorageContents()).filter(i -> i == null || i.getType().isAir()).count();
-        if (empty < items.size()) throw ChacaApi.error(plugin.names().name(target) + " 님 인벤토리에 빈칸이 " + items.size() + "개 필요해요");
-        for (ItemStack item : items) target.getInventory().addItem(item);
+        // 공통 지급 칸 판정 (RewardDelivery, 2026-10-26): 핫바 + 잠금 해제된 지금 쪽 27칸만. 다 들어갈 때만 준다(예전처럼 우편 없음).
+        var next = RewardDelivery.copy(target.getInventory().getStorageContents());
+        if (!RewardDelivery.place(next, RewardDelivery.usable(plugin, target), items, false).isEmpty()) throw ChacaApi.error(plugin.names().name(target) + " 님 인벤토리에 빈칸이 " + items.size() + "개 필요해요");
+        target.getInventory().setStorageContents(next);
         target.saveData(); plugin.savePlayerState(target); plugin.refreshEquipment(target);
         ok(sender(ctx), plugin.names().name(target) + " 님에게 " + what + "을(를) 주었어요");
     }

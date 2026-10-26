@@ -244,6 +244,9 @@ final class QuestBridge implements Listener,PluginMessageListener,AutoCloseable 
         return out;
     }
     private ItemStack[] plan(Player p,QuestDefinition q){
+        // 공통 지급 칸 판정 (RewardDelivery, 2026-10-26): 아공간 배낭 쪽을 넘기는 중이거나 잠긴 쪽을 보고 있으면 27칸(9~35)에서 제출 차감·보상 넣기를
+        // 하지 않는다(넘김이 끝날 때 덮여 복제·유실). 이 경우는 지급하지 않고 "보상 공간 확인"으로 거절한다 (잠시 뒤 다시 완료하면 됨).
+        if(!RewardDelivery.mainUsable(plugin,p))return null;
         ItemStack[] slots=Arrays.stream(p.getInventory().getStorageContents()).map(s->s==null?null:s.clone()).toArray(ItemStack[]::new);
         for(var g:q.objectives())if(g.type()==Type.SUBMIT){if(!g.matches(Type.SUBMIT,g.target(),server,p.getWorld().getName()))return null;ItemStack required=submissionItem(g.target());int left=g.amount();for(int i=0;i<slots.length&&left>0;i++){var s=slots[i];if(s!=null&&plugin.coreSimilar(s,required)){int n=Math.min(left,s.getAmount());left-=n;s.setAmount(s.getAmount()-n);if(s.getAmount()==0)slots[i]=null;}}if(left>0)return null;}
         for(String spec:q.items()){String[] parts=spec.split(":");ItemStack reward=new ItemStack(Objects.requireNonNull(Material.matchMaterial(parts[0])));int left=Integer.parseInt(parts[1]);for(int i=0;i<slots.length&&left>0;i++)if(slots[i]!=null&&slots[i].isSimilar(reward)){int n=Math.min(left,slots[i].getMaxStackSize()-slots[i].getAmount());slots[i].setAmount(slots[i].getAmount()+n);left-=n;}for(int i=0;i<slots.length&&left>0;i++)if(slots[i]==null||slots[i].isEmpty()){int n=Math.min(left,reward.getMaxStackSize());slots[i]=reward.clone();slots[i].setAmount(n);left-=n;}if(left>0)return null;}

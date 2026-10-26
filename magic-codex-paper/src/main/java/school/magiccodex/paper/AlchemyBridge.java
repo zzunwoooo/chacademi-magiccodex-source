@@ -357,7 +357,9 @@ final class AlchemyBridge implements PluginMessageListener, Listener {
         }
         // 결과물이 인벤토리에 다 들어가지 않으면 제작하지 않는다 (재료·경험치 차감 없음, 우편 대체 없음 — 2026-10-21 오너 결정)
         var storage = p.getInventory();
-        if (!fitsAfterTaking(storage, want, outputs)) {
+        // 공통 지급 칸 판정 (RewardDelivery, 2026-10-26): 아공간 배낭 쪽을 넘기는 중이거나 잠긴 쪽을 보고 있으면 27칸(9~35)에서
+        // 재료를 빼거나 결과물을 넣지 않는다 — 이때는 "공간 부족"과 같이 제작하지 않는다(재료·경험치 차감 없음).
+        if (!RewardDelivery.mainUsable(plugin, p) || !fitsAfterTaking(storage, want, outputs)) {
             plugin.getLogger().info("ALCHEMY NO-ROOM player=" + p.getName() + " recipe=" + match.id() + " amount=" + match.amount());
             String m = message("no-room", match, match.amount(), "");
             if (m.isBlank()) m = "인벤토리에 결과물을 넣을 자리가 없어요. 공간을 비운 뒤 다시 시도해 주세요.";

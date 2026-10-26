@@ -659,8 +659,10 @@ final class FishingBridge implements PluginMessageListener, Listener {
      * mailed: 이번에 보낸 우편이 모두 저장됐는지(true) 아닌지(false, 레코드는 남음). MAIL 일 때만 불린다. 메인 스레드.
      */
     Given deliver(Player p, List<ItemStack> items, String source, FishTank.Fish tankClaim, java.util.function.Consumer<Boolean> mailed) {
-        var leftover = new ArrayList<ItemStack>();
-        for (ItemStack it : items) leftover.addAll(p.getInventory().addItem(it.clone()).values());
+        // 공통 지급 칸 판정·배치 (RewardDelivery, 2026-10-26): 핫바 + 잠금 해제된 지금 쪽 27칸만, 기존 우편 수령과 같은 순서.
+        var next = RewardDelivery.copy(p.getInventory().getStorageContents());
+        var leftover = new ArrayList<ItemStack>(RewardDelivery.place(next, RewardDelivery.usable(plugin, p), items.stream().map(ItemStack::clone).toList(), false));
+        p.getInventory().setStorageContents(next);
         if (leftover.isEmpty()) return Given.INVENTORY;
         String receipt = receiptName(source);
         var entries = new ArrayList<FishMailOutbox.Entry>();

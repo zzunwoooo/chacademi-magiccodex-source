@@ -292,6 +292,9 @@ final class ChunkClaimBridge implements Listener, PluginMessageListener, AutoClo
 
     /** 땅문서 돌려주기: 접속 중이면 인벤토리(꽉 차면 발밑), 아니면 우편. */
     private void give(UUID id, ItemStack one, String why) {
+        // 공통 지급 함수 (2026-10-26): 접속 중이면 넣을 수 있는 칸(핫바 + 잠금 해제된 지금 쪽) → 남으면 우편, 아니면 우편.
+        var delivery = RewardDelivery.get();
+        if (delivery != null) { delivery.give(id, List.of(one), "chunk-deed-refund:" + id + ":" + UUID.randomUUID(), settings.itemName() + " 반환", why + " — " + settings.itemName() + "을 돌려드려요.", null); return; }
         Player p = Bukkit.getPlayer(id);
         if (p != null && p.isOnline()) {
             for (var left : p.getInventory().addItem(one).values()) p.getWorld().dropItemNaturally(p.getLocation(), left);

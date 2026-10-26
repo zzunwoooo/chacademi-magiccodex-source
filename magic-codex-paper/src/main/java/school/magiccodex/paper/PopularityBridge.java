@@ -207,6 +207,9 @@ final class PopularityBridge implements Listener, AutoCloseable {
     private void giveTicketBack(Player p) {
         ItemStack item = items.create(settings.unlockItem(), 1);
         if (item == null) { plugin.getLogger().severe("인기도 제한 해제권을 돌려주지 못했어요 (ItemsAdder " + settings.unlockItem() + " 없음): " + p.getName() + " 에게 1개"); return; }
+        // 공통 지급 함수 (2026-10-26): 넣을 수 있는 칸(핫바 + 잠금 해제된 지금 쪽) → 남으면 우편 (발밑 떨어뜨림 대신).
+        var delivery = RewardDelivery.get();
+        if (delivery != null) { delivery.give(p.getUniqueId(), List.of(item), "popularity-refund:" + p.getUniqueId() + ":" + UUID.randomUUID(), "인기도 제한 해제권 반환", "처리하지 못해 돌려드려요", null); return; }
         if (p.isOnline()) {
             for (var left : p.getInventory().addItem(item).values()) p.getWorld().dropItemNaturally(p.getLocation(), left);
             return;

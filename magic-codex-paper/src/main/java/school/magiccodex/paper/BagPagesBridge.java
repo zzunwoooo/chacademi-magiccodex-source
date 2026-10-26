@@ -142,6 +142,16 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
     void sharedReady(UUID id,BagSharedSql.Row row,int unlocked) {var e=entry(id);e.active=row.active();e.seq=row.sequence();e.pages=row.pages();e.unlocked=unlocked;e.loaded=true;var p=Bukkit.getPlayer(id);if(p!=null)send(p);}
     int sharedUnlocked(UUID id) {var e=entries.get(id);return e==null?1:e.unlocked;}
 
+    /**
+     * 공통 지급(RewardDelivery, 2026-10-26): 인벤토리 본칸 27칸(9~35, = 지금 쪽)에 보상을 넣어도 되는지. 메모리만 읽는다 (SQL·HuskSync 없음).
+     * 서버가 아는 실제 상태로 지금 쪽이 잠금 해제돼 있고(active ≤ unlocked), 배낭 동기화가 READY(쪽 넘기는 중·동기화 중·재조정 필요가 아님)일 때만 true.
+     * 비활성 쪽(공유 DB 줄)은 여기서 절대 건드리지 않는다 — lease/CAS·WAL 경로는 쪽 넘기기·정리만 쓴다.
+     */
+    boolean mainSlotsUsable(Player p) {
+        var e = entries.get(p.getUniqueId());
+        return e != null && e.loaded && e.active >= 1 && e.active <= Math.clamp(e.unlocked, 1, PAGES) && coordinator.inputReady(p.getUniqueId());
+    }
+
     private static boolean modded(Player p) { return p.getListeningPluginChannels().contains(BagProtocol.RESPONSE); }
 
     private void send(Player p) {
@@ -274,7 +284,7 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
         catch (RuntimeException ex) {
             failure("save before unlock; database unlock cancelled", ex);
             unlocking.remove(id);
-            for (var left : p.getInventory().addItem(one).values()) p.getWorld().dropItemNaturally(p.getLocation(), left);
+            giveBack(p, one);
             CmdKit.notify(p, "error", "bag-unlock", "공간을 열지 못했어요", "확장권을 돌려 드렸어요. 잠시 뒤 다시 해 주세요", 0);
             return;
         }
@@ -297,7 +307,7 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
                 }
                 // Not used: all pages were already open (another server) or the database failed.
                 if (online != null) {
-                    for (var left : online.getInventory().addItem(one).values()) online.getWorld().dropItemNaturally(online.getLocation(), left);
+                    giveBack(online, one);
                     if (result == -1) { var cur = entries.get(id); if (cur != null) cur.unlocked = PAGES; send(online); }
                     CmdKit.notify(online, result == -1 ? "warning" : "error", "bag-unlock",
                             result == -1 ? "모든 공간이 이미 열려 있어요" : "공간을 열지 못했어요",
@@ -305,6 +315,13 @@ final class BagPagesBridge implements PluginMessageListener, Listener {
                 } else mailBack(id, one);
             });
         });
+    }
+
+    /** 확장권 돌려주기 (2026-10-26 공통 지급 함수): 넣을 수 있는 칸 → 남으면 우편. 공통 지급이 없으면 예전처럼 인벤토리 → 발밑. */
+    private void giveBack(Player p, ItemStack one) {
+        var delivery = RewardDelivery.get();
+        if (delivery != null) { delivery.give(p.getUniqueId(), List.of(one), "bag-unlock-refund:" + p.getUniqueId() + ":" + UUID.randomUUID(), unlockName + " 반환", "공간을 열지 못해 " + unlockName + "을 돌려드려요.", null); return; }
+        for (var left : p.getInventory().addItem(one).values()) p.getWorld().dropItemNaturally(p.getLocation(), left);
     }
 
     /** The player left before the unlock answered and it was not used: the ticket goes back by mail (one mail per use). */

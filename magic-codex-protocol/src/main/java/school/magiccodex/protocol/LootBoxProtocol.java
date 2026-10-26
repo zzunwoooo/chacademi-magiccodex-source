@@ -19,7 +19,8 @@ public final class LootBoxProtocol {
 
     public static final String PLAY = "magiccodex:lootbox_play", DONE = "magiccodex:lootbox_done",
             ADMIN_REQUEST = "magiccodex:lootbox_admin_request", ADMIN_RESPONSE = "magiccodex:lootbox_admin_response";
-    public static final int MAX_BYTES = 60000, MAX_ITEM = 16384, MAX_RESULTS = 10;
+    /** MAX_BYTES = 관리 창·DONE 패킷 상한, PLAY_MAX_BYTES = 연출 패킷 상한(결과 10개의 실제 ItemStack 원본을 줄이지 않고 담기 위해 크게). */
+    public static final int MAX_BYTES = 60000, PLAY_MAX_BYTES = 393216, MAX_ITEM = 32768, MAX_RESULTS = 10;
     public static final int COMMON = 0, RARE = 1, UNIQUE = 2, LEGENDARY = 3;
     /** 관리 창 동작. */
     public static final int LIST = 0, ADD = 1, EDIT = 2, DELETE = 3, RENAME = 4, REKEY = 5, DELETE_BOX = 6, CLOSE = 7;
@@ -31,8 +32,11 @@ public final class LootBoxProtocol {
 
     /** 결과 한 칸: 실제 지급 확정 ItemStack(서버 직렬화 바이트)과 그 보상의 등급. */
     public record Result(int grade, byte[] item, String name) {}
-    /** opening = 이 개봉 건 번호(표시·DONE 짝 맞추기용), grade = 대표 연출 등급(결과 중 가장 높은 등급), notice = 아래 한 줄 안내. */
-    public record Play(long opening, String box, String title, int grade, List<Result> results, String notice) {}
+    /**
+     * opening = 이 개봉 건 번호(표시·DONE 짝 맞추기용), grade = 대표 연출 등급(결과 중 가장 높은 등급), notice = 아래 한 줄 안내,
+     * speed = 연출 속도 % (loot-boxes.yml animation.speed, 50~200).
+     */
+    public record Play(long opening, String box, String title, int grade, List<Result> results, String notice, int speed) {}
     public record Done(long opening) {}
 
     // ------------------------------------------------------------------ 관리 창
@@ -58,20 +62,24 @@ public final class LootBoxProtocol {
 
     private interface Write { void run(DataOutputStream out) throws IOException; }
 
-    private static byte[] pack(int magic, Write w) {
+    private static byte[] pack(int magic, Write w) { return pack(magic, MAX_BYTES, w); }
+
+    private static byte[] pack(int magic, int max, Write w) {
         try {
             var b = new ByteArrayOutputStream();
             var o = new DataOutputStream(b);
             o.writeInt(magic);
             w.run(o);
             o.flush();
-            if (b.size() > MAX_BYTES) throw new IOException("size");
+            if (b.size() > max) throw new IOException("size");
             return b.toByteArray();
         } catch (IOException e) { throw new IllegalArgumentException(e); }
     }
 
-    private static DataInputStream input(byte[] b, int magic) throws IOException {
-        if (b == null || b.length < 4 || b.length > MAX_BYTES) throw new IOException("size");
+    private static DataInputStream input(byte[] b, int magic) throws IOException { return input(b, magic, MAX_BYTES); }
+
+    private static DataInputStream input(byte[] b, int magic, int max) throws IOException {
+        if (b == null || b.length < 4 || b.length > max) throw new IOException("size");
         var i = new DataInputStream(new ByteArrayInputStream(b));
         if (i.readInt() != magic) throw new IOException("version");
         return i;
@@ -98,17 +106,17 @@ public final class LootBoxProtocol {
     // ------------------------------------------------------------------ PLAY / DONE
 
     public static byte[] encode(Play p) {
-        return pack(PLAY_MAGIC, o -> {
+        return pack(PLAY_MAGIC, PLAY_MAX_BYTES, o -> {
             o.writeLong(p.opening); o.writeUTF(p.box); o.writeUTF(p.title); o.writeByte(p.grade);
             o.writeByte(p.results.size());
             for (var r : p.results) { o.writeByte(r.grade); bytes(o, r.item); o.writeUTF(r.name); }
-            o.writeUTF(p.notice);
+            o.writeUTF(p.notice); o.writeShort(p.speed);
         });
     }
 
     public static Play play(byte[] bytes) {
         try {
-            var i = input(bytes, PLAY_MAGIC);
+            var i = input(bytes, PLAY_MAGIC, PLAY_MAX_BYTES);
             long opening = i.readLong();
             String box = text(i, 48), title = text(i, 80);
             int grade = i.readUnsignedByte(), n = i.readUnsignedByte();
@@ -122,8 +130,9 @@ public final class LootBoxProtocol {
                 results.add(new Result(g, item, text(i, 120)));
             }
             String notice = text(i, 240);
-            if (i.available() != 0) throw new IOException("trailing");
-            return new Play(opening, box, title, grade, List.copyOf(results), notice);
+            int speed = i.readUnsignedShort();
+            if (i.available() != 0 || speed < 50 || speed > 200) throw new IOException("trailing");
+            return new Play(opening, box, title, grade, List.copyOf(results), notice, speed);
         } catch (IOException | RuntimeException e) { throw new IllegalArgumentException("lootbox play", e); }
     }
 
