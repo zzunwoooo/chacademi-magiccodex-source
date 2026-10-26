@@ -8,6 +8,14 @@
 # 1장 대화 번호 = 단계 번호 (2026-10-26): ch1-17 = 분류의 거울 6문항 → 결과 ch1-17r-/m-/f-<기숙사> (SchoolBridge 가 띄움)
 
 commands:
+  # 엘레나 인사가 끝나면 하수구(구덩이)로 (예전 '하수구' 명령은 학교 서버에 없음). ★ 좌표는 오너가 정함
+  # ch1-3:
+  #   - "minecraft:execute in minecraft:overworld run tp {player} X Y Z"
+
+  # 브람 "출항이다!" 대화가 끝나면 바로 항구로 (배 컷신이 화면을 덮는 동안 옮겨 둠). ch1-8 시작명령과 같은 자리
+  ch1-7:
+    - "minecraft:execute in minecraft:overworld run tp {player} 32.5 71 143.5 0 0"
+
   # 분류의 거울 6문항이 끝나면 고른 결말(p_TD)로 기숙사 배정 → 결과 대사(ch1-17r/m/f-<기숙사>)를 띄움.
   # 이 줄이 없으면 6문항을 끝내도 배정되지 않아 1장이 멈춤 (/대화관리 단계 점검 이 경고함). 필수.
   ch1-17:
