@@ -71,7 +71,8 @@ final class HitMech extends Mech {
             boolean protectedTarget = t instanceof Player || targets.boss(t);
             double ratio = t.getHealth() / Targets.maxHealth(t);
             if (!protectedTarget || ratio < execute) {
-                targets.hurt(c.caster(), t, Math.max(dmg, t.getHealth() + 1), p.s("element", ""));
+                // 전투 스펙 2026-10-26: 처형은 감소 0 (예전엔 방어구가 health+1 피해를 줄여 처형이 실패함).
+                targets.execute(c.caster(), t, p.s("element", ""));
                 // Never bypass a cancelled or reduced damage event with setHealth.
                 return;
             }

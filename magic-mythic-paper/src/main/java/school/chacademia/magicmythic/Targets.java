@@ -122,6 +122,7 @@ final class Targets {
         if (!enemy(caster,target)) return false;
         amount = Math.max(0, amount);
         if (amount > 0 && plugin.status() != null) amount *= plugin.status().spellMultiplier(caster); // 약화
+        amount *= pvpScale(caster, target); // 전투 스펙 2026-10-26: 플레이어→플레이어는 PvP 전용 피해
         if (amount > 0 && caster instanceof Player && MagicDamageEvent.listened()) {
             var mark = plugin.reactions() == null ? null : plugin.reactions().markOf(target);
             var e = new MagicDamageEvent(caster, target, element == null ? "" : element, reaction == null ? "" : reaction,
@@ -130,6 +131,21 @@ final class Targets {
             amount = e.getDamage();
         }
         return plugin.protection().damage(caster,target,amount);
+    }
+
+    /**
+     * 전투 스펙 2026-10-26: PvP 피해 = k × (40 + 지능) (몹 상대 피해 ÷ 이 배율). 시전이 넘긴 pvp_scale (SpellTrace), 없으면 config pvp.fallback-scale.
+     * 몹이 쓰거나 몹이 맞는 마법은 1 (그대로).
+     */
+    static double pvpScale(LivingEntity caster, Entity target) {
+        if (!(caster instanceof Player) || !(target instanceof Player) || caster.equals(target) || !MagicArmor.current.enabled()) return 1;
+        return MagicArmor.pvpScale(MagicArmor.current, SpellTrace.current().pvpScale());
+    }
+
+    /** 처형 (크로스 애로우): 보호막·방어·저항·약화·PvP 배율 모두 무시하고 쓰러뜨린다. 취소된 피해는 그대로 실패. */
+    boolean execute(LivingEntity caster, LivingEntity target, String element) {
+        if (!enemy(caster, target)) return false;
+        return plugin.protection().execute(caster, target, target.getHealth() + target.getAbsorptionAmount() + 1);
     }
 
     /** Spell heal on a player (zone heal, rainbow). Fires {@link MagicHealEvent} for artifact bonuses. */
@@ -145,6 +161,7 @@ final class Targets {
     /** Same as hurt, but marked as a passive's extra hit so it never re-triggers a passive. */
     boolean hurtProc(LivingEntity caster, LivingEntity target, double amount) {
         if (plugin.status() != null) amount *= plugin.status().spellMultiplier(caster); // 약화
+        amount *= pvpScale(caster, target); // 전투 스펙: PvP 전용 피해
         return enemy(caster,target)&&plugin.protection().procDamage(caster,target,Math.max(0,amount));
     }
 

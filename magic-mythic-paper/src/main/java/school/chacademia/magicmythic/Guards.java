@@ -216,7 +216,8 @@ final class Guards implements Listener {
         double ratio = Math.clamp(g.reduce(), 0, 1), share = e.getDamage() * ratio;
         if (share <= 0) return;
         e.setDamage(e.getDamage() - share);
-        shares.put(e, new Object[]{protector, share, g.spell()});
+        // 전투 스펙 2026-10-26: PvP 마법 피해는 이미 마법 방어로 줄어든 값 → 대신 받는 쪽은 더 줄이지 않음 (이중 감소 방지).
+        shares.put(e, new Object[]{protector, share, g.spell(), plugin.protection().reducedHitOn(ally)});
     }
     private final Map<EntityDamageEvent, Object[]> shares = new WeakHashMap<>();
     /** The protector takes its share only when the ally's hit really went through (not cancelled by invuln/lethal...). */
@@ -227,7 +228,7 @@ final class Guards implements Listener {
         Player protector = (Player) s[0];
         if (!protector.isValid() || protector.isDead()) return;
         sharing = true;
-        try { protector.damage((double) s[1]); } finally { sharing = false; }
+        try { if ((boolean) s[3]) plugin.protection().sourceless(protector, (double) s[1], false, true); else protector.damage((double) s[1]); } finally { sharing = false; }
         String spell = (String) s[2];
         if (!spell.isBlank()) Links.vfx(protector, spell, "external:relay", e.getEntity().getLocation(), e.getEntity().getUniqueId());
     }

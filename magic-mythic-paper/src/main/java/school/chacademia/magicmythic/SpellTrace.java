@@ -7,7 +7,11 @@ package school.chacademia.magicmythic;
  */
 final class SpellTrace {
     private SpellTrace() {}
-    record Now(String spell, String element) { static final Now NONE = new Now("", ""); }
+    /** pvpScale: 전투 스펙 2026-10-26 — 플레이어 대상 타격에 곱할 PvP 배율 (Bridge 변수 pvp_scale). -1 = 모름 (MagicArmor fallback). */
+    record Now(String spell, String element, double pvpScale) {
+        static final Now NONE = new Now("", "", -1);
+        Now(String spell, String element) { this(spell, element, -1); }
+    }
     private static Now current = Now.NONE;
 
     static Now current() { return current; }
