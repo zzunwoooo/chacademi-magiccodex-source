@@ -10,6 +10,17 @@ models:
 - pipi
 - dorm_lowell
 - wizard_statue
+- st_kai
+- st_jun
+- teacher_harva
+- vice_gregor
+- vl_ole
+- tc_berna
+- tc_cedric
+- vl_ben
+- marta
+- vl_selma
+- librarian_isolde
 # 캐릭터 ID 기준 기본값 — 그 캐릭터와 연결된 NPC를 다시 만들어도 따라갑니다
 characters:
   luka:
@@ -29,6 +40,39 @@ characters:
     scale: 1.0
   dorm_lowell:
     model: dorm_lowell
+    scale: 1.0
+  st_kai:
+    model: st_kai
+    scale: 1.0
+  st_jun:
+    model: st_jun
+    scale: 1.0
+  teacher_harva:
+    model: teacher_harva
+    scale: 1.0
+  vice_gregor:
+    model: vice_gregor
+    scale: 1.0
+  vl_ole:
+    model: vl_ole
+    scale: 1.0
+  tc_berna:
+    model: tc_berna
+    scale: 1.0
+  tc_cedric:
+    model: tc_cedric
+    scale: 1.0
+  vl_ben:
+    model: vl_ben
+    scale: 1.0
+  marta:
+    model: marta
+    scale: 1.0
+  vl_selma:
+    model: vl_selma
+    scale: 1.0
+  librarian_isolde:
+    model: librarian_isolde
     scale: 1.0
 # Citizens NPC 하나만 따로 지정 (캐릭터 기본값보다 우선). model: none = 이 NPC만 원래 외형
 npcs: {}

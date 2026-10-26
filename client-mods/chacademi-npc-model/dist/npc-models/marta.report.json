@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/marta.glb",
+  "bytes": 2340240,
+  "sha256": "e3c9cb6f57c72a06b700711a5fcc7f9fe2c208f5660ca3fc763019375bcefcaa",
+  "heightBlocks": 1.8,
+  "scale": 2.0170434730704003,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13879,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "6e05db5e-1793002929272_54___________/54_마르타_할머니_수정.glb"
+}

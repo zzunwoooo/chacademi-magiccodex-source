@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/tc_cedric.glb",
+  "bytes": 2746756,
+  "sha256": "dd63f67b2afaf34dda6409ca58349a09043c6a118bb7a6ea5fd2cc38ce186722",
+  "heightBlocks": 1.8,
+  "scale": 1.976621419594451,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14822,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "a7d0b5fc-1793002929272_43__________/43_세드릭_교수_수정.glb"
+}

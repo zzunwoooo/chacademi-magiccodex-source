@@ -155,3 +155,10 @@ MagicCodex(Bridge·Fabric)·PortableVFX·스토리 모드는 **건드리지 않�
 - 명령 `/NPC관리 외형 방향 <0~360|나|지금|해제>` — 가장 가까운 NPC(5칸). 각도 = 마인크래프트 yaw(F3 의 Facing 값과 같음: 0=남 90=서 180=북 270=동). `나` = 지금 내 쪽을 보게, `지금` = NPC 엔티티의 현재 yaw. `외형 정보`·`목록` 에 방향 표시.
 - 각도는 소수 첫째 자리로 반올림 후 [0,360) 로 감음 (359.97 → 0).
 - 프로토콜 테스트: yaw 왕복(NaN·270), 360·-1·무한대 거부.
+
+## 19. 2026-10-26 — NPC 12명 일괄 추가 (리아 교체 포함)
+
+- 블렌더 GLB 12개 (클립 look_around·walk, 아틀라스 1장) → 키 1.8 정규화. 모델 ID = 캐릭터 ID: st_kai, st_jun, teacher_harva, vice_gregor, vl_ole, tc_berna, tc_cedric, vl_ben, marta, vl_selma, librarian_isolde, 리아는 기존 모델 ID `ria` 를 새 파일로 교체.
+- models.json: 대기 look_around, 걷기 walk, walkSpeed 1.2 (피피와 같은 걷기 클립). 총 18개 모델.
+- 서버 npc-models.yml: models 목록 + 캐릭터 11개 기본값 추가.
+- 변환 도구 수정: 정사각형이 아닌 텍스처(2048×1024)에서 UV 마스크 크기 오류로 실패하던 문제 → 가로·세로 따로 처리.

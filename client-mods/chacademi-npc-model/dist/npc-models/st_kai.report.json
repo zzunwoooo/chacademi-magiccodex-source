@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/st_kai.glb",
+  "bytes": 1813480,
+  "sha256": "b590cf10e41111ea607c76d6fad88344b8ebd43caf451701bdb853a437f04be6",
+  "heightBlocks": 1.8,
+  "scale": 1.9441756531688132,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13108,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "73ad1678-1793002929271_06______/06_카이/06_카이_수정.glb"
+}

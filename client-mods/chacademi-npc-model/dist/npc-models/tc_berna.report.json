@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/tc_berna.glb",
+  "bytes": 2690876,
+  "sha256": "4d9e1eedeb61f3ebd21d4b067c5f73d2a2a9a5a7948e10b09746ed3b09015881",
+  "heightBlocks": 1.8,
+  "scale": 1.927530373326324,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12804,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "aa98ec65-1793002929268_42__________/42_베르나_교수_수정.glb"
+}

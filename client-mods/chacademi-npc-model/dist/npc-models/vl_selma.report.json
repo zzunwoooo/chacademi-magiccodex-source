@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/vl_selma.glb",
+  "bytes": 2882556,
+  "sha256": "c395f07a0e24a0d30976affdd47b153b92cdc9383ad6c2415e815d6d94fece55",
+  "heightBlocks": 1.8,
+  "scale": 1.8840599002741092,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14607,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "6daf9f49-1793002929270_55______/55_셀마/55_셀마.glb"
+}

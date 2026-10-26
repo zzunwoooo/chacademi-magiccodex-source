@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/teacher_harva.glb",
+  "bytes": 2430304,
+  "sha256": "d6a0d8da5f4504208253ef8d278665cdb31b8fd9b5e2eafa3f2d7a1115f71930",
+  "heightBlocks": 1.8,
+  "scale": 1.9573368340748405,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14571,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "b7023c71-1793002929270_31__________/31_하르바_교수/31_하르바_교수.glb"
+}

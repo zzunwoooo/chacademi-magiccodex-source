@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/vl_ben.glb",
+  "bytes": 2684264,
+  "sha256": "9b6aed3578794352dc4afda46aa5b9909c82a80a39b7641791ac8aa535484fad",
+  "heightBlocks": 1.8,
+  "scale": 1.8079453562975443,
+  "yawDegrees": 0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13222,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "6c691914-1793002929272_45_____/45_벤_수정.glb"
+}

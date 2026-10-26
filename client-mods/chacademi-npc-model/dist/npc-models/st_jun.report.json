@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/st_jun.glb",
+  "bytes": 1934588,
+  "sha256": "e3d7ef007ea79b228cb21279034750884d12845e9aacaf61216901134da1b3e4",
+  "heightBlocks": 1.8,
+  "scale": 1.9106696238381686,
+  "yawDegrees": 0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 15368,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "9c127d1e-1793002929271_08_____/08_준/08_준_수정.glb"
+}

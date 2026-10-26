@@ -143,15 +143,15 @@ def world_matrices(js):
 
 # ---------------------------------------------------------------- 텍스처
 
-def uv_mask(g: Gltf, material: int, size: int) -> Image.Image:
-    """해당 재질이 실제로 쓰는 UV 영역(삼각형)을 칠한 마스크."""
-    mask = Image.new("L", (size, size), 0)
+def uv_mask(g: Gltf, material: int, width: int, height: int) -> Image.Image:
+    """해당 재질이 실제로 쓰는 UV 영역(삼각형)을 칠한 마스크. 정사각형이 아닌 텍스처(예: 2048×1024)도 처리."""
+    mask = Image.new("L", (width, height), 0)
     draw = ImageDraw.Draw(mask)
     for mesh in g.js["meshes"]:
         for p in mesh["primitives"]:
             if p.get("material") != material or "TEXCOORD_0" not in p["attributes"]:
                 continue
-            uv = g.accessor(p["attributes"]["TEXCOORD_0"]).astype(np.float64) * size
+            uv = g.accessor(p["attributes"]["TEXCOORD_0"]).astype(np.float64) * np.array([width, height], np.float64)
             idx = g.accessor(p["indices"]).reshape(-1, 3)
             for tri in idx:
                 pts = [tuple(uv[k]) for k in tri]
@@ -339,7 +339,7 @@ def normalize(src: Path, out: Path, tex_dir: Path | None, height: float | None, 
                 r = max_tex / max(img.size)
                 img = img.resize((max(1, round(img.width * r)), max(1, round(img.height * r))), Image.LANCZOS)
             if pad > 0 and min(img.size) >= 64:
-                img = dilate(img, uv_mask(g, mi, img.width), pad)
+                img = dilate(img, uv_mask(g, mi, img.width, img.height), pad)
             buf = io.BytesIO()
             img.save(buf, "JPEG", quality=jpeg_q, optimize=True)
             mat_source[mi] = len(new_images)

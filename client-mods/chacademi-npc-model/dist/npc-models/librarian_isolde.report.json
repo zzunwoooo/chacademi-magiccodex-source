@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/librarian_isolde.glb",
+  "bytes": 2404156,
+  "sha256": "818dc6f35118132fb992f00382761e5bb139d8c2376631f55397341bfb2764b9",
+  "heightBlocks": 1.8,
+  "scale": 1.5913664484186982,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 13972,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "4d5c67b7-1793002929270_57_______/57_이솔데/57_이솔데.glb"
+}

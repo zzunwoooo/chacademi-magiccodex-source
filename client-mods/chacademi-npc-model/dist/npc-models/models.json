@@ -18,15 +18,15 @@
     },
     "ria": {
       "file": "ria.glb",
-      "sha256": "0f4bb47b8e6bed32a47cc4c7a207b69edcf30ef52efc2fb7e0f3d19fa32a6444",
+      "sha256": "880e43e1c29e5fcfbb3d91d9497c0e61296f1350638192dc478edcc8d11fe60b",
       "clips": {
-        "idle": "wait",
+        "idle": "look_around",
         "idleVariants": [],
         "walk": "walk",
         "talk": null,
         "greet": null
       },
-      "walkSpeed": 0.945,
+      "walkSpeed": 1.2,
       "scale": 1.0,
       "nameplateOffset": 0.0
     },
@@ -101,6 +101,160 @@
       "scale": 1.0,
       "nameplateOffset": 0.0,
       "height": 3.0
+    },
+    "st_kai": {
+      "file": "st_kai.glb",
+      "sha256": "b590cf10e41111ea607c76d6fad88344b8ebd43caf451701bdb853a437f04be6",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "st_jun": {
+      "file": "st_jun.glb",
+      "sha256": "e3d7ef007ea79b228cb21279034750884d12845e9aacaf61216901134da1b3e4",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "teacher_harva": {
+      "file": "teacher_harva.glb",
+      "sha256": "d6a0d8da5f4504208253ef8d278665cdb31b8fd9b5e2eafa3f2d7a1115f71930",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "vice_gregor": {
+      "file": "vice_gregor.glb",
+      "sha256": "2aa034df95baa44c41b35499ebfab7780cd6a012ca39869844d492dc8b21b053",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "vl_ole": {
+      "file": "vl_ole.glb",
+      "sha256": "19f6934aee58a0ebcb778de69656ec8bd743540f39cde6ad329137568053b000",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "tc_berna": {
+      "file": "tc_berna.glb",
+      "sha256": "4d9e1eedeb61f3ebd21d4b067c5f73d2a2a9a5a7948e10b09746ed3b09015881",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "tc_cedric": {
+      "file": "tc_cedric.glb",
+      "sha256": "dd63f67b2afaf34dda6409ca58349a09043c6a118bb7a6ea5fd2cc38ce186722",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "vl_ben": {
+      "file": "vl_ben.glb",
+      "sha256": "9b6aed3578794352dc4afda46aa5b9909c82a80a39b7641791ac8aa535484fad",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "marta": {
+      "file": "marta.glb",
+      "sha256": "e3c9cb6f57c72a06b700711a5fcc7f9fe2c208f5660ca3fc763019375bcefcaa",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "vl_selma": {
+      "file": "vl_selma.glb",
+      "sha256": "c395f07a0e24a0d30976affdd47b153b92cdc9383ad6c2415e815d6d94fece55",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "librarian_isolde": {
+      "file": "librarian_isolde.glb",
+      "sha256": "818dc6f35118132fb992f00382761e5bb139d8c2376631f55397341bfb2764b9",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }

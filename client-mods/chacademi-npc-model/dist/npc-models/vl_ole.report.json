@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/vl_ole.glb",
+  "bytes": 3114108,
+  "sha256": "19f6934aee58a0ebcb778de69656ec8bd743540f39cde6ad329137568053b000",
+  "heightBlocks": 1.8,
+  "scale": 1.9758259576764539,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.625,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.375,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 16020,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "3cad68ea-1793002929270_41______/41_올레/41_올레.glb"
+}

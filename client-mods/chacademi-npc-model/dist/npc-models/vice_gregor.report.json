@@ -1,0 +1,33 @@
+{
+  "warnings": [],
+  "out": "out/vice_gregor.glb",
+  "bytes": 1711628,
+  "sha256": "2aa034df95baa44c41b35499ebfab7780cd6a012ca39869844d492dc8b21b053",
+  "heightBlocks": 1.8,
+  "scale": 1.9119071851508072,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12669,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      1024
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "bac70233-1793002929271_36__________/36_그레고르+교감/36_그레고르+교감_수정.glb"
+}
