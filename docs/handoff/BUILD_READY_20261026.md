@@ -70,6 +70,7 @@
 - ModelEngine: `training_dummy.bbmodel` → `plugins/ModelEngine/blueprints/` → `/meg reload` → 리소스팩 병합 (#107).
 - PortableVFX 새 팩 (`portable-vfx-runtime/assets`) → 런처 `config/portablevfx/effects/` (FINAL_PATCHES §5, VFX 문서).
 - Velocity `bungee-plugin-message-channel = true` 확인 (#95 공지·#102 확성기 전 서버 전달).
+- 튜토리얼 서버 하나 `tutorial` (오너 2026-10-26, FINAL_PATCHES §48): velocity.toml `[servers]` 에 `tutorial` 넣고 첫 접속 try 로 (예전 두 대 줄 지우기), 프록시 `tutorial.properties` 가 이미 있으면 `tutorial-servers=tutorial` 로 고치기, ChacaPortrait `auto.server-ids: [school, tutorial]` (튜토리얼 서버는 `server-id: tutorial`).
 - HuskHomes `/home`·`/sethome` 권한 끄기 권장 (#95).
 - DB: 학교·야생·아레나 `database.properties` 가 같은 MariaDB (공유 표 자동 생성: codex_audit_log · codex_player_stats · codex_popularity* · codex_chunk_claim/trust · codex_housing_showcase · codex_server_status …). 안 쓰는 `codex_artifact_pity` 는 지워도 됨.
 

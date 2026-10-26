@@ -75,14 +75,14 @@ class PortraitSettingsTest {
     @Test void automaticGenerationServerListDefaultsToSchoolAndTutorialServers() {
         var c = new YamlConfiguration();
         c.set("auto.first-join", true);
-        c.set("server-id", "tutorial_2");
-        assertEquals(java.util.List.of("school", "tutorial_1", "tutorial_2"), new PortraitSettings(c, name -> null).autoServerIds);
+        c.set("server-id", "tutorial");
+        assertEquals(java.util.List.of("school", "tutorial"), new PortraitSettings(c, name -> null).autoServerIds);
         assertTrue(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
-        c.set("server-id", "tutorial1");
+        c.set("server-id", "tutorial_x");
         assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());
-        c.set("auto.server-ids", java.util.List.of("school", " tutorial1 ", "bad id!"));
+        c.set("auto.server-ids", java.util.List.of("school", " tutorial_x ", "bad id!"));
         var tutorial = new PortraitSettings(c, name -> null);
-        assertEquals(java.util.List.of("school", "tutorial1"), tutorial.autoServerIds);
+        assertEquals(java.util.List.of("school", "tutorial_x"), tutorial.autoServerIds);
         assertTrue(tutorial.automaticGenerationAllowed());
         c.set("server-id", "wild");
         assertFalse(new PortraitSettings(c, name -> null).automaticGenerationAllowed());

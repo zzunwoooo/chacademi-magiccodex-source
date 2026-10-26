@@ -62,7 +62,7 @@ cd C:\Chacademi\build-workspace
    ```
    백엔드가 `server-ip=127.0.0.1` 이면 RCON 도 127.0.0.1 에만 열린다 (확인). **RCON 포트는 방화벽·공유기로 절대 열지 않는다.** 서버 재시작해야 적용.
    RCON 을 안 쓰고 기존 감독 콘솔(`Control.ps1 -Action Console`)로 보내려면 `server.<id>.console=script` (설정 예시에 줄 있음). Velocity 는 RCON 이 없어 `script` 또는 `none`.
-5. **Bridge 하트비트 배포**: 새 MagicCodexBridge jar 를 학교·야생·아레나(+튜토리얼) `plugins/` 에. 처음 켜지면 `plugins/MagicCodexBridge/server-heartbeat.yml` 이 생긴다. `server-id` 를 비워 두면 서버 폴더 이름(school·wild·arena·tutorial_1…)이 되고, 대시보드 `servers=` 이름과 같아야 한다. 확인: `/서버관리 상태` 에 "하트비트 server_id=school · N초 전 기록 (spark|bukkit)" 줄. 각 서버 `database.properties` 가 공유 MariaDB 여야 켜진다.
+5. **Bridge 하트비트 배포**: 새 MagicCodexBridge jar 를 학교·야생·아레나(+튜토리얼) `plugins/` 에. 처음 켜지면 `plugins/MagicCodexBridge/server-heartbeat.yml` 이 생긴다. `server-id` 를 비워 두면 서버 폴더 이름(school·wild·arena·tutorial…)이 되고, 대시보드 `servers=` 이름과 같아야 한다. 확인: `/서버관리 상태` 에 "하트비트 server_id=school · N초 전 기록 (spark|bukkit)" 줄. 각 서버 `database.properties` 가 공유 MariaDB 여야 켜진다.
 6. **spark**: Paper 1.21.4(Purpur 2416)에 spark 가 내장돼 있으면 그대로, 아니면 spark 플러그인(학교·야생·아레나, 프록시는 Velocity 용) 설치. 하트비트는 spark 가 없으면 Bukkit TPS/평균 틱 + JVM CPU 로 자동 대체 (`source` 칸 `bukkit`).
 7. **방화벽**: 관리자 PowerShell
    ```powershell

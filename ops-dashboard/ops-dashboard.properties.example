@@ -110,19 +110,17 @@ server.arena.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile 
 server.arena.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
 server.arena.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
 
-# 튜토리얼 서버를 만들면 servers= 에 tutorial_1,tutorial_2 를 넣고 아래 주석을 풀기 (★ 포트)
-#server.tutorial_1.label=튜토리얼 1
-#server.tutorial_1.port=25569
-#server.tutorial_1.log=C:/Chacademi/network/tutorial_1/logs/latest.log
-#server.tutorial_1.console=rcon
-#server.tutorial_1.rcon.port=25579
-#server.tutorial_1.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
-#server.tutorial_1.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
-#server.tutorial_2.label=튜토리얼 2
-#server.tutorial_2.port=25570
-#server.tutorial_2.log=C:/Chacademi/network/tutorial_2/logs/latest.log
-#server.tutorial_2.console=rcon
-#server.tutorial_2.rcon.port=25580
+# 튜토리얼 서버(tutorial, 시작의 섬 — 2026-10-26 오너: 하나만)를 만들면 servers= 에 tutorial 을 넣고 아래 주석을 풀기 (★ 포트)
+#server.tutorial.label=튜토리얼
+#server.tutorial.host=127.0.0.1
+#server.tutorial.port=25569
+#server.tutorial.log=C:/Chacademi/network/tutorial/logs/latest.log
+#server.tutorial.console=rcon
+#server.tutorial.rcon.port=25579
+#server.tutorial.rcon.password=
+#server.tutorial.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
+#server.tutorial.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
+#server.tutorial.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
 
 # ---------- 조작 ----------
 control.script-timeout-seconds=180

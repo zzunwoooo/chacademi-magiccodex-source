@@ -67,8 +67,8 @@ auto:
   # 최초 접속 시 자동 생성
   first-join: false
   # 자동 생성을 하는 서버(server-id) 목록. 기본은 school 만 (예전과 같음).
-  # 첫 접속은 튜토리얼 서버(tutorial_1, tutorial_2)로 가므로 둘 다 넣어 둠 (2026-10-25 오너 확정 이름).
-  server-ids: [school, tutorial_1, tutorial_2]
+  # 첫 접속은 튜토리얼 서버(tutorial, 시작의 섬)로 가므로 넣어 둠 (2026-10-26 오너: 튜토리얼 서버는 하나, 이름 tutorial).
+  server-ids: [school, tutorial]
   # 접속 후 몇 초 뒤에 시작할지 (접속 직후 몰림 완화)
   delay-seconds: 20
   # 자동 생성 "내용 문제" 실패 누적 상한 (넘으면 관리자 /유저관리 <닉네임> 초상화 다시그리기 로만). 안전 거부·결과 검사 실패·외형 정리 결과 오류만 셉니다.

@@ -126,7 +126,7 @@ public final class PortraitSettings {
 
         autoFirstJoin = c.getBoolean("auto.first-join", false);
         List<String> autoIds = new java.util.ArrayList<>();
-        for (String id : c.isList("auto.server-ids") ? c.getStringList("auto.server-ids") : List.of("school", "tutorial_1", "tutorial_2")) {
+        for (String id : c.isList("auto.server-ids") ? c.getStringList("auto.server-ids") : List.of("school", "tutorial")) {
             if (id != null && id.trim().matches("[A-Za-z0-9_-]{1,32}")) autoIds.add(id.trim());
         }
         autoServerIds = List.copyOf(autoIds);
