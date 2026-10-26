@@ -44,7 +44,7 @@ messages:
 recipes: {}
 #  healing_potion:
 #    name: 회복 물약
-#    result: item:healing_potion
+#    result: item:health_potion
 #    amount: 1
 #    exp: 30
 #    ingredients:

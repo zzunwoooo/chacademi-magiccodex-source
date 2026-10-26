@@ -8,7 +8,7 @@
 
 # 귀환권 ItemsAdder 아이템 id (namespace:id).  — 오너 결정 필요: 실제 아이템 id (아이템 정의·텍스처는 오너 제작)
 # 이 플러그인의 PDC 표식 magiccodexbridge:return_ticket (byte) 이 붙은 아이템도 귀환권으로 봅니다.
-item: "item:return_ticket"
+item: "item:home_ticket"
 # 알림 문구에 쓰는 이름
 item-name: "귀환권"
 

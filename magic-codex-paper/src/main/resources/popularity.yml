@@ -7,7 +7,7 @@
 # 관리: /유저관리 <닉> 인기도 보기 | 설정 <값> | 초기화 · /유저관리 <닉> 일일제한 보기 | 초기화 인기도
 
 # 인기도 제한 해제권 (ItemsAdder 아이템 ID)
-unlock-item: "item:popularity_unlock_ticket"
+unlock-item: "item:popularity_reset"
 # NPC 호감도 기능이 꺼져 있을 때만 쓰는 하루 기준 시간대
 timezone: Asia/Seoul
 # 오늘치 기록을 며칠 보관할지 (서버 켤 때 더 오래된 줄을 지워요)

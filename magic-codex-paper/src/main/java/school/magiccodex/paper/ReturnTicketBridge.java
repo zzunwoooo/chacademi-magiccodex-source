@@ -32,7 +32,7 @@ final class ReturnTicketBridge implements Listener, TravelBridge.ReturnTickets {
     private final TravelBridge travel;
     private final ItemsAdderItems itemsAdder;
     private final NamespacedKey key;
-    private String item = "item:return_ticket", name = "귀환권", server = "school", world = "world";
+    private String item = "item:home_ticket", name = "귀환권", server = "school", world = "world";
     /** The ticket taken for a move started here (given back as it was when that move fails). */
     private final Map<UUID, ItemStack> taken = new HashMap<>();
 
@@ -53,7 +53,7 @@ final class ReturnTicketBridge implements Listener, TravelBridge.ReturnTickets {
         var y = new YamlConfiguration();
         y.load(file);
         String i = y.getString("item", item).strip(), n = y.getString("item-name", name).strip(), s = y.getString("server", server).strip(), w = y.getString("world", world).strip();
-        if (!i.isEmpty() && !i.matches("[a-z0-9_.-]+:[a-z0-9_./-]+")) throw new IllegalArgumentException("return-ticket.yml item: namespace:id (예: item:return_ticket)");
+        if (!i.isEmpty() && !i.matches("[a-z0-9_.-]+:[a-z0-9_./-]+")) throw new IllegalArgumentException("return-ticket.yml item: namespace:id (예: item:home_ticket)");
         if (!TravelProtocol.validId(s)) throw new IllegalArgumentException("return-ticket.yml server: travel.yml servers 의 서버 ID");
         if (!TravelProtocol.validWorld(w)) throw new IllegalArgumentException("return-ticket.yml world 형식");
         if (n.isEmpty() || n.length() > 30) n = "귀환권";

@@ -73,7 +73,7 @@ final class PopularityBridge implements Listener, AutoCloseable {
         if (section != null) for (String k : section.getKeys(false)) messages.put(k, section.getString(k, ""));
         ZoneId zone;
         try { zone = ZoneId.of(y.getString("timezone", "Asia/Seoul")); } catch (RuntimeException e) { zone = ZoneId.of("Asia/Seoul"); }
-        return new Settings(y.getString("unlock-item", "item:popularity_unlock_ticket").trim(), zone, Math.max(1, y.getInt("keep-days", 30)),
+        return new Settings(y.getString("unlock-item", "item:popularity_reset").trim(), zone, Math.max(1, y.getInt("keep-days", 30)),
                 Map.copyOf(messages), y.getString("notify.up", "{player}님이 인기도를 올렸어요"), y.getString("notify.down", "누군가 인기도를 내렸어요"));
     }
 
