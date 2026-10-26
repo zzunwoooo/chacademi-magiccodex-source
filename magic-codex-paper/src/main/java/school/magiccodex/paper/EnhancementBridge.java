@@ -84,6 +84,14 @@ final class EnhancementBridge implements Listener,PluginMessageListener,AutoClos
   offer(p,-1);
  }
  boolean isWand(ItemStack i){return wand(i);}
+ /** 마력 재구성 (장신구 재구성, 오너 2026-10-26): 강화와 같은 대상 판정 · 키 · 시도 상한을 그대로 쓴다. 0 마법봉 · 1 장신구 · -1 아님. */
+ int targetKind(ItemStack i){return kind(i);}
+ /** 강화로 오르는 세 값의 PDC 키 (마법봉 wand_* · 장신구 equipment_bonus_0/2/3). 복사본. */
+ String[] statKeys(int kind){return keys(kind).clone();}
+ /** 강화 전 원본 수치 PDC 키 (wand_base_* · accessory_base_*). 복사본. */
+ String[] baseStatKeys(int kind){return baseKeys(kind).clone();}
+ /** enhancement.yml 시도 상한 (마법봉 maximum-attempts · 장신구 accessory.maximum-attempts). */
+ int attemptLimit(int kind){return limitOf(kind);}
  /** 등급별 마법봉 이름 (enhancement.yml wand-grades 순서). */
  List<String> wandGradeNames(){return List.copyOf(wandGrades.keySet());}
  /** 등급별 장신구 기본 수치 이름 (enhancement.yml accessory-grades 순서). */

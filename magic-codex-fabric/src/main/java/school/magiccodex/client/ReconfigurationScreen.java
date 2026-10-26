@@ -19,6 +19,8 @@ public final class ReconfigurationScreen extends Screen {
     // 주문서 아이템 (오너 2026-10-26): I 빨강 = 강화 초기화, II 파랑 = 실패 횟수 복구, III 보라 = 코어 성향 변경.
     private static final String[] NAMES={"마력 재구성 주문서 I","마력 재구성 주문서 II","마력 재구성 주문서 III"};
     private static final String[] STATS={"지능","마나 최대치","마법 가속"};
+    // 장신구 재구성 (오너 2026-10-26): 장신구 강화와 같은 세 값. 세 번째 줄 아이콘은 강화 창처럼 마나 아이콘을 같이 씀.
+    private static final String[] ACC_STATS={"지능","마나 최대치","초당 마나 회복"};
     private static final String[] ICONS={"icon-power","icon-mana","icon-haste"};
     private static final int GOLD=0xFFE7CE9C,INK=0xFFDEE8EE,MUTED=0xFFACBBC8,CYAN=0xFF9CE5EF;
     private Response data;
@@ -40,6 +42,12 @@ public final class ReconfigurationScreen extends Screen {
     private void divider(DrawContext c,float x,float y,float w){HudMesh.line(c,x,y,x+w/2-7,y,.9f,0x998E998D);HudMesh.line(c,x+w/2+7,y,x+w,y,.9f,0x998E998D);HudMesh.star(c,x+w/2,y,2.8f,GOLD);}
     private void box(DrawContext c,int x,int y,int w,int h,int border){c.fill(x,y,x+w,y+h,0x18071320);HudMesh.line(c,x,y,x+w,y,.6f,border);HudMesh.line(c,x,y+h,x+w,y+h,.6f,border);HudMesh.line(c,x,y,x,y+h,.6f,border);HudMesh.line(c,x+w,y,x+w,y+h,.6f,border);}
     private String num(double v){return String.format(Locale.ROOT,v==Math.rint(v)?"%.0f":"%.1f",v);}
+    private boolean accessory(){return data.kind()==ReconfigurationProtocol.ACCESSORY;}
+    private String stat(int i){return accessory()?ACC_STATS[i]:STATS[i];}
+    private String icon(int i){return i==2&&accessory()?ICONS[1]:ICONS[i];}
+    /** 초당 마나 회복은 0.15 단위라 소수 둘째 자리까지. */
+    private String value(int i,double v){return i==2&&accessory()&&v!=Math.rint(v)?String.format(Locale.ROOT,"%.2f",v):num(v);}
+    private String affinity(int i,int a){return accessory()?CoreAffinity.accessoryLabel(i,a):CoreAffinity.label(i,a);}
     private boolean hit(double x,double y,double a,double b,double w,double h){return x>=a&&x<a+w&&y>=b&&y<b+h;}
     @Override public void render(DrawContext c,int mx,int my,float delta){
         layout();double mouseX=(mx-left)/scale,mouseY=(my-top)/scale,t=Util.getMeasuringTimeMs()/1000d;
@@ -52,14 +60,14 @@ public final class ReconfigurationScreen extends Screen {
             UiResources.text().draw(c,"마력 재구성",320,41,27,GOLD,Identifier.of("magiccodex","ui_extra_bold"),true);text(c,"×",600,34,21,GOLD,true);
             for(int i=0;i<3;i++){int x=40+i*189;boolean hovered=hit(mouseX,mouseY,x,64,182,32);box(c,x,64,182,32,i==data.mode()?0xCF91DEEB:hovered?0xBBBDC4AC:0x777F8C8C);c.fill(x+1,65,x+181,95,0xFF112233);if(i==data.mode())c.fill(x+1,65,x+181,95,0x25387C99);text(c,TABS[i],x+91,80,13,i==data.mode()?CYAN:INK,true);}
             box(c,65,112,202,195,0x809FA88F);box(c,373,112,202,195,0x809FA88F);
-            text(c,data.mode()==2?"대상 마력코어":"대상 마법봉",166,127,13,GOLD,true);text(c,"사용 주문서",474,127,13,GOLD,true);
+            text(c,data.mode()==2?"대상 마력코어":accessory()?"대상 장신구":"대상 마법봉",166,127,13,GOLD,true);text(c,"사용 주문서",474,127,13,GOLD,true);
             HudMesh.line(c,80,142,252,142,.5f,0x778B998F);HudMesh.line(c,388,142,560,142,.5f,0x778B998F);
             sprite(c,"mana-glow",96-pulse*8,145-pulse*8,140+pulse*16,140+pulse*16,((int)(80+55*pulse)<<24)|0xB2CBFF);
             for(int j=0;j<3;j++)HudMesh.arc(c,166,210,44+j*3+pulse*3,1.2f,0,(float)(Math.PI*2),((int)((22+20*pulse)*(1-j*.2))<<24)|0xB9B6FF);
             if(data.slot()>=0){
                 if(data.mode()==2)sprite(c,"core-intact",95,140,142,142,0xFFFFFFFF);
                 else if(client!=null&&client.player!=null){
-                    // 대상 마법봉: 고해상도 아이콘을 그 크기로 새로 그림(ExactItemIcons, 회전하면 못 쓰므로 회전 없음).
+                    // 대상 마법봉·장신구(주 손 칸): 고해상도 아이콘을 그 크기로 새로 그림(ExactItemIcons, 회전하면 못 쓰므로 회전 없음).
                     // 고해상도 그림이 없거나 준비 전이면 일반 아이템 그리기로 같은 칸을 채운다.
                     var item=client.player.getInventory().getStack(data.slot());c.draw();
                     if(!item.isEmpty()){c.getMatrices().push();try{c.getMatrices().translate(0,0,10);drawStack(c,item,166,211+Math.round(Math.sin(t*1.5)*2),112);c.draw();}finally{c.getMatrices().pop();}}
@@ -72,9 +80,9 @@ public final class ReconfigurationScreen extends Screen {
             sprite(c,SCROLLS[data.mode()],400,136,148,136,0xFFFFFFFF);{String n=NAMES[data.mode()];float w=UiResources.text().width(n,13,FONT),sz=w>170?13*170/w:13;text(c,n,474,273,sz,GOLD,true);}text(c,"보유 "+data.credits()+"개",474,292,11,data.credits()>0?MUTED:0xFFE5B7AF,true);
             divider(c,45,322,550);
             text(c,data.mode()==2?"현재 성향":"현재 능력치",166,341,13,GOLD,true);text(c,data.state()==1?"변경 완료":"변경 후",474,341,13,GOLD,true);
-            for(int i=0;i<3;i++){int y=367+i*24;sprite(c,ICONS[i],76,y-11,22,22,0xFFFFFFFF);fit(c,data.mode()==2?CoreAffinity.label(i,data.affinity()):STATS[i],104,y,12,113,INK,false);if(data.mode()!=2)fit(c,num(data.before().get(i)),256,y,13,55,CYAN,true);
-                if(data.mode()!=2){sprite(c,ICONS[i],384,y-11,22,22,0xFFFFFFFF);fit(c,STATS[i],412,y,12,99,INK,false);fit(c,num(data.after().get(i)),565,y,13,51,CYAN,true);}
-                else if(data.nextAffinity()>=0){sprite(c,ICONS[i],384,y-11,22,22,0xFFFFFFFF);fit(c,CoreAffinity.label(i,data.nextAffinity()),412,y,12,150,CYAN,false);}
+            for(int i=0;i<3;i++){int y=367+i*24;sprite(c,icon(i),76,y-11,22,22,0xFFFFFFFF);fit(c,data.mode()==2?affinity(i,data.affinity()):stat(i),104,y,12,113,INK,false);if(data.mode()!=2)fit(c,value(i,data.before().get(i)),256,y,13,55,CYAN,true);
+                if(data.mode()!=2){sprite(c,icon(i),384,y-11,22,22,0xFFFFFFFF);fit(c,stat(i),412,y,12,99,INK,false);fit(c,value(i,data.after().get(i)),565,y,13,51,CYAN,true);}
+                else if(data.nextAffinity()>=0){sprite(c,icon(i),384,y-11,22,22,0xFFFFFFFF);fit(c,affinity(i,data.nextAffinity()),412,y,12,150,CYAN,false);}
             }
             if(data.mode()==2&&data.nextAffinity()<0){text(c,"?",474,381,40,CYAN,true);text(c,"새로운 성향",474,416,11,MUTED,true);}
             else if(data.mode()!=2)text(c,"남은 강화 "+Math.max(0,data.limit()-data.attempts())+" → "+Math.max(0,data.limit()-data.nextAttempts()),320,440,12,CYAN,true);

@@ -24,6 +24,12 @@ import school.magiccodex.protocol.ReconfigurationProtocol.*;
  * (중간에 비동기·대기 없음 → 차감만 되고 결과가 안 들어가는 경우가 없음).
  * 응답 유실 대비: 같은 토큰의 APPLY 가 다시 오면(클라 재요청) 이미 낸 결과를 그대로 다시 보내고,
  * 만료·모르는 토큰의 요청에는 무시하지 않고 새 화면 상태를 보내 창이 "요청 중…"에 멈추지 않게 한다.
+ * 장신구 재구성 (오너 2026-10-26 "장신구 재구성도 필요해"): 모드 0·1 은 EnhancementBridge 가 강화하는 장신구
+ * (반지·귀걸이·목걸이, accessory.enabled)도 대상. 강화와 같은 규칙으로 주 손에 든 것만 — 장착 칸·인벤토리의 다른
+ * 칸 장신구는 찾지 않는다 (마법봉은 예전처럼 주 손 → 인벤토리 순). 값 키·원본 키·시도 상한은 EnhancementBridge 것을
+ * 그대로 써서 강화와 어긋나지 않게 한다: 장신구 = equipment_bonus_0/2/3 (지능·최대 마나·초당 마나 회복),
+ * 원본 accessory_base_*, 상한 accessory.maximum-attempts(5). 모드 2 는 대상이 코어라 장신구여도 같은 흐름이고,
+ * 주 손에 장신구를 들고 있으면 창의 성향 이름만 장신구 기준(세 번째 = 마나 회복)으로 보낸다.
  */
 final class ReconfigurationBridge implements Listener,PluginMessageListener,AutoCloseable {
     private final MagicCodexBridge plugin;
@@ -36,7 +42,6 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
     private final String[] scrollItem={"item:core_scroll_red","item:core_scroll_blue","item:core_scroll_purple"};
     private static final String[] SCROLL_KEYS={"reset","restore","affinity"};
     private record Offer(Response view,ItemStack item,long expires) {}
-    private static final String[] STATS={"power","mana","haste"};
     ReconfigurationBridge(MagicCodexBridge plugin,EnhancementBridge enhancement) {
         this.plugin=plugin;this.enhancement=enhancement;this.itemsAdder=new ItemsAdderItems(plugin.getLogger());
         File f=new File(plugin.getDataFolder(),"reconfiguration.yml");if(!f.exists())plugin.saveResource("reconfiguration.yml",false);reload();
@@ -57,7 +62,12 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
     private NamespacedKey key(String n){return new NamespacedKey(plugin,n);}
     private int integer(ItemStack i,String n,int fallback){return i==null||!i.hasItemMeta()?fallback:i.getItemMeta().getPersistentDataContainer().getOrDefault(key(n),PersistentDataType.INTEGER,fallback);}
     private double number(ItemStack i,String n){return i.getItemMeta().getPersistentDataContainer().getOrDefault(key(n),PersistentDataType.DOUBLE,0d);}
-    private boolean target(ItemStack i,int mode){return i!=null&&i.getAmount()==1&&i.hasItemMeta()&&(mode==2?integer(i,"core_state",-1)==1&&integer(i,"core_nodes",-1)>=0&&integer(i,"core_nodes",11)<=10:i.getItemMeta().getPersistentDataContainer().has(key("wand_id"),PersistentDataType.STRING));}
+    /** held: 주 손 칸이면 장신구도 대상, 다른 칸은 마법봉만 (장신구는 강화처럼 주 손에 들어야 함). */
+    private boolean target(ItemStack i,int mode,boolean held){
+        if(i==null||i.getAmount()!=1||!i.hasItemMeta())return false;
+        if(mode==2)return integer(i,"core_state",-1)==1&&integer(i,"core_nodes",-1)>=0&&integer(i,"core_nodes",11)<=10;
+        int kind=enhancement.targetKind(i);return kind==ReconfigurationProtocol.WAND||held&&kind==ReconfigurationProtocol.ACCESSORY;
+    }
     private int credits(Player p,int mode){return Math.clamp(p.getPersistentDataContainer().getOrDefault(key("reconfig_credit_"+mode),PersistentDataType.INTEGER,0),0,1000000);}
     /** 인벤토리 저장 칸(0~35)의 이 모드 주문서 개수. ItemsAdder 가 없으면 0. */
     private int scrolls(Player p,int mode){
@@ -108,30 +118,35 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
         if(!p.getListeningPluginChannels().contains(ReconfigurationProtocol.RESPONSE)){warn(p,"차카데미 모드를 업데이트해 주세요");return;}
         if(!usable(p)){warn(p,"다른 보관함이나 진행 중인 강화를 먼저 닫아 주세요");return;}
         int slot=p.getInventory().getHeldItemSlot();ItemStack item=p.getInventory().getItem(slot);
-        if(!target(item,mode)){slot=-1;for(int j=0;j<36;j++)if(target(p.getInventory().getItem(j),mode)){slot=j;break;}item=slot<0?null:p.getInventory().getItem(slot);}
+        // 모드 2 의 kind 는 표시용: 주 손에 장신구를 들고 성향을 바꾸면 장신구 기준 성향 이름을 보여 준다.
+        int kind=mode==2&&enhancement.targetKind(item)==ReconfigurationProtocol.ACCESSORY?ReconfigurationProtocol.ACCESSORY:ReconfigurationProtocol.WAND;
+        if(!target(item,mode,true)){slot=-1;for(int j=0;j<36;j++)if(target(p.getInventory().getItem(j),mode,false)){slot=j;break;}item=slot<0?null:p.getInventory().getItem(slot);}
+        if(item!=null&&mode!=2)kind=enhancement.targetKind(item);
+        String what=kind==ReconfigurationProtocol.ACCESSORY?"장신구":"마법봉";
         String message="",name="대상 없음";int attempts=0,successes=0,limit=10,nodes=0,affinity=0,nextAttempts=0;
         List<Double> before=List.of(0d,0d,0d),after=before;
         if(item!=null){ItemStack visual=plugin.coreAppearance(item);if(visual!=item){item=visual;p.getInventory().setItem(slot,item);}}
-        if(item==null)message=mode==2?"인벤토리에 감정된 마력코어가 필요합니다.":"인벤토리에 등록된 마법봉이 필요합니다.";
+        if(item==null)message=mode==2?"인벤토리에 감정된 마력코어가 필요합니다.":"인벤토리에 등록된 마법봉이 필요합니다. 장신구는 주 손에 들어 주세요.";
         else {
             name=net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(item.getItemMeta().displayName()!=null?item.getItemMeta().displayName():item.displayName());if(name.length()>80)name=name.substring(0,80);
             if(mode==2){nodes=integer(item,"core_nodes",0);affinity=CoreAffinity.valid(integer(item,"core_affinity",0));}
             else {
                 enhancement.captureBase(item);
-                attempts=integer(item,"enhance_attempts",0);successes=integer(item,"enhance_successes",0);limit=integer(item,"enhance_limit",10);
-                before=List.of(number(item,"wand_power"),number(item,"wand_mana"),number(item,"wand_haste"));after=before;
-                if(attempts<0||attempts>100||successes<0||successes>attempts||limit<1||limit>100||before.stream().anyMatch(v->!Double.isFinite(v)||v<0||v>100000)){plugin.getLogger().warning("재구성: 마법봉 데이터 이상 player="+p.getName()+" attempts="+attempts+" successes="+successes+" limit="+limit+" stats="+before);warn(p,"마법봉 데이터가 올바르지 않아요. 관리자에게 알려 주세요");return;}
+                String[] keys=enhancement.statKeys(kind),base=enhancement.baseStatKeys(kind);
+                attempts=integer(item,"enhance_attempts",0);successes=integer(item,"enhance_successes",0);limit=integer(item,"enhance_limit",enhancement.attemptLimit(kind));
+                before=List.of(number(item,keys[0]),number(item,keys[1]),number(item,keys[2]));after=before;
+                if(attempts<0||attempts>100||successes<0||successes>attempts||limit<1||limit>100||before.stream().anyMatch(v->!Double.isFinite(v)||v<0||v>100000)){plugin.getLogger().warning("재구성: "+what+" 데이터 이상 player="+p.getName()+" attempts="+attempts+" successes="+successes+" limit="+limit+" stats="+before);warn(p,what+" 데이터가 올바르지 않아요. 관리자에게 알려 주세요");return;}
                 nextAttempts=mode==0?0:ReconfigurationRules.restore(attempts,successes,restoreCount);
                 if(mode==0){
                     if(!enhancement.hasBase(item))message="강화 전 원본 수치를 먼저 등록해 주세요.";
-                    else {after=List.of(number(item,"wand_base_power"),number(item,"wand_base_mana"),number(item,"wand_base_haste"));for(int j=0;j<3;j++)if(!Double.isFinite(after.get(j))||after.get(j)<0||after.get(j)>before.get(j))message="마법봉 원본 수치를 확인해 주세요.";}
+                    else {after=List.of(number(item,base[0]),number(item,base[1]),number(item,base[2]));for(int j=0;j<3;j++)if(!Double.isFinite(after.get(j))||after.get(j)<0||after.get(j)>before.get(j))message=what+" 원본 수치를 확인해 주세요.";}
                     if(attempts==0)message="초기화할 강화 기록이 없습니다.";
                 }else if(attempts==successes)message="복구할 실패 횟수가 없습니다.";
             }
         }
         int credit=usableCount(p,mode);if(message.isEmpty()&&credit==0)message="사용 가능한 주문서가 없습니다.";
         boolean available=message.isEmpty();if(available&&!notice.isEmpty())message=notice;
-        Response r=new Response(ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE),mode,0,slot,name,message,credit,nodes,affinity,-1,attempts,successes,limit,nextAttempts,before,after,available);
+        Response r=new Response(ThreadLocalRandom.current().nextLong(1,Long.MAX_VALUE),mode,0,slot,name,message,credit,nodes,affinity,-1,attempts,successes,limit,nextAttempts,before,after,available,kind);
         offers.put(p.getUniqueId(),new Offer(r,item==null?null:item.clone(),t+60000));send(p,r);
     }
     @Override public void onPluginMessageReceived(String ch,Player p,byte[] bytes){
@@ -145,13 +160,13 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
         // 이미 처리한 토큰의 APPLY 재요청(응답 유실 → 클라 재전송): 같은 결과를 다시 보낸다. 두 번 적용되지 않음.
         if(o.view.state()!=0){send(p,o.view);return;}
         offers.remove(p.getUniqueId());Response r=o.view;
-        if(!r.available()||q.mode()!=r.mode()||!p.hasPermission("magiccodex.reconfigure")||!usable(p)||System.currentTimeMillis()>o.expires||r.slot()<0||!o.item.equals(p.getInventory().getItem(r.slot()))){reply(p,r,2,"아이템이 변경됐거나 요청이 만료됐습니다. 다시 열어 주세요.",-1);return;}
+        if(!r.available()||q.mode()!=r.mode()||!p.hasPermission("magiccodex.reconfigure")||!usable(p)||System.currentTimeMillis()>o.expires||r.slot()<0||!o.item.equals(p.getInventory().getItem(r.slot()))||r.mode()!=2&&r.kind()==ReconfigurationProtocol.ACCESSORY&&p.getInventory().getHeldItemSlot()!=r.slot()){reply(p,r,2,"아이템이 변경됐거나 요청이 만료됐습니다. 다시 열어 주세요.",-1);return;}
         if(usableCount(p,r.mode())<1){reply(p,r,2,"사용 가능한 주문서가 없습니다.",-1);return;}
         ItemStack result=o.item.clone();var m=result.getItemMeta();var d=m.getPersistentDataContainer();int next=-1;
         if(r.mode()==2){next=CoreAffinity.changed(r.affinity(),ThreadLocalRandom.current().nextInt(2));d.set(key("core_affinity"),PersistentDataType.INTEGER,next);}
         else {
             d.set(key("enhance_attempts"),PersistentDataType.INTEGER,r.nextAttempts());
-            if(r.mode()==0){d.set(key("enhance_successes"),PersistentDataType.INTEGER,0);for(int j=0;j<3;j++)d.set(key("wand_"+STATS[j]),PersistentDataType.DOUBLE,r.after().get(j));}
+            if(r.mode()==0){d.set(key("enhance_successes"),PersistentDataType.INTEGER,0);String[] keys=enhancement.statKeys(r.kind());for(int j=0;j<3;j++)d.set(key(keys[j]),PersistentDataType.DOUBLE,r.after().get(j));}
         }
         result.setItemMeta(m);result=plugin.coreAppearance(result);if(r.mode()!=2)enhancement.lore(result);
         // 차감 → 결과 교체 → 저장이 한 서버 틱 안에서 끝난다. 예전 크레딧이 남아 있으면 크레딧 먼저, 없으면 주문서 아이템.
@@ -162,7 +177,7 @@ final class ReconfigurationBridge implements Listener,PluginMessageListener,Auto
         p.getInventory().setItem(r.slot(),result);p.saveData();plugin.savePlayerState(p);plugin.refreshEquipment(p);
         reply(p,r,1,r.mode()==0?"강화를 초기화했습니다.":r.mode()==1?"실패 횟수 "+(r.attempts()-r.nextAttempts())+"회를 복구했습니다.":"코어 성향을 변경했습니다.",next);
     }
-    private void reply(Player p,Response r,int state,String message,int affinity){Response result=new Response(r.token(),r.mode(),state,r.slot(),r.name(),message,usableCount(p,r.mode()),r.nodes(),r.affinity(),affinity,r.attempts(),r.successes(),r.limit(),r.nextAttempts(),r.before(),r.after(),false);send(p,result);offers.put(p.getUniqueId(),new Offer(result,null,System.currentTimeMillis()+60000));}
+    private void reply(Player p,Response r,int state,String message,int affinity){Response result=new Response(r.token(),r.mode(),state,r.slot(),r.name(),message,usableCount(p,r.mode()),r.nodes(),r.affinity(),affinity,r.attempts(),r.successes(),r.limit(),r.nextAttempts(),r.before(),r.after(),false,r.kind());send(p,result);offers.put(p.getUniqueId(),new Offer(result,null,System.currentTimeMillis()+60000));}
     private static void warn(Player p,String body){CmdKit.notify(p,"warning","reconfig-open","마력 재구성을 열 수 없어요",body,1500);}
     private void send(Player p,Response r){p.sendPluginMessage(plugin,ReconfigurationProtocol.RESPONSE,ReconfigurationProtocol.response(r));}
     @EventHandler public void quit(PlayerQuitEvent e){offers.remove(e.getPlayer().getUniqueId());limits.remove(e.getPlayer().getUniqueId());}
