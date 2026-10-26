@@ -41,7 +41,7 @@ db.status-table=codex_server_status
 
 # ---------- 서버 목록 ----------
 # 순서대로 화면에 나온다. 튜토리얼 서버는 만든 뒤에 추가 (없는 서버를 넣으면 늘 "꺼짐" 빨간 표시)
-servers=proxy,school,wild,arena
+servers=proxy,school,arena,wild1,wild2
 
 # 공통 키 (server.<id>.):
 #   label        화면 이름
@@ -87,16 +87,20 @@ server.school.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:
 server.school.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
 server.school.restart=
 
-server.wild.label=야생
-server.wild.host=127.0.0.1
-server.wild.port=25567
-server.wild.log=C:/Chacademi/network/wild/logs/latest.log
-server.wild.console=rcon
-server.wild.rcon.port=25577
-server.wild.rcon.password=
-server.wild.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
-server.wild.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
-server.wild.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
+# 야생1·야생2 는 새 호스팅 PC(24GB)에 있다. 대시보드는 기존 PC 에서 돌므로
+#   상태·TPS·MSPT·접속자 = 공유 DB 하트비트로 보임 (각 야생 Bridge database.properties 가 공유 DB 여야 함)
+#   켜짐/꺼짐 핑 = 새 PC 주소:포트 (★ 실제 주소·포트)
+#   로그·콘솔·시작/정지 = 다른 PC 라 여기서 안 됨 (RCON 포트를 밖에 열지 말 것). 필요하면 새 PC 에 대시보드를 하나 더 설치
+server.wild1.label=야생1
+server.wild1.host=★새호스팅주소
+# ★ 야생 게임 포트 · 하트비트 server-id 는 wild1·wild2 여야 함 (server-heartbeat.yml)
+server.wild1.port=25567
+server.wild1.console=none
+
+server.wild2.label=야생2
+server.wild2.host=★새호스팅주소
+server.wild2.port=25568
+server.wild2.console=none
 
 server.arena.label=아레나
 server.arena.host=127.0.0.1
@@ -109,65 +113,4 @@ server.arena.rcon.password=
 server.arena.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
 server.arena.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
 server.arena.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
-
-# 튜토리얼 서버(tutorial, 시작의 섬 — 2026-10-26 오너: 하나만)를 만들면 servers= 에 tutorial 을 넣고 아래 주석을 풀기 (★ 포트)
-#server.tutorial.label=튜토리얼
-#server.tutorial.host=127.0.0.1
-#server.tutorial.port=25569
-#server.tutorial.log=C:/Chacademi/network/tutorial/logs/latest.log
-#server.tutorial.console=rcon
-#server.tutorial.rcon.port=25579
-#server.tutorial.rcon.password=
-#server.tutorial.console.script="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Console -Server {server} -Command {command}
-#server.tutorial.start="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Control.ps1 -Action Start -Server {server}
-#server.tutorial.stop="C:/Program Files/PowerShell/7/pwsh.exe" -NoProfile -File C:/Chacademi/network/scripts/Stop-Network.ps1 -Server {server}
-
-# ---------- 조작 ----------
-control.script-timeout-seconds=180
-control.stop-wait-seconds=180
-control.start-wait-seconds=300
-# 스크립트 출력 글자 인코딩 (비우면 Windows 기본, 한글 Windows = MS949). 글자가 깨지면 UTF-8 로
-control.output-charset=
-# 모든 명령 앞에 붙일 것 (보통 비움)
-control.shell=
-
-# ---------- 규칙 경보 (AI 없이 바로 빨간 표시) ----------
-alarm.tps-below=15
-alarm.mspt-above=50
-alarm.heap-above-percent=90
-alarm.heartbeat-stale-seconds=30
-alarm.errors-per-minute=10
-alarm.host-cpu-above-percent=95
-alarm.host-memory-above-percent=95
-
-# ---------- AI 분석 (OpenAI, ChacaNPC 와 같은 키) ----------
-ai.enabled=true
-# ★ 키: 환경변수 CHACA_OPS_OPENAI_KEY → 없으면 CHACANPC_OPENAI_KEY → 없으면 아래 값
-ai.api-key=
-ai.base-url=https://api.openai.com/v1
-# ChacaNPC config.yml openai.model 과 같은 모델 (★ 확인)
-ai.model=gpt-6-luna
-ai.reasoning-effort=low
-ai.max-output-tokens=900
-# 하루 최대 횟수 (버튼 + 자동 합계)
-ai.max-per-day=40
-# true 면 새 빨간 경보가 생길 때 자동으로 한 번 (최소 간격 지킴). 기본 꺼짐 = 버튼만
-ai.auto-on-alarm=false
-ai.auto-min-interval-minutes=15
-
-# ---------- 운영 기록 검색 (codex_audit_log — 다른 작업이 만드는 표) ----------
-# 실제 표(AuditStore): id·at_ms(ms)·server·player(UUID)·player_name·kind·summary·detail
-audit.table=codex_audit_log
-audit.col.time=at_ms
-audit.col.server=server
-audit.col.uuid=player
-audit.col.name=player_name
-audit.col.kind=kind
-audit.col.message=summary
-audit.col.detail=detail
-# auto | millis | seconds | datetime (auto = 열 형식을 보고 정함)
-audit.time-unit=millis
-audit.max-rows=300
-
-# spark 결과 링크를 로그에서 찾는 정규식
-spark.link-pattern=https://spark\\.lucko\\.me/[A-Za-z0-9]+
+# 튜토리얼 서버는 없음 (2026-10-26 오너: 튜토리얼 장소는 학교 안)
