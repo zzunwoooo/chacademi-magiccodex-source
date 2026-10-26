@@ -616,6 +616,7 @@ final class ArtifactEffects implements Listener {
             var t = (LivingEntity) get(e, "getTarget");
             String reaction = (String) get(e, "getReaction");
             double mult = magicMultiplier(p, t, (String) get(e, "getElement"), reaction, (UUID) get(e, "getMarkCaster")) * rules.damage(p, e, reaction);
+            mult = CombatSpec.artifactMultiplier(mult, t instanceof Player); // 전투 스펙 2026-10-26: PvP 에서는 아티팩트 피해 보정 합 +20% 까지
             if (mult != 1) call(e, "setDamage", (double) get(e, "getDamage") * mult);
         }
         private void reaction(Event e) {

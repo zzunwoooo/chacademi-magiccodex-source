@@ -87,7 +87,7 @@ final class ChannelMech extends Mech {
     static boolean cast(LivingEntity caster, String skill, Location at, double damage) {
         try {
             return MythicBukkit.inst().getAPIHelper().castSkill(caster, skill, caster, caster.getLocation(), List.<Entity>of(), List.of(at), 1f,
-                data -> data.getVariables().putDouble("damage", damage));
+                data -> { data.getVariables().putDouble("damage", damage); data.getVariables().putDouble("pvp_scale", SpellTrace.current().pvpScale()); });
         } catch (RuntimeException | LinkageError e) { return false; }
     }
 }

@@ -62,6 +62,10 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     boolean coreSimilar(org.bukkit.inventory.ItemStack a,org.bukkit.inventory.ItemStack b){return coreVisuals==null?a!=null&&b!=null&&a.isSimilar(b):coreVisuals.similar(a,b);}
     private AppraisalBridge appraisal;
     private EnhancementBridge enhancement;
+    /** 장신구 강화·등급등록 (EquipmentBridge). 켜지기 전이면 null. */
+    EnhancementBridge enhancementBridge(){return enhancement;}
+    /** 강화 진행 중(구슬이 도는 중)이면 장비 바꾸기를 막는다. */
+    boolean enhancing(org.bukkit.entity.Player p){return enhancement!=null&&enhancement.active(p);}
     /** Server-thread API for future scroll items/NPC scripts. mode: 0 reset, 1 restore, 2 affinity. */
     public void grantReconfiguration(org.bukkit.entity.Player player,int mode,int count){reconfiguration.grant(player,mode,count);}
     public void openReconfiguration(org.bukkit.entity.Player player,int mode){reconfiguration.open(player,mode);}

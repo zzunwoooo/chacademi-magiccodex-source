@@ -26,6 +26,7 @@ public final class EnhancementScreen extends Screen {
  private void fitText(DrawContext c,String value,int x,int y,int size,int maxWidth,int color,boolean right){float measured=UiResources.text().width(value,size,FONT);float actual=measured>maxWidth?size*maxWidth/measured:size;float w=UiResources.text().width(value,actual,FONT);UiResources.text().draw(c,value,right?x-w:x,y,actual,color,FONT,false);}
  private void sprite(DrawContext c,Identifier id,float x,float y,float w,float h,int tw,int th,int tint){c.getMatrices().push();try{c.getMatrices().translate(x,y,0);c.getMatrices().scale(w/100,h/100,1);UiResources.images().drawTexture(c,id,0,0,0,0,100,100,tw,th,tw,th,tint);c.draw();}finally{c.getMatrices().pop();}}
  private float[] node(int i){int n=data.nodes();if(n==1)return new float[]{500,200};if(n<=5)return new float[]{325+i*350f/(n-1),195+(i%2==0?-12:12)};int row=i/5,col=i%5;return new float[]{325+(row==0?col:4-col)*86,170+row*84+(col%2)*8};}
+ private Identifier icon(int i){return i==2&&data.kind()==EnhancementProtocol.ACCESSORY?ICONS[1]:ICONS[i];}
  private String num(double v){return String.format(Locale.ROOT,v==Math.rint(v)?"%.0f":"%.1f",v);}
  private boolean hit(double x,double y,float a,float b,float w,float h){return x>=a&&x<=a+w&&y>=b&&y<=b+h;}
  @Override public void render(DrawContext c,int mx,int my,float delta){layout();double x=(mx-left)/scale,y=(my-top)/scale,t=Util.getMeasuringTimeMs()/1000d;var images=UiResources.images();images.beginFrame();UiResources.text().beginFrame();c.fill(0,0,width,height,0x60040B14);c.getMatrices().push();
@@ -42,7 +43,9 @@ public final class EnhancementScreen extends Screen {
   text(c,data.nodes()+"코어",166,220,13,0xFFDFE9F0,true);text(c,"‹",82,153,21,0xFFE1C88E,true);text(c,"›",251,153,21,0xFFE1C88E,true);
   // Equipment icon intentionally remains blank as requested. Live item name and values only.
   fitText(c,data.name(),80,365,13,172,0xFFE9D19B,false);text(c,"강화 횟수 "+data.attempts()+" / "+data.limit(),165,391,12,0xFFCCD8DF,true);
-  String[] labels={"지능","마나 최대치","마법 가속"};for(int i=0;i<3;i++){int sy=412+i*23;sprite(c,ICONS[i],73,sy-7,24,24,1254,1254,0xFFFFFFFF);text(c,labels[i],99,sy+4,11,0xFFDEE6EF,false);fitText(c,num(data.before().get(i))+" → "+num(data.before().get(i)+data.gains().get(i)),259,sy+4,11,90,0xFF8EE5EB,true);}
+  // 장신구 강화(kind 1)는 세 번째 줄이 초당 마나 회복 — 새 그림 없이 마나 아이콘을 같이 씀.
+  boolean accessory=data.kind()==EnhancementProtocol.ACCESSORY;
+  String[] labels=accessory?new String[]{"지능","마나 최대치","초당 마나 회복"}:new String[]{"지능","마나 최대치","마법 가속"};for(int i=0;i<3;i++){int sy=412+i*23;sprite(c,icon(i),73,sy-7,24,24,1254,1254,0xFFFFFFFF);text(c,labels[i],99,sy+4,11,0xFFDEE6EF,false);fitText(c,num(data.before().get(i))+" → "+num(data.before().get(i)+data.gains().get(i)),259,sy+4,11,90,0xFF8EE5EB,true);}
   double elapsed=elapsed();int active=0;while(active<data.nodes()&&elapsed>data.targets().get(active)+data.window())active++;
   int travel=0;while(travel<data.nodes()-1&&elapsed>data.targets().get(travel))travel++;
 
@@ -76,7 +79,7 @@ public final class EnhancementScreen extends Screen {
     c.fill(207,130,343,276,0xFA0A1825);sprite(c,TOOLTIP,177,103,196,198,1122,1402,0xFFFFFFFF);
     text(c,"마력코어 · "+data.nodes()+"코어",275,143,12,0xFFE9D19B,true);
     HudMesh.line(c,214,156,336,156,.6f,0x807D8D98);
-    for(int i=0;i<3;i++){int row=177+i*30;sprite(c,ICONS[i],208,row-12,24,24,1254,1254,0xFFFFFFFF);text(c,school.magiccodex.protocol.CoreAffinity.label(i,data.affinity()),236,row,11,0xFFDDE8EE,false);}
+    for(int i=0;i<3;i++){int row=177+i*30;sprite(c,icon(i),208,row-12,24,24,1254,1254,0xFFFFFFFF);text(c,data.kind()==EnhancementProtocol.ACCESSORY?school.magiccodex.protocol.CoreAffinity.accessoryLabel(i,data.affinity()):school.magiccodex.protocol.CoreAffinity.label(i,data.affinity()),236,row,11,0xFFDDE8EE,false);}
     c.draw();
    }finally{c.getMatrices().pop();}
   }
