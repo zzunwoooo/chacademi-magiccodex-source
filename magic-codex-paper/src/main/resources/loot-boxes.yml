@@ -873,3 +873,727 @@ boxes:
         grade: 유일
         weight: 120
         label: "3성 · 셜커 껍데기"
+  # ── 오너 표 2026-10-26 12:02: API 상자 2종 + 호감도 선물 뽑기권 ──
+  api_box_normal:
+    # 마법상자 (API 상자, 100개/1000개) — 오너 확률표 그대로 (weight = % × 100). 등급색은 Claude 가 확률로 정함: 5% 이상 일반 · 2~5% 고급 · 0.5~2% 유일 · 0.5% 미만 전설
+    name: "마법상자"
+    enabled: true
+    key:
+      itemsadder: "item:api_box_normal"
+    animation:
+      speed: 100
+    rewards:
+      - itemsadder: "item:home_ticket"
+        amount: 1
+        grade: 일반
+        weight: 1000
+        label: "귀환권 · 10%"
+      - itemsadder: "item:inventory_save"
+        amount: 1
+        grade: 일반
+        weight: 1600
+        label: "인벤세이브 · 16%"
+      - itemsadder: "item:death_return"
+        amount: 1
+        grade: 일반
+        weight: 1000
+        label: "리턴권 · 10%"
+      - itemsadder: "item:friend_teleport"
+        amount: 1
+        grade: 일반
+        weight: 1100
+        label: "텔포권 · 11%"
+      - itemsadder: "item:money_pouch"
+        amount: 1
+        grade: 일반
+        weight: 750
+        label: "재화 주머니 · 7.5%"
+      - itemsadder: "item:popularity_reset"
+        amount: 1
+        grade: 고급
+        weight: 300
+        label: "인기도 제한 해제권 · 3%"
+      - itemsadder: "item:health_potion"
+        amount: 1
+        grade: 일반
+        weight: 500
+        label: "체력 물약 · 5%"
+      - itemsadder: "item:mana_potion"
+        amount: 1
+        grade: 일반
+        weight: 600
+        label: "마나 물약 · 6%"
+      - itemsadder: "item:dungeon_ticket"
+        amount: 1
+        grade: 고급
+        weight: 200
+        label: "던전 입장권 · 2%"
+      - itemsadder: "item:spell_hint"
+        amount: 1
+        grade: 유일
+        weight: 70
+        label: "마법 힌트권 · 0.7%"
+      - itemsadder: "item:core_scroll_red"
+        amount: 1
+        grade: 고급
+        weight: 250
+        label: "강화 초기화권 (주문서 I) · 2.5%"
+      - itemsadder: "item:core_scroll_blue"
+        amount: 1
+        grade: 유일
+        weight: 150
+        label: "강화 횟수 복구권 (주문서 II) · 1.5%"
+      - itemsadder: "item:gift_ticket"
+        amount: 1
+        grade: 고급
+        weight: 400
+        label: "호감도 선물 뽑기권 · 4%"
+      - itemsadder: "item:fishing_ticket"
+        amount: 1
+        grade: 일반
+        weight: 500
+        label: "낚시용품 뽑기권 · 5%"
+      - itemsadder: "item:furniture_ticket"
+        amount: 1
+        grade: 일반
+        weight: 500
+        label: "가구 뽑기권 · 5%"
+      - vanilla: "minecraft:purple_shulker_box"
+        amount: 1
+        grade: 유일
+        weight: 130
+        label: "셜커 상자 (보라) · 1.3%"
+      - itemsadder: "item:core_unidentified"
+        amount: 1
+        grade: 일반
+        weight: 750
+        label: "마력코어 (미감정) · 7.5%"
+      - itemsadder: "item:chunk_deed"
+        amount: 1
+        grade: 고급
+        weight: 200
+        label: "청크 소유권 · 2%"
+  api_box_premium:
+    # 고급마법상자 (API 상자, 500개/5000개) — 오너 확률표 그대로 (weight = % × 100). 이름 뒤 숫자 = 개수. 등급색 규칙 위와 같음
+    name: "고급마법상자"
+    enabled: true
+    key:
+      itemsadder: "item:api_box_premium"
+    animation:
+      speed: 100
+    rewards:
+      - itemsadder: "item:home_ticket"
+        amount: 5
+        grade: 일반
+        weight: 750
+        label: "귀환권 ×5 · 7.5%"
+      - itemsadder: "item:inventory_save"
+        amount: 5
+        grade: 일반
+        weight: 1200
+        label: "인벤세이브 ×5 · 12%"
+      - itemsadder: "item:death_return"
+        amount: 5
+        grade: 일반
+        weight: 700
+        label: "리턴권 ×5 · 7%"
+      - itemsadder: "item:friend_teleport"
+        amount: 5
+        grade: 일반
+        weight: 700
+        label: "텔포권 ×5 · 7%"
+      - itemsadder: "item:invite_ticket"
+        amount: 1
+        grade: 전설
+        weight: 3
+        label: "초대권 · 0.03%"
+      - itemsadder: "item:money_pouch"
+        amount: 5
+        grade: 일반
+        weight: 500
+        label: "재화 주머니 ×5 · 5%"
+      - itemsadder: "item:popularity_reset"
+        amount: 1
+        grade: 고급
+        weight: 400
+        label: "인기도 제한 해제권 · 4%"
+      - itemsadder: "item:health_potion"
+        amount: 5
+        grade: 일반
+        weight: 500
+        label: "체력 물약 ×5 · 5%"
+      - itemsadder: "item:mana_potion"
+        amount: 5
+        grade: 일반
+        weight: 500
+        label: "마나 물약 ×5 · 5%"
+      - itemsadder: "item:dungeon_ticket"
+        amount: 3
+        grade: 일반
+        weight: 750
+        label: "던전 입장권 ×3 · 7.5%"
+      - itemsadder: "item:spell_hint"
+        amount: 1
+        grade: 고급
+        weight: 350
+        label: "마법 힌트권 · 3.5%"
+      - itemsadder: "item:chunk_deed"
+        amount: 1
+        grade: 고급
+        weight: 400
+        label: "청크 소유권 · 4%"
+      - itemsadder: "item:cutscene_ticket"
+        amount: 1
+        grade: 유일
+        weight: 67
+        label: "컷신 변경권 · 0.67%"
+      - itemsadder: "item:core_scroll_red"
+        amount: 1
+        grade: 일반
+        weight: 600
+        label: "강화 초기화권 (주문서 I) · 6%"
+      - itemsadder: "item:core_scroll_blue"
+        amount: 1
+        grade: 고급
+        weight: 300
+        label: "강화 횟수 복구권 (주문서 II) · 3%"
+      - itemsadder: "item:core_scroll_purple"
+        amount: 1
+        grade: 유일
+        weight: 150
+        label: "능력치 변경권 (주문서 III) · 1.5%"
+      - itemsadder: "item:monster_loot_ticket"
+        amount: 1
+        grade: 일반
+        weight: 500
+        label: "몬스터 전리품 뽑기권 · 5%"
+      - itemsadder: "item:shiny_change"
+        amount: 1
+        grade: 유일
+        weight: 100
+        label: "변색종(이로치) 변경권 · 1%"
+      - itemsadder: "item:gift_ticket"
+        amount: 3
+        grade: 고급
+        weight: 300
+        label: "호감도 선물 뽑기권 ×3 · 3%"
+      - itemsadder: "item:core_unidentified"
+        amount: 3
+        grade: 일반
+        weight: 900
+        label: "마력코어 (미감정) ×3 · 9%"
+      - itemsadder: "item:random_artifact"
+        amount: 1
+        grade: 고급
+        weight: 330
+        label: "아티팩트 열쇠 · 3.3%"
+  gift_ticket:
+    # 호감도 선물 뽑기권 (오너 2026-10-26 새 아이템 item:gift_ticket): 선물 100종 모두 같은 확률 (각 1%) · 등급색 = 선물 등급
+    # 확률: 오너 검수 대기
+    name: "호감도선물뽑기권"
+    enabled: true
+    key:
+      itemsadder: "item:gift_ticket"
+    animation:
+      speed: 100
+    rewards:
+      - itemsadder: "item:gift_sea_star_pearl"
+        amount: 1
+        grade: 전설
+        weight: 10
+        label: "바다별 진주"
+      - itemsadder: "item:gift_silver_compass"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "은빛 별자리 나침반"
+      - itemsadder: "item:gift_captain_logbook"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "옛 선장의 항해 일지"
+      - itemsadder: "item:gift_old_map"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "빛바랜 옛 지도"
+      - itemsadder: "item:gift_fishing_float"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "유리 낚시찌"
+      - itemsadder: "item:gift_seashell_set"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "바다 소라 모음"
+      - itemsadder: "item:gift_smooth_stone"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "매끈한 조약돌"
+      - itemsadder: "item:gift_firework"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "작은 폭죽"
+      - itemsadder: "item:gift_beer_mug"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "나무 맥주잔"
+      - itemsadder: "item:gift_rope"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "튼튼한 밧줄"
+      - itemsadder: "item:gift_ashen_night_chronicle"
+        amount: 1
+        grade: 전설
+        weight: 10
+        label: "잿빛 밤 연대기 초판"
+      - itemsadder: "item:gift_phoenix_feather"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "불사조의 깃털"
+      - itemsadder: "item:gift_royal_tea"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "왕실 은방울 홍차"
+      - itemsadder: "item:gift_broom_wax"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "빗자루 광택 왁스"
+      - itemsadder: "item:gift_rule_handbook"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "교칙 해설서"
+      - itemsadder: "item:gift_duster_feather"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "공작 깃털 먼지떨이"
+      - itemsadder: "item:gift_notebook"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "가죽 수첩"
+      - itemsadder: "item:gift_soap"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "허브 비누"
+      - itemsadder: "item:gift_handkerchief"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "자수 손수건"
+      - itemsadder: "item:gift_clean_cloth"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "극세사 걸레"
+      - itemsadder: "item:gift_archmage_statue"
+        amount: 1
+        grade: 전설
+        weight: 10
+        label: "마법사 조각상"
+      - itemsadder: "item:gift_moonwell_water"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "달우물의 물"
+      - itemsadder: "item:gift_grand_cake"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "3단 축하 케이크"
+      - itemsadder: "item:gift_feather_quill"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "백조 깃펜"
+      - itemsadder: "item:gift_silver_scissors"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "은 가위"
+      - itemsadder: "item:gift_apple_basket"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "사과 한 바구니"
+      - itemsadder: "item:gift_bookmark"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "압화 책갈피"
+      - itemsadder: "item:gift_cat_toy"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "고양이 깃털 장난감"
+      - itemsadder: "item:gift_dried_meat"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "육포 한 봉지"
+      - itemsadder: "item:gift_sion_bust"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "시온의 흉상 습작"
+      - itemsadder: "item:gift_old_wand"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "대마법사 시대의 낡은 지팡이"
+      - itemsadder: "item:gift_herb_tea_set"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "허브차 한 상자"
+      - itemsadder: "item:gift_lantern_glass"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "색유리 등불"
+      - itemsadder: "item:gift_candle"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "향초"
+      - itemsadder: "item:gift_ink_bottle"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "파란 잉크병"
+      - itemsadder: "item:gift_lucky_coin"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "행운의 동전"
+      - itemsadder: "item:gift_first_broom"
+        amount: 1
+        grade: 전설
+        weight: 10
+        label: "최초의 경주용 빗자루 손잡이"
+      - itemsadder: "item:gift_crystal_globe"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "눈 내리는 수정구"
+      - itemsadder: "item:gift_honey_jar"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "들꽃 꿀단지"
+      - itemsadder: "item:gift_bread_loaf"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "갓 구운 빵"
+      - itemsadder: "item:gift_wool_ball"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "털실 뭉치"
+      - itemsadder: "item:gift_lunchbox"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "정성 도시락"
+      - itemsadder: "item:gift_golden_herb"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "황금 만드라고라"
+      - itemsadder: "item:gift_dried_flower"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "말린 꽃다발"
+      - itemsadder: "item:gift_wool_scarf"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "손뜨개 목도리"
+      - itemsadder: "item:gift_wildflower"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "들꽃 한 송이"
+      - itemsadder: "item:gift_tea_leaves"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "찻잎 한 봉지"
+      - itemsadder: "item:gift_rare_feather"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "무지갯빛 깃털"
+      - itemsadder: "item:gift_theory_book"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "두꺼운 이론서"
+      - itemsadder: "item:gift_iron_nail"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "새 쇠못 한 줌"
+      - itemsadder: "item:gift_tarot_moon"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "달의 타로 원본"
+      - itemsadder: "item:gift_night_mirror"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "밤의 손거울"
+      - itemsadder: "item:gift_bird_whistle"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "새 부르는 피리"
+      - itemsadder: "item:gift_carrot_bundle"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "당근 한 묶음"
+      - itemsadder: "item:gift_master_hammer"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "명장의 망치"
+      - itemsadder: "item:gift_sweet_box"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "과자 선물 상자"
+      - itemsadder: "item:gift_milk_bottle"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "신선한 우유"
+      - itemsadder: "item:gift_mint_candy"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "박하사탕"
+      - itemsadder: "item:gift_pressed_letter"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "봉랍 편지지 세트"
+      - itemsadder: "item:gift_iron_horseshoe"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "행운의 편자"
+      - itemsadder: "item:gift_goat_bell"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "작은 목방울"
+      - itemsadder: "item:gift_tarot_deck"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "손때 묻은 타로 카드"
+      - itemsadder: "item:gift_cheese_wheel"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "숙성 염소 치즈"
+      - itemsadder: "item:gift_seed_pouch"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "씨앗 주머니"
+      - itemsadder: "item:gift_bandage"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "깨끗한 붕대"
+      - itemsadder: "item:gift_mushroom_basket"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "희귀 버섯 바구니"
+      - itemsadder: "item:gift_spice_box"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "먼 나라 향신료 상자"
+      - itemsadder: "item:gift_cookie"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "버터 쿠키"
+      - itemsadder: "item:gift_fresh_fish"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "싱싱한 생선"
+      - itemsadder: "item:gift_chess_piece"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "장기 말 한 벌"
+      - itemsadder: "item:gift_training_gloves"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "훈련용 가죽 장갑"
+      - itemsadder: "item:gift_postcard"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "마을 그림엽서"
+      - itemsadder: "item:gift_herb_bundle"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "말린 약초 묶음"
+      - itemsadder: "item:gift_hair_pin"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "별 머리핀"
+      - itemsadder: "item:gift_doll_dress"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "인형 옷"
+      - itemsadder: "item:gift_four_house_crest"
+        amount: 1
+        grade: 전설
+        weight: 10
+        label: "네 기숙사 원판 문장"
+      - itemsadder: "item:gift_silk_ribbon"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "검은 비단 리본"
+      - itemsadder: "item:gift_poetry_book"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "얇은 시집"
+      - itemsadder: "item:gift_paint_set"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "물감 세트"
+      - itemsadder: "item:gift_spirit_lute_string"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "정령의 류트 줄"
+      - itemsadder: "item:gift_beast_bell"
+        amount: 1
+        grade: 유일
+        weight: 10
+        label: "야수 길들이기 방울"
+      - itemsadder: "item:gift_joke_book"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "유머 모음집"
+      - itemsadder: "item:gift_rotten_flesh"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "썩은 고기"
+      - itemsadder: "item:gift_carving_knife"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "조각칼 세트"
+      - itemsadder: "item:gift_wood_block"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "잘 마른 나무토막"
+      - itemsadder: "item:gift_laundry_pegs"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "빨래집게 한 통"
+      - itemsadder: "item:gift_toy_sword"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "나무 칼"
+      - itemsadder: "item:gift_sunflower_seed"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "해바라기씨"
+      - itemsadder: "item:gift_magnifier"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "돋보기"
+      - itemsadder: "item:gift_shiny_button"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "반짝이는 단추"
+      - itemsadder: "item:gift_pillow"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "폭신한 베개"
+      - itemsadder: "item:gift_kite"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "종이 연"
+      - itemsadder: "item:gift_whistle"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "은 호루라기"
+      - itemsadder: "item:gift_star_chart"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "별자리 지도"
+      - itemsadder: "item:gift_candy_jar"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "알사탕 병"
+      - itemsadder: "item:gift_herb_seeds"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "약초 씨앗 주머니"
+      - itemsadder: "item:gift_chimney_brush"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "굴뚝 솔"
+      - itemsadder: "item:gift_toy_knight"
+        amount: 1
+        grade: 고급
+        weight: 10
+        label: "나무 기사 인형"
+      - itemsadder: "item:gift_flour_sack"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "밀가루 한 포대"
+      - itemsadder: "item:gift_lamp_oil"
+        amount: 1
+        grade: 일반
+        weight: 10
+        label: "등잔 기름"

@@ -73,7 +73,7 @@
   },
   {
     "path": "deployment/operating-config/MagicCodexBridge/loot-boxes.yml",
-    "sha256": "9e4928c9e9006568336ea9871a1fe02e578bb25bd6673c83afe1542caec83087",
+    "sha256": "1079e01c96af34fa5a1f1c0c24e237f3a25c3d0f28c0b4480d99dbab7f3ffba6",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   }

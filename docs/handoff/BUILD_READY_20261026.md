@@ -53,6 +53,7 @@
 - 뽑기 상자: `plugins/MagicCodexBridge/loot-boxes.yml` (overlay 는 꺼진 예시 상자만 — 실제 상자는 운영자가 `/상자관리 생성`·`관리` 로 만듦). 서버 `audit.yml` 에 새 종류 "뽑기상자" 반영(§36).
 - 책 (#105): `MagicCodexBridge/books.yml` overlay 교체 → `/서버관리 새로고침 책` (§35, 블록 연결은 오너가 docs/plans/library-books.md 대로).
 - 아이템 기능 (§37~§39): `MagicCodexBridge/loot-boxes.yml` 은 가구·낚시도구·몬스터 전리품 상자 3개가 들어간 overlay 로 교체(§38). `utility-items.yml` 은 자동 생성 → `/서버관리 새로고침 사용아이템`. `ChAcademiaMagicMythic/config.yml` 에 `mana-potion`·`health-potion`·`potion-cooldown-overlay` 키, `ChacaPortrait/config.yml` 의 `reroll.item-id` = `item:cutscene_ticket` 손으로 반영(§39). 바뀐 id: 귀환권 `item:home_ticket`, 인기도 해제권 `item:popularity_reset`, 체력 포션 `item:health_potion` (부록 A-2).
+- API 상자 2종 + 호감도 선물 뽑기권 상자 (§42): loot-boxes.yml overlay 교체 → `/상자관리 새로고침`. 새 ItemsAdder 아이템 `item:gift_ticket`(오너가 만듦). 묶음(×5·×3) 아이템 최대 스택 확인.
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - TAB 한글 닉 (#110): `deployment/tab/`.
 
