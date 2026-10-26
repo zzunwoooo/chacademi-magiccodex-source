@@ -213,8 +213,9 @@ final class QuestDefs {
         s.chapter = text(m.get("장"), 64);
         s.description = text(m.get("설명"), 200);
         s.server = id(m.get("서버"));
-        s.transfer = Boolean.TRUE.equals(m.get("서버이동"));
-        if (s.transfer && s.server.isEmpty()) warnings.add(id + ": 서버이동 은 서버 를 같이 적어야 함 (무시됨)");
+        boolean transfer = Boolean.TRUE.equals(m.get("서버이동"));
+        if (transfer && s.server.isEmpty()) warnings.add(id + ": 서버이동 은 서버 를 같이 적어야 함 (무시됨)");
+        s.transfer = transfer && !s.server.isEmpty();
         s.dialogue = id(m.get("대화"));
         s.cutscene = id(m.get("컷신"));
         s.next = id(m.get("다음"));

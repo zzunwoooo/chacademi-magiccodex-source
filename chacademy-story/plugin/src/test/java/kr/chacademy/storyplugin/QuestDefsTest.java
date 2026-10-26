@@ -83,4 +83,23 @@ class QuestDefsTest {
         assertFalse(b.submitted);
         assertEquals(QuestProgress.Phase.ACTIVE, b.phase);
     }
+
+    /** 2026-10-26: 단계별 서버·서버이동 (1장 tutorial → 배 → school). */
+    @Test void stepServerAndTransferRoundTrip() {
+        List<String> warnings = new ArrayList<>();
+        QuestDefs d = QuestDefs.parse(Map.of("단계", Map.of(
+                "ch1-7", Map.of("서버", "tutorial", "다음", "ch1-8"),
+                "ch1-8", Map.of("서버", "school", "서버이동", true),
+                "ch1-9", Map.of("서버이동", true))), warnings);
+        assertEquals("tutorial", d.get("ch1-7").server);
+        assertFalse(d.get("ch1-7").transfer);
+        assertEquals("school", d.get("ch1-8").server);
+        assertTrue(d.get("ch1-8").transfer);
+        assertTrue(warnings.stream().anyMatch(w -> w.startsWith("ch1-9: 서버이동")), "서버 없이 서버이동만 있으면 경고");
+        QuestDefs back = QuestDefs.parse(d.toMap(), new ArrayList<>());
+        assertEquals("school", back.get("ch1-8").server);
+        assertTrue(back.get("ch1-8").transfer);
+        assertEquals("", back.get("ch1-9").server);
+        assertFalse(d.toMap().toString().contains("서버이동=false"));
+    }
 }
