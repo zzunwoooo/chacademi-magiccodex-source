@@ -41,7 +41,7 @@ final class ArtifactSummonScreen extends Screen {
             LABEL = Identifier.of("magiccodex", "label"), BODY = Identifier.of("magiccodex", "body");
     private static final int GOLD = 0xFFE7C77E, IVORY = 0xFFF3E9D3, TEXT = 0xFFE4E9EF, MUTED = 0xFF9AA8BB, WARN = 0xFFFF9E9E;
 
-    private record Box(float x, float y, float w, float h) {
+    record Box(float x, float y, float w, float h) {
         boolean contains(double px, double py) { return px >= x && px < x + w && py >= y && py < y + h; }
         float cx() { return x + w / 2; }
         float cy() { return y + h / 2; }
@@ -345,8 +345,8 @@ final class ArtifactSummonScreen extends Screen {
         if (value != null && !value.isBlank()) UiResources.text().draw(c, value, x, y, size, color, face, false);
     }
 
-    /** Nine-slice, same rule as the artifact codex (frame border box lands on the box, corners keep their scale). */
-    private static void nine(DrawContext c, Identifier texture, int tw, int th, int fl, int ft, int fr, int fb, int corner, Box cell, int tint) {
+    /** Nine-slice, same rule as the artifact codex (frame border box lands on the box, corners keep their scale). 뽑기 상자 결과 창도 같이 쓴다. */
+    static void nine(DrawContext c, Identifier texture, int tw, int th, int fl, int ft, int fr, int fb, int corner, Box cell, int tint) {
         float s = cell.h() / (fb - ft);
         int[] sx = {0, fl + corner, fr - corner, tw};
         int[] sy = {0, ft + corner, fb - corner, th};

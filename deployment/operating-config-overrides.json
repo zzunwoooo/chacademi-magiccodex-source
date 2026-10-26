@@ -22,6 +22,10 @@
    "source": "magic-codex-paper/src/main/resources/climate.yml"
   },
   {
+   "overlay": "deployment/operating-config/MagicCodexBridge/loot-boxes.yml",
+   "source": "magic-codex-paper/src/main/resources/loot-boxes.yml"
+  },
+  {
    "overlay": "deployment/operating-config/MagicCodexBridge/books.yml",
    "source": "magic-codex-paper/src/main/resources/books.yml",
    "entries": "books"

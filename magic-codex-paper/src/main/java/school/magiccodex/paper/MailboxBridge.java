@@ -91,8 +91,8 @@ final class MailboxBridge implements MailService,PluginMessageListener,Listener,
  private void finishError(Player p,Request r,long token,String message){busy.remove(p.getUniqueId());if(current(p))p.sendPluginMessage(plugin,MailboxProtocol.RESPONSE,MailboxProtocol.encode(new Response(r.sequence(),token,message,r.page(),false,List.of(),"","",List.of())));}
  static ItemStack[] copy(ItemStack[] source){return Arrays.stream(source).map(i->i==null?null:i.clone()).toArray(ItemStack[]::new);}
  static boolean same(ItemStack[] a,ItemStack[] b){if(a.length!=b.length)return false;for(int i=0;i<a.length;i++){if(a[i]==null||a[i].getType().isAir()){if(b[i]!=null&&!b[i].getType().isAir())return false;}else if(b[i]==null||!Arrays.equals(a[i].serializeAsBytes(),b[i].serializeAsBytes()))return false;}return true;}
- /** Inserts a whole attachment or leaves the simulated inventory unchanged. Never drops overflow. */
- static boolean insert(ItemStack[] inventory,ItemStack value){var next=copy(inventory);int left=value.getAmount();for(int i=0;i<next.length&&left>0;i++){var old=next[i];if(old!=null&&!old.getType().isAir()&&old.isSimilar(value)){int n=Math.min(left,Math.max(0,Math.min(64,old.getMaxStackSize())-old.getAmount()));old.setAmount(old.getAmount()+n);left-=n;}}for(int i=0;i<next.length&&left>0;i++)if(next[i]==null||next[i].getType().isAir()){int n=Math.min(left,Math.min(64,value.getMaxStackSize()));next[i]=value.clone();next[i].setAmount(n);left-=n;}if(left!=0)return false;System.arraycopy(next,0,inventory,0,next.length);return true;}
+ /** Inserts a whole attachment or leaves the simulated inventory unchanged. Never drops overflow. 칸 규칙은 RewardPlan 하나 (모든 칸 사용 가능일 때). */
+ static boolean insert(ItemStack[] inventory,ItemStack value){return RewardDelivery.insertWhole(inventory,null,value);}
  /** 운영 기록 (메모 #92): 수령이 영수증까지 확인된 첨부만. */
  private static void audit(UUID owner,String claim,List<MailboxStore.Ref> fits){
   var items=new StringBuilder();var mails=new java.util.LinkedHashSet<String>();
@@ -102,7 +102,10 @@ final class MailboxBridge implements MailService,PluginMessageListener,Listener,
  private void claim(Player p,Request r,long session){
   if(r.action()==MailboxProtocol.CLAIM&&r.mail().isEmpty()){finishError(p,r,session,"우편을 선택해 주세요.");return;}
   UUID owner=p.getUniqueId();work(owner,()->store.ready(owner,r.action()==MailboxProtocol.CLAIM_ALL?"":r.mail()),refs->{
-   if(!allowed(p)){busy.remove(owner);return;}var before=copy(p.getInventory().getStorageContents());var next=copy(before);var fits=new ArrayList<MailboxStore.Ref>();for(var ref:refs)try{if(insert(next,plugin.coreAppearance(ItemStack.deserializeBytes(ref.item().bytes()))))fits.add(ref);}catch(RuntimeException e){plugin.getLogger().warning("Mailbox attachment unreadable: mail "+ref.mail()+" #"+ref.item().index());}
+   if(!allowed(p)){busy.remove(owner);return;}var before=copy(p.getInventory().getStorageContents());var next=copy(before);var fits=new ArrayList<MailboxStore.Ref>();
+   // 공통 지급 칸 판정 (RewardDelivery, 2026-10-26): 핫바 + 잠금 해제된 지금 쪽 27칸만. 쪽 넘기는 중·잠긴 쪽이면 27칸은 쓰지 않는다.
+   boolean[] usable=RewardDelivery.usable(plugin,p);
+   for(var ref:refs)try{if(RewardDelivery.insertWhole(next,usable,plugin.coreAppearance(ItemStack.deserializeBytes(ref.item().bytes()))))fits.add(ref);}catch(RuntimeException e){plugin.getLogger().warning("Mailbox attachment unreadable: mail "+ref.mail()+" #"+ref.item().index());}
    if(fits.isEmpty()){snapshot(p,r,session,"수령할 첨부가 없거나 인벤토리 공간이 부족합니다.");return;}
    String claim=UUID.randomUUID().toString();must(owner,()->{store.reserve(owner,List.copyOf(fits),claim,origin);return true;},reserved->{
     if(!allowed(p)||!same(before,p.getInventory().getStorageContents())){must(owner,()->{store.settle(owner,claim,false);return true;},v->snapshot(p,r,session,"인벤토리가 변경되었습니다. 다시 수령해 주세요."),m->finishError(p,r,session,m));return;}

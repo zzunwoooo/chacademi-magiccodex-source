@@ -30,7 +30,7 @@ abstract class SocialScreen extends Screen {
     void fitted(DrawContext c,String s,float x,float y,float size,float max,int color,boolean bold){var font=bold?BOLD:BODY;type.draw(c,s,x,y,Math.min(size,size*max/Math.max(1,type.width(s,size,font))),color,font,false);}
     void asset(DrawContext c,String file,int x,int y,int w,int h,int sx,int sy,int sw,int sh,int tint){images.drawTexture(c,Identifier.of("magiccodex","textures/gui/social/"+file+".png"),x,y,sx,sy,w,h,sw,sh,sw+sx,sh+sy,tint);}
     static boolean in(double x,double y,float rx,float ry,float w,float h){return x>=rx&&x<rx+w&&y>=ry&&y<ry+h;}
-    boolean refinedPanels(){return this instanceof ShopScreen||this instanceof MailboxScreen||this instanceof ShopAdminScreen;}
+    boolean refinedPanels(){return this instanceof ShopScreen||this instanceof MailboxScreen||this instanceof ShopAdminScreen||this instanceof LootBoxAdminScreen;}
     void box(DrawContext c,int x,int y,int w,int h,boolean hover){if(!refinedPanels()){HudMesh.capsule(c,x,y,w,h,hover?0xB74BADC2:0x886A839A,hover?0xB74BADC2:0x886A839A);HudMesh.capsule(c,x+1,y+1,w-2,h-2,hover?0xEF16394B:0xE00C1F32,hover?0xEF16394B:0xE00C1F32);return;}chamfer(c,x,y,w,h,Math.min(10,h/4f),hover?0xFFC3CBA9:0xFF758A9C);chamfer(c,x+2,y+2,w-4,h-4,Math.min(8,h/4f),hover?0xF01B3B50:0xF0112436);}
     void chamfer(DrawContext c,float x,float y,float w,float h,float r,int color){
         float[] xs={x+r,x+w-r,x+w,x+w,x+w-r,x+r,x,x},ys={y,y,y+r,y+h-r,y+h,y+h,y+h-r,y+r};var m=c.getMatrices().peek().getPositionMatrix();

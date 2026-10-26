@@ -52,6 +52,7 @@ final class CommandHub {
         ROOTS.put(ChacaApi.유저관리, "특정 유저의 모든 것 (스탯·마법·칭호·아티팩트·호감도·큐디치·돈 …)");
         ROOTS.put(ChacaApi.아이템관리, "아이템 만들기·주기·능력 붙이기");
         ROOTS.put(ChacaApi.상점관리, "일반 상점·물고기 판매소·거래 처리");
+        ROOTS.put(ChacaApi.상자관리, "뽑기 상자(API 상자) 만들기·보상·확률 관리");
         ROOTS.put(ChacaApi.기숙사관리, "기숙사 점수·기증 마법");
         ROOTS.put(ChacaApi.퀘스트관리, "의뢰 게시판 퀘스트 만들기·수정");
         ROOTS.put(ChacaApi.대화관리, "스토리 대화·컷신 재생과 파일 반영");
