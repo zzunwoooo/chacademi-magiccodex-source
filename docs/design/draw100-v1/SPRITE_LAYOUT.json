@@ -1,0 +1,13 @@
+{
+  "canvasSize": [1254, 1254],
+  "rows": 10,
+  "columns": 10,
+  "destinationAspectRatio": 1,
+  "note": "Approximate visible frame UV rectangles. Map frame rectangles to the same square destination; retain effect outside the frame as overflow. Do not derive hitbox from image alpha.",
+  "frameRectPixels": {
+    "tile_hidden.png": [154, 158, 947, 897],
+    "tile_hover.png": [140, 150, 975, 940],
+    "tile_revealed.png": [82, 88, 1091, 1052],
+    "reveal_fx.png": [206, 235, 838, 788]
+  }
+}

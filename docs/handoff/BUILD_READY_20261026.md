@@ -44,6 +44,7 @@
 - 뽑기권 상자 3개 (§38) — 가구 보상 종류 추가 (Bridge + ChacaHousing).
 - 아이템 5종 (§39) — Bridge·MagicMythic·ChacaPortrait. 클라 변경 없음.
 - 리턴권·텔포권·인벤세이브 + 사망 시 배낭 다른 쪽 떨어뜨리기 (§40) — 텔포권 고르기 창 새 채널 `magiccodex:tp_pick_request/response`. **Bridge + protocol + 클라 모드 같이.** 공유 DB 새 표 `codex_travel_presence`·`codex_travel_death` 자동 생성. `travel-items.yml`·`inventory-save.yml` 자동 생성. 아레나 server-id 가 travel.yml `use-servers`·`servers` 에 없어야 함.
+- 운영자 행운의 뽑기판 100칸 (§44) — 새 채널 `magiccodex:draw_board`·`magiccodex:draw_board_action`. **Bridge + protocol + 클라 모드 같이** (판 PNG 5장 리소스 포함). 공유 DB 새 표 `codex_draw_board`·`codex_draw_item` 자동 생성 (database.properties 따름, 없으면 `draw-board.db`). 설정 파일 없음.
 
 ## 3. 서버 파일 (jar 가 안 덮어씀)
 - `deployment/operating-config/**` 전부 overlay 대로 (MagicCodexBridge·MythicMobs·PortableVFX·ChacademyStory).
