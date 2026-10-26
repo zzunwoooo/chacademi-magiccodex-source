@@ -82,6 +82,8 @@ final class EquipmentBridge implements PluginMessageListener,Listener,AutoClosea
         if(!plugin.playerStateReady(p)){send(p,r.sequence(),"캐릭터 정보를 불러오는 중입니다.");return;}
         if(!p.hasPermission("magiccodex.equipment")||p.isDead()||p.getGameMode()==GameMode.SPECTATOR){send(p,r.sequence(),"지금은 장비를 변경할 수 없습니다.");return;}
         if(r.action()==EquipmentProtocol.VIEW){send(p,r.sequence(),"");return;}
+        // 전투 스펙 2026-10-26 장신구 강화: 강화가 도는 동안에는 손에 든 장신구·마법봉을 장착할 수 없다 (마법봉 강화와 같은 규칙).
+        if(plugin.enhancing(p)){send(p,r.sequence(),"강화를 먼저 끝내 주세요.");return;}
         var s=sessions.get(p.getUniqueId());
         if(s==null||s.until<now||s.revision!=r.revision()||!Arrays.equals(s.equipped,equipped(p))){send(p,r.sequence(),"장비 정보가 바뀌었습니다. 다시 선택해 주세요.");return;}
         // Never modify inventory while a chest/trade/container or vanilla cursor owns an item.
@@ -132,7 +134,9 @@ final class EquipmentBridge implements PluginMessageListener,Listener,AutoClosea
         kind.then(CmdKit.argument(BONUS_NAMES[0],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000))
                 .then(CmdKit.argument(BONUS_NAMES[1],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,200))
                         .then(CmdKit.argument(BONUS_NAMES[2],com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0,100000)).then(last))));
-        ChacaApi.branch(plugin,ChacaApi.아이템관리,CmdKit.literal("장비").then(CmdKit.literal("등록").then(kind)),"손에 든 아이템을 장신구로 등록 (능력치)","장비 등록 반지 10 0 0 0");
+        // 전투 스펙 2026-10-26: /아이템관리 장비 등급등록 <칸> <등급> — enhancement.yml accessory-grades 수치로 등록 (반지·귀걸이·목걸이).
+        var grade=CmdKit.word("칸",()->SLOT_NAMES.subList(1,4)).then(CmdKit.word("등급",()->{var e=plugin.enhancementBridge();return e==null?List.<String>of():e.accessoryGradeNames();}).executes(CmdKit.run(this::registerGrade)));
+        ChacaApi.branch(plugin,ChacaApi.아이템관리,CmdKit.literal("장비").then(CmdKit.literal("등록").then(kind)).then(CmdKit.literal("등급등록").then(grade)),"손에 든 아이템을 장신구로 등록 (능력치 직접·등급별)","장비 등급등록 반지 고급");
         var slot=CmdKit.word("칸",()->SLOT_NAMES);
         var user=CmdKit.literal("장신구")
                 .then(CmdKit.literal("보기").executes(CmdKit.run(this::show)))
@@ -144,8 +148,23 @@ final class EquipmentBridge implements PluginMessageListener,Listener,AutoClosea
         Player p=CmdKit.self(ctx);int index=SLOT_NAMES.indexOf(CmdKit.text(ctx,"종류"));if(index<0)throw ChacaApi.error("종류는 아티팩트·반지·귀걸이·목걸이 중 하나예요");
         ItemStack item=p.getInventory().getItemInMainHand();if(empty(item))throw ChacaApi.error("등록할 아이템을 주 손에 들어 주세요");
         double[] v=new double[5];for(int i=0;i<4;i++)v[i]=com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx,BONUS_NAMES[i]);v[4]=haste?com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx,BONUS_NAMES[4]):0;
-        var meta=item.getItemMeta();meta.getPersistentDataContainer().set(type,PersistentDataType.STRING,TYPES[index]);for(int i=0;i<5;i++)meta.getPersistentDataContainer().set(bonuses[i],PersistentDataType.DOUBLE,v[i]);item.setItemMeta(meta);
+        store(item,index,v);
         CmdKit.ok(CmdKit.sender(ctx),"손에 든 아이템을 "+SLOT_NAMES.get(index)+" 장비로 등록했어요");
+    }
+    /** 장신구 칸·능력치를 적고, 강화 원본 수치·강화 줄을 새로 적는다 (강화 기록은 그대로). */
+    private void store(ItemStack item,int index,double[] v){
+        var meta=item.getItemMeta();meta.getPersistentDataContainer().set(type,PersistentDataType.STRING,TYPES[index]);for(int i=0;i<5;i++)meta.getPersistentDataContainer().set(bonuses[i],PersistentDataType.DOUBLE,v[i]);item.setItemMeta(meta);
+        var e=plugin.enhancementBridge();if(e!=null)e.accessoryRegistered(item);
+    }
+    private void registerGrade(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
+        Player p=CmdKit.self(ctx);int index=SLOT_NAMES.indexOf(CmdKit.text(ctx,"칸"));if(index<1)throw ChacaApi.error("칸은 반지·귀걸이·목걸이 중 하나예요 (아티팩트는 아티팩트 도감 수치를 씀)");
+        String g=CmdKit.text(ctx,"등급");var e=plugin.enhancementBridge();double[] v=e==null?null:e.accessoryGrade(g);
+        if(v==null)throw ChacaApi.error("없는 장신구 등급이에요. enhancement.yml accessory-grades: "+(e==null?"":String.join("·",e.accessoryGradeNames())));
+        ItemStack item=p.getInventory().getItemInMainHand();if(empty(item)||item.getAmount()!=1)throw ChacaApi.error("등록할 아이템 한 개를 주 손에 들어 주세요");
+        if(item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin,"wand_id"),PersistentDataType.STRING))throw ChacaApi.error("마법봉은 장신구로 등록할 수 없어요");
+        if(item.getItemMeta().getPersistentDataContainer().getOrDefault(new NamespacedKey(plugin,"enhance_successes"),PersistentDataType.INTEGER,0)>0)throw ChacaApi.error("이미 강화한 장신구는 등급을 다시 정할 수 없어요");
+        store(item,index,v);p.saveData();
+        CmdKit.ok(CmdKit.sender(ctx),"손에 든 아이템을 "+g+" "+SLOT_NAMES.get(index)+"(으)로 등록했어요: 지능 "+AdminCommandRules.number(v[0])+" · 체력 "+AdminCommandRules.number(v[1])+" · 최대마나 "+AdminCommandRules.number(v[2])+" · 마나회복 "+AdminCommandRules.number(v[3]));
     }
     private static String itemName(ItemStack item){return net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText().serialize(item.displayName());}
     private void show(com.mojang.brigadier.context.CommandContext<io.papermc.paper.command.brigadier.CommandSourceStack> ctx)throws com.mojang.brigadier.exceptions.CommandSyntaxException{
