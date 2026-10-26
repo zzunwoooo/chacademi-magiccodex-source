@@ -162,7 +162,7 @@ final class ChunkClaimBridge implements Listener, PluginMessageListener, AutoClo
         var worlds = new ArrayList<String>();
         for (String w : settings.worlds()) if (Bukkit.getWorld(w) != null) worlds.add(w);
         var fresh = new ChunkClaimRules.Index();
-        for (var r : store.load(worlds)) fresh.put(r.world(), r.cx(), r.cz(), r.owner(), r.at());
+        for (var r : store.load(serverId, worlds)) fresh.put(r.world(), r.cx(), r.cz(), r.owner(), r.at());
         fresh.replaceTrust(store.trust());
         return fresh;
     }
@@ -374,7 +374,7 @@ final class ChunkClaimBridge implements Listener, PluginMessageListener, AutoClo
         if (!busy.add(id)) { result(p, false, settings.message("busy")); return; }
         io.execute(() -> {
             UUID released = null; boolean failed = false;
-            try { released = store.release(w, cx, cz, id); }
+            try { released = store.release(serverId, w, cx, cz, id); }
             catch (Exception e) { failed = true; plugin.getLogger().warning("청크 점유: 판매 저장 실패 " + id + " " + w + " " + cx + "," + cz + ": " + e); }
             UUID r = released; boolean f = failed;
             main(() -> {
@@ -670,7 +670,7 @@ final class ChunkClaimBridge implements Listener, PluginMessageListener, AutoClo
         if (index.owner(w, cx, cz) == null) throw ChacaApi.error("이 청크에는 주인이 없어요");
         io.execute(() -> {
             UUID released = null; Exception error = null;
-            try { released = store.release(w, cx, cz, null); } catch (Exception e) { error = e; }
+            try { released = store.release(serverId, w, cx, cz, null); } catch (Exception e) { error = e; }
             UUID r = released; Exception err = error;
             main(() -> {
                 if (err != null) { CmdKit.fail(p, "청크를 해제하지 못했어요", err); return; }

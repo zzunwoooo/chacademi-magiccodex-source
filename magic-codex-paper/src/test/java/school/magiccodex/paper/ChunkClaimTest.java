@@ -85,12 +85,18 @@ class ChunkClaimTest {
             assertEquals(ChunkClaimStore.ClaimResult.LIMIT, s.claim("world", 1, 4, a, 2, "wild", 13), "최대 2칸");
             assertEquals(ChunkClaimStore.ClaimResult.CLAIMED, s.claim("world", 1, 4, a, 0, "wild", 14), "0 = 제한 없음");
             assertEquals(3, s.claimsOf(a).size());
-            assertEquals(3, s.load(List.of("world")).size());
-            assertTrue(s.load(List.of("other")).isEmpty());
-            assertNull(s.release("world", 1, 2, b), "남의 땅은 판매 못 함");
-            assertEquals(a, s.release("world", 1, 2, a));
-            assertNull(s.release("world", 1, 2, a), "두 번 판매 안 됨 (땅문서 두 장 방지)");
-            assertEquals(a, s.release("world", 1, 3, null), "관리자 해제");
+            assertEquals(3, s.load("wild", List.of("world")).size());
+            assertTrue(s.load("wild", List.of("other")).isEmpty());
+            // 검수 2026-10-26: 야생2(wild2)는 다른 서버 — 같은 세계 이름·같은 좌표라도 따로 점유되고, 야생1 목록에 섞이지 않는다
+            assertEquals(ChunkClaimStore.ClaimResult.CLAIMED, s.claim("world", 1, 2, b, 0, "wild2", 16), "다른 서버의 같은 좌표는 따로");
+            assertTrue(s.load("wild", List.of("world")).stream().noneMatch(r -> r.server().equals("wild2")));
+            assertEquals(1, s.load("wild2", List.of("world")).size());
+            assertNull(s.release("wild2", "world", 1, 2, a), "야생2 의 그 땅은 b 것");
+            assertNull(s.release("wild", "world", 1, 2, b), "남의 땅은 판매 못 함");
+            assertEquals(a, s.release("wild", "world", 1, 2, a));
+            assertNull(s.release("wild", "world", 1, 2, a), "두 번 판매 안 됨 (땅문서 두 장 방지)");
+            assertEquals(a, s.release("wild", "world", 1, 3, null), "관리자 해제");
+            assertEquals(b, s.release("wild2", "world", 1, 2, b));
             assertEquals(ChunkClaimStore.ClaimResult.CLAIMED, s.claim("world", 1, 2, b, 0, "wild", 15), "판 땅은 다시 점유 가능");
             assertTrue(s.trust(a, b, true, 1)); assertFalse(s.trust(a, b, true, 2)); assertTrue(s.trust(a, c, true, 3));
             assertEquals(Set.of(b, c), new HashSet<>(s.trust().get(a)));
@@ -98,7 +104,7 @@ class ChunkClaimTest {
             assertEquals(List.of(c), s.trust().get(a));
         }
         try (var s = new ChunkClaimStore(SQLITE, dir.resolve("chunk-claims.db"))) {
-            assertEquals(2, s.load(List.of("world")).size(), "다시 열어도 그대로");
+            assertEquals(2, s.load("wild", List.of("world")).size(), "다시 열어도 그대로");
         }
     }
 
