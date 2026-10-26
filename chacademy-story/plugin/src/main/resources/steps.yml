@@ -158,7 +158,8 @@
     컷신: ''
     다음: ch1-9
     시작명령:
-    - essentials:warp harbor {player}
+    # 항구 도착 자리 (★ 오너 좌표 — 바닐라 명령이라 Essentials 필요 없음)
+    - minecraft:execute in minecraft:overworld run tp {player} HARBOR_X HARBOR_Y HARBOR_Z 0 0
     시작명령-한번: true
   ch1-9:
     장: "1장 · 차카데미아"
