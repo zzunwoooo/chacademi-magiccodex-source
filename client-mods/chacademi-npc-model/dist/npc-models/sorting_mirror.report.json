@@ -3,7 +3,7 @@
     "스킨 없음: 정적 모델로만 표시됩니다",
     "허벅지 뼈를 못 찾아 정면 방향 보정 안 함(+Z 가정, --yaw 로 지정 가능)"
   ],
-  "out": "ornate_mirror.glb",
+  "out": "sorting_mirror.glb",
   "bytes": 1820136,
   "sha256": "6a0451fbe8af32896c6f95e47193c1a14e35dcd7b1fe38b4d64c6e6d0a7d0ac0",
   "heightBlocks": 2.0,
