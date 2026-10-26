@@ -24,17 +24,17 @@ final class NativeConditions implements Listener,AutoCloseable {
     private int tick;private final int nearbyInterval;private final PartyHealing partyHealing;
     private final Set<UUID> burning=new HashSet<>(),hot=new HashSet<>(),moved=new HashSet<>(),submerged=new HashSet<>();
     private final Map<Integer,Set<UUID>> nearby=new HashMap<>();
-    private static class Trace {int sprint,burning,hotUntil,underwater;boolean fell,wasAirborne,waitDecoyExit;float rotation,hotRotation;Location still;}
+    private static class Trace {int sprint,swim,burning,hotUntil,underwater,fullPickup=-1000;boolean fell,wasAirborne,waitDecoyExit;float rotation,hotRotation;Location still;}
     private record BlockKey(UUID world,int x,int y,int z){static BlockKey of(Block b){return new BlockKey(b.getWorld().getUID(),b.getX(),b.getY(),b.getZ());}}
     private record Water(UUID player,int expires){}
     NativeConditions(MagicDiscovery plugin){this.plugin=plugin;partyHealing=new PartyHealing(plugin);origin=new NamespacedKey(plugin,"arrow_origin");nearbyInterval=Math.clamp(plugin.getConfig().getInt("nearby-check-ticks",40),20,200);Bukkit.getScheduler().runTaskTimer(plugin,this::tick,1,1);}
-    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_step")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);watchNearby(p);environment(p);}
+    void join(Player p){var t=new Trace();t.sprint=p.getStatistic(Statistic.SPRINT_ONE_CM);t.swim=p.getStatistic(Statistic.SWIM_ONE_CM);var s=plugin.session(p);t.fell=s!=null&&!s.learned.retrying("feather_fall")&&s.progress.getOrDefault("trace.fell",0d)>0;t.waitDecoyExit=s!=null&&s.learned.retrying("wind_decoy");traces.put(p.getUniqueId(),t);watchNearby(p);environment(p);}
     /** Discard transient pre-reset evidence as well as persistent retry counters. */
     void restart(Player p,String spell){var t=traces.get(p.getUniqueId());if(t==null)return;
         switch(spell){
             case "pressure_rupture" -> {t.rotation=0;t.still=null;}
             case "storm_command" -> {t.hotUntil=0;t.hotRotation=0;t.wasAirborne=false;}
-            case "feather_step" -> fallState(p,false);
+            case "feather_fall" -> fallState(p,false);
             case "water_breath" -> {t.underwater=0;environment(p);}
             case "wind_decoy" -> {t.waitDecoyExit=true;watchNearby(p);}
             default -> {}
@@ -74,6 +74,7 @@ final class NativeConditions implements Listener,AutoCloseable {
         }
         if(tick%20==0){for(UUID id:moved){var p=Bukkit.getPlayer(id);var t=traces.get(id);if(p==null||t==null)continue;
             int value=p.getStatistic(Statistic.SPRINT_ONE_CM);if(plugin.eligible(p)&&value>t.sprint)add(p,"sprint.centimeters",value-t.sprint);t.sprint=value;
+            int swim=p.getStatistic(Statistic.SWIM_ONE_CM);if(plugin.eligible(p)&&swim>t.swim)add(p,"swim.centimeters",swim-t.swim);t.swim=swim; // 2026-10-26 v2 물살 타기
         }moved.clear();}
         var bucket=nearby.get(tick%nearbyInterval);
         if(bucket!=null)for(var it=bucket.iterator();it.hasNext();){var id=it.next();var p=Bukkit.getPlayer(id);var t=traces.get(id);
@@ -86,7 +87,9 @@ final class NativeConditions implements Listener,AutoCloseable {
         if(tick%200==0)waters.values().removeIf(v->v.expires()<tick);
     }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void pickup(EntityPickupItemEvent e){if(e.getEntity() instanceof Player p){int amount=e.getItem().getItemStack().getAmount()-e.getRemaining();if(amount>0){add(p,"pickup.items",amount);if(e.getItem().getItemStack().getType()==Material.WET_SPONGE)add(p,"obtain.wet_sponge",1);}}}
-    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void full(PlayerAttemptPickupItemEvent e){if(e.getRemaining()>0&&e.getPlayer().getInventory().firstEmpty()<0)add(e.getPlayer(),"pickup.full_inventory",1);}
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void full(PlayerAttemptPickupItemEvent e){
+        // 2026-10-26 v2 배낭 정리: 아이템 위에 서 있으면 매 틱 오므로 3초에 1번만 센다
+        if(e.getRemaining()<=0||e.getPlayer().getInventory().firstEmpty()>=0)return;var t=traces.get(e.getPlayer().getUniqueId());if(t==null||tick-t.fullPickup<60)return;t.fullPickup=tick;add(e.getPlayer(),"pickup.full_inventory",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void crop(BlockBreakEvent e){if(e.getBlock().getBlockData() instanceof Ageable age&&age.getAge()<age.getMaximumAge()){
         String key=switch(e.getBlock().getType()){case WHEAT->"break.young_wheat";case CARROTS->"break.young_carrots";case POTATOES->"break.young_potatoes";default->null;};if(key!=null)add(e.getPlayer(),key,1);
     }}
@@ -96,7 +99,7 @@ final class NativeConditions implements Listener,AutoCloseable {
         if(SubmergedGold.qualifies(block.getType(),above.getType(),above.getBlockData() instanceof org.bukkit.block.data.Levelled fluid?fluid.getLevel():-1))add(e.getPlayer(),"mine.submerged_gold",1);
     }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void plant(BlockPlaceEvent e){if(Tag.SAPLINGS.isTagged(e.getBlockPlaced().getType()))add(e.getPlayer(),"plant.sapling",1);}
-    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void jump(PlayerJumpEvent e){if(e.getPlayer().isSprinting())add(e.getPlayer(),"jump.sprinting",1);}
+    @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void jump(PlayerJumpEvent e){if(e.getPlayer().isSprinting())add(e.getPlayer(),"jump.sprinting",1);if(e.getFrom().clone().subtract(0,0.2,0).getBlock().getType()==Material.SLIME_BLOCK)add(e.getPlayer(),"jump.slime",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void shear(PlayerShearEntityEvent e){if(e.getEntity() instanceof Sheep)add(e.getPlayer(),"shear.sheep",1);}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void feed(PlayerInteractEntityEvent e){
         if(!(e.getRightClicked() instanceof Chicken chicken))return;var p=e.getPlayer();var hand=e.getHand();var item=p.getInventory().getItem(hand);
@@ -108,7 +111,7 @@ final class NativeConditions implements Listener,AutoCloseable {
         if(e.getFinalDamage()<=0)return;if(e.getEntity() instanceof Player p){if(plugin.eligible(p)&&e.getCause()==EntityDamageEvent.DamageCause.FALL)fallState(p,true);if(e.getCause()==EntityDamageEvent.DamageCause.FIRE_TICK)add(p,"damage.fire_tick",e.getFinalDamage());}
         if(e instanceof EntityDamageByEntityEvent hit){Player p=attacker(hit.getDamager());if(p==null)return;if(e.getEntity() instanceof Parrot)add(p,"hit.parrot",1);
             if(hit.getDamager() instanceof Player direct&&(e.getEntity() instanceof Monster||e.getEntity() instanceof Player)&&hit.getCause()==EntityDamageEvent.DamageCause.ENTITY_ATTACK&&direct.getInventory().getItemInMainHand().getType()==Material.MACE&&direct.getFallDistance()>=20)add(direct,"combat.mace_fall_twenty",1);
-            if((e.getEntity() instanceof Monster||e.getEntity() instanceof Player)&&hit.getDamager() instanceof AbstractArrow arrow){long[] start=arrow.getPersistentDataContainer().get(origin,PersistentDataType.LONG_ARRAY);if(start!=null&&start.length==3){var l=e.getEntity().getLocation();double distance=Math.pow(l.getX()-Double.longBitsToDouble(start[0]),2)+Math.pow(l.getY()-Double.longBitsToDouble(start[1]),2)+Math.pow(l.getZ()-Double.longBitsToDouble(start[2]),2);if(distance>=4900)add(p,"arrow.distant_hit",1);}}
+            if((e.getEntity() instanceof Monster||e.getEntity() instanceof Player)&&hit.getDamager() instanceof AbstractArrow arrow){long[] start=arrow.getPersistentDataContainer().get(origin,PersistentDataType.LONG_ARRAY);if(start!=null&&start.length==3){var l=e.getEntity().getLocation();double distance=Math.pow(l.getX()-Double.longBitsToDouble(start[0]),2)+Math.pow(l.getY()-Double.longBitsToDouble(start[1]),2)+Math.pow(l.getZ()-Double.longBitsToDouble(start[2]),2);if(distance>=900)add(p,"arrow.distant_hit",1); /* 2026-10-26 오너: 70블록 → 30블록 */}}
         }
     }
     @EventHandler public void death(PlayerDeathEvent e){var p=e.getEntity();var t=traces.get(p.getUniqueId());if(t!=null){boolean fell=t.fell;fallState(p,false);if(fell)add(p,"death.after_fall",1);t.burning=0;t.underwater=0;submerged.remove(p.getUniqueId());t.rotation=0;t.hotUntil=0;}var cause=p.getLastDamageCause();if(cause!=null&&cause.getCause()==EntityDamageEvent.DamageCause.LIGHTNING)add(p,"death.lightning",1);}
@@ -148,7 +151,7 @@ final class NativeConditions implements Listener,AutoCloseable {
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void candle(PlayerInteractEvent e){
         if(e.getAction()!=org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK||e.useInteractedBlock()==Event.Result.DENY||e.useItemInHand()==Event.Result.DENY)return;Block block=e.getClickedBlock();if(block==null||!Tag.CANDLES.isTagged(block.getType())&& !Tag.CANDLE_CAKES.isTagged(block.getType())||!(block.getBlockData() instanceof Lightable light))return;
         boolean before=light.isLit();Material held=e.getPlayer().getInventory().getItem(e.getHand()).getType();var p=e.getPlayer();
-        Bukkit.getScheduler().runTask(plugin,()->{if(!(block.getBlockData() instanceof Lightable after)||!p.isOnline())return;if(!before&&after.isLit()&&held==Material.FLINT_AND_STEEL)add(p,"candle.lit",1);else if(before&&!after.isLit()&&held==Material.AIR)add(p,"candle.extinguished",1);});
+        Bukkit.getScheduler().runTask(plugin,()->{if(!(block.getBlockData() instanceof Lightable after)||!p.isOnline())return;if(!before&&after.isLit()&&held==Material.FLINT_AND_STEEL){add(p,"candle.lit",1);if(block.getWorld().getEnvironment()==World.Environment.NORMAL&&ConditionRules.night(block.getWorld().getTime()))add(p,"candle.lit_night",1);}else if(before&&!after.isLit()&&held==Material.AIR)add(p,"candle.extinguished",1);});
     }
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void bucket(PlayerBucketEmptyEvent e){if(e.getBucket()!=Material.WATER_BUCKET||waters.size()>30000)return;Block placed=e.getBlock();waters.put(BlockKey.of(placed),new Water(e.getPlayer().getUniqueId(),tick+200));}
     @EventHandler(priority=EventPriority.MONITOR,ignoreCancelled=true) public void flow(BlockFromToEvent e){var owner=waters.get(BlockKey.of(e.getBlock()));if(owner!=null&&owner.expires()>=tick&&waters.size()<30000)waters.put(BlockKey.of(e.getToBlock()),owner);}

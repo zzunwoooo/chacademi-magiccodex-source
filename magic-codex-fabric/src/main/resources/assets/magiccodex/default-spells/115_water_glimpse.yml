@@ -5,7 +5,7 @@ description: 바라보는 물속을 엿봅니다. 물의 깊이와 넓이, 어�
 icon: ''
 permission: magic.learned.water_glimpse
 discovery:
-  description: 낚시 미니게임 첫 성공
+  description: 낚시로 물고기를 처음 낚기.
 research: ''
 cast:
   command: 마법 water_glimpse

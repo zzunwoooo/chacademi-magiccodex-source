@@ -5,7 +5,7 @@ description: 거인의 발이 바라보는 방향을 따라 세 번 땅을 내�
 icon: ''
 permission: magic.learned.titan_stride
 discovery:
-  description: 대지 마법 35종 습득
+  description: 대지 마법 35종 습득하기.
 research: ''
 cast:
   command: 마법 titan_stride

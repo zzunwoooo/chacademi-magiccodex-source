@@ -5,7 +5,7 @@ description: 기억의 등불을 들어 마지막으로 쓰러진 곳을 비춥�
 icon: ''
 permission: magic.learned.memory_lantern
 discovery:
-  description: 쓰러진 자리로 돌아가 떨어뜨린 물건 되찾기 5번
+  description: 이솔데 교수의 빛 마법 중급 수업 듣기.
 research: ''
 cast:
   command: 마법 memory_lantern

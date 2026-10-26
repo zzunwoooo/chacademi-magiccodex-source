@@ -5,7 +5,7 @@ description: 시전 위치에 그림자 분신을 남깁니다. 8초 안에 다�
 icon: magiccodex:textures/spells/intermediate/shadow_double.png
 permission: magic.learned.shadow_double
 discovery:
-  description: 밤에 같은 위치에서 움직이지 않고 60초 서 있기.
+  description: 도서관에서 「그림자는 두 번 선다」 책 읽기.
 research: 밤이 깊으면 한 자리에서 예순을 세어 보라. 떠난 뒤에도 그림자는 잠시 그곳을 기억한다.
 cast:
   command: 마법 shadow_double

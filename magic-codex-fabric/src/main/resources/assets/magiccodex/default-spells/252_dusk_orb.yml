@@ -5,7 +5,7 @@ description: 느릿느릿한 어둠 구슬이 대상을 6초 동안 끈질기게
 icon: ''
 permission: magic.learned.dusk_orb
 discovery:
-  description: 그림자 매듭으로 둔화된 적 20마리 처치
+  description: 어둠 마법으로 몬스터 20마리 처치하기.
 research: ''
 cast:
   command: 마법 dusk_orb

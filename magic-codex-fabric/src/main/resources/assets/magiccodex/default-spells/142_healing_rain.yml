@@ -5,7 +5,7 @@ description: 범위 안의 아군을 회복시키는 비와 무지개를 만듭�
 icon: magiccodex:textures/spells/reviewed_20261016/healing_rain.png
 permission: magic.learned.healing_rain
 discovery:
-  description: 치유 포션을 10회 마시기.
+  description: 치유 물약을 20번 마시기.
 research: ''
 cast:
   command: 마법 healing_rain

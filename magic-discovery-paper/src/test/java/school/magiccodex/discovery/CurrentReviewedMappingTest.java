@@ -1,18 +1,36 @@
 package school.magiccodex.discovery;
-import org.junit.jupiter.api.Test;import org.bukkit.configuration.file.YamlConfiguration;import java.nio.file.*;import java.util.*;import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;import org.bukkit.configuration.file.YamlConfiguration;import java.nio.file.*;import java.util.*;import java.util.regex.*;import static org.junit.jupiter.api.Assertions.*;
+/**
+ * 2026-10-26 발견 조건 v2 (docs/plans/discovery-conditions-v2.md, 오너 결정): 도감 300종 = 서버 조건 299종(아공간 수조는 처음부터 앎),
+ * 도감 문구 = 서버 문구, 수동 조건은 수업·책·스토리가 실제로 주는 마법만, 300종 밖 옛 마법·조건 없는 마법 없음.
+ */
 class CurrentReviewedMappingTest {
- // Arcana learning conditions are explicitly upstream-pending; do not invent rules or extend legacy meteor prerequisites.
- static final Set<String> GIMMICK_PENDING=Set.of("thawing_heat","steam_ignition","water_level","stone_weight","vine_awaken","light_beam","mirror_tune","prism_tint","statue_wake","rewind","conduit_turn","dimension_mark");
- static final Set<String> ARCANA_PENDING=Set.of("shadow_double","echo_reading","sealing_thread","shadow_exchange","forbidden_contract","life_siphon","misfortune_whisper","hungry_shadow","curse_transfer","discord","night_chain","pain_deferral","black_harvest","ink_fingertip","shadow_nail","night_lullaby","loosen_grasp","healing_seal","shadow_scales","warning_thread","wound_accounting","inverted_offering","ghost_tool","bell_of_fear","eclipse_eye","void_maw","landing_airbrake","hushed_soles","thorn_manners","cinder_skipring","droplet_relay","folding_tideplane");
- // 2026-10-25/26 번호 재정렬(tools/spell_order.py) 뒤에는 번호로 옛 묶음을 가를 수 없어 id 로 적는다.
- /** 옛 번호 300 이상 화염 마법 (몹 마법 300~323, 신규 325~399): 운석 선행 조건에 넣지 않는다. */
- static final Set<String> FIRE_AFTER_299=Set.of("alchemy_preheat","broom_afterburner","campfire_rest","crimson_spiral","curving_plumes","ember_puff","eruption_line","flame_emperor","flame_javelin","flame_wheel","fox_orbit","heat_haze","scorch_lock","signal_flare","spark_flick","volcanic_barrage","ward_candle");
- /** 옛 번호 101~167 (149 제외) 확장 마법. */
- static final Set<String> EXPANSION_101_167=Set.of("arcane_imprint","arcane_mending","bark_peeling","bee_calm","climate_control","comforting_light","companion_return","compost_return","constellation_blessing","constellation_emissary","counterweight","dawn_ritual","dormant_seed","earth_anchor","earth_elemental","earth_embrace","earth_shaping","earthquake","exorcism_flash","faint_veil","firefly_mark","flawless_moment","flint_sorting","forest_throne","grass_sprouting","guardian_oath","guiding_fletching","guiding_star","iron_carapace","little_giant","luminous_copy","luminous_handover","mana_conduit","mana_deposit","material_exchange","merciful_arrow","minor_heal","moss_coating","mountain_back","night_sight","pollen_matchmaking","primordial_stone","protective_ward","remembering_field","seed_row","shadow_bind","sharing_table","solar_judgment","spring_ground","starlight_reprise","starlight_survey","stone_wall","summons_letter","sun_drying","thorn_armor","thorn_seeds","true_sight","vein_fracture","weathering_touch");
- @Test void meteorPreservesAllOtherLegacyFirePrerequisitesWithoutAddingKillOnlyMobSpells()throws Exception{var fire=new HashSet<String>();try(var files=Files.list(Path.of("../magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells"))){for(var path:files.filter(p->p.toString().endsWith(".yml")).toList()){var yaml=YamlConfiguration.loadConfiguration(path.toFile());String id=yaml.getString("id");if(!FIRE_AFTER_299.contains(id) && !GIMMICK_PENDING.contains(id) && "fire".equals(yaml.getString("category")) && !"cinder_skipring".equals(id))fire.add("magic.learned."+id);}}assertEquals(29,fire.size()); /* 2026-10-26: 꺼진 화염 3종(cinder_detonation·flame_footprints·fireproof_film) 기획에서 삭제 → 운석 선행 조건에서도 뺌 */fire.remove("magic.learned.falling_star");var definitions=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(fire,new HashSet<>(definitions.spells.get("falling_star").prerequisites()));}
- /** 신규 325~387·생활 12종 (습득 조건은 오너가 나중에 한꺼번에): 바인딩 review 표시 "nova 325~387" 로 가른다. */
- static Set<String> nova()throws Exception{var b=YamlConfiguration.loadConfiguration(Path.of("../portable-vfx-runtime/paper/src/main/resources/spell-bindings.yml").toFile()).getConfigurationSection("bindings");var out=new HashSet<String>();for(var id:b.getKeys(false))if(b.getString(id+".review","").startsWith("nova 325~387"))out.add(id);return out;}
- @Test void currentAndExpansionMappingsAndRemainingGapsAreExact()throws Exception{var catalog=YamlConfiguration.loadConfiguration(Path.of("../portable-vfx-runtime/paper/src/main/resources/spell-catalog.yml").toFile()).getConfigurationSection("spells");var definitions=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());definitions.manual(Path.of("src/main/resources/manual-conditions.yml").toFile());var nova=nova();assertEquals(75,nova.size());var missing=new HashSet<String>();int reviewed=0,manual=0,expansion=0;for(var id:catalog.getKeys(false))if(catalog.getBoolean(id+".reviewed")&&!nova.contains(id)){boolean added=EXPANSION_101_167.contains(id);if(added)expansion++;else reviewed++;if(definitions.manual.containsKey(id)){if(!added)manual++;}else if(!definitions.spells.containsKey(id)||Definitions.PENDING.contains(id))missing.add(id);}assertEquals(59,expansion);
-  // 2026-10-25 재정렬: 꺼져 있던 3종(검수됨) 도감·카탈로그에서 빠짐(-3), 175 졸음 켜짐(+1, 습득 조건 없음)
-  assertEquals(122+ARCANA_PENDING.size()+GIMMICK_PENDING.size()-2,reviewed);assertEquals(88,manual);var expected=new HashSet<>(Set.of("crimson_heart","compost_return","drowsiness")); /* 2026-10-26: 조건 미정 7종은 교수 수업(수동 조건)으로 */expected.addAll(ARCANA_PENDING);expected.addAll(GIMMICK_PENDING);assertEquals(expected,missing);}
+ static final Path SPELLS=Path.of("../magic-codex-fabric/src/main/resources/assets/magiccodex/default-spells");
+ static Map<String,YamlConfiguration> codex()throws Exception{var out=new TreeMap<String,YamlConfiguration>();try(var files=Files.list(SPELLS)){for(var path:files.filter(p->p.getFileName().toString().matches("[0-9]{3}_.*\\.yml")).toList()){var y=YamlConfiguration.loadConfiguration(path.toFile());out.put(y.getString("id"),y);}}return out;}
+ static Definitions definitions()throws Exception{var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());d.manual(Path.of("src/main/resources/manual-conditions.yml").toFile());return d;}
+ @Test void everyCodexSpellHasExactlyOneJudgedConditionWithTheSameText()throws Exception{
+  var codex=codex();var d=definitions();assertEquals(300,codex.size());
+  var expected=new TreeSet<>(codex.keySet());expected.remove("fish_trap");assertEquals(expected,new TreeSet<>(d.spells.keySet()));
+  for(var e:codex.entrySet()){if(e.getKey().equals("fish_trap"))continue;var s=d.spells.get(e.getKey());
+   assertEquals(e.getValue().getString("discovery.description"),s.description(),e.getKey());assertEquals(e.getValue().getString("category"),s.category(),e.getKey());
+   assertFalse(s.requirements().isEmpty()&&s.prerequisites().isEmpty(),e.getKey());}
+  assertTrue(Definitions.PENDING.isEmpty());assertFalse(d.spells.containsKey("feather_step"));assertFalse(d.spells.containsKey("wind_vault"));
+ }
+ @Test void manualConditionsAreExactlyTheOnesLessonsBooksAndStoryGrant()throws Exception{
+  var granted=new TreeSet<String>();var pattern=Pattern.compile("마법조건 주기 ([a-z0-9_]+)");
+  for(var file:List.of("../magic-codex-paper/src/main/resources/books.yml","../chacademy-story/plugin/src/main/resources/steps.yml")){
+   var m=pattern.matcher(Files.readString(Path.of(file)).replaceAll("(?m)^\\s*#.*$",""));while(m.find())granted.add(m.group(1));}
+  assertEquals(granted,new TreeSet<>(definitions().manual.keySet()));
+  assertTrue(granted.containsAll(List.of("guiding_star","rewind","statue_wake","void_maw","season_sense")));assertFalse(granted.contains("arcane_imprint"));
+ }
+ @Test void ultimateAndMeteorUseLearnedElementCounts()throws Exception{
+  var d=definitions();
+  assertEquals(Map.of("learned.fire",20d),d.spells.get("falling_star").requirements());assertEquals(Map.of("learned.fire",30d),d.spells.get("flame_emperor").requirements());
+  assertEquals(Map.of("learned.wind",30d),d.spells.get("heaven_cyclone").requirements());assertEquals(Map.of("learned.earth",35d),d.spells.get("titan_stride").requirements());
+  assertEquals(Map.of("learned.water",30d,"fishing.legendary",1d),d.spells.get("leviathan_rise").requirements());
+  assertEquals(Map.of("kill.fire_low_health",1d),d.spells.get("crimson_heart").requirements());
+  assertEquals(Map.of("arrow.distant_hit",10d),d.spells.get("storm_crown").requirements());assertEquals(Map.of("state.friends",10d),d.spells.get("guardian_oath").requirements());
+  assertEquals(Map.of("shield.block",10d),d.spells.get("earth_anchor").requirements());assertEquals(Map.of("shield.block",30d),d.spells.get("flawless_moment").requirements());
+  assertEquals(Map.of("pickup.items",300d),d.spells.get("wind_basket").requirements());assertEquals(Map.of("drink.milk_poisoned",3d),d.spells.get("purifying_wave").requirements());
+ }
 }

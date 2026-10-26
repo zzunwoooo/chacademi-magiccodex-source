@@ -5,7 +5,7 @@ description: 대상 주변의 공기를 빼앗아 3초 동안 무장해제합니
 icon: ''
 permission: magic.learned.air_choke
 discovery:
-  description: 1:1 결투 10판 참여
+  description: 1:1 결투에 10번 참가하기.
 research: ''
 cast:
   command: 마법 air_choke

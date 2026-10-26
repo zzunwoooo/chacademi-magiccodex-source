@@ -6,7 +6,7 @@ description: 색이 다른 바람 화살 3개를 소환해 하나씩 발사합�
 icon: magiccodex:textures/spells/expansion_2/storm_crown.png
 permission: magic.learned.storm_crown
 discovery:
-  description: 70블록 밖의 적에게 화살 명중.
+  description: 30블록 밖의 적을 화살로 10번 맞히기.
 research: 먼 적을 꿰뚫은 집중력이 세 갈래 바람을 한 목표로 이끈다. 위력만큼 중요한 것은 정확도다.
 cast:
   command: 마법 storm_crown

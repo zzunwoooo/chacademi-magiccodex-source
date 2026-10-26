@@ -5,7 +5,7 @@ description: 손에 든 물고기를 물렌즈로 들여다봅니다. 등급과 
 icon: ''
 permission: magic.learned.scale_appraisal
 discovery:
-  description: 물고기 처음 판매하기
+  description: 물고기를 처음 팔기.
 research: ''
 cast:
   command: 마법 scale_appraisal

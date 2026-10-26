@@ -5,7 +5,7 @@ description: 권한이 있는 영역의 연결된 콘크리트 가루를 최대 
 icon: magiccodex:textures/spells/reviewed_20261016/concrete_curing.png
 permission: magic.learned.concrete_curing
 discovery:
-  description: 물로 콘크리트 가루를 32개 굳히기.
+  description: 콘크리트 가루를 물에 닿게 놓아 32개 굳히기.
 research: ''
 cast:
   command: 마법 concrete_curing

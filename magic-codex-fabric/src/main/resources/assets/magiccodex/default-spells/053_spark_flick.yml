@@ -5,7 +5,7 @@ description: 손가락으로 불씨 세 개를 앞쪽 부채꼴로 튕겨 냅니
 icon: ''
 permission: magic.learned.spark_flick
 discovery:
-  description: 파이어 볼로 몬스터 30마리 처치
+  description: 파이어 볼로 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 spark_flick

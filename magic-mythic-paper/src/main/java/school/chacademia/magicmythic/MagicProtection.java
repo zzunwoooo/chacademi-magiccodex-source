@@ -101,8 +101,11 @@ public final class MagicProtection implements Listener {
   double applied=mode==Mode.PVP?pvpReduced(target,amount):amount;
   Hit h=new Hit(caster,target,mode);hits.push(h);
   boolean ok;
+  // 마법 발견 v2: 이 타격으로 죽어도 그 마법 처치로 세도록 피해 전에 기록 (체력이 가득 찬 상태였는지 = 한 방 처치 판정)
+  var hp=target.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
+  var trace=SpellTrace.current();DiscoveryHooks.Last before=caster instanceof Player p0?DiscoveryHooks.pre(p0,target,trace,hp!=null&&target.getHealth()>=hp.getValue()-1e-6):null;
   try{resetInvulnerability(target,mode);target.damage(applied,caster);ok=accepted(h.event);}finally{hits.pop();}
-  if(ok&&caster instanceof Player pl)DiscoveryHooks.hit(pl,target,SpellTrace.current());
+  if(caster instanceof Player pl)DiscoveryHooks.post(pl,target,trace,ok,before);
   return ok;
  }
  /**

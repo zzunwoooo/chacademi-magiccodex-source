@@ -5,7 +5,7 @@ description: 적 둘을 운명의 실로 6초 동안 묶습니다. 둘 사이가
 icon: ''
 permission: magic.learned.fate_link
 discovery:
-  description: 밤의 사슬로 피해 100번 전달
+  description: 밤의 사슬로 적을 100번 맞히기.
 research: ''
 cast:
   command: 마법 fate_link

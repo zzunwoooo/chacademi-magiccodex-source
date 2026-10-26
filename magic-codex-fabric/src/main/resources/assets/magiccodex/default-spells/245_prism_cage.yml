@@ -5,7 +5,7 @@ description: 대상 주변에 빛기둥 여섯 개를 세웁니다. 1.5초 뒤 �
 icon: ''
 permission: magic.learned.prism_cage
 discovery:
-  description: 던전에서 프리즘으로 빛줄기 10번 물들이기
+  description: 빛 마법으로 적을 1,000번 맞히기.
 research: ''
 cast:
   command: 마법 prism_cage

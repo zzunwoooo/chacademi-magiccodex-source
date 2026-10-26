@@ -87,6 +87,7 @@ public final class AuditLog implements Listener, AutoCloseable {
         log.worker.scheduleWithFixedDelay(log::flushSafe, s.batchSeconds(), s.batchSeconds(), TimeUnit.SECONDS);
         log.worker.scheduleWithFixedDelay(log::pruneSafe, 120, 24 * 3600, TimeUnit.SECONDS);
         AuditStats.enabled(s.stats());
+        DiscoveryStats.install(plugin); // 마법 발견 v2: 몇몇 통계를 발견 카운터로도
         log.worker.scheduleWithFixedDelay(() -> log.flushStats(null), s.statsMinutes() * 60L, s.statsMinutes() * 60L, TimeUnit.SECONDS);
         plugin.getServer().getPluginManager().registerEvents(log, plugin);
         instance = log;

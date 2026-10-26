@@ -67,7 +67,7 @@
   },
   {
     "path": "deployment/operating-config/MagicCodexBridge/books.yml",
-    "sha256": "035ea6b5b342b5f52b3070838945f10fd7ba3361c0d2dec545cbeacddd17939c",
+    "sha256": "2e759947b26e5d27c51b12a4983426907346fef9e52036558fb0b5a62574b1a6",
     "sameOnSchoolAndWild": true,
     "role": "non-secret gameplay configuration; deployment overlay, not player data"
   },

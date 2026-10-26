@@ -5,7 +5,7 @@ description: 큰 칼날 형태의 바람이 부메랑처럼 앞으로 날아갔�
 icon: magiccodex:textures/spells/expansion_2/returning_blade.png
 permission: magic.learned.returning_blade
 discovery:
-  description: 윈드 커터 50회 사용.
+  description: 윈드 커터를 50번 사용하기.
 research: 떠나간 칼날의 궤적을 되짚자, 작은 마나로도 한 번 더 베어내는 길이 열렸다.
 cast:
   command: 마법 returning_blade

@@ -5,7 +5,7 @@ description: 머리 위에 작은 빛의 책장을 펼칩니다. 아직 모르�
 icon: ''
 permission: magic.learned.enlighten_hint
 discovery:
-  description: 서로 다른 마법 50개 배우기
+  description: 서로 다른 마법 10종 배우기.
 research: ''
 cast:
   command: 마법 enlighten_hint

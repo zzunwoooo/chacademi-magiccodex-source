@@ -5,7 +5,7 @@ description: 3초 동안 영창하면 조준한 곳에 거대한 심연의 문�
 icon: ''
 permission: magic.learned.abyss_gate
 discovery:
-  description: 어둠 마법 30종 습득
+  description: 어둠 마법 30종 습득하기.
 research: ''
 cast:
   command: 마법 abyss_gate

@@ -9,13 +9,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class DiscoveryTest {
     @TempDir Path dir;
     @Test void approvedDefinitionsLoadWithDottedKeysAndExactCropConjunction()throws Exception{
-        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(144,d.spells.size());
+        var d=new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());assertEquals(299,d.spells.size()); /* 2026-10-26 v2: 300종 - 아공간 수조 */
         var crop=d.spells.get("harvest_wind");assertEquals(3,crop.requirements().size());assertEquals(12,crop.requirements().get("break.young_wheat"));
         assertFalse(Definitions.meets(crop,Map.of("break.young_wheat",36d)));
         assertTrue(Definitions.meets(crop,Map.of("break.young_wheat",12d,"break.young_carrots",12d,"break.young_potatoes",12d)));
-        assertEquals(.1,d.spells.get("cross_breeze").chance());assertEquals(1,d.spells.get("wind_push").chance());
-        assertFalse(d.spells.get("falling_star").prerequisites().contains("magic.learned.falling_star"));assertEquals(31,d.spells.get("falling_star").prerequisites().size());
-        assertEquals(4,d.spells.get("trajectory_acceleration").requirements().size());
+        assertEquals(1,d.spells.get("cross_breeze").chance());assertEquals(1,d.spells.get("wind_push").chance());
+        // 2026-10-26 오너 결정 3: 메테오 스트라이크 = 화염 마법 20종 (선행 마법 목록 없음)
+        assertTrue(d.spells.get("falling_star").prerequisites().isEmpty());assertEquals(Map.of("learned.fire",20d),d.spells.get("falling_star").requirements());
+        assertEquals(Map.of("hit.arrow_monster",30d),d.spells.get("trajectory_acceleration").requirements());
     }
     @Test void spatialLeapRequiresOnePublicWaypointAndNoOtherProgress()throws Exception{
         // Owner-approved travel-map rule (2026-10-24): one shared, public waypoint; not a personal point or wild spawn.

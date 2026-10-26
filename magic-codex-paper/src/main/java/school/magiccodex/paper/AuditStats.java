@@ -30,8 +30,15 @@ final class AuditStats {
 
     static void enabled(boolean on) { enabled = on; }
 
+    /** 통계를 다른 곳에도 알리는 받는 쪽 (마법 발견 v2: DiscoveryStats). 통계가 꺼져 있어도 알린다. 예외는 삼킨다. */
+    @FunctionalInterface interface Forward { void add(UUID player, String key, long amount); }
+    private static volatile Forward forward;
+    static void forward(Forward f) { forward = f; }
+
     /** 카운터 더하기. 키는 96자로 자른다. amount 0 이면 아무 일 없음. */
     static void add(UUID player, String key, long amount) {
+        var f = forward;
+        if (f != null && player != null && key != null && amount > 0) try { f.add(player, key, amount); } catch (RuntimeException | LinkageError ignored) { }
         if (!enabled || player == null || key == null || key.isBlank() || amount == 0) return;
         var k = new Key(player.toString(), key.length() > 96 ? key.substring(0, 96) : key);
         if (PENDING.size() >= MAX_KEYS && !PENDING.containsKey(k)) { overflowWarned = true; return; }

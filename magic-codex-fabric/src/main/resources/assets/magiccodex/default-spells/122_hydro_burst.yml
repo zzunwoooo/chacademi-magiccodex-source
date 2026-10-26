@@ -5,7 +5,7 @@ description: 1.5초 동안 물줄기를 연달아 쏩니다. 맞은 적은 조�
 icon: ''
 permission: magic.learned.hydro_burst
 discovery:
-  description: 물방울 탄환 300번 적중
+  description: 물방울 탄환으로 적을 300번 맞히기.
 research: ''
 cast:
   command: 마법 hydro_burst

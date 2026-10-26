@@ -5,7 +5,7 @@ description: 바닥에 얼음 꽃을 심습니다. 1.5초 뒤 꽃이 깨지며 �
 icon: ''
 permission: magic.learned.ice_bloom
 discovery:
-  description: 눈 덮인 바이옴에서 서리 파열로 적 10마리 처치
+  description: 서리 파열로 몬스터 20마리 처치하기.
 research: ''
 cast:
   command: 마법 ice_bloom

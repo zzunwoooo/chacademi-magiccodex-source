@@ -86,6 +86,12 @@ public final class ChacaLink {
         call("summary", new Class<?>[]{Plugin.class, String.class, Function.class}, owner, label, line);
     }
 
+    /** 서버 통계 카운터 (ChacaApi.stat, 메모 #96). 메모리에 더하기만. 브리지가 없으면 조용히 건너뛴다. */
+    public static void stat(UUID player, String key, long amount) {
+        try { call("stat", new Class<?>[]{UUID.class, String.class, long.class}, player, key, amount); }
+        catch (RuntimeException | LinkageError ignored) { }
+    }
+
     public static void status(Plugin owner, String label, Supplier<String> line) {
         call("status", new Class<?>[]{Plugin.class, String.class, Supplier.class}, owner, label, line);
     }

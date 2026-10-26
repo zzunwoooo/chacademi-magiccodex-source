@@ -5,7 +5,7 @@ description: 15블록 안의 대상과 자신의 위치를 맞바꿉니다.
 icon: magiccodex:textures/spells/advanced/shadow_exchange.png
 permission: magic.learned.shadow_exchange
 discovery:
-  description: 엔더 진주로 순간 이동한 횟수 30회 달성하기.
+  description: 엔더맨 30마리 처치하기.
 research: 내 그림자가 네 자리에 있었다면 결과는 달라졌을까?
 cast:
   command: 마법 shadow_exchange

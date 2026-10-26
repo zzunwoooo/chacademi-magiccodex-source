@@ -59,6 +59,7 @@
 - API 상자 2종 + 호감도 선물 뽑기권 상자 (§42): loot-boxes.yml overlay 교체 → `/상자관리 새로고침`. 새 ItemsAdder 아이템 `item:gift_ticket`(오너가 만듦). 묶음(×5·×3) 아이템 최대 스택 확인.
 - 별풍선 후원 (§43): `plugins/MagicCodexBridge/donation.yml` 자동 생성 (학교·야생·아레나 같은 내용) → 고치면 `/서버관리 새로고침 후원`. 서버 `audit.yml` 에 새 종류 "후원" (kinds 에 `후원: true`). `plugins/donation/config.yml` 의 `acceptAllDonations: true` 확인. 예전 Skript `api` 스크립트는 지워도 됨(남아 있어도 안 돎). 아레나(큐디치)는 `servers` 에 넣지 않음 = 후원 안 받음.
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
+- 마법 발견 조건 v2 (§45): **학교·야생·아레나 `plugins/MagicDiscovery/discoveries.yml`·`manual-conditions.yml` 을 저장소 파일로 교체** (안 바꾸면 옛 조건 그대로) → `/서버관리 새로고침 마법발견`. books.yml overlay(대기 책 16권 켬) · ChacademyStory `steps.yml` ch1-13 시작명령(길잡이 별) 같이. MagicDiscovery·Bridge·MagicMythic·모션 플러그인·클라 모드(도감 문구) 같은 빌드로.
 - TAB 한글 닉 (#110): `deployment/tab/`.
 
 ## 4. 손으로 할 것

@@ -5,7 +5,7 @@ description: 프리즘의 색을 바꿉니다. 프리즘을 지나는 빛줄기�
 icon: magiccodex:textures/spells/gimmick/prism_tint.png
 permission: magic.learned.prism_tint
 discovery:
-  description: 서로 다른 색 염료 6가지를 모으기.
+  description: 도서관에서 「프리즘 연구」 책 읽기.
 research: 흰빛 안에는 모든 색이 접혀 있다. 프리즘은 그중 하나를 골라 펼칠 뿐이다.
 cast:
   command: 마법 prism_tint

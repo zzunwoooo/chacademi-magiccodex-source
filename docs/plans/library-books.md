@@ -6,7 +6,9 @@
 - 선정 기준: 수업으로 확정 습득하는 마법과 겹치지 않게, 발견 조건이 애매하거나 지식형(생활·탐구·이론·역사) 마법. 스토리 스포일러 없음. 헛걸음 책은 같은 책장에 섞어 두고 일부는 지능 요구도 걸어 "겨우 읽었는데 마법 없음".
 - 필요 지능 단계: 0 · 20 · 40 · 60 · 80 · 100 (전투 스펙 대충 ≈26 · 적당 ≈100 · 한계 ≈122 기준).
 
-## 요약: 총 67권 — 헛걸음 37 · 마법 13 · 마법·대기 17
+> 2026-10-26 마법 발견 조건 v2 (오너 결정, `discovery-conditions-v2.md`): 대기 책 16권 켬 → **[마법] 29 · [헛걸음] 37 · 보류 1** (「도구에 새기는 마력」 = 마력 각인은 모루 이름 붙이기 자동 조건 유지, 책은 연결 안 함).
+
+## 요약: 총 67권 — 헛걸음 37 · 마법 13 · 마법·대기 17 (v2 이전 기준)
 
 | 장소 | 권수 |
 |---|---|
@@ -48,7 +50,7 @@
 | 3층 도서관 (library) | 마법 | spirit_contract_earth | 정령계약서 - 지 | earth_elemental | 80 | earth_elemental 그놈 · 안쪽 서가 · 정령학 칸 (수 계약서 바로 옆) | 2 |
 | 3층 도서관 (library) | 마법 | immovable_forest_king | 움직이지 않는 숲의 왕 | forest_throne | 100 | forest_throne 숲의 왕좌 · 안쪽 서가 · 정령학 칸 맨 위 (두꺼운 가죽 장정) | 2 |
 | 3층 도서관 (library) | 마법 | body_art_training | 체술 강화 | flame_leap | 60 | flame_leap 블레이즈 킥 · 안쪽 서가 · 화염 칸 맨 아래, 다른 책들 뒤에 숨겨진 얇은 책 (책장 뒷면 쪽에 연결 권장) | 2 |
-| 3층 도서관 (library) | 마법·대기 | hungry_void | 텅 빈 것의 식욕 | void_maw 공허의 입 (대기) | 100 | 안쪽 서가 가장 깊은 칸, 표지가 없는 검은 책 (숨겨진 책) | 2 |
+| 3층 도서관 (library) | 마법 | hungry_void | 텅 빈 것의 식욕 | void_maw 공허의 입 (v2 켬) | 100 | 안쪽 서가 가장 깊은 칸, 표지가 없는 검은 책 (숨겨진 책) | 2 |
 | 도서관 2층 (library_upper) | 헛걸음 | star_atlas | 별자리 도감 |  | 20 | 천문 칸 | 2 |
 | 도서관 2층 (library_upper) | 헛걸음 | old_newsletter | 학교 소식지 묶음 (90년 전) |  | 0 | 신문·기록 칸 | 2 |
 | 도서관 2층 (library_upper) | 헛걸음 | dragon_tales | 용에 관한 민담 |  | 40 | 신화·민담 칸 (용 이야기 — 마법 없음) | 2 |
@@ -57,36 +59,36 @@
 | 도서관 2층 (library_upper) | 헛걸음 | third_year_diary | 어느 3학년의 일기 |  | 0 | 일기 칸 | 2 |
 | 도서관 2층 (library_upper) | 헛걸음 | invisible_cloak_notes | 실패한 연구 노트 — 투명 망토 |  | 60 | 연구 노트 칸 (지능 60 — 실패한 연구) | 2 |
 | 도서관 2층 (library_upper) | 헛걸음 | forest_bestiary | 숲 생물 관찰기 |  | 20 | 생물 칸 | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | season_almanac | 계절 관측 일지 | season_sense 계절 예보 (대기) | 0 | 천문 칸 (별자리 도감 옆) | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | mirrors_and_light | 거울과 빛의 길 | mirror_tune 반사 조율 (대기) | 20 | 광학 칸 | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | prism_studies | 프리즘 연구 | prism_tint 프리즘 물들이기 (대기) | 20 | 광학 칸 (거울과 빛의 길 옆) | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | straight_light | 곧은 빛에 관한 소론 | light_beam 빛줄기 (대기) | 40 | 광학 칸 맨 위 | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | turning_back | 되돌리는 장치에 관하여 | rewind 되감기 (대기) | 40 | 시간 칸 | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | shadow_twin | 그림자는 두 번 선다 | shadow_double 그림자 분신 (대기) | 60 | 그림자 칸 | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | loosened_grip | 손아귀를 푸는 법 | loosen_grasp 손아귀 풀기 (대기) | 60 | 그림자 칸 | 2 |
-| 도서관 2층 (library_upper) | 마법·대기 | warning_thread_manual | 경계를 긋는 실 | warning_thread 경고의 실 (대기) | 80 | 그림자 칸 맨 위 | 2 |
+| 도서관 2층 (library_upper) | 마법 | season_almanac | 계절 관측 일지 | season_sense 계절 예보 (v2 켬) | 0 | 천문 칸 (별자리 도감 옆) | 2 |
+| 도서관 2층 (library_upper) | 마법 | mirrors_and_light | 거울과 빛의 길 | mirror_tune 반사 조율 (v2 켬) | 20 | 광학 칸 | 2 |
+| 도서관 2층 (library_upper) | 마법 | prism_studies | 프리즘 연구 | prism_tint 프리즘 물들이기 (v2 켬) | 20 | 광학 칸 (거울과 빛의 길 옆) | 2 |
+| 도서관 2층 (library_upper) | 마법 | straight_light | 곧은 빛에 관한 소론 | light_beam 빛줄기 (v2 켬) | 40 | 광학 칸 맨 위 | 2 |
+| 도서관 2층 (library_upper) | 마법 | turning_back | 되돌리는 장치에 관하여 | rewind 되감기 (v2 켬) | 40 | 시간 칸 | 2 |
+| 도서관 2층 (library_upper) | 마법 | shadow_twin | 그림자는 두 번 선다 | shadow_double 그림자 분신 (v2 켬) | 60 | 그림자 칸 | 2 |
+| 도서관 2층 (library_upper) | 마법 | loosened_grip | 손아귀를 푸는 법 | loosen_grasp 손아귀 풀기 (v2 켬) | 60 | 그림자 칸 | 2 |
+| 도서관 2층 (library_upper) | 마법 | warning_thread_manual | 경계를 긋는 실 | warning_thread 경고의 실 (v2 켬) | 80 | 그림자 칸 맨 위 | 2 |
 | 강의실 1 (classroom_1) — 바람 교실 | 헛걸음 | wind_textbook | 바람학 교과서 제1권 |  | 20 | 교탁 옆 책장 | 2 |
 | 강의실 1 (classroom_1) — 바람 교실 | 헛걸음 | ungraded_homework | 채점 안 된 숙제 더미 |  | 0 | 뒤쪽 사물함 위 | 2 |
 | 강의실 1 (classroom_1) — 바람 교실 | 마법 | falling_mechanics | 떨어지는 것들의 역학 | pressure_press | 40 | pressure_press 윈드 프레스 · 교탁 뒤 책장 (발견 조건 변경 제안: 앵무새 공격 → 이 책) | 2 |
 | 강의실 1 (classroom_1) — 바람 교실 | 마법 | whirlwind_axis | 회오리의 축 | pressure_rupture | 60 | pressure_rupture 토네이도 스핀 · 교탁 뒤 책장 (발견 조건 변경 제안: 제자리 10바퀴 → 이 책) | 2 |
 | 강의실 2 (classroom_2) — 장치·대지 실습실 | 헛걸음 | lecture_prep_notes | 어느 교수의 수업 준비 노트 |  | 40 | 교탁 서랍 옆 책장 (지능 40) | 2 |
-| 강의실 2 (classroom_2) — 장치·대지 실습실 | 마법·대기 | conduit_design | 마력 도관 설계 | conduit_turn 도관 회전 (대기) | 20 | 실습 교재 칸 | 2 |
-| 강의실 2 (classroom_2) — 장치·대지 실습실 | 마법·대기 | weight_and_balance | 무게와 균형 | stone_weight 무게추 (대기) | 20 | 실습 교재 칸 (마력 도관 설계 옆) | 2 |
+| 강의실 2 (classroom_2) — 장치·대지 실습실 | 마법 | conduit_design | 마력 도관 설계 | conduit_turn 도관 회전 (v2 켬) | 20 | 실습 교재 칸 | 2 |
+| 강의실 2 (classroom_2) — 장치·대지 실습실 | 마법 | weight_and_balance | 무게와 균형 | stone_weight 무게추 (v2 켬) | 20 | 실습 교재 칸 (마력 도관 설계 옆) | 2 |
 | 강의실 3 (classroom_3) — 화염 실습실 | 헛걸음 | fire_safety_rules | 화염 실습실 안전 수칙 |  | 0 | 문 옆 벽 책장 | 2 |
-| 강의실 3 (classroom_3) — 화염 실습실 | 마법·대기 | steam_primer | 증기 기관 입문 | steam_ignition 증기 점화 (대기) | 40 | 실습 교재 칸 | 2 |
-| 강의실 3 (classroom_3) — 화염 실습실 | 마법·대기 | thawing_notes | 얼음을 녹이는 열 | thawing_heat 해빙의 열기 (대기) | 40 | 실습 교재 칸 (증기 기관 입문 옆) | 2 |
+| 강의실 3 (classroom_3) — 화염 실습실 | 마법 | steam_primer | 증기 기관 입문 | steam_ignition 증기 점화 (v2 켬) | 40 | 실습 교재 칸 | 2 |
+| 강의실 3 (classroom_3) — 화염 실습실 | 마법 | thawing_notes | 얼음을 녹이는 열 | thawing_heat 해빙의 열기 (v2 켬) | 40 | 실습 교재 칸 (증기 기관 입문 옆) | 2 |
 | 연금술 공방 (alchemy_workshop) | 헛걸음 | herb_guide | 약초 도감 |  | 0 | 약초 선반 옆 | 2 |
 | 연금술 공방 (alchemy_workshop) | 헛걸음 | potion_accidents | 폭발한 물약 기록 |  | 20 | 작업대 아래 (지능 20) | 2 |
-| 연금술 공방 (alchemy_workshop) | 마법·대기 | alchemist_insight | 연금술사의 번뜩임 | insight_flash 영감의 섬광 (대기) | 40 | 작업대 위 노트 꽂이 | 2 |
+| 연금술 공방 (alchemy_workshop) | 마법 | alchemist_insight | 연금술사의 번뜩임 | insight_flash 영감의 섬광 (v2 켬) | 40 | 작업대 위 노트 꽂이 | 2 |
 | 대강당 (great_hall) | 헛걸음 | ceremony_program | 입학식 식순 |  | 0 | 단상 옆 책장 | 2 |
 | 대강당 (great_hall) | 헛걸음 | alumni_roll | 역대 졸업생 명부 |  | 0 | 뒤쪽 벽 책장 | 2 |
-| 대강당 (great_hall) | 마법·대기 | statue_keeper_log | 석상 관리 일지 | statue_wake 석상 깨우기 (대기) | 20 | 단상 뒤 책장 (발견 조건 변경 제안: 밤에 갑옷 거치대 앞 30초 → 이 책) | 2 |
+| 대강당 (great_hall) | 마법 | statue_keeper_log | 석상 관리 일지 | statue_wake 석상 깨우기 (v2 켬) | 20 | 단상 뒤 책장 (발견 조건 변경 제안: 밤에 갑옷 거치대 앞 30초 → 이 책) | 2 |
 | 기숙사 입구 (dorm_entrances) · 2층 기숙사 홀 (dorm_hall) | 헛걸음 | dorm_guide | 기숙사 생활 안내 |  | 0 | 기숙사 입구 게시판 옆 책장 | 2 |
-| 기숙사 입구 (dorm_entrances) · 2층 기숙사 홀 (dorm_hall) | 마법·대기 | locksmith_secret | 자물쇠 장인의 비밀 | sealing_thread 봉인의 실 (대기) | 40 | 기숙사 입구 사감 책상 옆 (발견 조건 변경 제안: 내 상자 100번 열고 닫기 → 이 책) | 2 |
+| 기숙사 입구 (dorm_entrances) · 2층 기숙사 홀 (dorm_hall) | 마법 | locksmith_secret | 자물쇠 장인의 비밀 | sealing_thread 봉인의 실 (v2 켬) | 40 | 기숙사 입구 사감 책상 옆 (발견 조건 변경 제안: 내 상자 100번 열고 닫기 → 이 책) | 2 |
 | 기숙사 입구 (dorm_entrances) · 2층 기숙사 홀 (dorm_hall) | 헛걸음 | unsent_letter | 전하지 못한 편지 |  | 0 | 2층 기숙사 홀 소파 옆 책장 | 2 |
 | 기숙사 입구 (dorm_entrances) · 2층 기숙사 홀 (dorm_hall) | 헛걸음 | dorm_ghost_stories | 기숙사 괴담 모음 |  | 0 | 2층 기숙사 홀 벽난로 옆 책장 | 2 |
 | 지하 강화소 (forge_basement) | 헛걸음 | otto_ledger | 오토의 장부 |  | 0 | 계산대 뒤 선반 | 2 |
-| 지하 강화소 (forge_basement) | 마법·대기 | arcane_imprint_manual | 도구에 새기는 마력 | arcane_imprint 마력 각인 (대기) | 80 | 모루 옆 공구 선반 위 (발견 조건 변경 제안: 모루로 이름 10번 → 이 책) | 2 |
+| 지하 강화소 (forge_basement) | 보류 | arcane_imprint_manual | 도구에 새기는 마력 | arcane_imprint 마력 각인 (연결 안 함, 오너 결정) | 80 | 모루 옆 공구 선반 위 (발견 조건 변경 제안: 모루로 이름 10번 → 이 책) | 2 |
 | 카페테리아 (cafeteria) · 병원 (hospital) | 헛걸음 | dorothea_recipes | 도로테아의 요리 노트 |  | 0 | 카페테리아 배식대 옆 선반 | 2 |
 | 카페테리아 (cafeteria) · 병원 (hospital) | 헛걸음 | lost_library_book | 누군가 두고 간 도서관 책 |  | 0 | 카페테리아 창가 자리 의자 위 (도서관에서 누가 들고 나온 책) | 2 |
 | 카페테리아 (cafeteria) · 병원 (hospital) | 헛걸음 | first_aid_guide | 응급 처치 안내서 |  | 0 | 병원 대기 의자 옆 책장 | 2 |
@@ -198,5 +200,7 @@
 - 1층 로비 안내 책상 위 → `/컨텐츠관리 책 연결 visitor_log`  (방문자 명부)
 
 ## 대기 책 켜기
+
+2026-10-26 v2 에서 16권 모두 켬 (마력 각인 책만 보류). 아래는 예전 안내.
 
 [마법·대기] 책은 books.yml 에서 그 책의 commands 주석(#)을 풀고, MagicDiscovery manual-conditions.yml 에 그 마법의 수동 조건을 등록한 뒤 `/서버관리 새로고침 책`. 발견 조건 파일 변경은 오너가 나중에 일괄 재기획할 때 함께 (오너 원칙).

@@ -5,7 +5,7 @@ description: 아공간 배낭의 열린 모든 쪽을 한 번에 정리합니다
 icon: ''
 permission: magic.learned.pack_sort
 discovery:
-  description: 가방 확장권 처음 사용
+  description: 가방이 꽉 찬 채로 떨어진 아이템을 주우려 하기 5번.
 research: ''
 cast:
   command: 마법 pack_sort

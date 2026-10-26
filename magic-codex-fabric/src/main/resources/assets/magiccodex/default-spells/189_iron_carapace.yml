@@ -5,7 +5,7 @@ description: 20초 동안 저항 효과를 부여합니다. 이동 속도 페널
 icon: magiccodex:textures/spells/expansion/iron_carapace.png
 permission: magic.learned.iron_carapace
 discovery:
-  description: 철 갑옷을 입은 상태에서 몬스터에게 누적 100의 피해를 받습니다.
+  description: 철 갑옷 한 벌(4부위)을 입고 몬스터에게 누적 100의 피해 받기.
 research: 몸을 강철처럼 만들 수는 있지만 강철의 무게까지 없앨 수는 없다.
 cast:
   command: 마법 iron_carapace

@@ -5,7 +5,7 @@ description: 모래 한 줌을 앞쪽으로 확 뿌립니다. 피해는 약하�
 icon: ''
 permission: magic.learned.sand_flick
 discovery:
-  description: 사막 바이옴에서 몬스터 30마리 처치
+  description: 사막 바이옴에서 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 sand_flick

@@ -5,7 +5,7 @@ description: 대상 한 명에게 6초 동안 조준선을 겁니다. 끝까지 
 icon: ''
 permission: magic.learned.scorch_lock
 discovery:
-  description: 20블록 밖에서 보스에게 50번 피해 주기
+  description: 20블록 넘게 떨어진 적을 화염 마법으로 150번 맞히기.
 research: ''
 cast:
   command: 마법 scorch_lock

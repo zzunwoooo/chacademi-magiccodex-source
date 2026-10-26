@@ -7,7 +7,7 @@ description: '손에 든 아이템을 4개까지 구워낸다.
 icon: magiccodex:textures/spells/advanced/living_furnace.png
 permission: magic.learned.living_furnace
 discovery:
-  description: 손끝의 화로 마법으로 64번 구워내기
+  description: 손끝의 화로를 64번 사용하기.
 research: 화력.. 화력을 더 올려!!! - 마스터 대장장이
 cast:
   command: 마법 living_furnace

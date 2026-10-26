@@ -5,7 +5,7 @@ description: 발걸음을 깃털처럼 가볍게 합니다. 10분 동안 밭을 
 icon: ''
 permission: magic.learned.light_step
 discovery:
-  description: 농지를 밟아 흙으로 10번 망가뜨리기
+  description: 농지를 밟아 흙으로 10번 망가뜨리기.
 research: ''
 cast:
   command: 마법 light_step

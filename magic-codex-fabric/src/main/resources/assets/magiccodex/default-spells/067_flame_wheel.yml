@@ -5,7 +5,7 @@ description: 지면을 따라 구르는 불 바퀴를 굴려 보냅니다. 적�
 icon: ''
 permission: magic.learned.flame_wheel
 discovery:
-  description: 화염 마법 한 번으로 적 3마리 이상 맞히기 10번
+  description: 화염 마법으로 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 flame_wheel

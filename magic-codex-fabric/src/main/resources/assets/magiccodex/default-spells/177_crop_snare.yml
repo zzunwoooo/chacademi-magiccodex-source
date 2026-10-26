@@ -5,7 +5,7 @@ description: 발밑에 뿌리 덫을 깔아 둡니다. 2분 동안 내가 거둔
 icon: ''
 permission: magic.learned.crop_snare
 discovery:
-  description: 살아난 작물 5마리 놓치기
+  description: 살아난 작물을 처음 처치하기.
 research: ''
 cast:
   command: 마법 crop_snare

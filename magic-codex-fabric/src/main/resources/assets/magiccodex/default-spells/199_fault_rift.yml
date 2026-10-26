@@ -5,7 +5,7 @@ description: 앞쪽 15블록 땅에 균열을 긋고, 잠시 뒤 무너뜨립니
 icon: ''
 permission: magic.learned.fault_rift
 discovery:
-  description: 지진으로 적 100번 맞히기
+  description: 지진으로 적을 100번 맞히기.
 research: ''
 cast:
   command: 마법 fault_rift

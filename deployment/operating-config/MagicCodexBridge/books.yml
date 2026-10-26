@@ -1326,7 +1326,7 @@ books:
           …아니면 반대로, 교수님이 이 책을 보고 배운 걸까?
     commands:
       - "유저관리 {player} 마법조건 주기 flame_leap"
-  # [마법·대기] void_maw 공허의 입 · 안쪽 서가 가장 깊은 칸, 표지가 없는 검은 책 (숨겨진 책)
+  # [마법] void_maw 공허의 입 · 안쪽 서가 가장 깊은 칸, 표지가 없는 검은 책 (숨겨진 책)
   hungry_void:
     title: "텅 빈 것의 식욕"
     required-intelligence: 100
@@ -1353,8 +1353,8 @@ books:
           조용히 제자리에 꽂아 두어라.
 
           배고픈 것은 배고픈 곳에 두는 법이다.
-    # commands:   # 대기: void_maw 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 void_maw"
+    commands:
+      - "유저관리 {player} 마법조건 주기 void_maw"
 
   # ──────────────────────────── 도서관 2층 (library_upper) ────────────────────────────
 
@@ -1552,7 +1552,7 @@ books:
 
           그걸 알아내기 전까지
           숲에는 혼자 들어가지 말 것.
-  # [마법·대기] season_sense 계절 예보 · 천문 칸 (별자리 도감 옆)
+  # [마법] season_sense 계절 예보 · 천문 칸 (별자리 도감 옆)
   season_almanac:
     title: "계절 관측 일지"
     required-intelligence: 0
@@ -1578,9 +1578,9 @@ books:
         right: |
           예보는 예보일 뿐이다.
           그래도 우산을 챙길 시간은 벌어 준다.
-    # commands:   # 대기: season_sense 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 season_sense"
-  # [마법·대기] mirror_tune 반사 조율 · 광학 칸
+    commands:
+      - "유저관리 {player} 마법조건 주기 season_sense"
+  # [마법] mirror_tune 반사 조율 · 광학 칸
   mirrors_and_light:
     title: "거울과 빛의 길"
     required-intelligence: 20
@@ -1604,9 +1604,9 @@ books:
         right: |
           네 번 돌리면 제자리.
           급하면 틀린다. 빛이 어디로 가는지 먼저 봐라.
-    # commands:   # 대기: mirror_tune 을 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 mirror_tune"
-  # [마법·대기] prism_tint 프리즘 물들이기 · 광학 칸 (거울과 빛의 길 옆)
+    commands:
+      - "유저관리 {player} 마법조건 주기 mirror_tune"
+  # [마법] prism_tint 프리즘 물들이기 · 광학 칸 (거울과 빛의 길 옆)
   prism_studies:
     title: "프리즘 연구"
     required-intelligence: 20
@@ -1631,9 +1631,9 @@ books:
 
           무슨 색인지는 대개 문 근처에 적혀 있다.
           잘 읽어라.
-    # commands:   # 대기: prism_tint 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 prism_tint"
-  # [마법·대기] light_beam 빛줄기 · 광학 칸 맨 위
+    commands:
+      - "유저관리 {player} 마법조건 주기 prism_tint"
+  # [마법] light_beam 빛줄기 · 광학 칸 맨 위
   straight_light:
     title: "곧은 빛에 관한 소론"
     required-intelligence: 40
@@ -1657,9 +1657,9 @@ books:
         right: |
           쏘는 동안에는 천천히 움직여라.
           빛은 곧고, 손은 흔들린다.
-    # commands:   # 대기: light_beam 을 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 light_beam"
-  # [마법·대기] rewind 되감기 · 시간 칸
+    commands:
+      - "유저관리 {player} 마법조건 주기 light_beam"
+  # [마법] rewind 되감기 · 시간 칸
   turning_back:
     title: "되돌리는 장치에 관하여"
     required-intelligence: 40
@@ -1685,9 +1685,9 @@ books:
 
           사람의 기억은 그보다 오래가니
           사람에게 한 실수는 사과로 되감아라.
-    # commands:   # 대기: rewind 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 rewind"
-  # [마법·대기] shadow_double 그림자 분신 · 그림자 칸
+    commands:
+      - "유저관리 {player} 마법조건 주기 rewind"
+  # [마법] shadow_double 그림자 분신 · 그림자 칸
   shadow_twin:
     title: "그림자는 두 번 선다"
     required-intelligence: 60
@@ -1712,9 +1712,9 @@ books:
 
           돌아올 곳이 있다는 건
           언제나 든든한 일이다.
-    # commands:   # 대기: shadow_double 을 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 shadow_double"
-  # [마법·대기] loosen_grasp 손아귀 풀기 · 그림자 칸
+    commands:
+      - "유저관리 {player} 마법조건 주기 shadow_double"
+  # [마법] loosen_grasp 손아귀 풀기 · 그림자 칸
   loosened_grip:
     title: "손아귀를 푸는 법"
     required-intelligence: 60
@@ -1737,9 +1737,9 @@ books:
           실전에서는 웃지 못한다.
 
           상대가 무엇을 들었는지 먼저 봐라.
-    # commands:   # 대기: loosen_grasp 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 loosen_grasp"
-  # [마법·대기] warning_thread 경고의 실 · 그림자 칸 맨 위
+    commands:
+      - "유저관리 {player} 마법조건 주기 loosen_grasp"
+  # [마법] warning_thread 경고의 실 · 그림자 칸 맨 위
   warning_thread_manual:
     title: "경계를 긋는 실"
     required-intelligence: 80
@@ -1761,8 +1761,8 @@ books:
           실은 가늘다.
           가는 것으로 큰 것을 묶으려면
           마음이 단단해야 한다.
-    # commands:   # 대기: warning_thread 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 warning_thread"
+    commands:
+      - "유저관리 {player} 마법조건 주기 warning_thread"
 
   # ──────────────────────────── 강의실 1 (classroom_1) — 바람 교실 ────────────────────────────
 
@@ -1883,7 +1883,7 @@ books:
         right: |
           질문하는 학생이 있는 동안은
           이 학교가 아직 학교다.
-  # [마법·대기] conduit_turn 도관 회전 · 실습 교재 칸
+  # [마법] conduit_turn 도관 회전 · 실습 교재 칸
   conduit_design:
     title: "마력 도관 설계"
     required-intelligence: 20
@@ -1906,9 +1906,9 @@ books:
         right: |
           네 번 돌리면 원래대로.
           그래서 서두를 필요가 없다.
-    # commands:   # 대기: conduit_turn 을 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 conduit_turn"
-  # [마법·대기] stone_weight 무게추 · 실습 교재 칸 (마력 도관 설계 옆)
+    commands:
+      - "유저관리 {player} 마법조건 주기 conduit_turn"
+  # [마법] stone_weight 무게추 · 실습 교재 칸 (마력 도관 설계 옆)
   weight_and_balance:
     title: "무게와 균형"
     required-intelligence: 20
@@ -1935,8 +1935,8 @@ books:
           (베르나 교수 메모)
           무게추로 친구 발을 누르지 마~
           진짜로 아파~
-    # commands:   # 대기: stone_weight 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 stone_weight"
+    commands:
+      - "유저관리 {player} 마법조건 주기 stone_weight"
 
   # ──────────────────────────── 강의실 3 (classroom_3) — 화염 실습실 ────────────────────────────
 
@@ -1961,7 +1961,7 @@ books:
         right: |
           커튼은 아직 교체하지 못했다.
           예산이 없다.
-  # [마법·대기] steam_ignition 증기 점화 · 실습 교재 칸
+  # [마법] steam_ignition 증기 점화 · 실습 교재 칸
   steam_primer:
     title: "증기 기관 입문"
     required-intelligence: 40
@@ -1984,9 +1984,9 @@ books:
         right: |
           밸브가 차가우면 몇 번이고 다시 넣어라.
           증기는 서두르지 않는다.
-    # commands:   # 대기: steam_ignition 을 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 steam_ignition"
-  # [마법·대기] thawing_heat 해빙의 열기 · 실습 교재 칸 (증기 기관 입문 옆)
+    commands:
+      - "유저관리 {player} 마법조건 주기 steam_ignition"
+  # [마법] thawing_heat 해빙의 열기 · 실습 교재 칸 (증기 기관 입문 옆)
   thawing_notes:
     title: "얼음을 녹이는 열"
     required-intelligence: 40
@@ -2008,8 +2008,8 @@ books:
         right: |
           (여백) 엘레나 교수님은 이 마법을 싫어하신다.
           "애써 얼린 걸 왜 녹여!"
-    # commands:   # 대기: thawing_heat 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 thawing_heat"
+    commands:
+      - "유저관리 {player} 마법조건 주기 thawing_heat"
 
   # ──────────────────────────── 연금술 공방 (alchemy_workshop) ────────────────────────────
 
@@ -2053,7 +2053,7 @@ books:
         right: |
           (아래 다른 글씨)
           가마솥 찾았습니다. 대강당 지붕 위.
-  # [마법·대기] insight_flash 영감의 섬광 · 작업대 위 노트 꽂이
+  # [마법] insight_flash 영감의 섬광 · 작업대 위 노트 꽂이
   alchemist_insight:
     title: "연금술사의 번뜩임"
     required-intelligence: 40
@@ -2076,8 +2076,8 @@ books:
         right: |
           영감은 답이 아니라 방향이다.
           방향만 알아도 실패가 절반으로 준다.
-    # commands:   # 대기: insight_flash 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 insight_flash"
+    commands:
+      - "유저관리 {player} 마법조건 주기 insight_flash"
 
   # ──────────────────────────── 대강당 (great_hall) ────────────────────────────
 
@@ -2123,7 +2123,7 @@ books:
           누군가 작게 써 두었다.
         right: |
           "다음은 너."
-  # [마법·대기] statue_wake 석상 깨우기 · 단상 뒤 책장 (발견 조건 변경 제안: 밤에 갑옷 거치대 앞 30초 → 이 책)
+  # [마법] statue_wake 석상 깨우기 · 단상 뒤 책장 (발견 조건 변경 제안: 밤에 갑옷 거치대 앞 30초 → 이 책)
   statue_keeper_log:
     title: "석상 관리 일지"
     required-intelligence: 20
@@ -2146,8 +2146,8 @@ books:
           관리인 브루노의 메모:
           "깨우고 나면 꼭 인사할 것.
           석상도 기분이라는 게 있다."
-    # commands:   # 대기: statue_wake 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 statue_wake"
+    commands:
+      - "유저관리 {player} 마법조건 주기 statue_wake"
 
   # ──────────────────────────── 기숙사 입구 (dorm_entrances) · 2층 기숙사 홀 (dorm_hall) ────────────────────────────
 
@@ -2170,7 +2170,7 @@ books:
         right: |
           왜 두 번이냐고 묻지 마라.
           전통이다.
-  # [마법·대기] sealing_thread 봉인의 실 · 기숙사 입구 사감 책상 옆 (발견 조건 변경 제안: 내 상자 100번 열고 닫기 → 이 책)
+  # [마법] sealing_thread 봉인의 실 · 기숙사 입구 사감 책상 옆 (발견 조건 변경 제안: 내 상자 100번 열고 닫기 → 이 책)
   locksmith_secret:
     title: "자물쇠 장인의 비밀"
     required-intelligence: 40
@@ -2193,8 +2193,8 @@ books:
           (사감 메모)
           간식 상자 봉인 금지.
           룸메이트가 운다.
-    # commands:   # 대기: sealing_thread 를 manual-conditions.yml 에 등록한 뒤 주석 풀기
-    #   - "유저관리 {player} 마법조건 주기 sealing_thread"
+    commands:
+      - "유저관리 {player} 마법조건 주기 sealing_thread"
   # [헛걸음] 2층 기숙사 홀 소파 옆 책장
   unsent_letter:
     title: "전하지 못한 편지"
@@ -2265,7 +2265,7 @@ books:
           학생 표정: 실망.
 
           …진짜 그게 비법인데.
-  # [마법·대기] arcane_imprint 마력 각인 · 모루 옆 공구 선반 위 (발견 조건 변경 제안: 모루로 이름 10번 → 이 책)
+  # [헛걸음·보류] arcane_imprint 마력 각인 · 모루 옆 공구 선반 위 (오너 결정 2026-10-26: 이 책은 연결 안 함 — 마력 각인은 "모루로 도구에 이름 10번" 자동 조건 그대로)
   arcane_imprint_manual:
     title: "도구에 새기는 마력"
     required-intelligence: 80
@@ -2287,7 +2287,7 @@ books:
         right: |
           각인이 끝나면 곡괭이는 원래대로.
           마력은 빌려 쓰는 것이다.
-    # commands:   # 대기: arcane_imprint 를 manual-conditions.yml 에 등록하고 discoveries.yml 의 자동 조건을 뺀 뒤 주석 풀기
+    # commands:   # 연결 안 함 (오너 결정 2026-10-26). 켜려면 manual-conditions.yml 에 arcane_imprint 를 넣고 discoveries.yml 자동 조건을 뺀 뒤 주석 풀기
     #   - "유저관리 {player} 마법조건 주기 arcane_imprint"
 
   # ──────────────────────────── 카페테리아 (cafeteria) · 병원 (hospital) ────────────────────────────

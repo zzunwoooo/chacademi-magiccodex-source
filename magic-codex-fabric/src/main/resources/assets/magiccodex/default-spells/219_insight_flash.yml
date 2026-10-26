@@ -5,7 +5,7 @@ description: 번뜩이는 영감을 얻습니다. 다음 연금 시도 한 번�
 icon: ''
 permission: magic.learned.insight_flash
 discovery:
-  description: "\"무언가 반응할 것 같다\" 힌트 10번 보기"
+  description: 연금술 공방에서 「연금술사의 번뜩임」 책 읽기.
 research: ''
 cast:
   command: 마법 insight_flash

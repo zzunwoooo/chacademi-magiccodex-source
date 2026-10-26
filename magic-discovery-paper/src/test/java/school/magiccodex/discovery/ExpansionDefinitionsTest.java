@@ -8,7 +8,7 @@ class ExpansionDefinitionsTest {
     @Test void expansionConditionsAreMappedAsApproved() throws Exception {
         var d = new Definitions(Path.of("src/main/resources/discoveries.yml").toFile());
         d.manual(Path.of("src/main/resources/manual-conditions.yml").toFile());
-        for (String id : List.of("stone_wall", "earth_elemental", "earthquake", "forest_throne", "minor_heal", "protective_ward", "companion_return", "starlight_survey", "shadow_bind"))
+        for (String id : List.of("stone_wall", "earth_elemental", "earthquake", "forest_throne", "minor_heal", "protective_ward", "companion_return", "shadow_bind")) // 2026-10-26 v2: 별빛 측량은 자동 조건(밤 망원경)
             assertEquals(Map.of(Definitions.conditionKey(id), 1d), d.manual.get(id).requirements(), id);
         assertEquals(100d, d.spells.get("earth_shaping").requirements().get("place.dirt_family"));
         assertEquals(Set.of("breed.cow", "breed.sheep", "breed.pig"), d.spells.get("pollen_matchmaking").requirements().keySet());

@@ -5,7 +5,7 @@ description: 빛탄을 쏩니다. 빛탄이 적에게 맞으면 프리즘처럼 
 icon: ''
 permission: magic.learned.prism_shot
 discovery:
-  description: 빛의 낙인 100번 적중
+  description: 빛 마법으로 적을 50번 맞히기.
 research: ''
 cast:
   command: 마법 prism_shot

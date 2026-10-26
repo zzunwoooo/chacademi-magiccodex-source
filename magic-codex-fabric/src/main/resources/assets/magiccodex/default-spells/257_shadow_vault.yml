@@ -5,7 +5,7 @@ description: 발밑 그림자 속 금고 문을 엽니다. 어디서든 내 엔�
 icon: ''
 permission: magic.learned.shadow_vault
 discovery:
-  description: 엔더 상자를 누적 50번 열기
+  description: 엔더 상자를 30번 열기.
 research: ''
 cast:
   command: 마법 shadow_vault

@@ -5,7 +5,7 @@ description: 슬롯에 장착한 동안 화염 지속 피해에 면역이 됩니
 icon: magiccodex:textures/spells/expansion_2/glaze_coating.png
 permission: magic.learned.glaze_coating
 discovery:
-  description: 화염 지속 피해를 100회 받기.
+  description: 불에 타는 피해를 누적 100만큼 받기.
 research: 자신이 시전하는 화염 마법에 상처입을 순 없는법이지
 cast:
   command: 마법 glaze_coating

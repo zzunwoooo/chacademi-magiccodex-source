@@ -5,7 +5,7 @@ description: 하늘 높이 불꽃 기둥을 쏘아 올립니다. 30초 동안 �
 icon: ''
 permission: magic.learned.signal_flare
 discovery:
-  description: 파티를 맺고 야생 진입
+  description: 모닥불을 5개 설치하기.
 research: ''
 cast:
   command: 마법 signal_flare

@@ -5,7 +5,7 @@ description: 땅에 새싹 물결을 퍼뜨려 주변 밭을 살핍니다. 작�
 icon: ''
 permission: magic.learned.crop_survey
 discovery:
-  description: 작물을 누적 200개 수확
+  description: 줄기에 열린 호박·수박을 합쳐 30개 수확하기.
 research: ''
 cast:
   command: 마법 crop_survey

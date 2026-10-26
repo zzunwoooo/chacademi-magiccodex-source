@@ -5,7 +5,7 @@ description: 4초 동안 몸 주위를 도는 바람 장벽을 두릅니다. 날
 icon: ''
 permission: magic.learned.storm_eye
 discovery:
-  description: 되받는 바람으로 투사체 30개 튕기기
+  description: 되받는 바람을 50번 사용하기.
 research: ''
 cast:
   command: 마법 storm_eye

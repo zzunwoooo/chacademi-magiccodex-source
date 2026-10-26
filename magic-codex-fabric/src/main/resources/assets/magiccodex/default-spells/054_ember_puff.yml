@@ -5,7 +5,7 @@ description: 짧게 숨을 들이쉬었다가 앞쪽으로 뜨거운 열기를 �
 icon: ''
 permission: magic.learned.ember_puff
 discovery:
-  description: 적에게 화상 30번 걸기
+  description: 불이 붙은 몬스터 30마리 처치하기.
 research: ''
 cast:
   command: 마법 ember_puff

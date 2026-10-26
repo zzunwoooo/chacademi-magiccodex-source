@@ -28,8 +28,7 @@ final class ExpansionConditions implements Listener, AutoCloseable {
     private final MagicDiscovery plugin;
     private int tick;
     private static final class Trace {
-        double compass, pet, sneak; int dark; boolean petNear; int petChecked;
-        double slimeTop = Double.NaN, apex; int bounces; boolean onSlime;
+        double pet, sneak; int dark; boolean petNear; int petChecked; // 2026-10-26 v2: 나침반 걷기(길잡이 별 → 스토리)·슬라임 연속 반동(용수철 지반 → 슬라임 위 점프) 삭제
         UUID blockedAttacker; int blockedUntil;
     }
     private final Map<UUID, Trace> traces = new HashMap<>();
@@ -107,7 +106,11 @@ final class ExpansionConditions implements Listener, AutoCloseable {
             add(p, "harvest.cactus", n);
         }
         if ((m == Material.WHEAT || m == Material.CARROTS || m == Material.POTATOES || m == Material.BEETROOTS || m == Material.NETHER_WART)
-            && b.getBlockData() instanceof Ageable a && a.getAge() >= a.getMaximumAge()) add(p, "harvest.crops", 1);
+            && b.getBlockData() instanceof Ageable a && a.getAge() >= a.getMaximumAge()) {
+            add(p, "harvest.crops", 1);
+            // 2026-10-26 v2 풍요의 손길: 다 자란 밀·당근·감자 각각
+            if (m == Material.WHEAT) add(p, "harvest.wheat", 1); else if (m == Material.CARROTS) add(p, "harvest.carrots", 1); else if (m == Material.POTATOES) add(p, "harvest.potatoes", 1);
+        }
     }
 
     // ------------------------------------------------------------------ 117 bark stripping with an axe
@@ -253,10 +256,6 @@ final class ExpansionConditions implements Listener, AutoCloseable {
         if (flat < 1e-4 && Math.abs(dy) < 1e-4) return;
         if (!plugin.eligible(p) || flat > 3) return; // teleports / vehicles
         Trace t = null;
-        if (flat > 0 && p.isOnGround() && plugin.needed(p, "guiding_star")
-            && (p.getInventory().getItemInMainHand().getType() == Material.COMPASS || p.getInventory().getItemInOffHand().getType() == Material.COMPASS)) {
-            t = t == null ? trace(p) : t; t.compass += flat; int whole = (int) t.compass; if (whole > 0) { t.compass -= whole; add(p, "walk.compass", whole); }
-        }
         if (flat > 0 && p.isSneaking() && night(p.getWorld()) && plugin.needed(p, "faint_veil")) {
             t = t == null ? trace(p) : t; t.sneak += flat; int whole = (int) t.sneak; if (whole > 0) { t.sneak -= whole; add(p, "sneak.night", whole); }
         }
@@ -265,31 +264,12 @@ final class ExpansionConditions implements Listener, AutoCloseable {
             if (tick - t.petChecked >= 40) { t.petChecked = tick; t.petNear = petNear(p); }
             if (t.petNear) { t.pet += flat; int whole = (int) t.pet; if (whole > 0) { t.pet -= whole; add(p, "travel.with_pet", whole); } }
         }
-        if (plugin.needed(p, "spring_ground")) slime(p, from, to);
     }
     private static boolean petNear(Player p) {
         for (Entity e : p.getNearbyEntities(12, 6, 12))
             if ((e instanceof Wolf || e instanceof Cat) && e instanceof Tameable tame && tame.isTamed() && p.getUniqueId().equals(tame.getOwnerUniqueId())) return true;
         return false;
     }
-    /** 127: three bounces in a row on slime blocks, each reaching 5+ blocks above the slime top. */
-    private void slime(Player p, Location from, Location to) {
-        Trace t = trace(p);
-        Block below = to.clone().subtract(0, 0.2, 0).getBlock();
-        boolean standingOnSlime = below.getType() == Material.SLIME_BLOCK && to.getY() - (below.getY() + 1) < 0.25;
-        if (!standingOnSlime && !Double.isNaN(t.slimeTop)) t.apex = Math.max(t.apex, to.getY());
-        if (standingOnSlime && !t.onSlime) { // landed on slime
-            if (!Double.isNaN(t.slimeTop)) {
-                if (t.apex - t.slimeTop >= 5) { if (++t.bounces >= 3) { add(p, "slime.bounce_chain", 1); t.bounces = 0; } }
-                else t.bounces = 0;
-            }
-            t.slimeTop = below.getY() + 1; t.apex = to.getY();
-        } else if (!standingOnSlime && p.isOnGround() && below.getType() != Material.SLIME_BLOCK && !below.isPassable()) { // landed elsewhere
-            t.slimeTop = Double.NaN; t.bounces = 0;
-        }
-        t.onSlime = standingOnSlime;
-    }
-
     // ------------------------------------------------------------------ polling (106 seasons, 165 dark caves)
     private void tick() {
         tick++;

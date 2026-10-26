@@ -5,7 +5,7 @@ description: 조사할 수 있는 물건에 남아 있는 기억을 읽어 사�
 icon: magiccodex:textures/spells/intermediate/echo_reading.png
 permission: magic.learned.echo_reading
 discovery:
-  description: 분실물 보관소에서 서로 다른 분실물 5개 조사하기.
+  description: 마법이 적힌 책(수업 책 빼고)을 3권 읽기.
 research: 물건은 입이 없지만 아무것도 기억하지 못하는 것은 아니다.
 cast:
   command: 마법 echo_reading

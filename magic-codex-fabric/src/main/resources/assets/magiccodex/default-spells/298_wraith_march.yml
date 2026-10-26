@@ -5,7 +5,7 @@ description: 망령 다섯이 한 줄로 바라보는 방향 15블록을 행진�
 icon: ''
 permission: magic.learned.wraith_march
 discovery:
-  description: 공포의 종으로 몬스터 50마리 겁주기
+  description: 어둠 마법으로 몬스터 300마리 처치하기.
 research: ''
 cast:
   command: 마법 wraith_march

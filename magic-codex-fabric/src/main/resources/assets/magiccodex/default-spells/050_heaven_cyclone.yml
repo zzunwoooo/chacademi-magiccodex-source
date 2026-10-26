@@ -5,7 +5,7 @@ description: 주변에 거대한 폭풍을 10초 동안 일으킵니다. 폭풍 
 icon: ''
 permission: magic.learned.heaven_cyclone
 discovery:
-  description: 바람 마법 30종 습득
+  description: 바람 마법 30종 습득하기.
 research: ''
 cast:
   command: 마법 heaven_cyclone

@@ -210,7 +210,7 @@ def write_all():
     for (o, i, nm, cat, fam, *_r) in M:
         mob = FAMILIES[fam][0]
         disc += (f'  {i}:\n    name: "{nm}"\n    permission: "magic.learned.{i}"\n    icon: "magiccodex:textures/spells/mob_skill/{i}.png"\n'
-                 f'    category: "{cat}"\n    condition-text: "{obj(mob)} 처치하면 5% 확률로 습득."\n    requirements:\n      "kill.mob.{fam}": 1\n'
+                 f'    category: "{cat}"\n    condition-text: "{obj(mob)} 처치하면 5% 확률로 습득합니다."\n    requirements:\n      "kill.mob.{fam}": 1\n'
                  f'    chance: 0.05\n    prerequisites: []\n')
     _section(os.path.join(REPO, 'magic-discovery-paper/src/main/resources/discoveries.yml'), mark, disc)
     # summary doc

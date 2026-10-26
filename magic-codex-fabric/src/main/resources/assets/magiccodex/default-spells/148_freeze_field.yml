@@ -5,7 +5,7 @@ description: 조준한 곳 반경 5에 6초 동안 냉기를 깝니다. 안에 3
 icon: ''
 permission: magic.learned.freeze_field
 discovery:
-  description: 적에게 둔화 100번 걸기
+  description: 물 마법으로 몬스터 500마리 처치하기.
 research: ''
 cast:
   command: 마법 freeze_field

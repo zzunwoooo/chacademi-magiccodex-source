@@ -565,6 +565,7 @@ final class FishingBridge implements PluginMessageListener, Listener {
             if (mailed) notes.add(config.message("mailed", "인벤토리가 가득 차서 우편으로 보냈어요."));
             if (grade == 3) p.getWorld().playSound(p.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, .8f, 1.2f);
         } else if (outcome == FishingProtocol.REFUSED) notes.add("결과를 확인하지 못했어요. 다시 시도해 주세요.");
+        else if (outcome == FishingProtocol.SNAPPED && !s.preview) AuditStats.add(p.getUniqueId(), "낚시줄끊김", 1); // 마법 발견 v2 잔잔한 물결
         removeHook(s);
         s.state = READY; s.ownCast = false; s.since = System.currentTimeMillis();
         send(p, new FishingProtocol.Result(s.id, shown, fishId, FishingGear.cut(name), grade, shape, cm, record, fresh, rewards, mailed,

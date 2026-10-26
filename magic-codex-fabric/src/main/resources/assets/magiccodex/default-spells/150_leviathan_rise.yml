@@ -5,7 +5,7 @@ description: 5초 동안 영창하면 조준한 곳의 물에서 거대한 바�
 icon: ''
 permission: magic.learned.leviathan_rise
 discovery:
-  description: 물 마법 30종 습득 + 전설 물고기 1종 도감 등록
+  description: 물 마법 30종 습득 + 전설 물고기 1마리 낚기.
 research: ''
 cast:
   command: 마법 leviathan_rise

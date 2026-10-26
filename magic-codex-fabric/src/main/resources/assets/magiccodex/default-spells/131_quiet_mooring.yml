@@ -5,7 +5,7 @@ description: 현재 위치가 물일 때 보트를 생성합니다. 물이 아�
 icon: magiccodex:textures/spells/expansion_2/quiet_mooring.png
 permission: magic.learned.quiet_mooring
 discovery:
-  description: 보트를 5회 설치하기.
+  description: 보트를 5번 설치하기.
 research: 노를 내려놓고 책을 읽으려면 먼저 배부터 멈춰야 한다.
 cast:
   command: 마법 quiet_mooring

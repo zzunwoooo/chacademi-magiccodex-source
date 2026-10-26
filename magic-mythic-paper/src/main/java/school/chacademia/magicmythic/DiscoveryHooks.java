@@ -23,9 +23,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *   cast.six_elements   - spells of all six elements within 30 s               (163 별빛 재현)
  *   kill.mob.<family>   - a player killed one of our wild mobs (CA_Wild_*, any colour / shiny, any weapon)
  *                         (300~323 몹 기술 습득 마법: x1 + chance 0.05 = 5% per kill; families = tools/mob_spells.py FAMILIES)
+ * 2026-10-26 발견 조건 v2 (docs/plans/discovery-conditions-v2.md):
+ *   hit.spell.<id> · hit.element.<원소>   - 마법 한 번이 적에게 실제로 들어감 (몬스터·플레이어)
+ *   hit.far · hit.far.<원소>             - 그 적이 시전자에게서 20블록 넘게 떨어져 있었음
+ *   kill.element.<원소>                  - 마지막 타격(3초 안)이 그 원소 마법인 몬스터 처치
+ *   kill.one_hit.<원소>                  - 체력이 가득 찬 몬스터를 그 마법 한 번으로 처치 (크로스 애로우)
+ *   kill.fire_low_health                 - 시전자 체력 하트 1칸(2) 이하에서 화염 마법으로 몬스터 처치 (홍련의 심장)
+ *   kill.crop_mob                        - 살아난 작물(CA_Crop_*) 처치 (작물 붙잡기·수확제의 종)
+ *   처치 귀속: 이제 피해를 넣기 직전에 기록하므로 한 방에 죽인 몬스터도 그 마법 처치로 센다 (예전엔 두 번째 타격부터).
  */
 final class DiscoveryHooks implements Listener {
-    private record Last(UUID caster, String spell, String element, long at) {}
+    record Last(UUID caster, String spell, String element, long at, boolean full) {}
     private static final Map<UUID, Last> LAST = new HashMap<>();
     private static final Map<UUID, Map<String, Long>> ELEMENTS = new HashMap<>();
     static final Set<String> SIX = Set.of("wind", "fire", "water", "earth", "light", "dark");
@@ -37,10 +45,31 @@ final class DiscoveryHooks implements Listener {
     }
 
     // ------------------------------------------------------------------ inputs from mechanics
-    static void hit(Player caster, LivingEntity target, SpellTrace.Now now) {
-        if (now == null || now.spell().isBlank()) return;
-        LAST.put(target.getUniqueId(), new Last(caster.getUniqueId(), now.spell(), now.element(), System.currentTimeMillis()));
+    /** 마법 피해를 넣기 직전 (MagicProtection.damage): 이 타격으로 죽어도 그 마법 처치로 세도록 먼저 적어 둔다. 돌려준 값은 실패 시 되돌릴 이전 기록. */
+    static Last pre(Player caster, LivingEntity target, SpellTrace.Now now, boolean full) {
+        if (now == null || now.spell().isBlank()) return null;
+        Last before = LAST.put(target.getUniqueId(), new Last(caster.getUniqueId(), now.spell(), now.element(), System.currentTimeMillis(), full));
         if (LAST.size() > 4096) { long cut = System.currentTimeMillis() - 3000; LAST.values().removeIf(l -> l.at() < cut); }
+        return before;
+    }
+
+    /** 피해를 넣은 뒤: 들어갔으면 적중을 세고, 막혔으면 기록을 되돌린다. */
+    static void post(Player caster, LivingEntity target, SpellTrace.Now now, boolean ok, Last before) {
+        if (now == null || now.spell().isBlank()) return;
+        if (!ok) {
+            Last mine = LAST.get(target.getUniqueId());
+            if (mine != null && mine.caster().equals(caster.getUniqueId()) && mine.spell().equals(now.spell())) {
+                if (before == null) LAST.remove(target.getUniqueId()); else LAST.put(target.getUniqueId(), before);
+            }
+            return;
+        }
+        if (target.equals(caster) || !(target instanceof org.bukkit.entity.Enemy || target instanceof Player)) return;
+        signal(caster, "hit.spell." + now.spell(), 1);
+        if (SIX.contains(now.element())) signal(caster, "hit.element." + now.element(), 1);
+        if (caster.getWorld() == target.getWorld() && caster.getLocation().distanceSquared(target.getLocation()) > 400) {
+            signal(caster, "hit.far", 1);
+            if (SIX.contains(now.element())) signal(caster, "hit.far." + now.element(), 1);
+        }
     }
 
     static void cast(Player caster, SpellTrace.Now now) {
@@ -76,6 +105,10 @@ final class DiscoveryHooks implements Listener {
         if (caster == null) return;
         signal(caster, "kill.spell." + last.spell(), 1);
         if ("light".equals(last.element()) && Targets.undead(e.getEntity())) signal(caster, "kill.light_undead", 1);
+        if (!(e.getEntity() instanceof org.bukkit.entity.Enemy) || !SIX.contains(last.element())) return;
+        signal(caster, "kill.element." + last.element(), 1);
+        if (last.full()) signal(caster, "kill.one_hit." + last.element(), 1);
+        if ("fire".equals(last.element()) && caster.getHealth() <= 2.0) signal(caster, "kill.fire_low_health", 1);
     }
 
     /** CA_Wild_ name prefix (after "CA_Wild_") -> family key. Longest prefixes first is not needed: none overlap. */
@@ -95,8 +128,10 @@ final class DiscoveryHooks implements Listener {
     private static void mobKill(EntityDeathEvent e) {
         Player killer = e.getEntity().getKiller();
         if (killer == null) return;
-        String family = mobFamily(Targets.mythicType(e.getEntity()));
+        String type = Targets.mythicType(e.getEntity());
+        String family = mobFamily(type);
         if (family != null) signal(killer, "kill.mob." + family, 1);
+        if (type != null && type.startsWith("CA_Crop_")) signal(killer, "kill.crop_mob", 1);
     }
 
     // ------------------------------------------------------------------ mana 0 (polled; the Bridge has no mana event)
