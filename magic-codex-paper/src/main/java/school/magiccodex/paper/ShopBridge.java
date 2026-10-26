@@ -131,7 +131,11 @@ cost+=costPreview.length+costName.getBytes(java.nio.charset.StandardCharsets.UTF
   // 닫기는 거래 중·연속 요청 제한·거리와 상관없이 받는다 (세션만 지움). 튜토리얼 재료 구매 확인이 닫기에서 일어난다.
   if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());tutorialClosed(p,s.shop);return;}
   if(!near(p,s.anchor))return;long now=System.currentTimeMillis();if(busy.contains(p.getUniqueId())||now<limits.getOrDefault(p.getUniqueId(),0L))return;limits.put(p.getUniqueId(),now+200);s=new Session(p,s.token,r.sequence(),s.shop,s.anchor);sessions.put(p.getUniqueId(),s);if(r.action()==ShopProtocol.CLOSE){sessions.remove(p.getUniqueId());return;}if(r.action()==ShopProtocol.OPEN){send(p,s,r.sequence(),"",r.search());return;}trade(p,s,r);}
- private void trade(Player p,Session s,Request r){var shop=catalog.get(s.shop);var product=shop==null?null:shop.products().stream().filter(i->i.id().equals(r.product())).findFirst().orElse(null);if(product==null||shop.revision()!=r.revision()){send(p,s,r.sequence(),"상점 설정이 변경되었습니다. 다시 확인해 주세요.",r.search());return;}int quantity=ShopProtocol.quantity(r.quantity());boolean selling=r.action()==ShopProtocol.SELL;ItemStack sample;try{sample=sample(product);}catch(RuntimeException e){send(p,s,r.sequence(),"이 상품은 지금 거래할 수 없습니다. 관리자에게 알려 주세요.",r.search());return;}if(quantity>sample.getMaxStackSize()*9){send(p,s,r.sequence(),"한 거래의 우편 첨부 가능 수량을 초과했습니다.",r.search());return;}boolean exchange=product.exchange();if(!exchange&&economy()==null){send(p,s,r.sequence(),"경제 서비스 연결이 필요합니다.",r.search());return;}var before=MailboxBridge.copy(p.getInventory().getStorageContents());var after=MailboxBridge.copy(before);
+ private void trade(Player p,Session s,Request r){var shop=catalog.get(s.shop);var product=shop==null?null:shop.products().stream().filter(i->i.id().equals(r.product())).findFirst().orElse(null);if(product==null||shop.revision()!=r.revision()){send(p,s,r.sequence(),"상점 설정이 변경되었습니다. 다시 확인해 주세요.",r.search());return;}int quantity=ShopProtocol.quantity(r.quantity());boolean selling=r.action()==ShopProtocol.SELL;ItemStack sample;try{sample=sample(product);}catch(RuntimeException e){send(p,s,r.sequence(),"이 상품은 지금 거래할 수 없습니다. 관리자에게 알려 주세요.",r.search());return;}if(quantity>sample.getMaxStackSize()*9){send(p,s,r.sequence(),"한 거래의 우편 첨부 가능 수량을 초과했습니다.",r.search());return;}boolean exchange=product.exchange();if(!exchange&&economy()==null){send(p,s,r.sequence(),"경제 서비스 연결이 필요합니다.",r.search());return;}
+  // 공통 지급 칸 판정 (RewardDelivery, 2026-10-26 검수): 아공간 배낭 쪽을 넘기는 중·잠긴 쪽이면 27칸(9~35)에서 판매·교환 아이템을 빼지 않는다
+  // (넘김이 끝날 때 옛 쪽이 공유 DB 에 그대로 남아 뺀 아이템이 복제됨). 연금술·의뢰·우편 수령과 같은 거절.
+  if((selling||exchange)&&!RewardDelivery.mainUsable(plugin,p)){send(p,s,r.sequence(),"배낭 쪽을 넘기는 중이에요. 잠시 뒤 다시 해 주세요.",r.search());return;}
+  var before=MailboxBridge.copy(p.getInventory().getStorageContents());var after=MailboxBridge.copy(before);
   // 교환 상품: 돈 대신 비용 아이템(개수 × 수량)을 인벤토리에서 낸다. 판매는 없다. 경제(Vault)는 필요 없다.
   if(exchange){if(selling){send(p,s,r.sequence(),"교환 상품은 팔 수 없어요.",r.search());return;}if(!costReady(product.costItem())){send(p,s,r.sequence(),"아이템 정보를 확인할 수 없어 지금은 교환할 수 없어요.",r.search());return;}
    int[] counts=amounts(after),left=ShopExchange.take(costKeys(after),counts,product.costItem(),ShopExchange.total(product.costCount(),quantity));
@@ -140,7 +144,7 @@ cost+=costPreview.length+costName.getBytes(java.nio.charset.StandardCharsets.UTF
   UUID owner=p.getUniqueId();busy.add(owner);
   // 접수 단계(work): 대기열이 차 있으면 여기서 거절되고 아무 것도 바뀌지 않는다.
   work(owner,()->store.prepare(owner,r.operation(),s.shop,r.revision(),r.product(),quantity,selling,origin),order->{
-   if(!ready(p)||!near(p,s.anchor)||(selling||exchange)&&!MailboxBridge.same(before,p.getInventory().getStorageContents())){abort(order,List.of("prepared"),()->done(p,s,r,"접속/인벤토리가 변경되었습니다."));return;}
+   if(!ready(p)||!near(p,s.anchor)||(selling||exchange)&&(!RewardDelivery.mainUsable(plugin,p)||!MailboxBridge.same(before,p.getInventory().getStorageContents()))){abort(order,List.of("prepared"),()->done(p,s,r,"접속/인벤토리가 변경되었습니다."));return;}
    if(selling)sell(p,order,after,()->{audit(order,s.shop,sample);done(p,s,r,"판매가 완료되었습니다.",true);},m->done(p,s,r,m));
    else if(exchange)exchange(p,order,after,()->{audit(order,s.shop,sample);done(p,s,r,"교환이 완료되었습니다. 우편함을 확인해 주세요.",true);},m->done(p,s,r,m));
    else buy(p,s,r,order,sample);
