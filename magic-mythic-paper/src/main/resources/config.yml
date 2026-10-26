@@ -5,7 +5,7 @@ boss-tags: [chacademia_boss]
 boss-mythic-prefixes: [BOSS_]
 boss-knockback-multiplier: 0.3
 
-# 전투 스펙 (오너 승인 2026-10-26, docs/plans/combat-spec.md) — 플레이어가 플레이어를 마법으로 맞힐 때만. 몹 상대 피해·몹이 쓰는 마법은 그대로.
+# 전투 스펙 (오너 승인 2026-10-26, docs/plans/combat-spec.md) — 플레이어가 플레이어를 마법으로 맞힐 때 (+ mob-magic-armor: 몹이 쓰는 마법). 플레이어가 몹을 맞히는 피해는 그대로.
 pvp:
   enabled: true
   # 마법 방어 = min(magic-armor-cap, (방어력 + 보호 인첸트 레벨 합(최대 protection-epf-max)) × magic-armor-per-point).
@@ -19,6 +19,9 @@ pvp:
   fallback-scale: 0.13
   # 다단 히트가 바닐라 무적 시간(0.5초)에 먹히지 않게 PvP 마법 타격 직전에 무적 시간을 0으로.
   reset-invulnerability: true
+  # 몹 스펙 #109 (2026-10-26): 몹이 플레이어에게 쓰는 마법(몹 스킬 chatelegraph·chamobshot)도 위 마법 방어·저항으로 줄임 (예전: 바닐라 방어 → 다이아+보호면 80% 넘게 막힘).
+  # PvP 배율·무적 시간 초기화는 없음. 몹 근접(미몹 Damage)은 바닐라 방어 그대로.
+  mob-magic-armor: true
 
 # 개별 기능 ----------------------------------------------------------------
 # 만년빙옥: 갇힌 적이 최대 체력의 이 비율 이상 피해를 받으면 풀림

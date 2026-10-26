@@ -8,11 +8,12 @@ import org.bukkit.configuration.ConfigurationSection;
  *  - 마법 방어 = min(cap, (방어력 + 보호 EPF 합(최대 20)) × perPoint). 방어 강도는 무시. 바닐라 방어·보호 인첸트 대신 이 값만 쓴다.
  *  - 저항 효과는 단계당 20% 그대로, 합해서 resistanceCap 까지 (마법 방어 뒤에 곱함).
  *  - 처형(크로스 애로우)은 감소 0 (방어·저항 모두 무시).
- * 몹이 쓰는 마법·플레이어가 몹을 맞히는 마법은 바꾸지 않는다 (몹 피해·체력은 #109 에서 따로).
+ * 플레이어가 몹을 맞히는 마법은 바꾸지 않는다. 몹이 플레이어에게 쓰는 마법은 #109(몹 스펙)부터 같은 마법 방어(mobMagicArmor)만 적용.
  */
 final class MagicArmor {
-    record Settings(boolean enabled, double cap, double perPoint, int epfMax, double resistanceCap, double fallbackScale, boolean resetInvulnerability) {
-        static final Settings DEFAULT = new Settings(true, 0.45, 0.0125, 20, 0.20, 0.13, true);
+    /** mobMagicArmor: 몹 스펙 #109 (2026-10-26) — 몹이 플레이어에게 쓰는 마법(몹 스킬)도 같은 마법 방어 (PvP 배율·무적 시간 초기화는 없음). */
+    record Settings(boolean enabled, double cap, double perPoint, int epfMax, double resistanceCap, double fallbackScale, boolean resetInvulnerability, boolean mobMagicArmor) {
+        static final Settings DEFAULT = new Settings(true, 0.45, 0.0125, 20, 0.20, 0.13, true, true);
         static Settings load(ConfigurationSection c) {
             if (c == null) return DEFAULT;
             return new Settings(c.getBoolean("enabled", true),
@@ -21,7 +22,8 @@ final class MagicArmor {
                     Math.clamp(c.getInt("protection-epf-max", DEFAULT.epfMax), 0, 64),
                     Math.clamp(c.getDouble("resistance-cap", DEFAULT.resistanceCap), 0, 1),
                     Math.clamp(c.getDouble("fallback-scale", DEFAULT.fallbackScale), 0, 10),
-                    c.getBoolean("reset-invulnerability", true));
+                    c.getBoolean("reset-invulnerability", true),
+                    c.getBoolean("mob-magic-armor", true));
         }
     }
     static volatile Settings current = Settings.DEFAULT;

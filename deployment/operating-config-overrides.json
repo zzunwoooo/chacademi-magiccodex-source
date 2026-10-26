@@ -67,6 +67,18 @@
    "overlay": "deployment/operating-config/MythicMobs/Skills/chacademi_training_dummy.yml",
    "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_training_dummy.yml",
    "kind": "mythic"
+  },
+  {
+   "overlay": "deployment/operating-config/MythicMobs/Skills/chacademi_mob_skills.yml",
+   "source": "magic-mythic-paper/mythicmobs/Skills/chacademi_mob_skills.yml",
+   "kind": "mythic",
+   "generator": "tools/mob_spec.py"
+  },
+  {
+   "overlay": "deployment/operating-config/MythicMobs/Mobs/chacademi_mob_minions.yml",
+   "source": "magic-mythic-paper/mythicmobs/Mobs/chacademi_mob_minions.yml",
+   "kind": "mythic",
+   "generator": "tools/mob_spec.py"
   }
  ],
  "keep": [

@@ -1518,3 +1518,36 @@ spells:
 - 대시보드를 쓰면 `servers=` 에 `tutorial` 추가 + 주석 풀기, MagicCodexBridge `server-heartbeat.yml` server-id `tutorial`(또는 폴더 이름 tutorial).
 
 **검증**: 바뀐 Java 문법 검사 통과. GPT 빌드 때 `TutorialRouterTest`·`PortraitSettingsTest`·`ServerHeartbeatTest` 확인.
+## 47. 몹 스펙 (메모 #109, 2026-10-26)
+오너: 수치는 Claude 가 정함 (전투 스펙 §34 기준). 근거·표·게임 확인: [docs/plans/mob-spec.md](../plans/mob-spec.md), 계산 `python3 docs/plans/mob-spec/model.py`.
+
+| 등급 | 체력 전 → 후 | 근접 전 → 후 | 몹 스킬 피해 |
+|---|---|---|---|
+| 1성 (33종) | 20 → **40** | 0 (공격 안 함) | × 1.0 |
+| 2성 (45종) | 55 → **60** | 5 → **3** (원래 0 이면 0) | × **1.1** |
+| 3성 (59종) | 195 → **380** | 12.15 → **8** | × **1.8** |
+| 보스 얼음핵 | 1050 → **2000** | 18.9 → **24** | × **3.5** |
+| 소환수 2종 | 14·16 → **30** | 3 → **4** | — |
+
+- 변색종도 같은 값. 몹 스킬 = `chacademi_mob_skills.yml` `flat=` 393줄을 원래 값 × 배율 (스킬끼리 차이 그대로). 펫 스킬은 그대로.
+- **몹이 쓰는 마법(몹 스킬)도 마법 방어** min(45%, (방어력+보호 레벨)×1.25%) — §34 의 "몹이 쓰는 마법은 바닐라 방어 그대로" 를 바꿈. 무적 시간 초기화·PvP 배율 없음. `MagicMythic config.yml` `pvp.mob-magic-armor` (기본 true). 몹 근접은 바닐라 방어 그대로. 플레이어 → 몹 피해는 그대로.
+- 처치/버팀 (대충 · 적당 · 한계, 피하며 싸울 때): 2성 처치 18 · 2 · 2초 / 버팀 25 · 65 · 98초. 3성 처치 157 · 21 · 17초 / 버팀 11 · 33 · 52초 (서서 맞으면 4 · 14 · 25초). 보스 한계 혼자 처치 97초 vs 버팀 23초, 적당 4명 33초.
+  → 대충은 2성까지, 3성은 적당이 피해야 이김, 보스는 3~4명.
+- 1차 값(2성 80/5/×1.3 · 3성 450/14/×2.5)은 근접을 빼고 계산해 너무 셌음 → 같은 날 2차로 낮춤.
+- 도구: `tools/mob_spec.py` (`apply`·`check`·`apply-mobs <서버 몹 파일>`), 원래 값 `docs/plans/mob-spec/baseline.json` (항상 여기서 계산 → 여러 번 돌려도 같음).
+- HUD: "2000 / 2000" 그대로 들어감. 최대 체력 2000 < Paper 기본 상한 2048.
+
+**바꾼 파일**
+- `magic-mythic-paper/mythicmobs/Skills/chacademi_mob_skills.yml` · `Mobs/chacademi_mob_minions.yml` → overlay `deployment/operating-config/MythicMobs/Skills/chacademi_mob_skills.yml` · `Mobs/chacademi_mob_minions.yml` (**새로 overlay 에 넣음**, generator `tools/mob_spec.py`, `operating_overlay.py check` 차이 없음)
+- `reference/output/wildlife-ground-v3/chacademia_custom_wild.yml` (저장소 사본, Health·Damage 만)
+- `MagicArmor` · `MagicProtection` (Mode.MOB) / `config.yml` `pvp.mob-magic-armor` / 테스트 `MobMagicArmorTest` · `WildDefinitionsTest`
+- `magic-mythic-paper/tools/pet_companions.py` (펫 피해 = baseline 원래 값, 결과 변화 없음)
+- 문서 `docs/plans/mob-spec.md` · `mob-spec/model.py` · `combat-spec.md`(몹 수치 줄)
+
+**배포**
+- MythicMobs 두 파일 교체 → `/mm reload`.
+- 야생 `plugins/MythicMobs/Mobs/chacademia_custom_wild.yml` 은 **통째로 바꾸지 말고** `python3 tools/mob_spec.py apply-mobs <그 파일>` (Health·Damage 줄만, 운영본에만 있는 몹 스킬 Skills 줄 보존) → `/mm reload`. 살아 있던 몹은 다시 스폰돼야 새 값.
+- ChAcademiaMagicMythic jar + `config.yml` `pvp.mob-magic-armor: true` (없어도 기본 true).
+- 렉: 숫자만 바뀜. 타격마다 곱셈 몇 번 (§34 와 같은 경로).
+
+**검증**: 바뀐 Java 문법 검사 통과. Gradle 없음 → **GPT 빌드 때 `MobMagicArmorTest`·`WildDefinitionsTest`·`WildlifeSkillReferencesTest` 확인.**
