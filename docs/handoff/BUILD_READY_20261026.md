@@ -38,12 +38,15 @@
 - 정보창 v3 (#87) · 인기도 · 상대 일러스트(ChacaPortrait + portrait-protocol + 모드) · 하우징 SHOWCASE (#108, ChacaHousing + Bridge + 모드).
 - 청크 점유 #88 · 기숙사 점수 홀로그램 #106 · 확성기 #102 · 허수아비 표시 #107 (MagicMythic + 모드) · 동행 펫 #81 · 길잡이 별 #93 (스토리 플러그인+모드+Bridge).
 - 전투 스펙·장신구 강화 (§34) — Bridge·MagicMythic·MythicMobs 스킬·클라 모드(EnhancementScreen·도감). 데이터팩 필요 없음.
+- 뽑기 상자 API 상자 (§36) — Bridge + protocol + 클라 모드 (새 채널, 상자 PNG 5장 리소스 포함). 공통 지급 함수 RewardDelivery 로 우편 수령·낚시·퀘스트·연금술·환불 경로가 바뀜.
+- NPC 통계 (§19 추가) — ChacaNPC + Bridge.
 
 ## 3. 서버 파일 (jar 가 안 덮어씀)
 - `deployment/operating-config/**` 전부 overlay 대로 (MagicCodexBridge·MythicMobs·PortableVFX·ChacademyStory).
 - 새 설정은 처음 켤 때 자동 생성: chunk-claims · popularity · megaphone · house-board · convenience-commands · audit · server-heartbeat · combat-lock · pet-companions(overlay) 등 — 각 § 의 기본값 확인.
 - **ItemsAdder 실제 id 맞추기**: FINAL_PATCHES 부록 A (확성기·인기도 해제권·확정 뽑기권 3종·땅문서·가방 확장권 — 아이템은 운영에 이미 있음).
 - NPC 일과표 85명: `docs/plans/npc-schedules/` → 학교 `plugins/ChacaNPC/npcs/` (먼저 places.yml 에 34곳 등록 — docs/plans/npc-places.md), `/서버관리 새로고침 NPC`.
+- 뽑기 상자: `plugins/MagicCodexBridge/loot-boxes.yml` (overlay 는 꺼진 예시 상자만 — 실제 상자는 운영자가 `/상자관리 생성`·`관리` 로 만듦). 서버 `audit.yml` 에 새 종류 "뽑기상자" 반영(§36).
 - 책 (#105): `MagicCodexBridge/books.yml` overlay 교체 → `/서버관리 새로고침 책` (§35, 블록 연결은 오너가 docs/plans/library-books.md 대로).
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - TAB 한글 닉 (#110): `deployment/tab/`.
@@ -63,7 +66,7 @@
 
 ## 6. 오너 검수 대기 (빌드에는 포함, 수치는 바뀔 수 있음)
 - 전투 스펙: 재계산 결과 적당 vs 한계 1.90배 (강화 상승량 = 단계값 × 코어 품질 배율 "섞기", §34 추가) (목표 1.6배 초과 — 펫 도감 20·마나 회복 8 유지 때문). 대충끼리 95초. 조정안은 docs/plans/combat-spec.md.
-- 책 67권 (#105), 아공간 배낭 잠긴 쪽 (§33).
+- 책 67권 (#105), 아공간 배낭 잠긴 쪽 (§33), 뽑기 상자 판단 6가지(§36: 10개 대표 등급 = 최고 등급, 열쇠 10개 미만이면 10연 거절, 안 보이는 잠금 해제 쪽엔 안 넣고 우편, 쪽 넘김 중 퀘스트·연금술 잠깐 거절, 환불 넘치면 바닥 대신 우편, 기록 종류 이름).
 
 ## 7. 컴파일 확인 상태
-- 70044a79 이후 바뀐 Java 336개 전부 문법 검사 통과. 타입 검사는 못 함 → 첫 빌드 컴파일 오류는 각 § "확인 필요" 참고, 고친 뒤 오너에게 보고.
+- 70044a79 이후 바뀐 Java 352개 전부 문법 검사 통과. 타입 검사는 못 함 → 첫 빌드 컴파일 오류는 각 § "확인 필요" 참고, 고친 뒤 오너에게 보고.
