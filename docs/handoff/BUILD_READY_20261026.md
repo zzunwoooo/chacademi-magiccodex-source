@@ -1,6 +1,5 @@
-# (초안 — 아직 빌드하지 말 것) 오픈 최종 2차 — GPT 빌드·배포 지시 (Claude 2026-10-26)
+# [BUILD-READY] 오픈 최종 2차 — GPT 빌드·배포 지시 (Claude 2026-10-26)
 
-> 이 파일은 초안이다. 전투 스펙·장신구 강화·책이 들어간 뒤 `BUILD_READY_20261026.md` 로 이름을 바꿔 `[BUILD-READY]` 커밋으로 올린다. 그 전에는 빌드하지 않는다.
 
 브랜치 `claude/opening-final-20261025` 의 **이 파일이 들어간 커밋**을 빌드한다 (커밋 메시지에 `[BUILD-READY]`).
 기준: `70044a79` (2026-10-25 밤 운영 배포) 이후 모든 패치. 자세한 내용·파일 위치는 [CLAUDE_OPENING_FINAL_PATCHES_20261026](CLAUDE_OPENING_FINAL_PATCHES_20261026.md) (§번호), 오너 결정은 [CLAUDE_OPENING_PREP_REVIEW_20261025](CLAUDE_OPENING_PREP_REVIEW_20261025.md).
@@ -38,14 +37,14 @@
 - 상점 응답 SHP4 (#98 교환) — Bridge + 모드. **한쪽만이면 상점이 안 열림.**
 - 정보창 v3 (#87) · 인기도 · 상대 일러스트(ChacaPortrait + portrait-protocol + 모드) · 하우징 SHOWCASE (#108, ChacaHousing + Bridge + 모드).
 - 청크 점유 #88 · 기숙사 점수 홀로그램 #106 · 확성기 #102 · 허수아비 표시 #107 (MagicMythic + 모드) · 동행 펫 #81 · 길잡이 별 #93 (스토리 플러그인+모드+Bridge).
-- 전투 스펙·장신구 강화 (§33) — Bridge·MagicMythic·MythicMobs 스킬·데이터팩·모드.
+- 전투 스펙·장신구 강화 (§34) — Bridge·MagicMythic·MythicMobs 스킬·클라 모드(EnhancementScreen·도감). 데이터팩 필요 없음.
 
 ## 3. 서버 파일 (jar 가 안 덮어씀)
 - `deployment/operating-config/**` 전부 overlay 대로 (MagicCodexBridge·MythicMobs·PortableVFX·ChacademyStory).
 - 새 설정은 처음 켤 때 자동 생성: chunk-claims · popularity · megaphone · house-board · convenience-commands · audit · server-heartbeat · combat-lock · pet-companions(overlay) 등 — 각 § 의 기본값 확인.
 - **ItemsAdder 실제 id 맞추기**: FINAL_PATCHES 부록 A (확성기·인기도 해제권·확정 뽑기권 3종·땅문서·가방 확장권 — 아이템은 운영에 이미 있음).
 - NPC 일과표 85명: `docs/plans/npc-schedules/` → 학교 `plugins/ChacaNPC/npcs/` (먼저 places.yml 에 34곳 등록 — docs/plans/npc-places.md), `/서버관리 새로고침 NPC`.
-- 책 (#105): books.yml — §(책 섹션).
+- 책 (#105): `MagicCodexBridge/books.yml` overlay 교체 → `/서버관리 새로고침 책` (§35, 블록 연결은 오너가 docs/plans/library-books.md 대로).
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - TAB 한글 닉 (#110): `deployment/tab/`.
 
@@ -57,5 +56,14 @@
 - HuskHomes `/home`·`/sethome` 권한 끄기 권장 (#95).
 - DB: 학교·야생·아레나 `database.properties` 가 같은 MariaDB (공유 표 자동 생성: codex_audit_log · codex_player_stats · codex_popularity* · codex_chunk_claim/trust · codex_housing_showcase · codex_server_status …). 안 쓰는 `codex_artifact_pity` 는 지워도 됨.
 
-## 5. 오너 검수 대기 (빌드에는 포함, 수치는 바뀔 수 있음)
-- 전투 스펙·장신구 강화 (§33), 책 #105 — 오너가 일어나서 검수.
+## 5. 전투 스펙 배포 주의 (§34)
+- 서버의 `MagicCodexBridge/config.yml`·`enhancement.yml` 은 jar 가 안 덮음 → 새 값으로 **교체** (enhancement.yml 이 옛 것이면 장신구 강화가 꺼져 있음). MagicMythic `config.yml` 도 새 키(마법 방어 상한 등) 반영.
+- 이미 접속했던 계정은 최대 마나 100·회복 5 가 저장돼 있음 → 접속자 전체 `/유저관리 <닉> 스탯 최대마나 설정 300`, `스탯 마나회복 설정 8` (또는 GPT 가 일괄 처리 방법 판단, 오너에게 보고).
+- 운영 jar 에 저장소에 없는 장신구 강화가 이미 있으면 오너에게 알리고 이 구현과 합칠 것 (오너: "이미 있다").
+
+## 6. 오너 검수 대기 (빌드에는 포함, 수치는 바뀔 수 있음)
+- 전투 스펙: 재계산 결과 적당 vs 한계 1.81배 (목표 1.6배 초과 — 펫 도감 20·마나 회복 8 유지 때문). 대충끼리 95초. 조정안은 docs/plans/combat-spec.md.
+- 책 67권 (#105), 아공간 배낭 잠긴 쪽 (§33).
+
+## 7. 컴파일 확인 상태
+- 70044a79 이후 바뀐 Java 336개 전부 문법 검사 통과. 타입 검사는 못 함 → 첫 빌드 컴파일 오류는 각 § "확인 필요" 참고, 고친 뒤 오너에게 보고.
