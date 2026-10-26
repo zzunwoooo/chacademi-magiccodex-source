@@ -160,6 +160,8 @@ public final class HudTextureCache implements AutoCloseable {
         var value=get(new Region(path,0,0,0,0));
         return value.map(t->new int[]{t.width(),t.height()}).orElse(null);
     }
+    /** True once a whole file has finished loading and failed (missing/corrupt PNG); false while loading or loaded. */
+    public boolean failed(String path){var value=textures.get(new Region(path,0,0,0,0));return value!=null&&value.isEmpty();}
     /** Whole file stretched into x,y,w,h (no aspect fit). */
     public boolean drawStretched(DrawContext ctx,String path,int x,int y,int w,int h,int tint) {
         if(w<=0||h<=0)return true;

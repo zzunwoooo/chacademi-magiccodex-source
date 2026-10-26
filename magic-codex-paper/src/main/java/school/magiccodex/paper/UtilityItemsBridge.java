@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import school.magiccodex.protocol.TarotProtocol;
 
 /**
  * 사용 아이템 3종 (2026-10-26 오너 결정). 설정 utility-items.yml, 고친 뒤 /서버관리 새로고침 사용아이템.
@@ -28,8 +29,9 @@ import org.bukkit.inventory.ItemStack;
  *       /월드관리 변색종 지정 과 같은 ShinyBridge.mark: 변색종 모델 ca_xxx_s 로 바꾸고 표식·이름 색·반짝임). 성공하면 1개.
  *       변색종 모델이 없는 몹·이미 변색종·보스·교화 중·등록 안 된 몹·막힌 세계는 거절(아이템 그대로).
  *       교화하면 변색종 펫이 된다 (TamingBridge.profile: 변색종이면 pet-id + "_shiny").</li>
- *   <li><b>마법 힌트권</b> {@code item:spell_hint}: 우클릭 → 깨달음의 빛(221)의 빛의 책 연출(카탈로그 enlighten_hint) +
- *       힌트 한 줄 (별 1~3, LifeSpells.hintCard). 남은 마법이 없으면 거절. 타로 카드 UI 가 생기면 {@link #showHint} 만 바꾸면 된다.</li>
+ *   <li><b>마법 힌트권</b> {@code item:spell_hint}: 우클릭 → 서버가 별(1~3)·힌트(LifeSpells.hintCard)·카드 그림(0~19)을 정하고
+ *       1개 사용 → MagicCodex 모드에 「운명의 타로」 창 (TarotProtocol, §41). 모드 없는 클라이언트는 예전처럼 깨달음의 빛(221)의
+ *       빛의 책 연출(카탈로그 enlighten_hint) + 알림·채팅 한 줄. 남은 마법이 없으면 거절.</li>
  *   <li><b>재화 주머니</b> {@code item:money_pouch}: 우클릭 → Vault 로 돈 지급 (금액 표 money-pouch.tiers), 결과 알림, 운영 기록 "돈".</li>
  * </ul>
  * 서버 부담: 우클릭 때만 (아이템 id 비교 → 해당할 때만 계산). 매 틱 작업·DB 없음. 메인 스레드 전용.
@@ -40,7 +42,7 @@ final class UtilityItemsBridge implements Listener {
     private final Map<UUID, Long> gate = new HashMap<>();
 
     private record Settings(String shinyItem, double shinyRange, List<String> shinyPrefixes, Set<String> shinyWorlds,
-                            String hintItem, double[] stars,
+                            String hintItem, double[] stars, boolean tarotUi,
                             String pouchItem, long pouchStep, List<MoneyPouchRules.Tier> tiers) {}
     private Settings settings;
 
@@ -49,6 +51,7 @@ final class UtilityItemsBridge implements Listener {
         this.itemsAdder = new ItemsAdderItems(plugin.getLogger());
         reload();
         Bukkit.getPluginManager().registerEvents(this, plugin);
+        plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, TarotProtocol.CHANNEL);   // 운명의 타로 (§41)
         ChacaApi.reload(plugin, "사용아이템", "utility-items.yml (변색종 변경권·마법 힌트권·재화 주머니)", this::reload);
     }
 
@@ -69,10 +72,11 @@ final class UtilityItemsBridge implements Listener {
             if (!Double.isFinite(stars[i]) || stars[i] < 0) throw new IllegalArgumentException("utility-items.yml spell-hint.stars 는 0 이상 숫자");
         }
         if (stars[0] + stars[1] + stars[2] <= 0) throw new IllegalArgumentException("utility-items.yml spell-hint.stars 합이 0");
+        boolean tarotUi = y.getBoolean("spell-hint.tarot-ui", true);
         String pouch = id(y.getString("money-pouch.item", "item:money_pouch"), "money-pouch.item");
         long step = Math.clamp(y.getLong("money-pouch.round-to", 10), 1, 1000);
         var tiers = MoneyPouchRules.parse(y.getMapList("money-pouch.tiers"));
-        settings = new Settings(shiny, range, prefixes.isEmpty() ? List.of("CA_Wild_") : prefixes, worlds, hint, stars, pouch, step, tiers);
+        settings = new Settings(shiny, range, prefixes.isEmpty() ? List.of("CA_Wild_") : prefixes, worlds, hint, stars, tarotUi, pouch, step, tiers);
     }
 
     private static String id(String v, String key) {
@@ -212,12 +216,24 @@ final class UtilityItemsBridge implements Listener {
         return 3;
     }
 
+    /** 카드 그림 번호 0~19 (겉모습만, 힌트·별과 따로 뽑음 — 오너 명세). 지금은 20종 같은 확률. */
+    static int rollIllustration() { return ThreadLocalRandom.current().nextInt(TarotProtocol.ILLUSTRATIONS); }
+
     /**
-     * 보여 주기. 타로 카드 UI 가 아직 저장소에 없어서 (2026-10-26) 가장 가까운 기존 연출 = 깨달음의 빛(221)의 빛의 책 VFX
-     * (PortableVFX 카탈로그 enlighten_hint, 마나·쿨 없이 연출만) + 1.2초 뒤(책이 다 펼쳐질 때) 알림 카드·채팅 한 줄.
-     * 연출이 안 떠도(클라 준비 전·PortableVFX 없음) 힌트는 보여 준다.
+     * 보여 주기 (힌트권은 이미 1개 썼고 결과도 정해진 뒤).
+     * MagicCodex 모드(TarotProtocol 채널을 듣는 클라이언트) → 「운명의 타로」 창: 카드 세 장 중 하나를 고르면(연출일 뿐, 결과는 같음)
+     * 뒤집혀 별·그림·힌트가 나온다. 창을 닫으면(확인·Esc 모두) 클라이언트가 채팅에 힌트 한 줄을 남긴다 → 고르기 전에 닫아도 힌트는 남음.
+     * 모드 없음·보내기 실패·tarot-ui: false → 예전 연출: 깨달음의 빛(221)의 빛의 책 VFX (카탈로그 enlighten_hint) + 1.2초 뒤 알림 카드·채팅 한 줄.
      */
     private void showHint(Player p, LifeSpells.HintCard card) {
+        if (settings.tarotUi() && p.getListeningPluginChannels().contains(TarotProtocol.CHANNEL)) {
+            try {
+                p.sendPluginMessage(plugin, TarotProtocol.CHANNEL, TarotProtocol.encode(new TarotProtocol.Card(card.stars(), rollIllustration(), card.line())));
+                return;
+            } catch (RuntimeException e) {   // 묶음 오류·채널 미등록 등 — 결과는 이미 정해졌으니 예전 방식으로라도 꼭 보여 준다
+                plugin.getLogger().warning("마법 힌트권 타로 창을 보내지 못함 (" + e.getMessage() + ") — 알림·채팅으로 보여 줌");
+            }
+        }
         CatalogVfxLink.cast(plugin, p, "enlighten_hint");
         String stars = "★".repeat(card.stars()) + "☆".repeat(3 - card.stars());
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
