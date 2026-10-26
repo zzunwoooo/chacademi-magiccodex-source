@@ -387,6 +387,28 @@ public final class MagicDiscovery extends JavaPlugin implements Listener,PluginM
         return List.copyOf(out);
     }
 
+    /**
+     * 마법 힌트(3성)용: 그 마법 조건 키마다 지금 값 (다시 배우는 중이면 기준값을 뺀 값). 메인 스레드에서 부르고 done 도 메인 스레드.
+     * 접속·로드된 유저는 세션 값으로 바로, 아니면 DB 를 비동기로 읽는다 (그때 learned.* 는 권한으로 셀 수 없어 빠짐).
+     * done(null) = 모르는 마법이거나 읽기 실패.
+     */
+    void hintProgress(UUID id,String spellId,Consumer<Map<String,Double>> done){
+        main();var spell=definitions==null?null:definitions.spells.get(spellId);if(spell==null){done.accept(null);return;}
+        var s=sessions.get(id);var p=Bukkit.getPlayer(id);
+        if(s!=null&&s.loaded&&p!=null){done.accept(hintValues(spell,s.learned,values(p,s,spell)));return;}
+        if(store==null){done.accept(null);return;}
+        store.load(id).whenComplete((data,error)->later(()->{
+            if(error!=null||data==null){done.accept(null);return;}
+            var learned=new LearnedSpells();learned.restore(data.learnedOverrides(),data.retryProgress());
+            var out=new LinkedHashMap<>(hintValues(spell,learned,data.progress()));out.keySet().removeIf(ConditionRules::learnedKey);done.accept(Map.copyOf(out));
+        }));
+    }
+    private static Map<String,Double> hintValues(Definitions.Spell spell,LearnedSpells learned,Map<String,Double> values){
+        var out=new LinkedHashMap<String,Double>();
+        for(String key:spell.requirements().keySet()){double v=values.getOrDefault(key,0d);if(!ConditionRules.stateLike(key))v=Math.max(0,v-learned.baseline(spell.id(),key));out.put(key,v);}
+        return Map.copyOf(out);
+    }
+
     /** 접속 중이고 데이터가 로드된 유저의 진행도 (없으면 null). */
     Map<String,Double> loadedProgress(UUID id){var s=sessions.get(id);return s==null||!s.loaded?null:Map.copyOf(s.progress);}
 

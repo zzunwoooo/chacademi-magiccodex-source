@@ -33,6 +33,17 @@ final class DiscoveryLink {
         try{Class<?> type=Class.forName("school.magiccodex.discovery.DiscoveryService",false,plugin.getClass().getClassLoader());Object service=Bukkit.getServicesManager().load(type);if(service==null){done.accept("발견 서비스가 준비되지 않았습니다.");return;}type.getMethod("adminCondition",UUID.class,String.class,String.class,java.util.function.Consumer.class).invoke(service,player,spell,action,done);}
         catch(ReflectiveOperationException|RuntimeException error){done.accept("수동 조건 처리를 완료하지 못했습니다. 발견 플러그인 버전을 확인하세요.");}
     }
+    /** 마법 힌트권 3성: 조건 키 → 지금 값. done 은 메인 스레드에서 정확히 한 번 (null = 발견 플러그인 없음·옛 버전·읽기 실패). */
+    @SuppressWarnings("unchecked") static void hintProgress(UUID player,String spell,java.util.function.Consumer<java.util.Map<String,Double>> done){
+        var plugin=Bukkit.getPluginManager().getPlugin("MagicDiscovery");if(plugin==null||!plugin.isEnabled()){done.accept(null);return;}
+        try{
+            Class<?> type=Class.forName("school.magiccodex.discovery.DiscoveryService",false,plugin.getClass().getClassLoader());Object service=Bukkit.getServicesManager().load(type);
+            if(service==null){done.accept(null);return;}
+            java.util.function.Consumer<java.util.Map<String,Double>> once=new java.util.function.Consumer<>(){boolean sent;public void accept(java.util.Map<String,Double> v){if(sent)return;sent=true;done.accept(v);}};
+            try{type.getMethod("hintProgress",UUID.class,String.class,java.util.function.Consumer.class).invoke(service,player,spell,once);}
+            catch(ReflectiveOperationException|RuntimeException e){once.accept(null);}
+        }catch(ReflectiveOperationException|RuntimeException e){done.accept(null);}
+    }
     private static Class<?> serviceClass;private static java.lang.reflect.Method cast;
     static void cast(UUID player,String spell,double spent){
         if("light_leap".equals(spell)){

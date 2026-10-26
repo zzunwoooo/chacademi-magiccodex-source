@@ -201,13 +201,14 @@ final class UtilityItemsBridge implements Listener {
         var life = LifeSpells.current();
         if (life == null) { warn(p, "hint", "지금은 마법 힌트권을 쓸 수 없어요", ""); return; }
         int stars = rollStars(settings.stars());
-        var card = life.hintCard(p, stars);
-        if (card == null) { warn(p, "hint", "더 알려 줄 마법이 없어요", "마법 힌트권은 그대로예요"); return; }
-        takeOne(p, hand);
-        showHint(p, card);
+        var pick = life.pickCard(p, stars);
+        if (pick == null) { warn(p, "hint", "더 알려 줄 마법이 없어요", "마법 힌트권은 그대로예요"); return; }
+        if (takeOne(p, hand) == null) return;
         ChacaApi.stat(p.getUniqueId(), "마법힌트권", 1);
-        ChacaApi.stat(p.getUniqueId(), "마법힌트권" + card.stars() + "성", 1);
-        plugin.getLogger().info("마법 힌트권 사용: " + p.getName() + " → " + card.spell() + " (" + card.stars() + "성)");
+        ChacaApi.stat(p.getUniqueId(), "마법힌트권" + pick.stars() + "성", 1);
+        plugin.getLogger().info("마법 힌트권 사용: " + p.getName() + " → " + pick.condition().spell() + " (" + pick.stars() + "성)");
+        // 3성 진행도는 MagicDiscovery 에서 읽는다 (보통 바로, DB 면 비동기·최대 3초) → 문장이 정해지면 타로 창·알림을 보낸다
+        life.hintCard(p, pick, card -> { if (p.isOnline()) showHint(p, card); });
     }
 
     static int rollStars(double[] weights) {

@@ -137,7 +137,7 @@ final class LifeSpells implements Listener, AutoCloseable {
             case "heart_read" -> heartRefusal(p);
             case "blessed_ribbon" -> ribbonRefusal(p);
             case "scale_appraisal" -> appraisalRefusal(p);
-            case "enlighten_hint" -> pickHint(p) == null ? "지금은 떠오르는 마법 이야기가 없어요" : null;
+            case "enlighten_hint" -> pickHint(p, 2) == null ? "지금은 떠오르는 마법 이야기가 없어요" : null;
             default -> null;
         };
     }
@@ -433,43 +433,50 @@ final class LifeSpells implements Listener, AutoCloseable {
             "abyss_gate", "aurora_veil", "crimson_breath", "crossfire", "eclipse_eye", "flame_emperor", "heaven_cyclone", "leviathan_rise", "titan_stride");
     // 2026-10-26 발견 조건 v2: 홍련의 심장 판정 구현(PENDING 비움), 300종 밖 옛 마법(feather_step·wind_vault 등)은 discoveries.yml 에서 삭제
 
-    private record Hint(String spell, String permission, String condition) {}
-    private List<Hint> hints = List.of();
-    private long hintsStamp = -1;
+    private static final Random RANDOM = new Random();
 
-    /** MagicDiscovery 데이터 폴더의 discoveries.yml (서버가 실제로 쓰는 condition-text). 파일이 바뀌면 다시 읽는다. */
-    private List<Hint> discoveryHints() {
-        var md = Bukkit.getPluginManager().getPlugin("MagicDiscovery");
-        if (md == null) return List.of();
-        var file = new java.io.File(md.getDataFolder(), "discoveries.yml");
-        long stamp = file.isFile() ? file.lastModified() : 0;
-        if (stamp == hintsStamp) return hints;
-        hintsStamp = stamp;
-        var out = new ArrayList<Hint>();
-        if (stamp > 0) try {
-            var y = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
-            var root = y.getConfigurationSection("spells");
-            if (root != null) for (String id : root.getKeys(false)) {
-                String perm = root.getString(id + ".permission", "magic.learned." + id), text = root.getString(id + ".condition-text", "");
-                if (!NO_HINT.contains(id) && text != null && !text.isBlank() && witness(text, null) != null) out.add(new Hint(id, perm, text.strip()));
-            }
-        } catch (RuntimeException e) { plugin.getLogger().warning("깨달음의 빛: discoveries.yml 을 읽지 못했어요 (" + e.getMessage() + ")"); }
-        hints = List.copyOf(out);
-        return hints;
+    /** 공통 힌트 파일·조건표 (MagicCodexBridge 가 켬; 없으면 null → 자동 문장만). */
+    private SpellHints spellHints() { return plugin.spellHints(); }
+
+    /** ChacaNPC hints.yml 목격담 재료 (spell → materials), 없으면 null. */
+    private static String npcMaterials(String spell) {
+        Object m = npcApi("hintMaterials", new Class<?>[0]);
+        return m instanceof Map<?, ?> map && map.get(spell) instanceof String s && !s.isBlank() ? s : null;
     }
 
-    private Hint pickHint(Player p) {
-        var open = new ArrayList<Hint>();
-        for (Hint h : discoveryHints()) if (!p.hasPermission(h.permission())) open.add(h);
-        return open.isEmpty() ? null : open.get(new Random().nextInt(open.size()));
+    /**
+     * 2성 문장 (마법 힌트권 2성 · 깨달음의 빛 · NPC 힌트 대체 재료가 같이 씀):
+     * spell-hints.yml 의 2 → ChacaNPC 목격담 재료로 만든 목격담 → 발견 조건 문구를 흐린 자동 목격담. 만들 수 없으면 null.
+     */
+    static String second(SpellHints hints, SpellHints.Condition c, String materials) {
+        String line = hints == null ? null : hints.line(c.spell(), 2);
+        if (line != null) return line;
+        return witness(c.text(), materials);
+    }
+
+    /**
+     * 힌트 후보: 아직 안 배운 마법 · 궁극(NO_HINT) 제외 · 발견 조건 문구가 있는 것 (discoveries.yml + manual-conditions.yml).
+     * 2성은 2성 문장을 만들 수 있는 마법만 (파일 문장이 있거나 자동 목격담이 되는 것).
+     */
+    private SpellHints.Condition pickHint(Player p, int stars) {
+        var hints = spellHints();
+        if (hints == null) return null;
+        var open = new ArrayList<SpellHints.Condition>();
+        Map<?, ?> materials = stars == 2 && npcApi("hintMaterials", new Class<?>[0]) instanceof Map<?, ?> m ? m : Map.of();
+        for (var c : hints.conditions()) {
+            if (NO_HINT.contains(c.spell()) || p.hasPermission(c.permission())) continue;
+            if (stars == 2 && hints.line(c.spell(), 2) == null && witness(c.text(), null) == null
+                    && !(materials.get(c.spell()) instanceof String s && !s.isBlank())) continue;
+            open.add(c);
+        }
+        return open.isEmpty() ? null : open.get(RANDOM.nextInt(open.size()));
     }
 
     private boolean enlighten(Player p) {
-        Hint h = pickHint(p);
+        var h = pickHint(p, 2);
         if (h == null) return false;
-        Object m = npcApi("hintMaterials", new Class<?>[0]);
-        String materials = m instanceof Map<?, ?> map && map.get(h.spell()) instanceof String s && !s.isBlank() ? s : null;
-        String line = witness(h.condition(), materials);
+        String line = second(spellHints(), h, npcMaterials(h.spell()));
+        if (line == null) return false;
         // NOTES: the light book is fully open at ~1.2 s
         later(p, 24, () -> {
             p.sendMessage(Component.text("[깨달음의 빛] ", NamedTextColor.YELLOW).append(Component.text(line, NamedTextColor.WHITE)));
@@ -482,6 +489,8 @@ final class LifeSpells implements Listener, AutoCloseable {
 
     /** 힌트 카드 한 장: 고른 마법 id, 별 수(1~3), 보여 줄 문장. */
     record HintCard(String spell, int stars, String line) {}
+    /** 고른 마법과 별 수 (문장은 {@link #hintCard(Player, HintPick, java.util.function.Consumer)} 가 만든다). */
+    record HintPick(SpellHints.Condition condition, int stars) {}
 
     private static final Map<String, String> ELEMENT_NAMES = Map.of("fire", "화염", "water", "물", "wind", "바람", "earth", "대지", "light", "빛", "dark", "어둠");
     private Map<String, String> elements;
@@ -502,27 +511,48 @@ final class LifeSpells implements Listener, AutoCloseable {
         return ELEMENT_NAMES.get(elements.get(spell));
     }
 
-    /**
-     * 마법 힌트권: 깨달음의 빛과 같은 후보(아직 안 배운 마법 · 궁극/미구현 제외 · discoveries.yml 발견 조건)에서 1개.
-     * 별 수(타로 기획 #65): 3성 = 발견 조건 그대로, 2성 = 깨달음의 빛·NPC 와 같은 목격담, 1성 = 원소만 막연하게.
-     * null = 남은 힌트 없음 (아이템을 쓰지 않음). 세상은 바꾸지 않는다 (연출·알림은 부르는 쪽).
-     */
-    HintCard hintCard(Player p, int stars) {
-        Hint h = pickHint(p);
-        if (h == null) return null;
+    /** 마법 힌트권: 깨달음의 빛과 같은 후보에서 1개 고르기. null = 남은 힌트 없음 (아이템을 쓰지 않음). 세상은 바꾸지 않는다. */
+    HintPick pickCard(Player p, int stars) {
         int s = Math.clamp(stars, 1, 3);
-        String line;
-        if (s == 3) line = "카드가 또렷하게 속삭여요… 「" + h.condition().strip().replaceAll("[.。!]+$", "") + "」 그러면 새 마법을 깨칠 수 있을 거예요.";
-        else if (s == 2) {
-            Object m = npcApi("hintMaterials", new Class<?>[0]);
-            String materials = m instanceof Map<?, ?> map && map.get(h.spell()) instanceof String str && !str.isBlank() ? str : null;
-            line = witness(h.condition(), materials);
-        } else {
-            String element = elementOf(h.spell());
-            line = element == null ? "아직 깨치지 못한 마법 하나가 어딘가에서 당신을 기다리고 있는 것 같아요…"
-                    : "아직 깨치지 못한 " + element + " 마법 하나가 어딘가에서 당신을 기다리고 있는 것 같아요…";
+        var h = pickHint(p, s);
+        return h == null ? null : new HintPick(h, s);
+    }
+
+    /** 1성 문장: spell-hints.yml 의 1 → 원소만 막연하게. */
+    private String first(SpellHints.Condition c) {
+        var hints = spellHints();
+        String line = hints == null ? null : hints.line(c.spell(), 1);
+        if (line != null) return line;
+        String element = elementOf(c.spell());
+        return element == null ? "아직 깨치지 못한 마법 하나가 어딘가에서 당신을 기다리고 있는 것 같아요…"
+                : "아직 깨치지 못한 " + element + " 마법 하나가 어딘가에서 당신을 기다리고 있는 것 같아요…";
+    }
+
+    /** 3성 진행도를 기다리는 최대 시간 (DB 가 느리면 진행도 없이 보여 줌). */
+    private static final long PROGRESS_WAIT_TICKS = 60;
+
+    /**
+     * 카드 문장 만들기 (타로 기획 #65 · 2026-10-26 spell-hints.yml): 1성 = 파일 1, 2성 = 파일 2(없으면 목격담), 3성 = 발견 조건 + 지금 진행도.
+     * done 은 메인 스레드에서 정확히 한 번. 3성 진행도는 MagicDiscovery 에서 읽는다 (접속 중이면 바로, 아니면 DB 비동기, 3초 넘으면 진행도 없이).
+     */
+    void hintCard(Player p, HintPick pick, java.util.function.Consumer<HintCard> done) {
+        var c = pick.condition();
+        if (pick.stars() == 1) { done.accept(new HintCard(c.spell(), 1, first(c))); return; }
+        if (pick.stars() == 2) {
+            String line = second(spellHints(), c, npcMaterials(c.spell()));
+            done.accept(new HintCard(c.spell(), 2, line != null ? line : first(c)));
+            return;
         }
-        return new HintCard(h.spell(), s, line);
+        String nick = plugin.names() != null ? plugin.names().name(p) : p.getName();
+        if (c.manual()) { done.accept(new HintCard(c.spell(), 3, SpellHints.third(c, nick, null))); return; }
+        boolean[] sent = {false};
+        java.util.function.Consumer<Map<String, Double>> finish = values -> {
+            if (sent[0]) return;
+            sent[0] = true;
+            done.accept(new HintCard(c.spell(), 3, SpellHints.third(c, nick, values)));
+        };
+        Bukkit.getScheduler().runTaskLater(plugin, () -> finish.accept(null), PROGRESS_WAIT_TICKS);
+        DiscoveryLink.hintProgress(p.getUniqueId(), c.spell(), finish);
     }
 
     private static final Pattern LESSON = Pattern.compile("^(\\S+) 마법 (\\S+) 수업을 통해.*습득$");

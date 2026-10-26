@@ -92,6 +92,9 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     private TitleBridge titles;
     /** #47 마법 효과음 (마크 기본 사운드 층). */
     private SpellSounds spellSounds;
+    /** 마법별 힌트 파일 spell-hints.yml + 발견 조건표 (마법 힌트권·깨달음의 빛·NPC 힌트 공통, 2026-10-26). */
+    private SpellHints spellHints;
+    SpellHints spellHints(){return spellHints;}
     /** Trusted server-thread API; the callback runs after database commit. */
     public void grantTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,false,result);}
     public void revokeTitle(UUID player,String id,java.util.function.Consumer<Boolean> result){if(titles==null)result.accept(false);else titles.grant(player,id,true,result);}
@@ -280,6 +283,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         DailyLimits.registerAffinity(this,npcSocial); // 메모 #90: /유저관리 <닉> 일일제한 보기·초기화
         spellSounds=new SpellSounds(this);
         ChacaApi.reload(this,"마법소리","spell-sounds.yml (마법 효과음)",()->spellSounds.reload());
+        spellHints=new SpellHints(this);
+        ChacaApi.reload(this,"힌트","spell-hints.yml (마법별 힌트 1·2성)",()->spellHints.reload());
         try{titles=new TitleBridge(this);}catch(Exception error){getLogger().severe("칭호 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         if(getServer().getPluginManager().isPluginEnabled("MythicMobs"))try{spellRuntime=new SpellRuntime(this);getLogger().info("Spell gameplay runtime ready: "+spellRuntime.routeCount()+" routes; catalog="+mana.isCatalogMode());}catch(Exception error){getLogger().severe("마법 실행 초기화 실패: "+error.getMessage());getServer().getPluginManager().disablePlugin(this);return;}
         if(spellRuntime==null)getLogger().warning("Spell gameplay runtime unavailable: MythicMobs is not enabled; existing fallback routes remain active.");

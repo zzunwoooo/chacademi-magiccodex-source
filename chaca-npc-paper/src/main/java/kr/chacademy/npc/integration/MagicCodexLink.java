@@ -135,6 +135,22 @@ public final class MagicCodexLink implements Listener {
         return player.getName();
     }
 
+    /**
+     * Optional v1 extension (2026-10-26): MagicCodexBridge 마법별 힌트 파일(spell-hints.yml)의 2성 문장.
+     * hints.yml 힌트에 materials 가 비어 있을 때 대신 쓴다. 연결 안 됨·옛 Bridge·없음 = null.
+     */
+    public String spellHint(String spell) {
+        if (facade == null || !methods.containsKey("spellHint")) {
+            return null;
+        }
+        try {
+            Object value = call("spellHint", spell);
+            return value instanceof String s && !s.isBlank() ? s.strip() : null;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            return null;
+        }
+    }
+
     /** {score, heart} */
     public CompletableFuture<int[]> affinity(UUID player, String npc) {
         return future("affinity", player, npc);

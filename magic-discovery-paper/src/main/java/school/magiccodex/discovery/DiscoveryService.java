@@ -20,6 +20,11 @@ public final class DiscoveryService {
     public Map<String,String> registeredSpells(){return plugin.registeredSpells();}
     /** Only explicitly configured manual replacements; command facade performs administrator checks. */
     public void adminCondition(UUID player,String spell,String action,Consumer<String> done){plugin.adminCondition(player,spell,action,done);}
+    /**
+     * 마법 힌트권 3성 (MagicCodexBridge SpellHints, 2026-10-26): 그 마법 조건 키 → 지금 값 (다시 배우는 중이면 기준값을 뺀 값, 읽기 전용).
+     * 서버 스레드에서 부르고 done 도 서버 스레드. 접속 중이 아니면 DB 를 비동기로 읽는다. done(null) = 모르는 마법·읽기 실패.
+     */
+    public void hintProgress(UUID player,String spell,Consumer<Map<String,Double>> done){plugin.hintProgress(player,spell,done);}
     public Map<String,String> manualConditions(){var out=new java.util.LinkedHashMap<String,String>();plugin.definitions.manual.forEach((id,spell)->out.put(id,spell.name()));return Map.copyOf(out);}
     /**
      * Persist current knowledge for an online or offline player without minting first-discovery rewards.

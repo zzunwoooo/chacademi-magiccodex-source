@@ -1111,7 +1111,18 @@ public final class DialogueService {
             }
             candidates.add(h);
         }
-        return candidates.isEmpty() ? null : candidates.get(random.nextInt(candidates.size()));
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        HintDef chosen = candidates.get(random.nextInt(candidates.size()));
+        if (chosen.materials() == null || chosen.materials().isBlank()) {
+            // 목격담 재료가 비었으면 MagicCodexBridge 마법별 힌트 파일(spell-hints.yml)의 2성 문장으로 (2026-10-26). 없으면 그대로.
+            String line = link().spellHint(chosen.spell());
+            if (line != null) {
+                chosen = new HintDef(chosen.id(), chosen.spell(), chosen.topic(), line, chosen.difficulty(), chosen.vague());
+            }
+        }
+        return chosen;
     }
 
     private void decideJealousy(DialogueSession s, List<RumorView> rumors) {

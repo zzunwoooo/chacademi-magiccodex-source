@@ -46,6 +46,20 @@ public final class NpcSocialFacade {
         return lessons != null && lessons.open(player, lessonId, anchor);
     }
 
+    /**
+     * (추가 메서드, API_VERSION 그대로, 2026-10-26) 마법별 힌트 파일 spell-hints.yml 의 2성 문장 — ChacaNPC hints.yml 힌트에
+     * 목격담 재료(materials)가 비어 있을 때 대신 쓴다. 파일에 없으면 발견 조건 문구를 흐린 자동 목격담, 그것도 안 되면 null. 메인 스레드에서 호출.
+     */
+    public String spellHint(String spell) {
+        var plugin = org.bukkit.plugin.java.JavaPlugin.getPlugin(MagicCodexBridge.class);
+        var hints = plugin.spellHints();
+        if (hints == null || spell == null) return null;
+        String line = hints.line(spell, 2);
+        if (line != null) return line;
+        var c = hints.condition(spell);
+        return c == null ? null : LifeSpells.second(hints, c, null);
+    }
+
     public int apiVersion() {
         return API_VERSION;
     }
