@@ -16,12 +16,16 @@ public final class ReconfigurationScreen extends Screen {
     private static final Identifier FONT=Identifier.of("magiccodex","hud_bold");
     private static final String[] TABS={"강화 초기화","실패 횟수 복구","코어 성향 변경"};
     private static final String[] SCROLLS={"scroll-reset","scroll-restore","scroll-affinity"};
-    private static final String[] NAMES={"강화 초기화권","강화 횟수 복구권","능력치 변경권"};
+    // 주문서 아이템 (오너 2026-10-26): I 빨강 = 강화 초기화, II 파랑 = 실패 횟수 복구, III 보라 = 코어 성향 변경.
+    private static final String[] NAMES={"마력 재구성 주문서 I","마력 재구성 주문서 II","마력 재구성 주문서 III"};
     private static final String[] STATS={"지능","마나 최대치","마법 가속"};
     private static final String[] ICONS={"icon-power","icon-mana","icon-haste"};
     private static final int GOLD=0xFFE7CE9C,INK=0xFFDEE8EE,MUTED=0xFFACBBC8,CYAN=0xFF9CE5EF;
     private Response data;
     private long waiting=-1,completed=-1;
+    // 응답 대기 중인 요청 (재전송용). 2.5초 안에 답이 없으면 같은 요청을 한 번 더 보낸다 — 서버는 같은 토큰 APPLY 를
+    // 두 번 적용하지 않고 결과를 다시 보내 주며, 만료된 토큰에는 새 상태를 보낸다.
+    private int waitAction,waitMode;private boolean retried;
     private float scale,left,top;
     public ReconfigurationScreen(Response r){super(Text.literal("마력 재구성"));data=r;}
     Response snapshot(){return data;}
@@ -54,13 +58,18 @@ public final class ReconfigurationScreen extends Screen {
             for(int j=0;j<3;j++)HudMesh.arc(c,166,210,44+j*3+pulse*3,1.2f,0,(float)(Math.PI*2),((int)((22+20*pulse)*(1-j*.2))<<24)|0xB9B6FF);
             if(data.slot()>=0){
                 if(data.mode()==2)sprite(c,"core-intact",95,140,142,142,0xFFFFFFFF);
-                else if(client!=null&&client.player!=null){var item=client.player.getInventory().getStack(data.slot());c.draw();c.getMatrices().push();try{c.getMatrices().translate(166,211+(float)Math.sin(t*1.5)*2,10);c.getMatrices().multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees((float)Math.sin(t*.6)*7));c.getMatrices().scale(4.5f,4.5f,1);c.drawItem(item,-8,-8);c.draw();}finally{c.getMatrices().pop();}}
+                else if(client!=null&&client.player!=null){
+                    // 대상 마법봉: 고해상도 아이콘을 그 크기로 새로 그림(ExactItemIcons, 회전하면 못 쓰므로 회전 없음).
+                    // 고해상도 그림이 없거나 준비 전이면 일반 아이템 그리기로 같은 칸을 채운다.
+                    var item=client.player.getInventory().getStack(data.slot());c.draw();
+                    if(!item.isEmpty()){c.getMatrices().push();try{c.getMatrices().translate(0,0,10);drawStack(c,item,166,211+Math.round(Math.sin(t*1.5)*2),112);c.draw();}finally{c.getMatrices().pop();}}
+                }
                 else text(c,"장비 미리보기",166,211,13,MUTED,true);
             }else text(c,"—",166,211,24,MUTED,true);
             String display=data.name();while(display.length()>1&&UiResources.text().width(display,13,FONT)>166)display=display.substring(0,display.length()-1);if(!display.equals(data.name())){while(display.length()>1&&UiResources.text().width(display+"…",13,FONT)>166)display=display.substring(0,display.length()-1);display+="…";}text(c,display,166,272,13,GOLD,true);
             text(c,data.mode()==2?data.nodes()+"코어":"남은 강화 "+Math.max(0,data.limit()-(data.state()==1?data.nextAttempts():data.attempts()))+" / "+data.limit(),166,292,11,INK,true);
             c.getMatrices().push();c.getMatrices().translate(320,210,0);c.getMatrices().multiply(net.minecraft.util.math.RotationAxis.POSITIVE_Z.rotationDegrees((float)(t*9%360)));sprite(c,"rune-cyan",-33,-33,66,66,0xB0FFFFFF);c.getMatrices().pop();
-            sprite(c,SCROLLS[data.mode()],400,136,148,136,0xFFFFFFFF);text(c,NAMES[data.mode()],474,273,13,GOLD,true);text(c,"사용 가능 "+data.credits()+"회",474,292,11,MUTED,true);
+            sprite(c,SCROLLS[data.mode()],400,136,148,136,0xFFFFFFFF);{String n=NAMES[data.mode()];float w=UiResources.text().width(n,13,FONT),sz=w>170?13*170/w:13;text(c,n,474,273,sz,GOLD,true);}text(c,"보유 "+data.credits()+"개",474,292,11,data.credits()>0?MUTED:0xFFE5B7AF,true);
             divider(c,45,322,550);
             text(c,data.mode()==2?"현재 성향":"현재 능력치",166,341,13,GOLD,true);text(c,data.state()==1?"변경 완료":"변경 후",474,341,13,GOLD,true);
             for(int i=0;i<3;i++){int y=367+i*24;sprite(c,ICONS[i],76,y-11,22,22,0xFFFFFFFF);fit(c,data.mode()==2?CoreAffinity.label(i,data.affinity()):STATS[i],104,y,12,113,INK,false);if(data.mode()!=2)fit(c,num(data.before().get(i)),256,y,13,55,CYAN,true);
@@ -80,10 +89,20 @@ public final class ReconfigurationScreen extends Screen {
         if(hit(mouseX,mouseY,80,258,174,27)&&UiResources.text().width(data.name(),13,FONT)>166){var lines=new java.util.ArrayList<Text>();String line="";for(int point:data.name().codePoints().toArray()){String ch=new String(Character.toChars(point));if(!line.isEmpty()&&textRenderer.getWidth(line+ch)>200){lines.add(Text.literal(line));line="";}line+=ch;}if(!line.isEmpty())lines.add(Text.literal(line));c.drawTooltip(textRenderer,lines,mx,my);}
     }
     @Override public boolean mouseClicked(double mx,double my,int button){if(button!=0)return false;layout();double x=(mx-left)/scale,y=(my-top)/scale;if(hit(x,y,585,18,30,30)){close();return true;}if(waiting>=0)return false;
-        for(int i=0;i<3;i++)if(hit(x,y,40+i*189,64,182,32)){waiting=Util.getMeasuringTimeMs();ReconfigurationClient.send(data.token(),ReconfigurationProtocol.SELECT,i);return true;}
-        if(hit(x,y,215,481,210,32)){if(data.state()==1){close();return true;}if(data.available()){waiting=Util.getMeasuringTimeMs();sound("block.amethyst_block.hit",1.1f,.45f);ReconfigurationClient.send(data.token(),ReconfigurationProtocol.APPLY,data.mode());}return true;}return false;
+        for(int i=0;i<3;i++)if(hit(x,y,40+i*189,64,182,32)){request(ReconfigurationProtocol.SELECT,i);return true;}
+        if(hit(x,y,215,481,210,32)){if(data.state()==1){close();return true;}if(data.available()){sound("block.amethyst_block.hit",1.1f,.45f);request(ReconfigurationProtocol.APPLY,data.mode());}return true;}return false;
     }
-    @Override public void tick(){if(waiting>=0&&Util.getMeasuringTimeMs()-waiting>7000)waiting=-1;}
+    private void request(int action,int mode){waiting=Util.getMeasuringTimeMs();waitAction=action;waitMode=mode;retried=false;ReconfigurationClient.send(data.token(),action,mode);}
+    /** 고해상도 아이콘은 그 크기로 새로 그리고(ExactItemIcons), 없으면 일반 아이템 그리기 — 가방·뽑기 상자 창과 같은 규칙. */
+    static void drawStack(DrawContext c,net.minecraft.item.ItemStack stack,float cx,float cy,float size){
+        var m=c.getMatrices();m.push();
+        try{if(!ExactItemIcons.draw(c,stack,cx-size/2,cy-size/2,size)){m.translate(cx-size/2,cy-size/2,0);m.scale(size/16f,size/16f,1);c.drawItem(stack,0,0);}}finally{m.pop();}
+    }
+    @Override public void tick(){
+        if(waiting<0)return;long age=Util.getMeasuringTimeMs()-waiting;
+        if(!retried&&age>2500){retried=true;ReconfigurationClient.send(data.token(),waitAction,waitMode);}
+        if(age>7000)waiting=-1;
+    }
     @Override public void close(){ReconfigurationClient.closed(data.token());super.close();}
     @Override public boolean shouldPause(){return false;}
 }

@@ -41,7 +41,9 @@ public final class EnhancementScreen extends Screen {
   for(int ring=0;ring<4;ring++){int alpha=(int)((13+19*pulse)*(1-ring*.2f));HudMesh.arc(c,166,153,43+ring*1.7f+pulse*2,2.2f,0,(float)(Math.PI*2),(alpha<<24)|0xB3AFF7);}
   sprite(c,CORE,102,87,128,128,1254,1254,0xFFFFFFFF);
   text(c,data.nodes()+"코어",166,220,13,0xFFDFE9F0,true);text(c,"‹",82,153,21,0xFFE1C88E,true);text(c,"›",251,153,21,0xFFE1C88E,true);
-  // Equipment icon intentionally remains blank as requested. Live item name and values only.
+  // 장비 미리보기 (오너 2026-10-26: 강화 대상 아이템 표시). 서버는 주 손 아이템(마법봉·장신구)을 강화하므로 주 손을 그린다.
+  // 72 크기 칸에 고해상도 아이콘을 그 크기로 새로 그림(ExactItemIcons), 없으면 일반 아이템 그리기 — 재구성 창과 같은 규칙.
+  if(client!=null&&client.player!=null){var held=client.player.getMainHandStack();if(!held.isEmpty()){c.draw();c.getMatrices().push();try{c.getMatrices().translate(0,0,10);ReconfigurationScreen.drawStack(c,held,166,318,72);c.draw();}finally{c.getMatrices().pop();}}}
   fitText(c,data.name(),80,365,13,172,0xFFE9D19B,false);text(c,"강화 횟수 "+data.attempts()+" / "+data.limit(),165,391,12,0xFFCCD8DF,true);
   // 장신구 강화(kind 1)는 세 번째 줄이 초당 마나 회복 — 새 그림 없이 마나 아이콘을 같이 씀.
   boolean accessory=data.kind()==EnhancementProtocol.ACCESSORY;
