@@ -50,7 +50,7 @@ class CombatLockRulesTest {
 
     @Test void defaultsCoverSchoolAndWild() {
         var d = CombatLockRules.Settings.DEFAULT;
-        assertTrue(d.appliesTo("school") && d.appliesTo("wild") && d.appliesTo("wild2"));
+        assertTrue(d.appliesTo("school") && d.appliesTo("wild1") && d.appliesTo("wild2"));
         assertEquals(10_000, d.windowMs());
         assertTrue(d.commands().contains("spawn") && d.commands().contains("home"));
     }

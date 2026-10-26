@@ -11,7 +11,7 @@ final class CombatLockRules {
 
     /** combat-lock.yml 내용. commands·spells 는 소문자, servers 가 비어 있으면 모든 서버. */
     record Settings(boolean enabled, long windowMs, Set<String> servers, Set<String> commands, Set<String> spells, long notifyCooldownMs) {
-        static final Settings DEFAULT = new Settings(true, 10_000, Set.of("school", "wild", "wild2"),
+        static final Settings DEFAULT = new Settings(true, 10_000, Set.of("school", "wild1", "wild2"),
                 Set.of("home", "phome", "publichome", "spawn", "warp", "tpa", "tpahere", "tpaccept", "tpyes", "back", "rtp", "randomtp",
                         "집", "홈", "스폰", "워프", "뒤로", "귀환"),
                 Set.of("companion_return"), 1500);

@@ -17,7 +17,7 @@ final class TravelItemRules {
     record Settings(String deathItem, String deathName, String friendItem, String friendName,
                     Set<String> useServers, Set<String> deathServers, Set<String> listServers) {
         static final Settings DEFAULT = new Settings("item:death_return", "리턴권", "item:friend_teleport", "텔포권",
-                Set.of("school", "wild", "wild2"), Set.of("wild", "wild2"), Set.of("school", "wild", "wild2"));
+                Set.of("school", "wild1", "wild2"), Set.of("wild1", "wild2"), Set.of("school", "wild1", "wild2"));
         boolean usableOn(String server) { return server != null && useServers.contains(server); }
         boolean recordsDeathOn(String server) { return server != null && deathServers.contains(server); }
         boolean listed(String server) { return server != null && listServers.contains(server); }

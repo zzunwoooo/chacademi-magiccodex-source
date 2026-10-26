@@ -51,7 +51,7 @@ final class BalloonDonationBridge implements Listener {
     private final File file;
     private volatile BalloonRules.Settings settings = BalloonRules.DEFAULT;
     /** 후원을 받는 서버 (travel.yml server-id). 오너 2026-10-26: 큐디치(아레나) 서버에서는 아예 안 받음 → 목록에 없는 서버는 이벤트를 취소만 하고 보상 없음. */
-    private volatile Set<String> servers = Set.of("school", "wild", "wild2");
+    private volatile Set<String> servers = Set.of("school", "wild1", "wild2");
     private boolean hooked;
     private Method getType, getNickname, getAmount, getCount;
     /** 이 서버에서 이미 전원 상자를 보낸 (처리번호|uuid). 오래된 것부터 지운다. */
@@ -80,7 +80,7 @@ final class BalloonDonationBridge implements Listener {
     private void loadAll(File file) {
         var y = YamlConfiguration.loadConfiguration(file);
         settings = parse(y);
-        servers = TravelItemRules.ids(y.isList("servers") ? y.getStringList("servers") : null, Set.of("school", "wild", "wild2"));
+        servers = TravelItemRules.ids(y.isList("servers") ? y.getStringList("servers") : null, Set.of("school", "wild1", "wild2"));
     }
 
     /** 이 서버가 후원을 받는 서버인가 (travel.yml server-id 가 servers 에 있음). server-id 를 모르면 받지 않음. */

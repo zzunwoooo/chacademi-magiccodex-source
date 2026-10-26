@@ -10,7 +10,7 @@ item: "item:inventory_save"
 item-name: "인벤세이브"
 
 # 인벤세이브·배낭 떨어뜨리기를 쓰는 서버 (travel.yml server-id). 아레나는 넣지 마세요.
-servers: [school, wild, wild2]
+servers: [school, wild1, wild2]
 
 # 인벤세이브 없이 죽으면 아공간 배낭의 다른 쪽(지금 안 보는 쪽) 아이템도 죽은 자리에 전부 떨어뜨립니다.
 # 공유 DB 에서 먼저 비운 뒤에만 떨어뜨려서 복제가 생기지 않습니다. false = 다른 쪽은 그대로 (예전 동작).

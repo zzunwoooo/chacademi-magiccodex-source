@@ -13,7 +13,7 @@
 | 신규 24GB / i9-14900K | 야생1 8GB · 야생2 8GB | |
 - 튜토리얼 서버 삭제 — 튜토리얼 장소는 학교 서버 안.
 - 야생1·2 는 다른 호스팅 → 공용 MariaDB·Redis(HuskSync)에 원격 접속: 기존 호스팅 방화벽에서 신규 호스팅 IP만 3306/6379 허용, 각 플러그인 database.properties·HuskSync config 의 호스트를 기존 호스팅 공인/사설 IP 로. Velocity `velocity.toml` 의 wild·wild2 주소도 신규 호스팅 IP. 지연이 생기는지(배낭 쪽 넘기기·서버 이동) 확인.
-- 서버 id: 학교 school, 야생 wild·wild2 (travel.yml·chunk-claims·inventory-save·donation 의 servers 목록과 같아야 함). PvP1·PvP2 의 server-id 는 아레나용(큐디치·결투) — 그 목록들에 넣지 않음.
+- 서버 id (오너 2026-10-26 16:34): 학교 school, **야생 wild1·wild2** (예전 wild → wild1). Velocity [servers] 이름도 wild1·wild2. travel.yml·chunk-claims·inventory-save·combat-lock·travel-items·donation.yml 의 servers 와 Velocity party.properties(trusted-servers·chat-servers·wild-server)·travel.properties(travel-servers) 전부 wild1 로. 야생은 새로 미니 옛 wild 저장 데이터 없음. (travel.yml·chunk-claims·inventory-save·donation 의 servers 목록과 같아야 함). PvP1·PvP2 의 server-id 는 아레나용(큐디치·결투) — 그 목록들에 넣지 않음.
 
 ## 0. 순서
 1. `git fetch && git checkout <이 커밋>` → `python3 tools/operating_overlay.py check` 가 "차이 없음"인지.
@@ -67,7 +67,7 @@
 - 아이템 기능 (§37~§39): `MagicCodexBridge/loot-boxes.yml` 은 가구·낚시도구·몬스터 전리품 상자 3개가 들어간 overlay 로 교체(§38). `utility-items.yml` 은 자동 생성 → `/서버관리 새로고침 사용아이템`. `ChAcademiaMagicMythic/config.yml` 에 `mana-potion`·`health-potion`·`potion-cooldown-overlay` 키, `ChacaPortrait/config.yml` 의 `reroll.item-id` = `item:cutscene_ticket` 손으로 반영(§39). 바뀐 id: 귀환권 `item:home_ticket`, 인기도 해제권 `item:popularity_reset`, 체력 포션 `item:health_potion` (부록 A-2).
 - API 상자 2종 + 호감도 선물 뽑기권 상자 (§42): loot-boxes.yml overlay 교체 → `/상자관리 새로고침`. 새 ItemsAdder 아이템 `item:gift_ticket`(오너가 만듦). 묶음(×5·×3) 아이템 최대 스택 확인.
 - 별풍선 후원 (§43): `plugins/MagicCodexBridge/donation.yml` 자동 생성 (학교·야생·아레나 같은 내용) → 고치면 `/서버관리 새로고침 후원`. 서버 `audit.yml` 에 새 종류 "후원" (kinds 에 `후원: true`). `plugins/donation/config.yml` 의 `acceptAllDonations: true` 확인. 예전 Skript `api` 스크립트는 지워도 됨(남아 있어도 안 돎). 아레나(큐디치)는 `servers` 에 넣지 않음 = 후원 안 받음.
-- 야생2 연결 (오너 2026-10-26): 서버의 `MagicCodexBridge/travel.yml` 은 jar 가 안 덮으므로 학교·야생1·야생2 모두 손으로 — `servers.wild2.enabled: true`, `points.wild2_spawn` (server wild2, spawn: true, from: [school]) 추가. 야생2 서버는 server-id: wild2, Velocity 이름 wild2. 야생2 세계 스폰은 `/mv setspawn`.
+- 야생2 연결 (오너 2026-10-26): 서버의 `MagicCodexBridge/travel.yml` 은 jar 가 안 덮으므로 학교·야생1·야생2 모두 손으로 — `servers.wild2.enabled: true`, `points.wild2_spawn` (server wild2, spawn: true, from: [school]) 추가. 야생1 server-id: wild1 · 야생2 server-id: wild2, Velocity 이름도 같게. 야생2 세계 스폰은 `/mv setspawn`.
 - **튜토리얼 서버 없음 (오너 15:23)**: 튜토리얼 맵은 school 안. 스토리 steps.yml·대화 전부 school 서버에만. Velocity `tutorial.properties` 의 tutorial-servers 는 비움 (FINAL_PATCHES §48·§49 추가). 위 §48 의 tutorial 서버 등록 안내는 무시.
 - 스토리 장 공개 (오너 2026-10-26 "첫날엔 1장에서 막자"): 서버 `ChacademyStory/config.yml` 은 jar 가 안 덮음 → `chapter-release.open-through: 1`, `chapters.2.open: false` 로 손으로 (2장 여는 날 `/대화관리 장공개 열기 2`).
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.

@@ -12,7 +12,7 @@ final class NetworkChat {
     record WireIdentity(String nickname,int house,String registeredNickname) {WireIdentity(String nickname,int house){this(nickname,house,"");}}
     private final Set<String> trusted,chatServers;
     private final Map<UUID,Identity> identities=new HashMap<>();
-    NetworkChat(Set<String> trusted){this(trusted,Set.of("school","wild","arena"));}
+    NetworkChat(Set<String> trusted){this(trusted,Set.of("school","wild1","wild2","arena"));}
     /** chatServers: 전체·기숙사 채팅을 쓰는 서버 이름 (party.properties chat-servers, 2026-10-21 하드코딩 제거). trusted 이기도 해야 한다. */
     NetworkChat(Set<String> trusted,Set<String> chatServers){this.trusted=Set.copyOf(trusted);this.chatServers=Set.copyOf(chatServers);}
     static WireIdentity decode(byte[] data)throws IOException {

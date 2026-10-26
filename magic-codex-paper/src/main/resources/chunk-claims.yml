@@ -16,7 +16,7 @@ enabled: true
 
 # 켤 서버 (travel.yml 의 server-id). 학교·아레나 등 여기 없는 서버는 아무 일도 하지 않아요. 비우면 [] 모든 서버.
 servers:
-  - wild
+  - wild1
   - wild2
 
 # 점유할 수 있는 세계 이름. 여기 없는 세계는 전부 "제한". (야생 서버의 기본 세계 이름은 world)

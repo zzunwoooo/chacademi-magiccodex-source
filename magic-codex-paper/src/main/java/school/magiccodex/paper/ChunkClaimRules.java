@@ -52,7 +52,7 @@ final class ChunkClaimRules {
             Map.entry("error", "땅 정보를 저장하지 못했어요"),
             Map.entry("error-body", "땅문서는 돌려 드렸어요. 잠시 뒤 다시 해 주세요"));
 
-    static final Settings DEFAULT = new Settings(true, "item:chunk_deed", "땅문서", Set.of("wild", "wild2"), Set.of("world"), List.of(),
+    static final Settings DEFAULT = new Settings(true, "item:chunk_deed", "땅문서", Set.of("wild1", "wild2"), Set.of("world"), List.of(),
             0, 1, true, Set.of(), 1500, "소유 가능", "제한", Map.of());
 
     static int clampRadius(int r) { return Math.clamp(r, 0, school.magiccodex.protocol.ChunkClaimProtocol.MAX_RADIUS); }

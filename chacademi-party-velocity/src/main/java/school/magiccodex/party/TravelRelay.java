@@ -44,9 +44,9 @@ final class TravelRelay {
         var p = new Properties();
         try {
             if (Files.exists(path)) try (var r = Files.newBufferedReader(path)) { p.load(r); }
-            else { p.setProperty("travel-servers", "school,wild,wild2"); try (var w = Files.newBufferedWriter(path)) { p.store(w, "지도 이동: 보낼 수 있는 Velocity 서버 이름 (쉼표). 고친 뒤 프록시 재시작."); } }
+            else { p.setProperty("travel-servers", "school,wild1,wild2"); try (var w = Files.newBufferedWriter(path)) { p.store(w, "지도 이동: 보낼 수 있는 Velocity 서버 이름 (쉼표). 고친 뒤 프록시 재시작."); } }
         } catch (IOException e) { log.warn("travel.properties 읽기 실패 — 기본값 사용", e); }
-        for (String s : p.getProperty("travel-servers", "school,wild,wild2").split(",")) if (!s.isBlank()) targets.add(s.strip());
+        for (String s : p.getProperty("travel-servers", "school,wild1,wild2").split(",")) if (!s.isBlank()) targets.add(s.strip());
         for (String s : targets) if (proxy.getServer(s).isEmpty()) log.warn("travel.properties: Velocity 에 없는 서버 " + s + " (그 서버로의 지도 이동은 '서버를 찾을 수 없어요' 로 실패)");
         proxy.getChannelRegistrar().register(LINK);
     }

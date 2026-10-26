@@ -12,7 +12,7 @@ enabled: true
 
 # 후원을 받는 서버 (travel.yml 의 server-id). 오너: 큐디치(아레나) 서버에서는 아예 안 받음 → 아레나는 넣지 마세요.
 # 여기 없는 서버에서 온 후원은 보상 없이 무시 (donation 플러그인의 api 콘솔 명령도 실행 안 됨). /후원관리 도 거절.
-servers: [school, wild, wild2]
+servers: [school, wild1, wild2]
 
 # 개수별 상자 보상 (우편함으로). item = ItemsAdder id, amount = 개수, name = 알림·채팅에 보일 이름
 tiers:

@@ -47,7 +47,7 @@ final class InventorySaveBridge implements Listener {
     private final ItemsAdderItems itemsAdder;
     private final NamespacedKey key;
     private String item = "item:inventory_save", name = "인벤세이브";
-    private Set<String> servers = Set.of("school", "wild", "wild2");
+    private Set<String> servers = Set.of("school", "wild1", "wild2");
     private boolean bagDrop = true;
     /** 이번 사망에서 인벤세이브를 쓴 사람 (부활하면 알림). */
     private final Map<UUID, Integer> saved = new HashMap<>();
@@ -107,7 +107,7 @@ final class InventorySaveBridge implements Listener {
         y.load(file);
         item = TravelItemRules.item(y.getString("item", item), "item:inventory_save");
         name = TravelItemRules.name(y.getString("item-name", name), "인벤세이브");
-        servers = TravelItemRules.ids(y.isList("servers") ? y.getStringList("servers") : null, Set.of("school", "wild", "wild2"));
+        servers = TravelItemRules.ids(y.isList("servers") ? y.getStringList("servers") : null, Set.of("school", "wild1", "wild2"));
         bagDrop = y.getBoolean("drop-bag-pages-on-death", true);
     }
 

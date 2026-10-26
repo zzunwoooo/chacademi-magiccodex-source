@@ -8,7 +8,7 @@
 # 서버 이름은 travel.yml 의 server-id 입니다.
 
 # 리턴권·텔포권을 쓸 수 있는 서버 (아레나는 넣지 마세요 — 아레나에서는 못 씀)
-use-servers: [school, wild, wild2]
+use-servers: [school, wild1, wild2]
 
 # 리턴권: 우클릭 → 야생에서 가장 최근에 쓰러진 자리로
 death-return:
@@ -16,11 +16,11 @@ death-return:
   item: "item:death_return"
   item-name: "리턴권"
 # 쓰러진 자리를 적는 서버 (야생만). 아레나·학교 사망, 큐디치·결투 경기 중 사망은 적지 않습니다.
-death-servers: [wild, wild2]
+death-servers: [wild1, wild2]
 
 # 텔포권: 우클릭 → 접속 중인 유저 목록 → 고른 유저 곁으로
 friend-teleport:
   item: "item:friend_teleport"
   item-name: "텔포권"
 # 목록에 나오는 유저가 있는 서버 (아레나에 있는 유저는 목록에 아예 안 나옵니다)
-list-servers: [school, wild, wild2]
+list-servers: [school, wild1, wild2]

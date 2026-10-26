@@ -12,8 +12,8 @@ class TravelItemRulesTest {
         assertEquals("item:death_return", s.deathItem());
         assertEquals("리턴권", s.deathName());
         assertEquals("item:tp", s.friendItem());
-        assertEquals(Set.of("school", "wild", "wild2"), s.useServers());
-        assertEquals(Set.of("wild", "wild2"), s.deathServers());
+        assertEquals(Set.of("school", "wild1", "wild2"), s.useServers());
+        assertEquals(Set.of("wild1", "wild2"), s.deathServers());
         assertTrue(s.listServers().isEmpty());   // 빈 목록 = 아무도 안 나옴
         assertFalse(TravelItemRules.Settings.DEFAULT.usableOn("arena"));
         assertFalse(TravelItemRules.Settings.DEFAULT.recordsDeathOn("arena"));

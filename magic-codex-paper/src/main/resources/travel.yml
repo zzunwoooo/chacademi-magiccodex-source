@@ -2,10 +2,10 @@
 # 고친 뒤: /서버관리 새로고침 이동   (서버마다 한 번씩)
 # 파일이 서버끼리 다르면 /서버관리 상태 · /컨텐츠관리 이동지점 목록 에 "travel.yml 다름" 이 표시됩니다.
 
-# 이 서버의 서버 ID (아래 servers 의 키). 튜토리얼 서버 = tutorial, 학교 서버 = school, 야생1 서버 = wild, 야생2 서버 = wild2 ...
+# 이 서버의 서버 ID (아래 servers 의 키). 학교 서버 = school, 야생1 서버 = wild1, 야생2 서버 = wild2 ...
 server-id: school
 
-# 서버 목록. 키 = DB 에 저장되는 서버 ID (바꾸지 마세요 — 바꾸면 저장된 개인 지점이 "지도에서 빠진 서버" 가 됩니다).
+# 서버 목록. 키 = DB 에 저장되는 서버 ID (오너 2026-10-26: 야생 = wild1·wild2. 바꾸지 마세요 — 바꾸면 저장된 개인 지점이 "지도에서 빠진 서버" 가 됩니다).
 #   proxy   = Velocity 서버 이름 (velocity.toml [servers] 의 이름)
 #   enabled = false 면 그 서버로의 이동만 막고 지점·기록은 그대로 둡니다 ("이동할 수 없어요" 로 표시).
 # 서버를 빼고 싶으면 지우지 말고 enabled: false 로 두는 걸 권장합니다 (지우면 그 서버 지점은 "지도에서 빠진 서버" 로 표시).
@@ -13,8 +13,8 @@ servers:
   school:
     proxy: school
     label: 학교
-  wild:
-    proxy: wild
+  wild1:
+    proxy: wild1
     label: 야생1
   wild2:
     proxy: wild2
@@ -49,7 +49,7 @@ tabs:
       anchor: [493.0, 432.0]   # 기준 픽셀 (배율·회전할 때 이 점은 제자리)
   wild1:
     label: 야생1
-    server: wild
+    server: wild1
     world: world
     map: terrain
     # bounds: { min-x: -5000, min-z: -5000, max-x: 5000, max-z: 5000 }
@@ -70,7 +70,7 @@ points:
   # 학교에 있을 때만 (from), 야생에서는 못 감. 월드 이름이 world 가 아니면 world 를 바꾸세요.
   wild_spawn:
     name: 야생 스폰
-    server: wild
+    server: wild1
     world: world
     spawn: true
     from: [school]
@@ -105,7 +105,7 @@ rules:
 # from 에 없는 서버(학교·아레나)는 아무 일 없음 — 큐디치·결투 경기 중 사망은 경기 규칙대로. 끄려면 from: []
 # 학교 서버가 닫혀 있거나 이동이 막히면 몇 번 다시 시도하고, 그래도 안 되면 알림 (그 자리에서 지도로 이동).
 death-return:
-  from: [wild, wild2]
+  from: [wild1, wild2]
   to-server: school
   to-world: world
 

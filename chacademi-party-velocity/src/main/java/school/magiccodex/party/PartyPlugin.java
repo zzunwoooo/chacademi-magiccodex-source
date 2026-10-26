@@ -52,7 +52,7 @@ public final class PartyPlugin {
     private final Map<UUID,Long> nextChat=new HashMap<>(),nextCommand=new HashMap<>();
     private final Set<String> trusted=new HashSet<>();
     /** 채팅 접두 아이콘용 학교·야생 서버 이름 (party.properties school-server · wild-server). 그 밖의 채팅 서버는 [아레나]. */
-    private String schoolServer="school",wildServer="wild";
+    private String schoolServer="school",wildServer="wild1";
     private PartyBook book;
     private long membershipChangedAt=System.currentTimeMillis();
     private PartyStore store;
@@ -67,13 +67,13 @@ public final class PartyPlugin {
         try{
             Files.createDirectories(directory);var path=directory.resolve("party.properties");var properties=new Properties();
             if(Files.exists(path)){try(var reader=Files.newBufferedReader(path)){properties.load(reader);}}
-            else {properties.setProperty("max-members","8");properties.setProperty("trusted-servers","school,wild,arena");properties.setProperty("chat-servers","school,wild,arena");properties.setProperty("school-server","school");properties.setProperty("wild-server","wild");try(var writer=Files.newBufferedWriter(path)){properties.store(writer,"Single Velocity authority; restart after editing. trusted-servers/chat-servers = Velocity server names (the arena name must match kyudichi.properties arena-server).");}}
+            else {properties.setProperty("max-members","8");properties.setProperty("trusted-servers","school,wild1,wild2,arena");properties.setProperty("chat-servers","school,wild1,wild2,arena");properties.setProperty("school-server","school");properties.setProperty("wild-server","wild1");try(var writer=Files.newBufferedWriter(path)){properties.store(writer,"Single Velocity authority; restart after editing. trusted-servers/chat-servers = Velocity server names (the arena name must match kyudichi.properties arena-server).");}}
             int capacity=Integer.parseInt(properties.getProperty("max-members","8"));
             // 2026-10-21 (C02): the arena is trusted by default (identity · party HUD · chat work there); existing files keep their own list
-            for(var s:properties.getProperty("trusted-servers","school,wild,arena").split(","))if(!s.isBlank())trusted.add(s.strip());
+            for(var s:properties.getProperty("trusted-servers","school,wild1,wild2,arena").split(","))if(!s.isBlank())trusted.add(s.strip());
             var chatServers=new HashSet<String>();
-            for(var s:properties.getProperty("chat-servers","school,wild,arena").split(","))if(!s.isBlank())chatServers.add(s.strip());
-            schoolServer=properties.getProperty("school-server","school").strip();wildServer=properties.getProperty("wild-server","wild").strip();
+            for(var s:properties.getProperty("chat-servers","school,wild1,wild2,arena").split(","))if(!s.isBlank())chatServers.add(s.strip());
+            schoolServer=properties.getProperty("school-server","school").strip();wildServer=properties.getProperty("wild-server","wild1").strip();
             for(var s:chatServers)if(!trusted.contains(s))logger.warn("party.properties: chat-servers 의 "+s+" 가 trusted-servers 에 없어 그 서버에서는 전체·기숙사 채팅이 안 됩니다");
             network=new NetworkChat(trusted,chatServers);hud=new PartyHud(trusted);
             store=new PartyStore(directory.resolve("parties.json"));book=store.load(capacity);ready=true;

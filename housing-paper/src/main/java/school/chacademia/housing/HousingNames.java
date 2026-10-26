@@ -16,8 +16,8 @@ final class HousingNames implements AutoCloseable {
  }
  static List<Path> networkSources(Path folder){
   var local=folder.toAbsolutePath().normalize();var plugins=local.getParent();var server=plugins==null?null:plugins.getParent();var network=server==null?null:server.getParent();
-  if(network==null||!network.getFileName().toString().equalsIgnoreCase("network")||!plugins.getFileName().toString().equalsIgnoreCase("plugins")||!Set.of("school","wild","arena").contains(server.getFileName().toString()))return List.of(local);
-  var out=new ArrayList<Path>();for(String name:List.of("school","wild","arena")){var source=network.resolve(name).resolve("plugins/MagicCodexBridge");if(Files.isDirectory(source))out.add(source);}
+  if(network==null||!network.getFileName().toString().equalsIgnoreCase("network")||!plugins.getFileName().toString().equalsIgnoreCase("plugins")||!Set.of("school","wild1","wild2","arena").contains(server.getFileName().toString()))return List.of(local);
+  var out=new ArrayList<Path>();for(String name:List.of("school","wild1","wild2","arena")){var source=network.resolve(name).resolve("plugins/MagicCodexBridge");if(Files.isDirectory(source))out.add(source);}
   return out.isEmpty()?List.of(local):List.copyOf(out);
  }
  static void merge(Map<UUID,String> out,UUID id,String name)throws SQLException{
