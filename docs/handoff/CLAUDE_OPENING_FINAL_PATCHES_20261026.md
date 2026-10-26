@@ -720,3 +720,8 @@ items:
 
 확인: 각 아이템을 손에 들고 `/iaget` 류 또는 `/ia` 편집기에서 id 를 보고, 설정 바꾼 뒤 `/서버관리 새로고침 …`(각 섹션 참고).
 - **추가 (오너 2026-10-26 10:07)**: 잠긴 쪽에서 **"아공간 배낭" 제목을 그리지 않음**(자물쇠·문구만). 잠긴 쪽에서는 **Shift+클릭(빠른 이동)·두 번 클릭 모으기 막음**(보이지 않는 27칸으로 옮겨져 사라진 것처럼 보이던 문제) — 제작 패널 닫을 때 2x2 되돌리기만 예외. `GalaxyBagScreen.onMouseClick` 오버라이드.
+
+## 35. 도서관·교실 책 67권 (2026-10-26, 메모 #105, 오너 최종 검수 대기)
+- 바뀐 파일: `deployment/operating-config/MagicCodexBridge/books.yml`(overlay 등록) + 소스 기본값 `magic-codex-paper/src/main/resources/books.yml`. 코드 변경 없음.
+- 마법 13 · 마법·대기 17(commands 주석 — MagicDiscovery manual-conditions 에 그 마법이 없어서, 오너 일괄 재기획 때 켬) · 헛걸음 37. 기획표·장소별 블록 연결 명령: [docs/plans/library-books.md](../plans/library-books.md).
+- 적용: 서버 `plugins/MagicCodexBridge/books.yml` 교체 → `/서버관리 새로고침 책` → 오너가 책장마다 `/컨텐츠관리 책 연결 <책ID>` (서버별 book-blocks.yml).
