@@ -85,8 +85,12 @@ final class ConvenienceCommands implements Listener, PluginMessageListener {
     /** 이미 처리한 서버 간 메시지 id. */
     private final LinkedHashSet<String> seen = new LinkedHashSet<>();
 
+    /** 다른 기능(별풍선 후원)이 모든 서버 가운데 공지를 띄울 때 ({@link #announce}). 없으면 null. */
+    private static ConvenienceCommands instance;
+
     ConvenienceCommands(MagicCodexBridge plugin, OperatorCommands operator) throws Exception {
         this.plugin = plugin;
+        instance = this;
         this.operator = operator;
         this.file = new File(plugin.getDataFolder(), FILE);
         this.logFile = new File(plugin.getDataFolder(), "help-requests.log");
@@ -246,6 +250,38 @@ final class ConvenienceCommands implements Listener, PluginMessageListener {
         plugin.getLogger().info("NOTICE admin=" + from.getName() + " : " + text);
         if (!settings.crossServer()) { ok(from, "이 서버에 공지했어요"); return; }
         ok(from, forward(from instanceof Player p ? p : null, w) ? "모든 서버에 공지했어요" : "이 서버에 공지했어요 (다른 서버로 보낼 접속자가 없어요)");
+    }
+
+    /**
+     * 모든 서버 접속자에게 화면 가운데 큰 글씨(title·line) + 알림 카드(card·line) + 공지 소리. /공지 와 같은 서버 간 경로(Forward ALL).
+     * 메인 스레드. 이 서버에 보이면 true. cross-server: false 면 이 서버만. 편의 명령이 없으면(초기화 실패) false — 그때는 부른 쪽이 이 서버에만 띄운다.
+     * id = 메시지 ID (64자 이하, 받은 서버의 {@link #announceHook} 가 이것으로 무슨 공지인지 안다). 비우면 무작위.
+     */
+    static boolean announce(String id, String card, String title, String line) {
+        var self = instance;
+        if (self == null) return false;
+        var w = new ConvenienceRules.Wire(ConvenienceRules.Kind.ANNOUNCE, self.origin, id == null || id.isEmpty() || id.length() > 64 ? UUID.randomUUID().toString() : id,
+                self.serverId(), ConvenienceRules.clean(card, 80), ConvenienceRules.clean(title, 40), ConvenienceRules.clean(line, 300), System.currentTimeMillis());
+        self.seen(w.id());
+        self.showAnnounce(w);
+        if (self.settings.crossServer() && !self.forward(null, w)) self.plugin.getLogger().warning("가운데 공지를 다른 서버로 보내지 못했어요 (이 서버 접속자 없음): " + w.text());
+        return true;
+    }
+
+    /**
+     * 다른 서버에서 온 가운데 공지(ANNOUNCE)를 받은 뒤 부르는 곳 (메인 스레드, 처음 보는 id 만). 별풍선 후원 사망이 쓴다:
+     * id 가 "balloon:" 로 시작하면 이 서버 접속자에게 기념 상자를 보낸다 (BalloonDonationBridge). null = 없음.
+     */
+    static java.util.function.Consumer<ConvenienceRules.Wire> announceHook;
+
+    private void showAnnounce(ConvenienceRules.Wire w) {
+        var title = net.kyori.adventure.title.Title.title(Component.text(w.account(), NamedTextColor.RED), Component.text(w.text(), NamedTextColor.GOLD),
+                net.kyori.adventure.title.Title.Times.times(java.time.Duration.ofMillis(300), java.time.Duration.ofSeconds(5), java.time.Duration.ofMillis(800)));
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.showTitle(title);
+            CmdKit.notify(p, "warning", "announce-" + w.id(), w.who().isEmpty() ? settings.noticeTitle() : w.who(), w.text(), 0);
+            play(p, settings.noticeSound());
+        }
     }
 
     private void showNotice(ConvenienceRules.Wire w) {
@@ -408,6 +444,12 @@ final class ConvenienceCommands implements Listener, PluginMessageListener {
         if (w == null || origin.equals(w.origin())) return;
         switch (w.kind()) {
             case NOTICE -> { if (seen(w.id())) showNotice(w); }
+            case ANNOUNCE -> {
+                if (!seen(w.id())) return;
+                showAnnounce(w);
+                var hook = announceHook;   // 별풍선 후원 사망: 이 서버 접속자 기념 상자 (우편 source 가 같아 보낸 서버와 겹쳐도 한 통)
+                if (hook != null) try { hook.accept(w); } catch (RuntimeException error) { plugin.getLogger().warning("가운데 공지 후속 처리 실패: " + error); }
+            }
             case HELP -> {
                 if (!seen(w.id())) return;
                 String text = ConvenienceRules.clean(w.text(), 500);

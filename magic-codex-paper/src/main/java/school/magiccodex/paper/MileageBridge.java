@@ -315,6 +315,20 @@ final class MileageBridge implements PluginMessageListener, Listener {
         ChacaApi.branch(plugin, ChacaApi.유저관리, root, "마일리지 보기·설정·추가·빼기·구매 기록", "마일리지 보기");
         ChacaApi.summary(plugin, "마일리지", id -> { Long v = cached.get(id); return v == null ? "" : MileageProtocol.amount(v); });
     }
+    /**
+     * 다른 기능(별풍선 후원)의 마일리지 지급: /유저관리 &lt;닉&gt; 마일리지 추가 와 같은 저장(같은 IO 스레드·같은 표). 메인 스레드에서 부르고,
+     * 결과도 메인 스레드: ok = {전, 후}, fail = 유저용 문구. 기록(운영 기록)은 부른 쪽이 남긴다.
+     */
+    void credit(UUID id, long value, Consumer<long[]> ok, Consumer<String> fail) {
+        if (value <= 0 || value > MileageProtocol.MAX_BALANCE) { fail.accept("마일리지 값이 맞지 않아요"); return; }
+        work(() -> store.change(id, "추가", value), v -> {
+            plugin.getLogger().info("MILEAGE CREDIT player=" + id + " value=" + value + " before=" + v[0] + " after=" + v[1]);
+            var p = Bukkit.getPlayer(id);
+            if (p != null) { cached.put(id, v[1]); if (sessions.containsKey(id)) push(p, MileageProtocol.KIND_STATE, "", ""); }
+            ok.accept(v);
+        }, fail);
+    }
+
     private void changeBalance(CommandContext<CommandSourceStack> ctx, String change) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         UUID id = ChacaApi.target(ctx);
         long value = LongArgumentType.getLong(ctx, "값");

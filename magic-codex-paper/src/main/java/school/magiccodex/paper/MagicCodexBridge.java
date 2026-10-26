@@ -137,6 +137,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
     /** 전투 표시·전투 중 이동 막기 (메모 #91, combat-lock.yml). null = 초기화 실패. */
     public CombatTag combatTag(){return combatTag;}
     private MileageBridge mileage;
+    /** 마일리지 상점 (null = shop-mailbox DB 초기화 실패). 별풍선 후원 마일리지 지급이 쓴다. */
+    MileageBridge mileage(){return mileage;}
     private FishTankBridge fishTank;
     private BagPagesBridge bagPages;
     /** 공통 지급 함수 (2026-10-26). */
@@ -310,6 +312,8 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{new InventorySaveBridge(this);}catch(Exception|LinkageError error){getLogger().severe("인벤세이브 초기화 실패 (inventory-save.yml 확인): "+error.getMessage());}   // 2026-10-26 (배낭 다음: 사망 시 다른 쪽 떨어뜨리기)
         // 뽑기 상자 (API 상자, 2026-10-26): 아공간 배낭 다음에 (지급 칸 판정이 배낭 상태를 읽음).
         try{lootBoxes=new LootBoxBridge(this);}catch(Exception|LinkageError error){lootBoxes=null;getLogger().severe("뽑기 상자 초기화 실패 (loot-boxes.yml 확인): "+error.getMessage());}
+        // 별풍선 후원 보상 (2026-10-26, FINAL_PATCHES §43): donation 플러그인이 있으면 후원 이벤트를 받아 처리하고 취소 (api 콘솔 명령 안 돌게).
+        try{new BalloonDonationBridge(this);}catch(Exception|LinkageError error){getLogger().severe("별풍선 후원 보상 초기화 실패 (donation.yml 확인): "+error.getMessage());}
         try{chunkClaims=new ChunkClaimBridge(this);}catch(Exception|LinkageError error){chunkClaims=null;getLogger().severe("청크 점유 초기화 실패 (chunk-claims.yml·DB 확인): "+error.getMessage());}
         try{houseBoard=new HouseBoardBridge(this);}catch(Exception|LinkageError error){houseBoard=null;getLogger().severe("기숙사 점수 홀로그램 초기화 실패 (house-board.yml 확인): "+error.getMessage());}   // 메모 #106
         new AdminCommandBridge(this,mana,school,enhancement,appraisal,titles,npcSocial);

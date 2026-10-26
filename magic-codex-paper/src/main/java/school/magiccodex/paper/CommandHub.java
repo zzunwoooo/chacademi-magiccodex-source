@@ -41,6 +41,8 @@ final class CommandHub {
     }
 
     record Branch(Plugin owner, LiteralCommandNode<CommandSourceStack> node, String description, String example) {}
+    /** 대단원 바로 뒤에 붙는 칸 (예: /후원관리 &lt;닉네임&gt; &lt;개수&gt;). 유저관리에는 못 붙인다. */
+    record RootArgument(Plugin owner, ArgumentCommandNode<CommandSourceStack, ?> node, String description, String example) {}
     record PlayerRoot(Plugin owner, LiteralCommandNode<CommandSourceStack> node, String description, Collection<String> aliases) {}
     record Reload(Plugin owner, String key, String description, ChacaApi.ThrowingRunnable action) {}
     record Line(Plugin owner, String label, Function<UUID, String> line) {}
@@ -53,6 +55,7 @@ final class CommandHub {
         ROOTS.put(ChacaApi.아이템관리, "아이템 만들기·주기·능력 붙이기");
         ROOTS.put(ChacaApi.상점관리, "일반 상점·물고기 판매소·거래 처리");
         ROOTS.put(ChacaApi.상자관리, "뽑기 상자(API 상자) 만들기·보상·확률 관리");
+        ROOTS.put(ChacaApi.후원관리, "별풍선 후원 보상 테스트·수동 지급 (실제 후원과 같은 처리)");
         ROOTS.put(ChacaApi.기숙사관리, "기숙사 점수·기증 마법");
         ROOTS.put(ChacaApi.퀘스트관리, "의뢰 게시판 퀘스트 만들기·수정");
         ROOTS.put(ChacaApi.대화관리, "스토리 대화·컷신 재생과 파일 반영");
@@ -73,6 +76,7 @@ final class CommandHub {
     private final ChacaPermissions permissions;
     private final Map<String, List<Branch>> branches = new LinkedHashMap<>();
     private final List<PlayerRoot> playerRoots = new ArrayList<>();
+    private final Map<String, List<RootArgument>> rootArguments = new LinkedHashMap<>();
     private final LinkedHashMap<String, Reload> reloads = new LinkedHashMap<>();
     private final List<Line> summaries = new ArrayList<>();
     private final List<Status> statuses = new ArrayList<>();
@@ -109,6 +113,12 @@ final class CommandHub {
         // 같은 이름 갈래는 Brigadier가 자식들을 합친다 (같은 플러그인의 다른 파일이 같은 갈래에 붙여도 덮어쓰지 않음).
         list.add(new Branch(owner, node, description, example == null ? node.getLiteral() + " " : example));
         lateWarning(owner, "/" + root + " " + node.getLiteral());
+    }
+
+    void rootArgument(Plugin owner, String root, ArgumentCommandNode<CommandSourceStack, ?> node, String description, String example) {
+        if (!ROOTS.containsKey(root) || root.equals(ChacaApi.유저관리)) throw new IllegalArgumentException("칸을 바로 붙일 수 없는 대단원: " + root);
+        rootArguments.computeIfAbsent(root, k -> new ArrayList<>()).add(new RootArgument(owner, node, description, example == null ? "" : example));
+        lateWarning(owner, "/" + root + " <" + node.getName() + ">");
     }
 
     void playerCommand(Plugin owner, LiteralCommandNode<CommandSourceStack> node, String description, Collection<String> aliases) {
@@ -160,6 +170,7 @@ final class CommandHub {
             }
             if (root.equals(ChacaApi.서버관리)) addServerBranches(parent);
             for (var branch : branches.get(root)) parent.then(graft(branch.node(), "/" + root + (target != null ? " <닉네임>" : "")));
+            for (var arg : rootArguments.getOrDefault(root, List.of())) builder.then(copy(arg.node(), "/" + root + " <" + arg.node().getName() + ">"));
             if (target != null) builder.then(target);
             registrar.register(builder.build(), entry.getValue(), List.of());
         }
@@ -287,6 +298,7 @@ final class CommandHub {
                 out.add(new CatalogLine("/서버관리 상태", "연결 상태 보기"));
             }
             for (var b : branches.get(root)) walk(b.node(), head + " " + b.node().getLiteral(), b.description(), out);
+            for (var a : rootArguments.getOrDefault(root, List.of())) walk(a.node(), head + " " + catalogToken(a.node()), a.description(), out);
         }
         for (var r : playerRoots) walk(r.node(), "/" + r.node().getLiteral(), "(유저 명령) " + r.description(), out);
         var seen = new HashSet<String>();
@@ -326,7 +338,12 @@ final class CommandHub {
             String example = root.equals(ChacaApi.유저관리) ? typed : typed + b.example();
             lines.add(line(shown, b.description(), example));
         }
-        if (list.isEmpty() && !root.equals(ChacaApi.서버관리)) lines.add(Component.text(" (아직 등록된 명령이 없습니다)", NamedTextColor.DARK_GRAY));
+        for (var a : rootArguments.getOrDefault(root, List.of())) {
+            var shown = new StringBuilder(head + " <" + a.node().getName() + ">");
+            for (CommandNode<CommandSourceStack> n = a.node(); n.getChildren().size() == 1; ) { n = n.getChildren().iterator().next(); shown.append(' ').append(token(n)); }
+            lines.add(line(shown.toString(), a.description(), "/" + root + " " + a.example()));
+        }
+        if (list.isEmpty() && rootArguments.getOrDefault(root, List.of()).isEmpty() && !root.equals(ChacaApi.서버관리)) lines.add(Component.text(" (아직 등록된 명령이 없습니다)", NamedTextColor.DARK_GRAY));
         lines.add(Component.text(" 줄을 누르면 채팅창에 명령이 들어갑니다. 칸마다 다음에 넣을 것이 회색으로 보입니다.", NamedTextColor.DARK_GRAY));
         lines.forEach(sender::sendMessage);
     }
