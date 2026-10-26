@@ -158,6 +158,8 @@ public final class LootBoxAdminScreen extends SocialScreen {
     private void field(DrawContext c, Input input, int x, int y, int w, String hint) { box(c, x, y, w, 44, input.focus()); input.draw(c, x + 6, y + 2, w - 12, 40, hint); }
 
     private void icon(DrawContext c, ItemStack item, float x, float y, float scale) {
+        String path = LootBoxScreen.rewardIcon(item); // 가구 보상: 가구 그림
+        if (path != null && UiResources.images().drawCentered(c, path, x + 8 * scale, y + 8 * scale, Math.round(16 * scale), 0xFFFFFFFF)) return;
         c.getMatrices().push(); c.getMatrices().translate(x, y, 0); c.getMatrices().scale(scale, scale, 1);
         c.drawItem(item, 0, 0); c.drawStackOverlay(textRenderer, item, 0, 0); c.getMatrices().pop();
     }

@@ -45,6 +45,32 @@ final class LootBoxRules {
     }
 
     /**
+     * 가구 보상처럼 "한 번 가지면 끝"인 보상이 섞인 추첨 (2026-10-26 가구 뽑기권).
+     * unique[i] != null 인 보상은 이미 가진 것(owned)이면 나오지 않고, 이번 추첨(10개 열기)에서 한 번 나오면 남은 추첨에서도 빠진다
+     * — 같은 가중치 비율로 "가지지 않은 것 중에서 다시 뽑기"와 같다. unique[i] == null 인 보상(일반 아이템)은 그대로.
+     * count 번을 다 뽑을 수 없으면 null (가질 수 있는 가구가 count 개보다 적음).
+     */
+    static int[] drawUnique(int[] weights, String[] unique, Set<String> owned, int count, RandomGenerator random) {
+        int[] w = weights.clone();
+        for (int i = 0; i < w.length; i++) if (unique[i] != null && owned.contains(unique[i])) w[i] = 0;
+        var out = new int[count];
+        for (int n = 0; n < count; n++) {
+            int pick = draw(w, random);
+            if (pick < 0) return null;
+            out[n] = pick;
+            if (unique[pick] != null) for (int i = 0; i < w.length; i++) if (unique[pick].equals(unique[i])) w[i] = 0;
+        }
+        return out;
+    }
+
+    /** drawUnique 로 나올 수 있는 서로 다른 한정 보상 수 (거절 안내용). */
+    static int uniqueLeft(int[] weights, String[] unique, Set<String> owned) {
+        var left = new HashSet<String>();
+        for (int i = 0; i < weights.length; i++) if (unique[i] != null && weights[i] > 0 && !owned.contains(unique[i])) left.add(unique[i]);
+        return left.size();
+    }
+
+    /**
      * 대표 연출 등급 = 결과 중 가장 높은 등급.
      * 기존 정책이 없어서 Claude 가 정함 (오너 확인 필요) — docs/handoff/CLAUDE_OPENING_FINAL_PATCHES_20261026.md 참고.
      */
