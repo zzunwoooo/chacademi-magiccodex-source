@@ -9,4 +9,20 @@
 #    house: 루미나
 #    titles: [suffix_student]
 #    spells: [feather_step]
-players: {}
+players:
+  # ── 교수 담당 유저 (오너 2026-10-26): 담당 원소마다 간단한 마법 1 + 복잡한 마법 1 미리 해금 ──
+  madoomok:        # 마두 — 바람·대지
+    spells: [wind_push, thundercloud, pebble_toss, earthquake]   # 윈드 푸쉬·뇌운 / 조약돌 던지기·지진
+  "424242":        # 견자희 — 빛·어둠
+    spells: [prism_shot, prism_cage, shadow_fang, night_chain]   # 프리즘 탄·빛의 감옥 / 그림자 송곳니·밤의 사슬
+  chunbongtv:      # 춘봉 — 화염·물
+    spells: [ember_bolt, volcanic_barrage, water_bolt, tidal_wave]   # 파이어 볼·화산탄 세례 / 물방울 탄환·해일
+  # ── 기숙사 미리 배정 (분류 거울에서 창시자 연출) ──
+  babymansik:
+    house: 아르케온
+  Jungryeok:
+    house: 루미나
+  Chaenna:
+    house: 베스티아즈
+  alohay0:
+    house: 노크세르
