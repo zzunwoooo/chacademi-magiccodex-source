@@ -306,6 +306,7 @@ public final class MagicCodexBridge extends JavaPlugin implements PluginMessageL
         try{new MegaphoneBridge(this);}catch(Exception|LinkageError error){getLogger().severe("확성기 초기화 실패 (megaphone.yml 확인): "+error.getMessage());}
         // 아공간 배낭 2·3쪽 (2026-10-24). 실패해도 나머지는 계속 (인벤토리는 1쪽만).
         try{bagPages=new BagPagesBridge(this);}catch(Exception|LinkageError error){bagPages=null;getLogger().severe("아공간 배낭 초기화 실패 (bag-pages.yml·DB 확인): "+error.getMessage());}
+        try{new InventorySaveBridge(this);}catch(Exception|LinkageError error){getLogger().severe("인벤세이브 초기화 실패 (inventory-save.yml 확인): "+error.getMessage());}   // 2026-10-26 (배낭 다음: 사망 시 다른 쪽 떨어뜨리기)
         // 뽑기 상자 (API 상자, 2026-10-26): 아공간 배낭 다음에 (지급 칸 판정이 배낭 상태를 읽음).
         try{lootBoxes=new LootBoxBridge(this);}catch(Exception|LinkageError error){lootBoxes=null;getLogger().severe("뽑기 상자 초기화 실패 (loot-boxes.yml 확인): "+error.getMessage());}
         try{chunkClaims=new ChunkClaimBridge(this);}catch(Exception|LinkageError error){chunkClaims=null;getLogger().severe("청크 점유 초기화 실패 (chunk-claims.yml·DB 확인): "+error.getMessage());}

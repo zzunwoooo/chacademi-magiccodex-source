@@ -596,6 +596,8 @@ public final class TravelBridge implements Listener, PluginMessageListener, Auto
         if (p.getGameMode() == GameMode.SPECTATOR) return "관전 중에는 이동할 수 없어요";
         if (!plugin.playerStateReady(p)) return "캐릭터 정보를 불러오는 중이에요…";
         if (GeneralPresetBridge.combat(p.getUniqueId())) return "경기 중에는 이동할 수 없어요";
+        var bags = plugin.bagPagesBridge();   // 사망 뒤 배낭 다른 쪽 떨어뜨리는 중 (2026-10-26): 끝난 뒤 이동 (사망 귀환은 2초마다 다시 시도)
+        if (bags != null && bags.deathBusy(p.getUniqueId())) return "쓰러진 뒤 배낭을 정리하는 중이에요. 잠시 뒤 다시 해 주세요";
         if (config.rules().blockInCombat() && plugin.inCombat(p)) return "전투 중에는 이동할 수 없어요";
         long left = noCooldown ? 0 : TravelModel.cooldownLeft(config.rules(), lastTravel.getOrDefault(p.getUniqueId(), 0L), System.currentTimeMillis());
         if (left > 0) return "다시 이동하려면 " + (left + 999) / 1000 + "초 기다려 주세요";
