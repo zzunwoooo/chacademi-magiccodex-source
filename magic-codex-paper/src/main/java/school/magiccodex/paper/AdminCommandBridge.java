@@ -40,7 +40,7 @@ final class AdminCommandBridge {
             ChacaApi.branch(plugin, ChacaApi.유저관리, affinity(), "NPC 호감도·하트·호칭", "호감도 ");
         });
         register(plugin, "/아이템관리 마법봉·마력코어", () -> {
-            ChacaApi.branch(plugin, ChacaApi.아이템관리, wand(), "마법봉 주기·만들기·등록·원본설정", "마법봉 주기");
+            ChacaApi.branch(plugin, ChacaApi.아이템관리, wand(), "마법봉 주기(등급별)·만들기·등록·원본설정", "마법봉 주기 고급");
             ChacaApi.branch(plugin, ChacaApi.아이템관리, core(), "마력코어 주기·만들기", "마력코어 주기");
         });
         var operator = new OperatorCommands(plugin); // #95 게임모드·찾아가기·불러오기·좌표이동·비행·회복
@@ -274,6 +274,10 @@ final class AdminCommandBridge {
     private LiteralArgumentBuilder<CommandSourceStack> wand() {
         var give = literal("주기").executes(run(ctx -> giveWand(ctx, self(ctx))))
                 .then(player("닉네임").executes(run(ctx -> giveWand(ctx, ChacaApi.resolveOnline(ctx, "닉네임")))));
+        // 전투 스펙 2026-10-26: /아이템관리 마법봉 주기 <등급> [닉네임] — 등급·수치는 enhancement.yml wand-grades (명령 등록 시점의 등급 목록).
+        for (String grade : enhancement.wandGradeNames())
+            give.then(literal(grade).executes(run(ctx -> giveGradeWand(ctx, self(ctx), grade)))
+                    .then(player("닉네임").executes(run(ctx -> giveGradeWand(ctx, ChacaApi.resolveOnline(ctx, "닉네임"), grade)))));
         var make = literal("만들기").then(wandStats(run(ctx -> makeWand(ctx, self(ctx))), run(ctx -> makeWand(ctx, ChacaApi.resolveOnline(ctx, "닉네임")))));
         var register = literal("등록").then(wandStats(run(this::registerWand), null));
         var base = literal("원본설정").then(wandStats(run(this::wandBase), null));
@@ -302,6 +306,11 @@ final class AdminCommandBridge {
 
     private void giveWand(CommandContext<CommandSourceStack> ctx, Player target) throws CommandSyntaxException {
         deliver(ctx, target, List.of(enhancement.apprenticeWand()), "수습 마법봉");
+    }
+
+    private void giveGradeWand(CommandContext<CommandSourceStack> ctx, Player target, String grade) throws CommandSyntaxException {
+        ItemStack item = user(() -> enhancement.gradeWand(grade));
+        deliver(ctx, target, List.of(item), grade + " 마법봉");
     }
 
     private void makeWand(CommandContext<CommandSourceStack> ctx, Player target) throws CommandSyntaxException {

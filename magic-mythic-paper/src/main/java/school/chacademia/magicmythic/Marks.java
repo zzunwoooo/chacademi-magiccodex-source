@@ -29,8 +29,11 @@ final class Marks implements Listener {
     final class Mark {
         final Type type; final LivingEntity caster; final LivingEntity holder; final double damage; final Params p;
         final long until; int charges; double taken = 0; boolean done = false;
+        /** 전투 스펙 2026-10-26: 표식을 건 시전의 추적값 (PvP 배율 pvp_scale 포함) — 나중에 터질 때 같은 배율을 쓴다. */
+        final SpellTrace.Now trace;
         Mark(Type type, LivingEntity caster, LivingEntity holder, double damage, Params p, long ticks) {
             this.type = type; this.caster = caster; this.holder = holder; this.damage = damage; this.p = p;
+            var named = SpellTrace.of(p); this.trace = new SpellTrace.Now(named.spell(), named.element(), SpellTrace.current().pvpScale());
             this.until = now + ticks; this.charges = Math.max(1, p.i("count", 3));
         }
     }
@@ -89,7 +92,7 @@ final class Marks implements Listener {
         if (marks.isEmpty()) return;
         for (Mark m : new ArrayList<>(marks)) {
             if (m.done) continue;
-            var traceBefore = SpellTrace.set(SpellTrace.of(m.p));
+            var traceBefore = SpellTrace.set(m.trace);
             try {
             boolean gone = !m.holder.isValid() || m.holder.isDead() || !plugin.protection().pair(m.caster,m.holder.getLocation());
             if (m.type == Type.ASH_BRAND && !gone && now >= m.until) { burstBrand(m); m.done = true; }
@@ -170,7 +173,7 @@ final class Marks implements Listener {
                 // #79: the wedge VFX (30 s loop) only ends on its external:melee_hit branch; nothing sent it, so it stayed after the burst.
                 if (m.caster instanceof Player pl && !m.p.s("spell", "").isBlank())
                     Links.vfx(pl, m.p.s("spell", ""), "external:melee_hit", victim.getLocation(), victim.getUniqueId());
-                Bukkit.getScheduler().runTask(plugin, () -> burstWedge(m));
+                Bukkit.getScheduler().runTask(plugin, () -> { var before = SpellTrace.set(m.trace); try { burstWedge(m); } finally { SpellTrace.set(before); } });
             }
         }
     }
@@ -184,8 +187,8 @@ final class Marks implements Listener {
             if (--m.charges <= 0) m.done = true;
             double dmg = m.damage;
             Bukkit.getScheduler().runTask(plugin, () -> {
-                applyingSword = true;
-                try { plugin.targets().hurt(attacker, victim, dmg); } finally { applyingSword = false; }
+                applyingSword = true; var before = SpellTrace.set(m.trace);
+                try { plugin.targets().hurt(attacker, victim, dmg); } finally { applyingSword = false; SpellTrace.set(before); }
             });
             return;
         }

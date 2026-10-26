@@ -10,5 +10,5 @@ research: ''
 cast:
   command: 마법 leviathan_rise
   cooldown-seconds: 900
-  mana-cost: 2000
+  mana-cost: 600
 order: 150

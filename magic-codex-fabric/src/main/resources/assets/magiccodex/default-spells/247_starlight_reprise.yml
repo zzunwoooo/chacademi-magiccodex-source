@@ -10,5 +10,5 @@ research: 여섯 빛을 숨 돌릴 틈 없이 이어 보라. 마지막 빛이 �
 cast:
   command: 마법 starlight_reprise
   cooldown-seconds: 600
-  mana-cost: 600
+  mana-cost: 450
 order: 247

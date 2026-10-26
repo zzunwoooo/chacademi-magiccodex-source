@@ -10,5 +10,5 @@ research: ''
 cast:
   command: 마법 flame_emperor
   cooldown-seconds: 600
-  mana-cost: 1800
+  mana-cost: 450
 order: 99

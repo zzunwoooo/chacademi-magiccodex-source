@@ -1,5 +1,6 @@
 # 서버 마력 스냅샷: 피해 = base-damage + power-ratio * 마력. (자동 생성: magic-mythic-paper/tools/spells.py)
 # 피해 수치는 밸런스 검토 전 임시값입니다.
+# pvp-base / pvp-ratio: 전투 스펙 2026-10-26 — 플레이어가 플레이어를 맞힐 때만 이 값 (k × (40 + 지능), tools/spells.py PVP_K). 몹 상대는 위 값 그대로.
 # 사거리는 tools/spells.py RANGE_SCALE=1.7 가 이미 반영된 값 (#80). 아래 배율은 서버 판정 전체에 한 번 더 곱해집니다.
 # 전체 마법 사거리 배율 (#80). 1.0 = 아래 range 그대로. 0.25~3. 서버 판정(조준 확인·대상 탐색)에만 적용됩니다.
 # 주의: 클라이언트 조준 미리보기(spell-targeting.json)·이펙트(PortableVFX spell-bindings.yml range)·미몹 투사체(range=) 는 따로라
@@ -70,6 +71,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 3.1072
+    pvp-ratio: 0.07768
     ground: true
   vacuum_cleave:
     name: "윈드 커터"
@@ -79,6 +82,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.35
+    pvp-base: 1.3828
+    pvp-ratio: 0.03457
   gale_dash:
     name: "바람 걸음"
     skill: "CHA_gale_dash"
@@ -144,6 +149,8 @@ spells:
     utility: false
     base-damage: 7
     power-ratio: 0.55
+    pvp-base: 2.2172
+    pvp-ratio: 0.05543
   returning_blade:
     name: "되돌이 칼날"
     skill: "CHA_returning_blade"
@@ -152,6 +159,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.2208
+    pvp-ratio: 0.03052
   pressure_press:
     name: "윈드 프레스"
     skill: "CHA_pressure_press"
@@ -185,6 +194,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    pvp-base: 3.382
+    pvp-ratio: 0.08455
     ground: true
   air_stacking:
     name: "허공 쌓기"
@@ -203,6 +214,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 1.4164
+    pvp-ratio: 0.03541
   crossfire:
     name: "크로스 애로우"
     skill: "CHA_crossfire"
@@ -211,6 +224,8 @@ spells:
     utility: false
     base-damage: 8
     power-ratio: 0.6
+    pvp-base: 4.1332
+    pvp-ratio: 0.10333
   pressure_rupture:
     name: "토네이도 스핀"
     skill: "CHA_pressure_rupture"
@@ -219,6 +234,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.4248
+    pvp-ratio: 0.03562
   storm_crown:
     name: "삼중 탄환"
     skill: "CHA_storm_crown"
@@ -227,6 +244,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 1.6912
+    pvp-ratio: 0.04228
   hearth_touch:
     name: "손끝의 화로"
     skill: "CHA_hearth_touch"
@@ -243,6 +262,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.25
+    pvp-base: 0.9344
+    pvp-ratio: 0.02336
   rekindle:
     name: "다시 타오르는 불"
     skill: "CHA_rekindle"
@@ -259,6 +280,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.4
+    pvp-base: 1.6692
+    pvp-ratio: 0.04173
     ground: true
   fire_curtain:
     name: "플레어 월"
@@ -268,6 +291,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.12
+    pvp-base: 0.5992
+    pvp-ratio: 0.01498
     ground: true
   phoenix_oath:
     name: "불사조의 서약"
@@ -293,6 +318,8 @@ spells:
     utility: false
     base-damage: 14
     power-ratio: 0.9
+    pvp-base: 21.48
+    pvp-ratio: 0.537
     ground: true
   flame_lash:
     name: "화염 채찍"
@@ -302,6 +329,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    pvp-base: 2.3264
+    pvp-ratio: 0.05816
   palm_fireworks:
     name: "손바닥 폭죽"
     skill: "CHA_palm_fireworks"
@@ -318,6 +347,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 2.7268
+    pvp-ratio: 0.06817
   flame_leap:
     name: "블레이즈 킥"
     skill: "CHA_flame_leap"
@@ -326,6 +357,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 2.7268
+    pvp-ratio: 0.06817
   crimson_heart:
     name: "홍련의 심장"
     skill: "CHA_crimson_heart"
@@ -382,6 +415,8 @@ spells:
     utility: false
     base-damage: 7
     power-ratio: 0.5
+    pvp-base: 3.488
+    pvp-ratio: 0.0872
   heat_recovery:
     name: "열량 보존"
     skill: "CHA_heat_recovery"
@@ -398,6 +433,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
   lava_suture:
     name: "용암 봉합"
     skill: "CHA_lava_suture"
@@ -414,6 +451,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.35
+    pvp-base: 2.3464
+    pvp-ratio: 0.05866
   incandescent_break:
     name: "파이어 스트라이크"
     skill: "CHA_incandescent_break"
@@ -422,6 +461,8 @@ spells:
     utility: false
     base-damage: 7
     power-ratio: 0.5
+    pvp-base: 3.488
+    pvp-ratio: 0.0872
   crimson_breath:
     name: "드래곤 브레스"
     skill: "CHA_crimson_breath"
@@ -430,6 +471,8 @@ spells:
     utility: false
     base-damage: 12
     power-ratio: 0.8
+    pvp-base: 3.72
+    pvp-ratio: 0.093
   water_breath:
     name: "물결 숨결"
     skill: "CHA_water_breath"
@@ -454,6 +497,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.25
+    pvp-base: 0.9344
+    pvp-ratio: 0.02336
   quench:
     name: "불길 씻기"
     skill: "CHA_quench"
@@ -495,6 +540,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 1.6912
+    pvp-ratio: 0.04228
   eternal_ice_prison:
     name: "만년빙옥"
     skill: "CHA_eternal_ice_prison"
@@ -536,6 +583,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
     ground: true
   pressure_lance:
     name: "수압창"
@@ -545,6 +594,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
   life_distribution:
     name: "생명의 분배"
     skill: "CHA_life_distribution"
@@ -604,6 +655,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.8756
+    pvp-ratio: 0.04689
   pressure_hammer:
     name: "수압해머"
     skill: "CHA_pressure_hammer"
@@ -612,6 +665,8 @@ spells:
     utility: false
     base-damage: 9
     power-ratio: 0.6
+    pvp-base: 2.9224
+    pvp-ratio: 0.07306
     ground: true
   waterspout:
     name: "용오름"
@@ -621,6 +676,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 3.1072
+    pvp-ratio: 0.07768
     ground: true
   current_sorting:
     name: "사금 추출"
@@ -671,6 +728,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 3.1072
+    pvp-ratio: 0.07768
   bouncing_droplet:
     name: "도약하는 물방울"
     skill: "CHA_bouncing_droplet"
@@ -679,6 +738,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.3
+    pvp-base: 1.352
+    pvp-ratio: 0.0338
   abyssal_pressure:
     name: "심해의 압력"
     skill: "CHA_abyssal_pressure"
@@ -687,6 +748,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.35
+    pvp-base: 2.452
+    pvp-ratio: 0.0613
     ground: true
   verdant_touch:
     name: "풍요의 손길"
@@ -712,6 +775,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.2
+    pvp-base: 0.7724
+    pvp-ratio: 0.01931
   miners_rhythm:
     name: "광부의 박자"
     skill: "CHA_miners_rhythm"
@@ -744,6 +809,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.4248
+    pvp-ratio: 0.03562
   stone_wall:
     name: "석벽"
     skill: "CHA_stone_wall"
@@ -761,6 +828,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 2.7268
+    pvp-ratio: 0.06817
   earthquake:
     name: "지진"
     skill: "CHA_earthquake"
@@ -769,6 +838,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 3.1072
+    pvp-ratio: 0.07768
   climate_control:
     name: "기후 통제"
     skill: "CHA_climate_control"
@@ -801,6 +872,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.15
+    pvp-base: 0.7124
+    pvp-ratio: 0.01781
   vein_fracture:
     name: "광맥 파쇄"
     skill: "CHA_vein_fracture"
@@ -860,6 +933,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.2
+    pvp-base: 0.7724
+    pvp-ratio: 0.01931
   bark_peeling:
     name: "껍질 벗기기"
     skill: "CHA_bark_peeling"
@@ -885,6 +960,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.35
+    pvp-base: 2.452
+    pvp-ratio: 0.0613
   pollen_matchmaking:
     name: "꽃가루 중매"
     skill: "CHA_pollen_matchmaking"
@@ -951,6 +1028,8 @@ spells:
     utility: false
     base-damage: 8
     power-ratio: 0.5
+    pvp-base: 3.5936
+    pvp-ratio: 0.08984
   earth_embrace:
     name: "대지의 품"
     skill: "CHA_earth_embrace"
@@ -967,6 +1046,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.4
+    pvp-base: 2.8324
+    pvp-ratio: 0.07081
   primordial_stone:
     name: "원초의 돌"
     skill: "CHA_primordial_stone"
@@ -975,6 +1056,8 @@ spells:
     utility: false
     base-damage: 20
     power-ratio: 1.0
+    pvp-base: 7.6096
+    pvp-ratio: 0.19024
   guiding_star:
     name: "길잡이 별"
     skill: "CHA_guiding_star"
@@ -1047,6 +1130,8 @@ spells:
     utility: false
     base-damage: 8
     power-ratio: 0.5
+    pvp-base: 2.4716
+    pvp-ratio: 0.06179
   arcane_mending:
     name: "마력 봉합"
     skill: "CHA_arcane_mending"
@@ -1079,6 +1164,8 @@ spells:
     utility: false
     base-damage: 10
     power-ratio: 0.6
+    pvp-base: 13.7692
+    pvp-ratio: 0.34423
     ground: true
   firefly_mark:
     name: "반딧불 표식"
@@ -1161,6 +1248,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.4248
+    pvp-ratio: 0.03562
   mana_deposit:
     name: "마력 예금"
     skill: "CHA_mana_deposit"
@@ -1225,6 +1314,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 0.9964
+    pvp-ratio: 0.02491
   curving_plumes:
     name: "곡선 불깃털"
     skill: "CHA_curving_plumes"
@@ -1233,6 +1324,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 0.9964
+    pvp-ratio: 0.02491
   crystal_orbit:
     name: "결정 공전탄"
     skill: "CHA_crystal_orbit"
@@ -1241,6 +1334,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 0.974
+    pvp-ratio: 0.02435
   venom_spit:
     name: "독 뱉기"
     skill: "CHA_venom_spit"
@@ -1249,6 +1344,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 0.8348
+    pvp-ratio: 0.02087
   smoke_veil:
     name: "연막 은신"
     skill: "CHA_smoke_veil"
@@ -1257,6 +1354,8 @@ spells:
     utility: false
     base-damage: 1
     power-ratio: 0.1
+    pvp-base: 0.386
+    pvp-ratio: 0.00965
   domain_stomp:
     name: "영역 선포"
     skill: "CHA_domain_stomp"
@@ -1265,6 +1364,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   seal_circle:
     name: "봉인진"
     skill: "CHA_seal_circle"
@@ -1273,6 +1374,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.4248
+    pvp-ratio: 0.03562
     ground: true
   seal_talismans:
     name: "봉인 부적"
@@ -1282,6 +1385,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 0.8348
+    pvp-ratio: 0.02087
   shield_slam:
     name: "방패 내려찍기"
     skill: "CHA_shield_slam"
@@ -1290,6 +1395,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   chain_arrow:
     name: "사슬 화살"
     skill: "CHA_chain_arrow"
@@ -1298,6 +1405,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.2208
+    pvp-ratio: 0.03052
   mana_drain:
     name: "마나 흡수"
     skill: "CHA_mana_drain"
@@ -1306,6 +1415,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 0.8348
+    pvp-ratio: 0.02087
     ground: true
   soul_scythe:
     name: "영혼 낫"
@@ -1315,6 +1426,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   oblivion_orbs:
     name: "망각의 탄환"
     skill: "CHA_oblivion_orbs"
@@ -1323,6 +1436,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 0.8348
+    pvp-ratio: 0.02087
   bone_grasp:
     name: "뼈의 손아귀"
     skill: "CHA_bone_grasp"
@@ -1331,6 +1446,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 0.8348
+    pvp-ratio: 0.02087
     ground: true
   shadow_leap:
     name: "그림자 도약"
@@ -1340,6 +1457,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   binding_pull:
     name: "끌어오기"
     skill: "CHA_binding_pull"
@@ -1348,6 +1467,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.15
+    pvp-base: 0.7124
+    pvp-ratio: 0.01781
   fairy_dust:
     name: "요정 가루"
     skill: "CHA_fairy_dust"
@@ -1356,6 +1477,8 @@ spells:
     utility: false
     base-damage: 1
     power-ratio: 0.1
+    pvp-base: 0.386
+    pvp-ratio: 0.00965
   moon_wind:
     name: "반달 바람날"
     skill: "CHA_moon_wind"
@@ -1364,6 +1487,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.2208
+    pvp-ratio: 0.03052
   gale_wings:
     name: "돌풍 날갯짓"
     skill: "CHA_gale_wings"
@@ -1372,6 +1497,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 0.9964
+    pvp-ratio: 0.02491
   feather_storm:
     name: "깃털 폭풍"
     skill: "CHA_feather_storm"
@@ -1380,6 +1507,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   hunting_pounce:
     name: "사냥 도약"
     skill: "CHA_hunting_pounce"
@@ -1388,6 +1517,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   roar_leap:
     name: "포효 도약"
     skill: "CHA_roar_leap"
@@ -1396,6 +1527,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   gravity_slam:
     name: "중력 강타"
     skill: "CHA_gravity_slam"
@@ -1404,6 +1537,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
   tail_spikes:
     name: "꼬리 가시"
     skill: "CHA_tail_spikes"
@@ -1412,6 +1547,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.15
+    pvp-base: 0.6104
+    pvp-ratio: 0.01526
     ground: true
   shadow_double:
     name: "그림자 분신"
@@ -1461,6 +1598,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.15
+    pvp-base: 0.6104
+    pvp-ratio: 0.01526
     ground: true
   drowsiness:
     name: "졸음"
@@ -1520,6 +1659,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
   ink_fingertip:
     name: "먹물 손끝"
     skill: "CHA_ink_fingertip"
@@ -1536,6 +1677,8 @@ spells:
     utility: false
     base-damage: 12
     power-ratio: 0.8
+    pvp-base: 5.6652
+    pvp-ratio: 0.14163
   night_lullaby:
     name: "밤의 자장가"
     skill: "CHA_night_lullaby"
@@ -1568,6 +1711,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
     ground: true
   warning_thread:
     name: "경고의 실"
@@ -1610,6 +1755,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.2
+    pvp-base: 2.48
+    pvp-ratio: 0.062
     ground: true
   void_maw:
     name: "공허의 입"
@@ -1619,6 +1766,8 @@ spells:
     utility: false
     base-damage: 14
     power-ratio: 0.9
+    pvp-base: 6.426
+    pvp-ratio: 0.16065
     ground: true
   landing_airbrake:
     name: "빗자루 차원이동"
@@ -1660,6 +1809,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.4248
+    pvp-ratio: 0.03562
     ground: true
   folding_tideplane:
     name: "접히는 수면"
@@ -1669,6 +1820,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.8756
+    pvp-ratio: 0.04689
     ground: true
   thawing_heat:
     name: "해빙의 열기"
@@ -1774,6 +1927,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.2
+    pvp-base: 0.7724
+    pvp-ratio: 0.01931
   ember_puff:
     name: "작은 불숨"
     skill: "CHA_ember_puff"
@@ -1782,6 +1937,8 @@ spells:
     utility: false
     base-damage: 2.5
     power-ratio: 0.2
+    pvp-base: 0.8036
+    pvp-ratio: 0.02009
   tide_slash:
     name: "물살 베기"
     skill: "CHA_tide_slash"
@@ -1790,6 +1947,8 @@ spells:
     utility: false
     base-damage: 2.5
     power-ratio: 0.2
+    pvp-base: 0.8036
+    pvp-ratio: 0.02009
   ice_shard:
     name: "얼음 조각"
     skill: "CHA_ice_shard"
@@ -1798,6 +1957,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.2
+    pvp-base: 0.7724
+    pvp-ratio: 0.01931
   wind_needle:
     name: "바람 송곳"
     skill: "CHA_wind_needle"
@@ -1806,6 +1967,8 @@ spells:
     utility: false
     base-damage: 2
     power-ratio: 0.2
+    pvp-base: 0.7724
+    pvp-ratio: 0.01931
   mini_twister:
     name: "작은 회오리"
     skill: "CHA_mini_twister"
@@ -1814,6 +1977,8 @@ spells:
     utility: false
     base-damage: 2.5
     power-ratio: 0.25
+    pvp-base: 0.9652
+    pvp-ratio: 0.02413
   shadow_fang:
     name: "그림자 송곳니"
     skill: "CHA_shadow_fang"
@@ -1822,6 +1987,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 0.9964
+    pvp-ratio: 0.02491
   dusk_orb:
     name: "어둠 구슬"
     skill: "CHA_dusk_orb"
@@ -1830,6 +1997,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 0.9964
+    pvp-ratio: 0.02491
   prism_shot:
     name: "프리즘 탄"
     skill: "CHA_prism_shot"
@@ -1838,6 +2007,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 0.9964
+    pvp-ratio: 0.02491
   sand_flick:
     name: "모래 한 줌"
     skill: "CHA_sand_flick"
@@ -1846,6 +2017,8 @@ spells:
     utility: false
     base-damage: 1.5
     power-ratio: 0.15
+    pvp-base: 0.5792
+    pvp-ratio: 0.01448
   sunlance_drop:
     name: "햇살 꽂기"
     skill: "CHA_sunlance_drop"
@@ -1854,6 +2027,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.2208
+    pvp-ratio: 0.03052
   flame_wheel:
     name: "화염 원반"
     skill: "CHA_flame_wheel"
@@ -1862,6 +2037,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.6068
+    pvp-ratio: 0.04017
   eruption_line:
     name: "분화선"
     skill: "CHA_eruption_line"
@@ -1870,6 +2047,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    pvp-base: 2.3264
+    pvp-ratio: 0.05816
   flame_javelin:
     name: "화염 투창"
     skill: "CHA_flame_javelin"
@@ -1878,6 +2057,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    pvp-base: 2.3264
+    pvp-ratio: 0.05816
   heat_haze:
     name: "아지랑이"
     skill: "CHA_heat_haze"
@@ -1886,6 +2067,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.8756
+    pvp-ratio: 0.04689
   frost_path:
     name: "서리 길"
     skill: "CHA_frost_path"
@@ -1902,6 +2085,8 @@ spells:
     utility: false
     base-damage: 0.9
     power-ratio: 0.08
+    pvp-base: 0.368
+    pvp-ratio: 0.0092
   crystal_coat:
     name: "결정 갑옷"
     skill: "CHA_crystal_coat"
@@ -1910,6 +2095,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.3
+    pvp-base: 1.5704
+    pvp-ratio: 0.03926
   ice_bloom:
     name: "얼음 꽃"
     skill: "CHA_ice_bloom"
@@ -1918,6 +2105,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.8756
+    pvp-ratio: 0.04689
     ground: true
   vacuum_burst:
     name: "진공 폭발"
@@ -1927,6 +2116,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.5
+    pvp-base: 2.3264
+    pvp-ratio: 0.05816
     ground: true
   gale_combo:
     name: "질풍 연격"
@@ -1936,6 +2127,8 @@ spells:
     utility: false
     base-damage: 2.5
     power-ratio: 0.2
+    pvp-base: 0.8036
+    pvp-ratio: 0.02009
   air_choke:
     name: "숨 막힘"
     skill: "CHA_air_choke"
@@ -1969,6 +2162,8 @@ spells:
     utility: false
     base-damage: 10
     power-ratio: 0.8
+    pvp-base: 3.7512
+    pvp-ratio: 0.09378
   shadow_step:
     name: "그림자 걸음"
     skill: "CHA_shadow_step"
@@ -1985,6 +2180,8 @@ spells:
     utility: false
     base-damage: 5
     power-ratio: 0.4
+    pvp-base: 1.8756
+    pvp-ratio: 0.04689
   flash_blink:
     name: "섬광 도약"
     skill: "CHA_flash_blink"
@@ -2001,6 +2198,8 @@ spells:
     utility: false
     base-damage: 6
     power-ratio: 0.45
+    pvp-base: 2.1372
+    pvp-ratio: 0.05343
   air_cannon:
     name: "공기 포탄"
     skill: "CHA_air_cannon"
@@ -2009,6 +2208,8 @@ spells:
     utility: false
     base-damage: 3
     power-ratio: 0.25
+    pvp-base: 1.1632
+    pvp-ratio: 0.02908
   hex_doll:
     name: "저주 인형"
     skill: "CHA_hex_doll"
@@ -2025,6 +2226,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 2.0716
+    pvp-ratio: 0.05179
   volcanic_barrage:
     name: "화산탄 세례"
     skill: "CHA_volcanic_barrage"
@@ -2033,6 +2236,8 @@ spells:
     utility: false
     base-damage: 7
     power-ratio: 0.5
+    pvp-base: 3.488
+    pvp-ratio: 0.0872
     ground: true
   scorch_lock:
     name: "작열의 표적"
@@ -2042,6 +2247,8 @@ spells:
     utility: false
     base-damage: 14
     power-ratio: 0.9
+    pvp-base: 6.426
+    pvp-ratio: 0.16065
   freeze_field:
     name: "빙결 지대"
     skill: "CHA_freeze_field"
@@ -2050,6 +2257,8 @@ spells:
     utility: false
     base-damage: 8
     power-ratio: 0.6
+    pvp-base: 4.1432
+    pvp-ratio: 0.10358
     ground: true
   ebb_mark:
     name: "썰물"
@@ -2059,6 +2268,8 @@ spells:
     utility: false
     base-damage: 10
     power-ratio: 0.7
+    pvp-base: 4.904
+    pvp-ratio: 0.1226
   ice_serpent:
     name: "얼음 뱀"
     skill: "CHA_ice_serpent"
@@ -2067,6 +2278,8 @@ spells:
     utility: false
     base-damage: 3.5
     power-ratio: 0.25
+    pvp-base: 1.744
+    pvp-ratio: 0.0436
   sky_dive:
     name: "천공 강하"
     skill: "CHA_sky_dive"
@@ -2075,6 +2288,8 @@ spells:
     utility: false
     base-damage: 11
     power-ratio: 0.8
+    pvp-base: 5.5592
+    pvp-ratio: 0.13898
     ground: true
   thundercloud:
     name: "뇌운"
@@ -2084,6 +2299,8 @@ spells:
     utility: false
     base-damage: 4.5
     power-ratio: 0.3
+    pvp-base: 2.1244
+    pvp-ratio: 0.05311
   fate_link:
     name: "운명의 실"
     skill: "CHA_fate_link"
@@ -2092,6 +2309,8 @@ spells:
     utility: false
     base-damage: 9
     power-ratio: 0.6
+    pvp-base: 4.2488
+    pvp-ratio: 0.10622
   prism_cage:
     name: "빛의 감옥"
     skill: "CHA_prism_cage"
@@ -2100,6 +2319,8 @@ spells:
     utility: false
     base-damage: 12
     power-ratio: 0.8
+    pvp-base: 5.6652
+    pvp-ratio: 0.14163
   wraith_march:
     name: "망령의 행진"
     skill: "CHA_wraith_march"
@@ -2108,6 +2329,8 @@ spells:
     utility: false
     base-damage: 9
     power-ratio: 0.6
+    pvp-base: 4.2488
+    pvp-ratio: 0.10622
   fault_rift:
     name: "단층 붕괴"
     skill: "CHA_fault_rift"
@@ -2116,6 +2339,8 @@ spells:
     utility: false
     base-damage: 11
     power-ratio: 0.8
+    pvp-base: 5.5592
+    pvp-ratio: 0.13898
   flame_emperor:
     name: "염제 강림"
     skill: "CHA_flame_emperor"
@@ -2124,6 +2349,8 @@ spells:
     utility: false
     base-damage: 18
     power-ratio: 1.2
+    pvp-base: 3.3068
+    pvp-ratio: 0.08267
   leviathan_rise:
     name: "레비아탄"
     skill: "CHA_leviathan_rise"
@@ -2132,6 +2359,8 @@ spells:
     utility: false
     base-damage: 20
     power-ratio: 1.3
+    pvp-base: 15.9112
+    pvp-ratio: 0.39778
     ground: true
   heaven_cyclone:
     name: "하늘의 눈"
@@ -2141,6 +2370,8 @@ spells:
     utility: false
     base-damage: 18
     power-ratio: 1.2
+    pvp-base: 6.6132
+    pvp-ratio: 0.16533
   abyss_gate:
     name: "심연의 문"
     skill: "CHA_abyss_gate"
@@ -2149,6 +2380,8 @@ spells:
     utility: false
     base-damage: 22
     power-ratio: 1.4
+    pvp-base: 19.8276
+    pvp-ratio: 0.49569
     ground: true
   aurora_veil:
     name: "오로라"
@@ -2158,6 +2391,8 @@ spells:
     utility: false
     base-damage: 4
     power-ratio: 0.3
+    pvp-base: 1.6532
+    pvp-ratio: 0.04133
   titan_stride:
     name: "타이탄의 발걸음"
     skill: "CHA_titan_stride"
@@ -2166,6 +2401,8 @@ spells:
     utility: false
     base-damage: 16
     power-ratio: 1.1
+    pvp-base: 3.382
+    pvp-ratio: 0.08455
   alchemy_preheat:
     name: "연금로 예열"
     skill: "CHA_alchemy_preheat"

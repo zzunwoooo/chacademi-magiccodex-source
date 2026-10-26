@@ -72,7 +72,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     @Override public void onEnable() {
         if(!protectionReady){getServer().getPluginManager().disablePlugin(this);return;}
         saveDefaultConfig();
-        QuidditchCombat.current = QuidditchCombat.load(getConfig().getConfigurationSection("quidditch-combat")); // #33
+        QuidditchCombat.current = QuidditchCombat.load(getConfig().getConfigurationSection("quidditch-combat")); MagicArmor.current = MagicArmor.Settings.load(getConfig().getConfigurationSection("pvp")); // 전투 스펙 2026-10-26 // #33
         getServer().getPluginManager().registerEvents(protection,this);
         getServer().getPluginManager().registerEvents(allies,this);
         getServer().getPluginManager().registerEvents(new PartyFriendlyFire(this),this); // #23 근접·투사체·불·물약 아군 피해 차단
@@ -181,7 +181,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
 
     /** /서버관리 새로고침 몹마법 */
     void reloadAll() {
-        reloadConfig(); QuidditchCombat.current = QuidditchCombat.load(getConfig().getConfigurationSection("quidditch-combat")); targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
+        reloadConfig(); QuidditchCombat.current = QuidditchCombat.load(getConfig().getConfigurationSection("quidditch-combat")); MagicArmor.current = MagicArmor.Settings.load(getConfig().getConfigurationSection("pvp")); /* 전투 스펙 2026-10-26 */ targets.reload(); reactions.reload(); status.reload(); telegraphs.reload();
     }
 
     /** /서버관리 상태 의 몹마법 줄 */

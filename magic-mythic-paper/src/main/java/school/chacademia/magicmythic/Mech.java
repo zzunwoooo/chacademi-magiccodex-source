@@ -47,7 +47,8 @@ abstract class Mech implements ITargetedEntitySkill, ITargetedLocationSkill {
 
     /** run() with the spell trace set (attribution for damage/heal hooks) and the cast noted for acquisition checks. */
     final boolean traced(Ctx c) {
-        var now = SpellTrace.of(p);
+        var named = SpellTrace.of(p);
+        var now = new SpellTrace.Now(named.spell(), named.element(), variable(c.data(), "pvp_scale", -1));
         var before = SpellTrace.set(now);
         try {
             if (c.caster() instanceof org.bukkit.entity.Player pl) DiscoveryHooks.cast(pl, now);

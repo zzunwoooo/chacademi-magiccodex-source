@@ -10,5 +10,5 @@ research: 여섯 빛이 하늘에 모이면, 심판을 피할 그림자는 없�
 cast:
   command: 마법 solar_judgment
   cooldown-seconds: 300
-  mana-cost: 800
+  mana-cost: 600
 order: 246

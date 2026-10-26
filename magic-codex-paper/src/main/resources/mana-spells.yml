@@ -187,7 +187,7 @@ spells:
     enabled: true
     command: 마법 crossfire
     permission: magic.learned.crossfire
-    mana-cost: 1500
+    mana-cost: 450
     cooldown-seconds: 120
   resonant_arrow:
     name: 미스틱 슈터
@@ -271,7 +271,7 @@ spells:
     enabled: true
     command: 마법 falling_star
     permission: magic.learned.falling_star
-    mana-cost: 700
+    mana-cost: 600
     cooldown-seconds: 360
   flame_lash:
     name: 화염 채찍
@@ -411,7 +411,7 @@ spells:
     enabled: true
     command: 마법 crimson_breath
     permission: magic.learned.crimson_breath
-    mana-cost: 2500
+    mana-cost: 450
     cooldown-seconds: 1000
   water_breath:
     name: 물결 숨결
@@ -959,7 +959,7 @@ spells:
     enabled: true
     command: 마법 solar_judgment
     permission: magic.learned.solar_judgment
-    mana-cost: 800
+    mana-cost: 600
     cooldown-seconds: 300
   firefly_mark:
     name: 반딧불 표식
@@ -1060,7 +1060,7 @@ spells:
     enabled: true
     command: 마법 starlight_reprise
     permission: magic.learned.starlight_reprise
-    mana-cost: 600
+    mana-cost: 450
     cooldown-seconds: 600
   constellation_emissary:
     name: 성좌의 대리인
@@ -1270,7 +1270,7 @@ spells:
     enabled: true
     command: 마법 eclipse_eye
     permission: magic.learned.eclipse_eye
-    mana-cost: 1500
+    mana-cost: 450
     cooldown-seconds: 300
   void_maw:
     name: 공허의 입
@@ -1890,42 +1890,42 @@ spells:
     enabled: true
     command: 마법 flame_emperor
     permission: magic.learned.flame_emperor
-    mana-cost: 1800
+    mana-cost: 450
     cooldown-seconds: 600
   leviathan_rise:
     name: 레비아탄
     enabled: true
     command: 마법 leviathan_rise
     permission: magic.learned.leviathan_rise
-    mana-cost: 2000
+    mana-cost: 600
     cooldown-seconds: 900
   heaven_cyclone:
     name: 하늘의 눈
     enabled: true
     command: 마법 heaven_cyclone
     permission: magic.learned.heaven_cyclone
-    mana-cost: 2000
+    mana-cost: 450
     cooldown-seconds: 900
   abyss_gate:
     name: 심연의 문
     enabled: true
     command: 마법 abyss_gate
     permission: magic.learned.abyss_gate
-    mana-cost: 2200
+    mana-cost: 600
     cooldown-seconds: 900
   aurora_veil:
     name: 오로라
     enabled: true
     command: 마법 aurora_veil
     permission: magic.learned.aurora_veil
-    mana-cost: 1800
+    mana-cost: 450
     cooldown-seconds: 900
   titan_stride:
     name: 타이탄의 발걸음
     enabled: true
     command: 마법 titan_stride
     permission: magic.learned.titan_stride
-    mana-cost: 2000
+    mana-cost: 450
     cooldown-seconds: 900
   alchemy_preheat:
     name: 연금로 예열

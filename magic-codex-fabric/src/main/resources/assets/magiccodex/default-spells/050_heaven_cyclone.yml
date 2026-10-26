@@ -10,5 +10,5 @@ research: ''
 cast:
   command: 마법 heaven_cyclone
   cooldown-seconds: 900
-  mana-cost: 2000
+  mana-cost: 450
 order: 50

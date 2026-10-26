@@ -154,6 +154,7 @@ final class SpellRuntime implements AutoCloseable {
             boolean okay=mm.getAPIHelper().castSkill(p,r.skill(),p,p.getLocation(),chosen==null?List.of():List.of(chosen),List.of(plan.location()),1f,data->{
                 data.getVariables().putDouble("magic_power",power);
                 data.getVariables().putDouble("damage",r.damage(power));
+                data.getVariables().putDouble("pvp_scale",r.pvpScale(power)); // 전투 스펙 2026-10-26: 플레이어 대상 피해 배율 (MagicMythic Targets)
                 data.getVariables().putDouble("magic_haste",plugin.magicHaste(p));
             });
             return changed||okay;
