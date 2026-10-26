@@ -577,6 +577,19 @@
       "walkSpeed": 1.2,
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "ornate_mirror": {
+      "file": "ornate_mirror.glb",
+      "sha256": "6a0451fbe8af32896c6f95e47193c1a14e35dcd7b1fe38b4d64c6e6d0a7d0ac0",
+      "clips": {
+        "idle": null,
+        "idleVariants": [],
+        "walk": null,
+        "talk": null,
+        "greet": null
+      },
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }
