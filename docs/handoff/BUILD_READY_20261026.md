@@ -44,7 +44,9 @@
 - 뽑기권 상자 3개 (§38) — 가구 보상 종류 추가 (Bridge + ChacaHousing).
 - 아이템 5종 (§39) — Bridge·MagicMythic·ChacaPortrait. 클라 변경 없음.
 - 리턴권·텔포권·인벤세이브 + 사망 시 배낭 다른 쪽 떨어뜨리기 (§40) — 텔포권 고르기 창 새 채널 `magiccodex:tp_pick_request/response`. **Bridge + protocol + 클라 모드 같이.** 공유 DB 새 표 `codex_travel_presence`·`codex_travel_death` 자동 생성. `travel-items.yml`·`inventory-save.yml` 자동 생성. 아레나 server-id 가 travel.yml `use-servers`·`servers` 에 없어야 함.
+- 마법 힌트권 운명의 타로 (§41) — 새 채널 `magiccodex:tarot_hint` (서버→클라), Bridge + protocol + 클라 모드 (타로 PNG 35장 약 68MB 포함). `utility-items.yml spell-hint.tarot-ui`.
 - 별풍선 후원 보상 (§43) — **서버 플러그인 `deployment/donation/donation-bukkit-2.0.2-allcounts.1.jar` → 학교·야생·아레나 `plugins/`**, **클라 모드 `donation-fabric-1.21.4-2.0.2-allcounts.1.jar` → 런처 `mods/`** (README 에 SHA-256). Bridge 는 donation 이 없어도 켜짐(/후원관리 만). 서버 간 공지에 새 종류 ANNOUNCE — 모든 서버 Bridge 같은 빌드.
+- 운영자 행운의 뽑기판 100칸 (§44) — 새 채널 `magiccodex:draw_board`·`magiccodex:draw_board_action`. **Bridge + protocol + 클라 모드 같이** (판 PNG 5장 리소스 포함). 공유 DB 새 표 `codex_draw_board`·`codex_draw_item` 자동 생성 (database.properties 따름, 없으면 `draw-board.db`). 설정 파일 없음.
 
 ## 3. 서버 파일 (jar 가 안 덮어씀)
 - `deployment/operating-config/**` 전부 overlay 대로 (MagicCodexBridge·MythicMobs·PortableVFX·ChacademyStory).
@@ -55,7 +57,7 @@
 - 책 (#105): `MagicCodexBridge/books.yml` overlay 교체 → `/서버관리 새로고침 책` (§35, 블록 연결은 오너가 docs/plans/library-books.md 대로).
 - 아이템 기능 (§37~§39): `MagicCodexBridge/loot-boxes.yml` 은 가구·낚시도구·몬스터 전리품 상자 3개가 들어간 overlay 로 교체(§38). `utility-items.yml` 은 자동 생성 → `/서버관리 새로고침 사용아이템`. `ChAcademiaMagicMythic/config.yml` 에 `mana-potion`·`health-potion`·`potion-cooldown-overlay` 키, `ChacaPortrait/config.yml` 의 `reroll.item-id` = `item:cutscene_ticket` 손으로 반영(§39). 바뀐 id: 귀환권 `item:home_ticket`, 인기도 해제권 `item:popularity_reset`, 체력 포션 `item:health_potion` (부록 A-2).
 - API 상자 2종 + 호감도 선물 뽑기권 상자 (§42): loot-boxes.yml overlay 교체 → `/상자관리 새로고침`. 새 ItemsAdder 아이템 `item:gift_ticket`(오너가 만듦). 묶음(×5·×3) 아이템 최대 스택 확인.
-- 별풍선 후원 (§43): `plugins/MagicCodexBridge/donation.yml` 자동 생성 (학교·야생·아레나 같은 내용) → 고치면 `/서버관리 새로고침 후원`. 서버 `audit.yml` 에 새 종류 "후원" (kinds 에 `후원: true`). `plugins/donation/config.yml` 의 `acceptAllDonations: true` 확인. 예전 Skript `api` 스크립트는 지워도 됨(남아 있어도 안 돎).
+- 별풍선 후원 (§43): `plugins/MagicCodexBridge/donation.yml` 자동 생성 (학교·야생·아레나 같은 내용) → 고치면 `/서버관리 새로고침 후원`. 서버 `audit.yml` 에 새 종류 "후원" (kinds 에 `후원: true`). `plugins/donation/config.yml` 의 `acceptAllDonations: true` 확인. 예전 Skript `api` 스크립트는 지워도 됨(남아 있어도 안 돎). 아레나(큐디치)는 `servers` 에 넣지 않음 = 후원 안 받음.
 - 스토리 장 이름 (#104): ChacademyStory `steps.yml`.
 - TAB 한글 닉 (#110): `deployment/tab/`.
 
