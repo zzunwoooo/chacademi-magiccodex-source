@@ -1356,3 +1356,39 @@ MagicCodexBridge 가 그 플러그인의 후원 이벤트를 받아 처리한다
 ### §43 추가 — 큐디치(아레나) 서버에서는 후원 안 받음 (오너 2026-10-26 12:47)
 - `donation.yml servers: [school, wild, wild2]` (travel.yml server-id). 목록에 없는 서버(아레나)에서 온 후원 이벤트는 **취소만 하고 보상 없음**(콘솔 `api` 명령도 안 돎), 서버 로그 한 줄. `/후원관리` 도 그 서버에서는 거절. server-id 를 모르는 서버(travel.yml 없음)도 받지 않음.
 - 10,000 개 "접속자 전원 상자"는 그대로 아레나 접속자도 받음 (후원을 받는 것만 막음).
+
+## 45. 마법 발견 조건 전체 정리 (2026-10-26, 오너 결정)
+
+**한 줄**: 300종 중 처음부터 아는 아공간 수조를 뺀 **299종 모두 실제로 얻을 수 있는 조건**이 생겼다 (조건 없는 마법 0). 오너 검수표 = [docs/plans/discovery-conditions-v2.md](../plans/discovery-conditions-v2.md) (바꾼 179종, 원소별), 전체 300종 = `docs/plans/discovery-review.csv` (v2 로 다시 만듦).
+
+**무엇이 바뀌었나**
+- 판정 방법: 자동 222 · 책 29 · 교수 수업 47 · 스토리 1 (길잡이 별). 이번에 손댄 179종 = 새 조건 118 · 꺼져 있던 자동 판정 켬 20 · 조건 바꿈 11 · 대기 책 연결 16 · 문구만 맞춤 14.
+- 오너 결정 반영: 300종 밖 `feather_step`·`wind_vault` 삭제, 옛 키 정리(폭풍의 지휘 `wind.hot_air_rotation` · 화염 채찍 `fish.monster_pulled` · 파이어 스트라이크 `practice.shield_completed` 등 — 수동 마법은 이제 `trace.condition.<id>` 하나만), 수동 목록에 걸려 꺼져 있던 자동 판정 다시 켬, 메테오 스트라이크 = 화염 마법 20종 / 염제 강림 30종, 정화의 물결 = 독 걸린 채 우유 3번, 홍련의 심장 판정 구현(`Definitions.PENDING` 비움), 도감 문구 ↔ 실제 지급 맞춤(비행·윈드 프레스·토네이도 스핀·글씨 씻기 = 책, 기억의 등불 = 이솔데 빛 중급 수업, 철의 외피·산맥의 등 문구), 되감기·석상 깨우기 + 대기 책 14권 연결(마력 각인 책만 연결 안 함), 라이트닝 쇼크 = 번개 목격, 삼중 탄환 = 30블록 밖 화살 10번, 용수철 지반 = 슬라임 위 30번 뛰기, 진실의 눈 = 투명화 물약 마신 채 10마리, 수호자의 서약 = 친구 10명, 대지의 닻 = 방패로 10번 막기, 바람 바구니 = 아이템 300개.
+- 길잡이 별: 스토리 `ch1-13` 시작명령 `유저관리 {player} 마법조건 주기 guiding_star` (시작명령-한번). 저장소 기본 steps.yml 은 ch1-12 를 올레 클릭(대화 ch1-12 "저 잡았어요!") 으로 끝내므로 그 대화 뒤에 배움. **운영 steps.yml(overlay) 은 ch1-12 가 물고기를 낚으면 자동으로 넘어감** → 올레에게 보여 주는 장면에서 배우게 하려면 오너가 `/대화관리 단계 ch1-12 호출 NPC클릭` 으로 올레(12번) 연결 + 대화 ch1-12 지정.
+- 궁극 "원소 N종 습득" (`learned.<원소>`): MagicDiscovery 가 그 원소 마법 권한 수를 셈 (30초 캐시, 새로 배우면 바로 다시). 깨달음의 빛 힌트 제외 목록(`LifeSpells.NO_HINT`)은 가중치 10 만 남김.
+
+**새 카운터 (렉 없음: 이벤트로만, 무거운 확인은 그 마법이 아직 필요한 사람만)**
+- MagicDiscovery: 새 `LifeConditions`(생활 행동 50여 개 — 표는 v2 문서 "새로 넣은 카운터"), `ConditionRules`(순수 규칙), `Definitions.counted`·`learned.*`, 시전 원소 `cast.element.<원소>`, 수영 거리, 슬라임 점프, 밤 촛불, 가방 꽉 찬 채 줍기(3초에 1번), 화살 먼 거리 70→30블록. 옛 나침반 걷기·슬라임 연속 반동 판정 삭제.
+- MagicMythic `DiscoveryHooks`: 마법 적중 `hit.spell.<id>`·`hit.element.<원소>`·`hit.far(.<원소>)`, 원소 처치 `kill.element.<원소>`, 한 방 처치 `kill.one_hit.<원소>`, 홍련의 심장 `kill.fire_low_health`, 살아난 작물 `kill.crop_mob`. **처치 귀속을 피해 직전에 기록하도록 바꿈**(`MagicProtection.damage` → `pre`/`post`) — 예전엔 한 방에 죽인 몬스터는 그 마법 처치로 안 셌음(산맥의 등 등에도 적용).
+- MagicCodexBridge: 서버 통계 → 발견 카운터 연결 `DiscoveryStats`(교화·연금술·낚시·보물상자·등급·물고기 판매·선물·결투·빗자루·개인 지점 이동), 새 통계 `낚시줄끊김`·`개인지점이동`, 호감도 30 `affinity.any_30`, 책 읽기 `book.read`. 낚시 미니게임 성공이 이제 `fish.caught_fish` 로 셈 (예전엔 바닐라 낚시만 → 물고기 유인이 사실상 못 얻었음).
+- 모션 플러그인: 새 통계 `빗자루비행`(블록)·`빗자루낙마`.
+
+**배포**
+1. MagicDiscovery jar (학교·야생·아레나 같은 빌드) + **서버의 `plugins/MagicDiscovery/discoveries.yml`·`manual-conditions.yml` 을 저장소 파일로 교체** (jar 가 안 덮어씀. 안 바꾸면 옛 조건 그대로) → `/서버관리 새로고침 마법발견` 또는 재시작.
+2. MagicCodexBridge jar + `MagicCodexBridge/books.yml` overlay 교체 → `/서버관리 새로고침 책` (켠 책 16권 블록 연결은 library-books.md 대로).
+3. ChAcademiaMagicMythic jar, 모션 플러그인 jar.
+4. ChacademyStory: 운영 `plugins/ChacademyStory/steps.yml` 에 `ch1-13` 시작명령 2줄 추가 (overlay 반영됨) → `/서버관리 새로고침 스토리`.
+5. 클라 모드(도감 문구 158개 바뀜, known-hashes 추가 — 손대지 않은 도감 파일은 자동 갱신).
+6. 이미 배운 마법은 그대로. 새 카운터는 업데이트 뒤부터 셈 (예전 행동·이미 읽은 책은 안 셈).
+
+**검증**: Gradle 없음 → 바뀐 Java 문법 검사 통과, `ConditionRulesTest` 6개·AuditStats 전달을 따로 컴파일해 실행(통과), yml 299종을 Definitions 규칙대로 검사, discoveries.yml 의 모든 자동 키를 세는 코드가 있는지 확인(전부 있음). 테스트 고침: CurrentReviewedMappingTest(새 불변식) · DiscoveryTest · ManualConditionsTest · EventIndexTest · ExpansionDefinitionsTest · GimmickCatalogIntegrationTest, 새 DiscoveryStatsTest — **GPT 빌드 때 JUnit·컴파일 확인**.
+
+**게임 확인**
+- [ ] `/유저관리 <닉> 마법조건 진행 보기`로 새 키가 오르는지: 농지 밟기·우유(독)·모닥불·엔더 진주·낚시(미니게임) 1마리 → 물밑 엿보기 즉시.
+- [ ] 1장 올레 대화 뒤 길잡이 별 발견 알림.
+- [ ] 화염 마법 20종 계정 → 메테오 스트라이크 (시전 한 번 뒤 또는 30초 안).
+- [ ] 1:1 결투 한 판 → 아레나에서 `duel.played` 1.
+- [ ] 대기였던 책(예: 「되돌리는 장치에 관하여」) 닫으면 되감기 발견.
+
+**오너 확인 필요 / Claude 판단** (자세히는 v2 문서 끝 "판단한 것")
+- 배낭 정리 = 가방 확장권 대신 "가방 꽉 찬 채 줍기 5번" (확장권이 유료일 수 있어서) · 잔향 읽기 = 마법 책 3권 읽기 (분실물 보관소 없음) · 월식의 눈 = 최대 마나 1,500 그대로 · 허공 디딤 = 비행 50번 · 미스틱 슈터 = 미라지 슈터 화살 300번 · 섬광 도약은 같은 서버 개인 지점만 · 축복의 리본은 호감도가 바뀔 때 확인.

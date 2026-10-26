@@ -1,5 +1,7 @@
 # 마법 발견 조건 검수 목록 (애매한 것 · 조건 없는 것만)
 
+> **2026-10-26 v2 로 모두 정리됨** → 바뀐 조건은 [discovery-conditions-v2.md](discovery-conditions-v2.md). 아래 표는 v2 이전 상태 기록. `discovery-review.csv` 는 v2 기준으로 다시 만듦 (`v1 분류` 열 = 이 표의 분류).
+
 2026-10-26 · 기준 커밋 9deb413f · 조건은 하나도 안 바꿈 (읽기 전용 정리)
 
 ## 한눈에
