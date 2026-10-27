@@ -1,30 +1,22 @@
 {
   "warnings": [],
-  "out": "luka_norm.glb",
-  "bytes": 3436372,
-  "sha256": "ef446e711624bdc43a675b98719dfda51c3e38f3cda347a5a7a32f59651de574",
+  "out": "luka.glb",
+  "bytes": 2329960,
+  "sha256": "3aacce0dd8d51cda4c3c18703dd78b2cfe2d7036f2833a441df817d622969291",
   "heightBlocks": 1.8,
-  "scale": 1.7724283844304936,
-  "yawDegrees": 0.94,
+  "scale": 1.6540212429145804,
+  "yawDegrees": -0.0,
   "clips": {
-    "walk": {
-      "seconds": 2.3333,
-      "rootSpeed": 1.2307
-    },
-    "wait": {
-      "seconds": 6.0,
-      "rootSpeed": 0.0
-    },
     "look_around": {
       "seconds": 15.5833,
       "rootSpeed": 0.0
     },
-    "idle": {
-      "seconds": 15.3333,
+    "walk": {
+      "seconds": 2.3333,
       "rootSpeed": 0.0
     }
   },
-  "triangles": 15977,
+  "triangles": 15314,
   "joints": 65,
   "textures": [
     [
@@ -36,5 +28,10 @@
       2048
     ]
   ],
-  "input": "luka.fbx"
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/luka.glb"
 }

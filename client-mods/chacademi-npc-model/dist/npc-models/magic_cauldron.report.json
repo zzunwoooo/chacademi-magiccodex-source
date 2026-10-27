@@ -1,0 +1,27 @@
+{
+  "warnings": [
+    "스킨 없음: 정적 모델로만 표시됩니다",
+    "허벅지 뼈를 못 찾아 정면 방향 보정 안 함(+Z 가정, --yaw 로 지정 가능)"
+  ],
+  "out": "magic_cauldron.glb",
+  "bytes": 752648,
+  "sha256": "500b52bf2869736bb8ba8a16ea1415ba1a8c36cfee89b0055b1e7e04ecef9259",
+  "heightBlocks": 1.0,
+  "scale": 1.0004885197850513,
+  "yawDegrees": 0.0,
+  "clips": {},
+  "triangles": 7438,
+  "joints": 0,
+  "textures": [
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/magic_cauldron.glb"
+}
