@@ -643,6 +643,20 @@
       },
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "sf_bruno": {
+      "file": "sf_bruno.glb",
+      "sha256": "661133bf4ea0dd3bd87755c834a2bcbcdec72b2aa885c33e50be1190d30b74dd",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }

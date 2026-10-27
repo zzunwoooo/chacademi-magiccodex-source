@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "sf_bruno.glb",
+  "bytes": 2922580,
+  "sha256": "661133bf4ea0dd3bd87755c834a2bcbcdec72b2aa885c33e50be1190d30b74dd",
+  "heightBlocks": 1.8,
+  "scale": 1.7244292560200432,
+  "yawDegrees": -0.0,
+  "clips": {
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    },
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 14703,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/a.glb"
+}
