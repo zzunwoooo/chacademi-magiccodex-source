@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "vl_felix.glb",
+  "bytes": 2286300,
+  "sha256": "085b89e74ffe0de748f0700b3f38079ab7350bfa2a97e9f21f3d2c2a22041f0f",
+  "heightBlocks": 1.8,
+  "scale": 1.9902273501503525,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12618,
+  "joints": 65,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/38.glb"
+}

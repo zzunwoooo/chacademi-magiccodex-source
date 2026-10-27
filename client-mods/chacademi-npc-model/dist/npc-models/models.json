@@ -602,6 +602,34 @@
       },
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "vl_gustav": {
+      "file": "vl_gustav.glb",
+      "sha256": "c5dcbf9156ad4ecf77d2bffa02b7bdc894d73825d53b6c565ce01e812d5c8a71",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
+    },
+    "vl_felix": {
+      "file": "vl_felix.glb",
+      "sha256": "085b89e74ffe0de748f0700b3f38079ab7350bfa2a97e9f21f3d2c2a22041f0f",
+      "clips": {
+        "idle": "look_around",
+        "idleVariants": [],
+        "walk": "walk",
+        "talk": null,
+        "greet": null
+      },
+      "walkSpeed": 1.2,
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }

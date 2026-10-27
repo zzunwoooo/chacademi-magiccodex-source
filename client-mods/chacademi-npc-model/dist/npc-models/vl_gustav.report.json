@@ -1,0 +1,37 @@
+{
+  "warnings": [],
+  "out": "vl_gustav.glb",
+  "bytes": 2351464,
+  "sha256": "c5dcbf9156ad4ecf77d2bffa02b7bdc894d73825d53b6c565ce01e812d5c8a71",
+  "heightBlocks": 1.8,
+  "scale": 1.9605905394649188,
+  "yawDegrees": -0.0,
+  "clips": {
+    "look_around": {
+      "seconds": 15.5833,
+      "rootSpeed": 0.0
+    },
+    "walk": {
+      "seconds": 2.3333,
+      "rootSpeed": 0.0
+    }
+  },
+  "triangles": 12805,
+  "joints": 66,
+  "textures": [
+    [
+      2048,
+      2048
+    ],
+    [
+      2048,
+      2048
+    ]
+  ],
+  "proportion": {
+    "legs": 1.0,
+    "torso": 1.0,
+    "arms": 1.0
+  },
+  "input": "src/34.glb"
+}
