@@ -630,6 +630,19 @@
       "walkSpeed": 1.2,
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "artifact": {
+      "file": "artifact.glb",
+      "sha256": "bd6528f2a3eb364c8f38333a6db93deeb35a942fc6d55ff7cc4c43a3ee695705",
+      "clips": {
+        "idle": null,
+        "idleVariants": [],
+        "walk": null,
+        "talk": null,
+        "greet": null
+      },
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }
