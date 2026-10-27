@@ -657,6 +657,19 @@
       "walkSpeed": 1.2,
       "scale": 1.0,
       "nameplateOffset": 0.0
+    },
+    "enhance_station": {
+      "file": "enhance_station.glb",
+      "sha256": "5b70e78c17d8223a2e1505c0cf79eb91b425bd71ae41f3b6849aaf6a738d2363",
+      "clips": {
+        "idle": null,
+        "idleVariants": [],
+        "walk": null,
+        "talk": null,
+        "greet": null
+      },
+      "scale": 1.0,
+      "nameplateOffset": 0.0
     }
   }
 }
