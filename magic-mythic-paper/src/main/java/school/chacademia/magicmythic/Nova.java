@@ -116,21 +116,26 @@ final class Nova {
     // ------------------------------------------------------------------ time
     /** Runs `r` after `ticks` (0 = next tick) unless the caster left. */
     void later(int ticks, Runnable r) {
+        final SpellTrace.Now trace = SpellTrace.current(); // keep "which spell" for delayed hits (kill.spell.* acquisition)
         plugin.ticker().add(new Ticker.Tick() {
             int age;
-            @Override public boolean tick() { if (!pl.isOnline()) return false; if (age++ < ticks) return true; r.run(); return false; }
+            @Override public boolean tick() {
+                if (!pl.isOnline()) return false; if (age++ < ticks) return true;
+                var before = SpellTrace.set(trace); try { r.run(); } finally { SpellTrace.set(before); } return false;
+            }
             @Override public String kind() { return "nova"; }
         });
     }
     /** body(age) every tick from 0 until it returns false, the caster leaves or maxTicks pass; then end.run(). */
     void loop(int maxTicks, IntPredicate body, Runnable end) {
+        final SpellTrace.Now trace = SpellTrace.current();
         plugin.ticker().add(new Ticker.Tick() {
             int age; boolean done;
             @Override public boolean tick() {
                 if (!pl.isOnline() || age > maxTicks) return false;
-                return body.test(age++);
+                var before = SpellTrace.set(trace); try { return body.test(age++); } finally { SpellTrace.set(before); }
             }
-            @Override public void stop() { if (!done) { done = true; if (end != null) end.run(); } }
+            @Override public void stop() { if (!done) { done = true; if (end != null) { var before = SpellTrace.set(trace); try { end.run(); } finally { SpellTrace.set(before); } } } }
             @Override public String kind() { return "nova"; }
         });
     }
@@ -157,6 +162,7 @@ final class Nova {
         BiConsumer<Location, Vector> onStep = null;
         final Map<UUID, Integer> hitAt = new HashMap<>();
         double travelled; boolean ended;
+        final SpellTrace.Now trace = SpellTrace.current(); // spell attribution for hits after the cast tick
 
         Shot(Location from, Vector dir, double speed, double range, String system) {
             this.pos = from.clone(); this.dir = dir.clone().normalize(); this.speed = speed; this.range = range; this.system = system;
@@ -175,8 +181,13 @@ final class Nova {
             plugin.ticker().add(this); return this;
         }
         @Override public String kind() { return "nova"; }
-        @Override public void stop() { if (visual != null) { visual.close(); visual = null; } if (!ended) { ended = true; onEnd.accept(pos.clone(), false); } }
-        @Override public boolean tick() {
+        @Override public void stop() {
+            var before = SpellTrace.set(trace);
+            try { if (visual != null) { visual.close(); visual = null; } if (!ended) { ended = true; onEnd.accept(pos.clone(), false); } }
+            finally { SpellTrace.set(before); }
+        }
+        @Override public boolean tick() { var before = SpellTrace.set(trace); try { return step(); } finally { SpellTrace.set(before); } }
+        private boolean step() {
             if (!pl.isOnline() || pos.getWorld() == null || ++life > maxLife) return false;
             if (homing != null && homing.isValid() && turn > 0) {
                 Vector to = chest(homing).toVector().subtract(pos.toVector());

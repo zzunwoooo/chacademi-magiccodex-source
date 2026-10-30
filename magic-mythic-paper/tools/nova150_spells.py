@@ -1,5 +1,6 @@
 """2026-10-31 신규 마법 150종 (301~450, 기획: 프로젝트 문서 '차카데미 신규 마법 150종 기획안', VFX: PC 차카데미 vfx_Claude\\<Bundle>).
-오너: "실제 기능 개발도 하고, 모험 일지도 다 적어봐". 마나/쿨/피해/반경은 임시값 (밸런스 미확정), 발견 조건은 나중에 한꺼번에.
+오너: "실제 기능 개발도 하고, 모험 일지도 다 적어봐" → "연구일지 쓰려면 발견조건도 해야겠네 발견조건도 ㄱㄱ".
+마나/쿨/피해/반경은 임시값 (밸런스 미확정). 발견 조건 = tools/nova150/discovery.py (도감 문구 + discoveries.yml 서버 판정).
 
 Same row shape and outputs as tools/nova_spells.py (that file's docstring), rows in tools/nova150/{wind,fire,water,earth,light,dark}.py,
 Java in Nova150<Element>.java (chanova types registered from NovaMech). research = 도감 '연구 기록' (모험일지).
@@ -10,7 +11,10 @@ sys.path.insert(0, HERE)
 import arcana_spells as _a
 from nova.common import N, ev, cast  # noqa: F401
 from nova150 import wind, fire, water, earth, light, dark   # noqa: E402
+from nova150.discovery import DISC   # noqa: E402
 M = wind.M + fire.M + water.M + earth.M + light.M + dark.M
+# discovery text (row field 14) comes from DISC so the codex text and the server condition never drift apart
+M = [r[:14] + (DISC[r[1]][0],) + r[15:] for r in M]
 EXTRA = {}
 for _m in (wind, fire, water, earth, light, dark): EXTRA.update(getattr(_m, 'EXTRA', {}))
 
@@ -64,10 +68,24 @@ def write_all():
     _a._upsert(os.path.join(REPO, 'portable-vfx-runtime/paper/src/main/resources/spell-bindings.yml'), [
         (i, (lambda old, o=o, i=i, pack=pack, hold=hold, P=P: bind_entry(old, o, i, pack, hold, P)))
         for (o, i, nm, cat, mana, cd, en, desc, disc, res, pack, hold, P) in rows], MARK)
-    t = ['| # | id | 이름 | 대상 | 마나 / 쿨 | 피해 (base + 마력×) | 구현 | 임시값 | VFX 팩 |', '|---|---|---|---|---|---|---|---|---|']
+    # magic-discovery-paper: real acquisition conditions (counters the server already tracks; see nova150/discovery.py)
+    def disc_entry(old, i, nm, cat):
+        text, req, pre = DISC[i]
+        icon = (_a._field(old, 'icon') if old else None) or f'magiccodex:textures/spells/nova150/{i}.png'
+        r = ''.join(f'      "{k}": {v}\n' for k, v in req.items())
+        p = ('\n' + ''.join(f'      - "magic.learned.{x}"\n' for x in pre)) if pre else ' []\n'
+        return (f'  {i}:\n    name: "{nm}"\n    permission: "magic.learned.{i}"\n    icon: {icon}\n    category: "{cat}"\n'
+                f'    condition-text: "{text}"\n    requirements:\n{r}    chance: 1.0\n    prerequisites:{p}')
+    for i, (text, req, pre) in DISC.items():
+        assert 0 < len(req) <= 20 and all(re.fullmatch(r'[a-z0-9_.-]{1,100}', k) for k in req), i
+        assert all(x in DISC for x in pre) and '"' not in text, i
+    _a._upsert(os.path.join(REPO, 'magic-discovery-paper/src/main/resources/discoveries.yml'), [
+        (i, (lambda old, i=i, nm=nm, cat=cat: disc_entry(old, i, nm, cat)))
+        for (o, i, nm, cat, *_r) in sorted(M)], MARK)
+    t = ['| # | id | 이름 | 대상 | 마나 / 쿨 | 피해 (base + 마력×) | 구현 | 임시값 | 발견 조건 | VFX 팩 |', '|---|---|---|---|---|---|---|---|---|---|']
     for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, bundle, hold, P, en) in sorted(M):
         dmg = f'{base} + {ratio}' if base or ratio else '-'
-        t.append(f'| {o} | `{i}` | {nm} | {tgt} {rng} | {mana} / {cd}초 | {dmg} | {note} | {temp} | {bundle}{"" if en else " (꺼짐)"} |')
+        t.append(f'| {o} | `{i}` | {nm} | {tgt} {rng} | {mana} / {cd}초 | {dmg} | {note} | {temp} | {disc} | {bundle}{"" if en else " (꺼짐)"} |')
     doc = _a._read(os.path.join(HERE, 'nova150_spells_doc.md')).replace('{{TABLE}}', '\n'.join(t))
     _a._write_if(os.path.join(REPO, 'docs/handoff/NOVA150_301_450.md'), doc)
     print(len(M), 'nova150 spells written')
