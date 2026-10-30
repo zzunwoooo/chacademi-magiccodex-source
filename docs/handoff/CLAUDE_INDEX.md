@@ -1,5 +1,7 @@
 > 현재 운영 기준: [LIVE_SOURCE_HANDOFF_20261025](LIVE_SOURCE_HANDOFF_20261025.md) — 운영 상태와 재현 한계를 먼저 확인하세요.
 
+> Claude 2026-10-31 (not built, not compiled here): [할로윈 3인 보스 호박 리퍼 — 미몹 보스·소품 + 애드온 chaboss(페이즈·기믹 70/40/15·귀환·무적·대상 고르기) + chavfx + chamobshot back + /테스트 보스 호박리퍼](CLAUDE_PUMPKIN_REAPER_BOSS_20261031.md). Branch claude/pumpkin-reaper-boss-20261031 on claude/magic-150-20261031. MagicMythic jar + MythicMobs Mobs/Skills yml + ModelEngine pumpkin_reaper.bbmodel + 16 VFX packs PR_* (client); props models not made yet.
+
 > Claude 2026-10-31 (not built): [신규 공격 마법 150종 301~450 — 원소 6 × 25(초급7·중급6·고급6·비전4·궁극2) 실제 기능 · 도감 설명 · 모험일지 · 발견 조건](NOVA150_301_450.md). Branch claude/magic-150-20261031 on claude/magic-325-387-20261025. MagicMythic jar (Nova150*.java + Nova.java SpellTrace 수정) + MagicDiscovery discoveries.yml + Bridge mana-spells.yml + PortableVFX spell-catalog/bindings + MythicMobs Skills + client mod (default-spells 450, DefaultSpellMigration spells-150-20261031) together; 150 VFX packs on owner PC `차카데미 vfx_Claude\<번들>` must be deployed to client PortableVFX; icons `textures/spells/nova150/<id>.png` not drawn yet.
 
 > Claude 2026-10-25 (not built, NOT committed): [오픈 전 메모 1차 개선 — 마법 자동시전 검수·지능 명칭·감정 성향·책 지능·칭호 지급·사전 설정·AI 대화 호감도·천장·파티 아군·대상 마법·허수아비·하우징 좋아요·장 잠금·길잡이·커스텀 경기·재접속·설정창·귀환권·튜토리얼 상점 등](CLAUDE_OPENING_PREP_20261025.md). Local branch work/opening-prep-20261025 (merge of latest claude/* branches).

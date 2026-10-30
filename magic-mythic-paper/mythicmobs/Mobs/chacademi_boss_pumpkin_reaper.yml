@@ -1,0 +1,225 @@
+# 할로윈 3인 보스 "호박 리퍼" (2026-10-31). 진행(페이즈·기믹·대상 고르기)은 애드온 chaboss 가 맡는다 (ReaperBoss.java).
+# 경기장 = 보스 소환 위치 중심 반경 20 (chaboss arena=). 기믹 체력 70% / 40% / 15% (g1 g2 g3).
+# 모델: pumpkin_reaper(.bbmodel, 애니 26개) 는 완성. reaper_pumpkin_<얼굴>·reaper_lantern·reaper_candy·reaper_scarecrow 는 아직 Blockbench 제작 전 (아래 id 로 만들 것).
+# 체력·피해는 첫 값 (고위 미몹 빙핵의 수호자 1050 / 18.9 기준). 테스트 후 조정.
+
+CA_Boss_pumpkin_reaper:
+  Type: HUSK
+  Display: '&6&l호박 리퍼'
+  Health: 12000
+  Damage: 20
+  Armor: 10
+  BossBar:
+    Enabled: true
+    Title: '&6&l호박 리퍼'
+    Range: 48
+    Color: RED
+    Style: SEGMENTED_10
+    CreateFog: true
+    DarkenSky: true
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.26
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=pumpkin_reaper;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - chaboss{a=start;arena=20;g1=0.70;g2=0.40;g3=0.15} @self ~onSpawn
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ---- 기믹 소품 (애드온이 소환·판정. 소품은 맞아도 안 죽고, 맞은 것만 기록됨 - 허수아비만 죽음)
+
+# 기믹1 거짓말하는 호박들: 얼굴 5종 중 3개가 나옴
+CA_Reaper_pumpkin_smile:
+  Type: HUSK
+  Display: '&6잭오랜턴'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_pumpkin_smile;n=false} @self ~onSpawn
+CA_Reaper_pumpkin_angry:
+  Type: HUSK
+  Display: '&6잭오랜턴'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_pumpkin_angry;n=false} @self ~onSpawn
+CA_Reaper_pumpkin_sad:
+  Type: HUSK
+  Display: '&6잭오랜턴'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_pumpkin_sad;n=false} @self ~onSpawn
+CA_Reaper_pumpkin_blank:
+  Type: HUSK
+  Display: '&6잭오랜턴'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_pumpkin_blank;n=false} @self ~onSpawn
+CA_Reaper_pumpkin_surprised:
+  Type: HUSK
+  Display: '&6잭오랜턴'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_pumpkin_surprised;n=false} @self ~onSpawn
+
+# 기믹2 세 번의 종소리: 분신 (본체 모델 그대로, 촛불 색은 VFX)
+CA_Reaper_clone:
+  Type: HUSK
+  Display: '&5리퍼의 분신'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=pumpkin_reaper;n=false} @self ~onSpawn
+  - state{s=idle;li=0;lo=0} @self ~onSpawn
+
+# 기믹3 마지막 등불 / 8번 패턴: 들고 다니는 물건 (가까이 가면 머리 위로 올라감 = 애드온이 승객으로 태움)
+CA_Reaper_lantern:
+  Type: ARMOR_STAND
+  Display: '&e마지막 등불'
+  Health: 1000
+  Options:
+    Invisible: true
+    Marker: true
+    Small: true
+    Silent: true
+    PreventOtherDrops: true
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_lantern;n=false} @self ~onSpawn
+CA_Reaper_candy:
+  Type: ARMOR_STAND
+  Display: '&d사탕'
+  Health: 1000
+  Options:
+    Invisible: true
+    Marker: true
+    Small: true
+    Silent: true
+    PreventOtherDrops: true
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_candy;n=false} @self ~onSpawn
+
+# 기믹3 허수아비: 어둠 속에서 다가오는 잡몹. 쓰러진 자리에 사탕이 생김 (애드온)
+CA_Reaper_scarecrow:
+  Type: HUSK
+  Display: '&6허수아비'
+  Health: 60
+  Damage: 6
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 32
+    MovementSpeed: 0.22
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=reaper_scarecrow;n=false;drive=true} @self ~onSpawn
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  AITargetSelectors:
+  - clear
+  - players

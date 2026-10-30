@@ -1,0 +1,115 @@
+# 호박 리퍼 보스 스킬. 애드온 chaboss 가 대상(가까운 적 / 가장 먼 적 / 체력 가장 낮은 적 / 전원)을 골라 이 스킬을 시전한다.
+# 그래서 chatelegraph·chamobshot 줄에는 타게터를 붙이지 않는다 (애드온이 넘긴 대상을 그대로 씀). 모션은 state @self.
+# 빨간 예고 = 모드 예고(chatelegraph). VFX = PortableVFX 팩 claude:pr_<팩>/<시스템> (팩에는 예고 없음).
+# vfxref 는 예고 크기와 같게 (팩은 예고 크기 기준으로 만들어져 배율 1). vfxlead=0 = 판정 순간 재생.
+
+# ---------------- 모션만 (애드온이 순서를 맞춰 부름)
+CHA_REAPER_a_return_vanish:
+  Skills:
+  - state{s=return_vanish;li=0;lo=2} @self
+CHA_REAPER_a_return_appear:
+  Skills:
+  - state{s=return_appear;li=0;lo=3} @self
+CHA_REAPER_a_laugh:
+  Skills:
+  - state{s=laugh;li=0;lo=3} @self
+CHA_REAPER_a_p04_pumpkin_bomb:
+  Skills:
+  - state{s=p04_pumpkin_bomb;li=0;lo=3} @self
+CHA_REAPER_a_p05_soul_chain:
+  Skills:
+  - state{s=p05_soul_chain;li=0;lo=3} @self
+CHA_REAPER_a_p07_ghost_dash:
+  Skills:
+  - state{s=p07_ghost_dash;li=0;lo=2} @self
+CHA_REAPER_a_p08_trick_or_treat:
+  Skills:
+  - state{s=p08_trick_or_treat;li=0;lo=3} @self
+CHA_REAPER_a_p09_candy_rain_start:
+  Skills:
+  - state{s=p09_candy_rain_start;li=0;lo=0} @self
+  - delay 24
+  - state{s=p09_candy_rain_loop;li=0;lo=0} @self
+CHA_REAPER_a_p09_candy_rain_end:
+  Skills:
+  - state{s=p09_candy_rain_loop;r=true} @self
+  - state{s=p09_candy_rain_start;r=true} @self
+  - state{s=p09_candy_rain_end;li=0;lo=3} @self
+CHA_REAPER_a_g1_scythe_plant:
+  Skills:
+  - state{s=g1_scythe_plant;li=0;lo=3} @self
+CHA_REAPER_a_g2_split:
+  Skills:
+  - state{s=g2_split;li=0;lo=3} @self
+CHA_REAPER_a_g2_merge_sweep:
+  Skills:
+  - state{s=g2_split;r=true} @self
+  - state{s=g2_merge_sweep;li=0;lo=3} @self
+CHA_REAPER_a_g3_lantern_drop:
+  Skills:
+  - state{s=g3_lantern_drop;li=0;lo=3} @self
+CHA_REAPER_a_g3_arena_sweep:
+  Skills:
+  - state{s=g3_arena_sweep;li=0;lo=3} @self
+# ---------------- 1. 수확 베기: 가까운 적 쪽 240° 부채꼴 반경 7, 예고 0.45초 / 3페이즈부터 2연타
+CHA_REAPER_p01:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=7;angle=240;ticks=9;flat=11;element=dark;knock=0.6;vfx=pr_harvestslash/slash;vfxref=7;vfxlead=0;spell=boss_reaper_slash}
+CHA_REAPER_p01x2:
+  Skills:
+  - state{s=p01_harvest_double;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=7;angle=240;ticks=9;flat=10;element=dark;knock=0.5;vfx=pr_harvestslash/slash;vfxref=7;vfxlead=0;spell=boss_reaper_slash}
+  - delay 13
+  - chatelegraph{shape=cone;at=caster;r=7;angle=240;ticks=6;flat=10;element=dark;knock=0.8;vfx=pr_harvestslash/slashback;vfxref=7;vfxlead=0;spell=boss_reaper_slash}
+
+# ---------------- 2. 반달 회전베기: 보스 중심 원 반경 8, 예고 0.55초
+CHA_REAPER_p02:
+  Skills:
+  - state{s=p02_crescent_spin;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=8;ticks=11;flat=10;element=dark;knock=1.2;up=0.3;vfx=pr_crescentspin/spin;vfxref=8;vfxlead=0;spell=boss_reaper_spin}
+
+# ---------------- 3. 부메랑 낫: 가장 먼 적 방향 직선 18 · 폭 2, 예고 0.55초 → 낫이 날아갔다 돌아옴 (갈 때·올 때 각각 판정)
+CHA_REAPER_p03:
+  Skills:
+  - state{s=p03_boomerang_throw;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=18;width=2;ticks=11;flat=0;spell=boss_reaper_boomerang}
+  - delay 11
+  - chavfx{id=pr_boomerangscythe/launch;at=caster}
+  - chamobshot{speed=1.1;range=18;radius=1.2;back=true;flat=9;element=dark;fromy=2.2;fromz=0.8;vfx=pr_boomerangscythe/scythe;hitvfx=pr_boomerangscythe/catch}
+
+# ---------------- 4. 호박 폭탄: 한 명당 하나 (애드온이 0.4초 간격으로 전원에게), 대상 발밑 원 반경 2.2, 예고 1.5초
+CHA_REAPER_p04:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.2;ticks=30;flat=9;element=fire;ignite=40;vfx=pr_pumpkinbomb/boom;vfxref=2.2;vfxlead=0;spell=boss_reaper_bomb}
+  - delay 8
+  - chavfx{id=pr_pumpkinbomb/throw;at=caster}
+  - chamobshot{flat=0;radius=0.2;speed=0.55;rise=0.5;range=26;fromy=2.4;vfx=pr_pumpkinbomb/bomb}
+
+# ---------------- 6. 땅속의 손: 시작 (보스 손 내리꽂기) + 손 하나 (애드온이 체력 가장 낮은 적 위치에 5번)
+CHA_REAPER_p06:
+  Skills:
+  - state{s=p06_ground_hands;li=0;lo=3} @self
+  - delay 11
+  - chavfx{id=pr_groundhands/slam;at=caster}
+CHA_REAPER_p06_hand:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=1.4;ticks=12;flat=6;element=dark;up=0.7;status=slow:30:0.3;vfx=pr_groundhands/hand;vfxref=1.4;vfxlead=0;spell=boss_reaper_hands}
+
+# ---------------- 7. 유령 돌진: 애드온이 사라짐·나타남·돌진 이동·저주 장판. 여기선 직선 예고 26 · 폭 2.6, 0.6초 + 판정
+CHA_REAPER_p07:
+  Skills:
+  - chatelegraph{shape=line;at=caster;length=26;width=2.6;ticks=12;flat=11;element=dark;knock=1;spell=boss_reaper_dash}
+
+# ---------------- 9. 사탕 비 메테오 하나 (애드온이 위치를 골라 1~2파). 원 반경 1.3, 예고 0.8초
+CHA_REAPER_p09_meteor:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=1.3;ticks=16;flat=7;element=fire;vfx=pr_candyrain/meteorhit;vfxref=1.3;vfxlead=0;spell=boss_reaper_meteor}
+
+# ---------------- 10. 수확자의 도약: 체력 가장 낮은 적 발밑 원 반경 5 (예고 0.75초, 모션 시작부터 1.15초에 내려찍기), 내려찍을 때 그 옆으로 순간이동
+CHA_REAPER_p10:
+  Skills:
+  - state{s=p10_reaper_leap;li=0;lo=3} @self
+  - delay 8
+  - chavfx{id=pr_reaperleap/launch;at=caster}
+  - chatelegraph{shape=circle;at=target;r=5;ticks=15;flat=13;element=fire;knock=1;up=0.4;blink=true;vfx=pr_reaperleap/slam;vfxref=5;vfxlead=0;spell=boss_reaper_leap}

@@ -21,6 +21,8 @@ import org.bukkit.util.Vector;
  *   vfx=pack/system (projectile role, follows the shot)  hitvfx=pack/system (static, played where it hits or stops)
  *   tint=FFFFFF  burst=0 (radius: when the shot lands or hits, everything inside takes the hit instead - thrown rocks, bottles)
  *   orbit=0 (ticks the shots first circle the caster at 1.6 blocks before flying - foxfire) 
+ *   back=false (boomerang: passes through targets and walls, turns at range and flies back to the caster's chest;
+ *     each target is hit at most once per leg; hitvfx plays when it is caught - 호박 리퍼 부메랑 낫)
  *   count up to 8, spread up to 360 (radial bursts)
  *   Player AIM spells (no entity target): homing / orbit end aim at the aimed point (until a shot is within 1.5 blocks).
  *
@@ -91,6 +93,8 @@ final class MobShotMech extends Mech {
         final boolean playersOnly = !p.s("hits", "players").toLowerCase(Locale.ROOT).startsWith("e");
         final double burst = Math.clamp(p.d("burst", 0), 0, 6); final int orbit = Math.clamp(p.i("orbit", 0), 0, 60);
         double travelled; GameplayVisual visual; boolean done; int age; final double orbitPhase;
+        final boolean back = p.b("back", false); boolean returning;
+        final java.util.Set<java.util.UUID> hitLeg = new java.util.HashSet<>();
         /** Player AIM spells have no entity target: home on the aimed point instead (until the shot reaches it). */
         final Location aimPoint; boolean aimReached;
 
@@ -127,14 +131,20 @@ final class MobShotMech extends Mech {
                 Vector to = goal == null ? null : goal.subtract(pos.toVector());
                 if (to != null && to.lengthSquared() > 1e-4) vel = vel.clone().normalize().multiply(1 - homing).add(to.normalize().multiply(homing)).normalize().multiply(speed);
             }
-            if (rise > 0) vel.setY(vel.getY() - 0.04);
+            if (returning) {   // boomerang: fly straight back to the caster's chest
+                Location home = c.caster().getLocation().add(0, c.caster().getHeight() * 0.55, 0);
+                Vector to = home.toVector().subtract(pos.toVector());
+                if (to.lengthSquared() <= Math.max(1.44, speed * speed)) { pos.setX(home.getX()); pos.setY(home.getY()); pos.setZ(home.getZ()); return end(true); }
+                vel = to.normalize().multiply(speed);
+            }
+            if (rise > 0 && !returning) vel.setY(vel.getY() - 0.04);
             double len = vel.length(); int steps = Math.max(1, (int) Math.ceil(len / 0.4)); Vector step = vel.clone().multiply(1.0 / steps);
             for (int i = 0; i < steps; i++) {
                 Location prev = pos.clone();
                 pos.add(step); travelled += len / steps;
                 if (!pos.getWorld().isChunkLoaded(pos.getBlockX() >> 4, pos.getBlockZ() >> 4) || !plugin.protection().pair(c.caster(), pos)) return end(false);
                 // real collision shapes (slabs, fences, panes), same rule as chabolt
-                if (len > 1e-6) {
+                if (len > 1e-6 && !back) {
                     var wall = pos.getWorld().rayTraceBlocks(prev, step, len / steps, org.bukkit.FluidCollisionMode.NEVER, true);
                     if (wall != null && wall.getHitBlock() != null) {
                         var at = wall.getHitPosition().subtract(step.clone().normalize().multiply(0.05));
@@ -144,10 +154,15 @@ final class MobShotMech extends Mech {
                 }
                 for (Entity e : pos.getWorld().getNearbyEntities(pos, radius + 1, radius + 1, radius + 1)) {
                     if (!(e instanceof LivingEntity t) || !valid(t) || Targets.closestDistance(e, pos) > radius) continue;
+                    if (back) { if (hitLeg.add(t.getUniqueId())) strike(t); continue; }
                     if (burst <= 0) strike(t);
                     return end(true);
                 }
-                if (travelled >= range) return end(false);
+                if (travelled >= range && !returning) {
+                    if (!back) return end(false);
+                    returning = true; hitLeg.clear();
+                }
+                if (returning && travelled >= range * 3) return end(false);   // safety: never fly forever
             }
             if (visual != null) visual.move(pos, vel.clone().normalize());
             return true;

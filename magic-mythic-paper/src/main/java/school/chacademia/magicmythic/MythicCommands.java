@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
  * /테스트 몹 예고 &lt;종류&gt; [초]
  * /테스트 몹 예고효과 &lt;효과&gt; &lt;모양&gt; &lt;크기&gt; [각도·폭] [틱] [선행] [배율]
  * /테스트 몹 상태이상 &lt;종류|해제|목록&gt; [초] [대상] [세기]
+ * /테스트 보스 호박리퍼 &lt;기믹 1~3|패턴 pXX|초기화&gt;
  * /컨텐츠관리 연습장 허수아비 &lt;설치|제거|목록&gt;
  * /서버관리 새로고침 몹마법 · /서버관리 상태 (몹마법)
  * </pre>
@@ -36,6 +37,8 @@ final class MythicCommands {
             "마나·쿨타임 없이 마법의 미몹 스킬만 실행", "마법 시전 ");
         ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("몹").then(telegraph()).then(telegraphFx()).then(status()),
             "몹 예고 장판·예고 효과·상태이상 시험", "몹 예고 전부");
+        ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("보스").then(reaper()),
+            "할로윈 보스 호박 리퍼: 기믹 1~3 바로 시작 · 패턴 pXX 시전 · 초기화 (64칸 안)", "보스 호박리퍼 기믹 1");
         if (plugin.dummies() != null)
             ChacaLink.branch(plugin, ChacaLink.컨텐츠관리, plugin.dummies().command(), "마법 연습장 훈련 허수아비 설치(서 있는 곳)·제거(3칸 안)·목록", "연습장 허수아비 설치");
         ChacaLink.reload(plugin, "몹마법", "config.yml (대상·원소 반응·상태이상·예고 장판). 스킬 YAML은 /mm reload", plugin::reloadAll);
@@ -107,6 +110,19 @@ final class MythicCommands {
                     ChacaLink.ok(ctx.getSource().getSender(), TestCast.cast(plugin, self(ctx), ctx.getArgument("마법", String.class)));
                     return 1;
                 }));
+    }
+
+    // ------------------------------------------------------------------ /테스트 보스 호박리퍼
+
+    private LiteralArgumentBuilder<CommandSourceStack> reaper() {
+        var pats = List.of("p01", "p02", "p03", "p04", "p05", "p06", "p07", "p08", "p09", "p10");
+        return Commands.literal("호박리퍼")
+            .then(Commands.literal("기믹").then(Commands.argument("번호", IntegerArgumentType.integer(1, 3))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), ReaperBoss.test(self(ctx), "기믹", String.valueOf(IntegerArgumentType.getInteger(ctx, "번호")))); return 1; })))
+            .then(Commands.literal("패턴").then(Commands.argument("패턴", ChacaLink.word(() -> pats))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), ReaperBoss.test(self(ctx), "패턴", StringArgumentType.getString(ctx, "패턴"))); return 1; })))
+            .then(Commands.literal("초기화")
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), ReaperBoss.test(self(ctx), "초기화", "")); return 1; }));
     }
 
     // ------------------------------------------------------------------ /테스트 몹 예고 · 예고효과 · 상태이상
