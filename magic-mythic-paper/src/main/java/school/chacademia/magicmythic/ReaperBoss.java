@@ -4,6 +4,9 @@ import io.lumine.mythic.bukkit.MythicBukkit;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Consumer;
+import java.time.Duration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
@@ -40,6 +43,9 @@ import school.magiccodex.protocol.TelegraphProtocol.Show;
  */
 final class ReaperBoss extends Mech {
     static final Map<UUID, Fight> FIGHTS = new HashMap<>();
+    /** 혼자 시험 모드 (/테스트 보스 하베스트 혼자 켜기): 즉사 대신 알림, 종소리 완화, 등불 체력 감소 없음, 사슬 상대 = 임시 허수아비. 서버 전체. */
+    static boolean solo;
+    static final LegacyComponentSerializer LEG = LegacyComponentSerializer.legacySection();
     static final String TAG = "chacademi_reaper_prop";
 
     ReaperBoss(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
@@ -56,6 +62,11 @@ final class ReaperBoss extends Mech {
 
     /** /테스트 보스 하베스트 - 가장 가까운 하베스트(64칸 안)에 기믹·패턴을 바로 걸거나 처음 상태로. */
     static String test(Player p, String action, String arg) {
+        if (action.equals("혼자")) {
+            solo = arg.equals("켜기");
+            return solo ? "혼자 시험 모드 켬: 즉사 대신 알림 · 종소리는 내 색이 아닌 분신 둘 5초 안 · 등불 체력 감소 없음 · 사슬 상대는 임시 허수아비"
+                        : "혼자 시험 모드 끔 (원래 규칙)";
+        }
         Fight f = null; double best = 64 * 64;
         for (Fight x : FIGHTS.values()) if (x.boss.getWorld().equals(p.getWorld())) { double d = x.boss.getLocation().distanceSquared(p.getLocation()); if (d < best) { best = d; f = x; } }
         if (f == null) return "64칸 안에 하베스트가 없어요 (/mm mobs spawn CA_Boss_pumpkin_reaper - 소환한 자리가 경기장 중심)";
@@ -86,7 +97,7 @@ final class ReaperBoss extends Mech {
         final MagicMythicPlugin plugin; final LivingEntity boss; final Location center; final double arena;
         final double[] gate; final boolean[] gateDone = new boolean[3];
         int t, nextAt = 60, emptyFor, deflectAt; String last = "";
-        boolean invulnerable, closed;
+        boolean invulnerable, closed, enraged;
         Gimmick gimmick;
         UUID guardFx;
         final List<Pool> pools = new ArrayList<>();
@@ -97,7 +108,16 @@ final class ReaperBoss extends Mech {
             this.plugin = plugin; this.boss = boss; this.center = boss.getLocation().clone();
             this.arena = Math.clamp(p.d("arena", 20), 8, 40);
             this.gate = new double[]{ Math.clamp(p.d("g1", 0.70), 0.05, 0.95), Math.clamp(p.d("g2", 0.40), 0.05, 0.95), Math.clamp(p.d("g3", 0.15), 0.02, 0.95) };
+            later(20, () -> { title("§6§l하베스트", "§7할로윈의 수확자가 깨어났다"); say("올해도 수확할 머리가 잔뜩이군..."); });
         }
+
+        /* ---------------------------------------------------------------- 채팅 + 타이틀 (액션바는 UI 에 가려서 안 씀) */
+        void say(String line) { for (Player pl : players()) pl.sendMessage(LEG.deserialize("§6[하베스트] §f" + line)); }
+        void title(String main, String sub) { for (Player pl : players()) title(pl, main, sub); }
+        static void title(Player pl, String main, String sub) {
+            pl.showTitle(Title.title(LEG.deserialize(main), LEG.deserialize(sub), Title.Times.times(Duration.ofMillis(250), Duration.ofMillis(2600), Duration.ofMillis(500))));
+        }
+        static void tell(Player pl, String line) { pl.sendMessage(LEG.deserialize(line)); }
 
         @Override public String kind() { return "boss"; }
 
@@ -145,7 +165,8 @@ final class ReaperBoss extends Mech {
         void pattern(List<Player> ps) {
             int ph = phase();
             List<Pat> pool = new ArrayList<>();
-            for (Pat pt : PATTERNS) if (pt.minPhase() <= ph && !pt.id().equals(last) && !(pt.id().equals("p05") && ps.size() < 2)) pool.add(pt);
+            if (ph == 4 && !enraged) { enraged = true; title("§c§l광폭화", "§f하베스트가 마지막 힘을 끌어낸다"); say("이제 진짜 수확이다!"); }
+            for (Pat pt : PATTERNS) if (pt.minPhase() <= ph && !pt.id().equals(last) && !(pt.id().equals("p05") && ps.size() < 2 && !solo)) pool.add(pt);
             if (pool.isEmpty()) return;
             int sum = pool.stream().mapToInt(Pat::weight).sum(), roll = RNG.nextInt(sum);
             Pat pick = pool.get(0);
@@ -163,18 +184,18 @@ final class ReaperBoss extends Mech {
                 case "p02" -> cast("CHA_REAPER_p02", near);
                 case "p03" -> cast("CHA_REAPER_p03", far);
                 case "p04" -> { anim("p04_pumpkin_bomb"); int k = 0; for (Player pl : ps) { int d = 5 + 8 * k++; later(d, () -> cast("CHA_REAPER_p04", pl)); } }
-                case "p05" -> soulChain(far, weakest(ps, far));
+                case "p05" -> { LivingEntity other = weakest(ps, far); if (other == null && solo) other = soloPartner(far); say("§5묶여라. 도망칠 수 있다면."); soulChain(far, other); }
                 case "p06" -> groundHands(weak);
-                case "p07" -> ghostDash(far);
-                case "p08" -> trickOrTreat(ps);
-                case "p09" -> candyRain(ps, weak);
-                case "p10" -> cast("CHA_REAPER_p10", weak);
+                case "p07" -> { say("어디까지 도망칠 수 있을까?"); ghostDash(far); }
+                case "p08" -> { say("§d장난칠까, 사탕 줄까?"); trickOrTreat(ps); }
+                case "p09" -> { say("§d다들 사탕 좋아하잖아?"); candyRain(ps, weak); }
+                case "p10" -> { say("약한 머리부터 수확하지."); cast("CHA_REAPER_p10", weak); }
                 default -> {}
             }
         }
 
         /** 5. 영혼 사슬: 두 사람을 잇고, 5초 안에 12블록 이상 떨어지면 끊김, 못 끊으면 두 사람 모두 큰 피해. */
-        void soulChain(Player a, Player b) {
+        void soulChain(Player a, LivingEntity b) {
             if (a == null || b == null || a.equals(b)) return;
             anim("p05_soul_chain");
             later(8, () -> {
@@ -193,16 +214,25 @@ final class ReaperBoss extends Mech {
                             stop(); return false;
                         }
                         if (age >= 100) {
-                            for (Player pl : List.of(a, b)) { Fx.effect(plugin, "claude:pr_soulchain/fail", pl.getLocation(), 0, 40); plugin.targets().hurt(boss, pl, 16, "dark"); }
+                            for (LivingEntity pl : List.of(a, b)) { Fx.effect(plugin, "claude:pr_soulchain/fail", pl.getLocation(), 0, 40); if (pl instanceof Player p2) plugin.targets().hurt(boss, p2, 16, "dark"); }
                             stop(); return false;
                         }
                         return true;
                     }
-                    @Override public void stop() { if (link != null) link.close(); Fx.stop(ba); Fx.stop(bb); }
+                    @Override public void stop() { if (link != null) link.close(); Fx.stop(ba); Fx.stop(bb); if (b.getScoreboardTags().contains(TAG + ":partner")) b.remove(); }
                     @Override public String kind() { return "boss"; }
                 };
                 plugin.ticker().add(tk);
             });
+        }
+
+        /** 혼자 시험: 사슬 반대편을 맡을 임시 허수아비 (대상 5칸 옆, 사슬이 끝나면 사라짐). */
+        LivingEntity soloPartner(Player near) {
+            if (near == null) return null;
+            Location at = ground(near.getLocation().clone().add(near.getLocation().getDirection().setY(0).normalize().multiply(-5)));
+            ArmorStand st = boss.getWorld().spawn(at, ArmorStand.class, a -> { a.setCustomName("§7[시험] 사슬 상대"); a.setCustomNameVisible(true); a.setPersistent(false); a.addScoreboardTag(TAG + ":partner"); });
+            later(160, () -> { if (st.isValid()) st.remove(); });
+            return st;
         }
 
         /** 6. 땅속의 손: 가장 체력 낮은 적이 서 있는 곳에 0.35초 간격 5번 (그때그때 위치), 각 예고 0.6초 뒤 손. */
@@ -380,8 +410,12 @@ final class ReaperBoss extends Mech {
         /** 즉사 (기믹 실패): 수확 연출 후 체력 0. */
         void harvest(Player pl) {
             Fx.effect(plugin, "claude:pr_harvested/harvest", pl.getLocation(), 0, 40);
+            if (solo) { tell(pl, "§c[시험] 즉사 판정 — 시험 모드라 살려 둠"); return; }
             later(6, () -> { if (pl.isValid() && !pl.isDead()) pl.setHealth(0); });
         }
+        /** 기믹 실패 알림 (이유는 채팅으로 남김). */
+        void failed(String why) { title("§c§l수확", "§f" + why); say("§c" + why + "... 수확의 시간이다."); }
+        void cleared(String what, String line) { title("§a§l" + what, "§f" + line); say("흐흐... 이번엔 운이 좋았군."); }
 
         /* ---------------------------------------------------------------- helpers */
 
@@ -470,6 +504,8 @@ final class ReaperBoss extends Mech {
         LyingPumpkins(Fight f) {
             this.f = f;
             f.anim("g1_scythe_plant");
+            f.title("§6§l거짓말하는 호박들", "§f진짜는 하나뿐. 속삭임을 모아라 (15초)");
+            f.say("셋 중 하나만 진짜야. 나머지는... 거짓말을 하지.");
             f.later(15, () -> Fx.effect(f.plugin, "claude:pr_lyingpumpkins/plant", f.center, f.center.getYaw(), 300));
             List<Integer> fs = new ArrayList<>(List.of(0, 1, 2, 3, 4)); Collections.shuffle(fs, RNG);
             truth = RNG.nextInt(3);
@@ -486,9 +522,9 @@ final class ReaperBoss extends Mech {
             for (int k = 0; k < Math.max(ps.size(), 1) && !ps.isEmpty(); k++) {
                 StringBuilder sb = new StringBuilder();
                 for (int j = k; j < lines.size(); j += ps.size()) { if (sb.length() > 0) sb.append("  /  "); sb.append(lines.get(j)); }
-                if (k < ps.size()) { clues.put(ps.get(k).getUniqueId(), sb.toString()); ps.get(k).sendMessage("§6[하베스트] §f속삭임이 들린다... §e" + sb); }
+                if (k < ps.size()) { clues.put(ps.get(k).getUniqueId(), sb.toString()); Fight.tell(ps.get(k), "§6[하베스트] §f속삭임이 들린다... §e" + sb); }
             }
-            countdown = f.warn(Shape.CIRCLE, f.center, 0, (float) f.arena, 0, 300, true, s -> { if (!over) fail(); });
+            countdown = f.warn(Shape.CIRCLE, f.center, 0, (float) f.arena, 0, 300, true, s -> { if (!over) fail("시간이 다 됐다"); });
         }
 
         /**
@@ -511,13 +547,14 @@ final class ReaperBoss extends Mech {
 
         @Override public boolean step(List<Player> ps) {
             age += 5;
-            if (age % 40 == 0) for (Player pl : ps) { String c = clues.get(pl.getUniqueId()); if (c != null && !over) pl.sendActionBar(net.kyori.adventure.text.Component.text("§e" + c)); }
+            if (age == 40 && !over) for (Player pl : ps) { String c = clues.get(pl.getUniqueId()); if (c != null) Fight.title(pl, "§6속삭임", "§e" + (c.length() > 60 ? "채팅을 확인하라" : c)); }
+            if (age == 160 && !over) for (Player pl : ps) { String c = clues.get(pl.getUniqueId()); if (c != null) Fight.tell(pl, "§6[하베스트] §7(다시) §e" + c); }
             return !over;
         }
 
         @Override public void propHit(Player by, Entity prop) {
             if (over) return;
-            for (int i = 0; i < 3; i++) if (prop.equals(pumpkins[i])) { if (i == truth) success(i); else fail(); return; }
+            for (int i = 0; i < 3; i++) if (prop.equals(pumpkins[i])) { if (i == truth) success(i); else fail("거짓 호박을 부쉈다"); return; }
         }
 
         void success(int i) {
@@ -525,10 +562,12 @@ final class ReaperBoss extends Mech {
             if (countdown != null) f.plugin.telegraphs().clear(countdown.id());
             Fx.effect(f.plugin, "claude:pr_lyingpumpkins/truth", pumpkins[i].getLocation(), 0, 40);
             f.anim("laugh");
+            f.cleared("정답", "진짜 호박이 부서졌다");
             for (Entity e : pumpkins) if (e != null) e.remove();
         }
-        void fail() {
+        void fail(String why) {
             over = true;
+            f.failed(why);
             if (countdown != null) f.plugin.telegraphs().clear(countdown.id());
             for (Entity e : pumpkins) if (e != null && e.isValid()) { Fx.effect(f.plugin, "claude:pr_lyingpumpkins/lie", e.getLocation(), 0, 40); e.remove(); }
             f.later(6, () -> { Fx.effect(f.plugin, "claude:pr_lyingpumpkins/wipe", f.center, 0, 60); for (Player pl : f.players()) f.harvest(pl); });
@@ -547,6 +586,8 @@ final class ReaperBoss extends Mech {
         ThreeBells(Fight f) {
             this.f = f;
             f.anim("g2_split");
+            f.title("§5§l세 번의 종소리", "§f세 번째 종이 울릴 때...");
+            f.say("종이 세 번 울리면... 어느 게 진짜 나일까?");
             Fx.effect(f.plugin, "claude:pr_threebells/split", f.center, 0, 40);
             for (int i = 0; i < 3; i++) {
                 double a = Math.toRadians(f.center.getYaw() + 90 + i * 120);
@@ -563,7 +604,8 @@ final class ReaperBoss extends Mech {
                     d.setBillboard(Display.Billboard.CENTER); d.setPersistent(false); d.addScoreboardTag(TAG);
                 });
                 pl.addPassenger(td); markers.add(td);
-                pl.sendActionBar(net.kyori.adventure.text.Component.text(CHAT[c] + "머리 위에 " + KO[c] + " 촛불이 켜졌다."));
+                Fight.tell(pl, "§6[하베스트] " + CHAT[c] + "머리 위에 " + KO[c] + " 촛불이 켜졌다.");
+                Fight.title(pl, "", CHAT[c] + "머리 위에 " + KO[c] + " 촛불이 켜졌다");
             }
         }
 
@@ -575,17 +617,17 @@ final class ReaperBoss extends Mech {
                 for (Player pl : ps) pl.playSound(pl.getLocation(), Sound.BLOCK_BELL_USE, 2f, k == 3 ? 0.7f : 1f);
                 if (k == 3) third = age;
             }
-            if (third >= 0 && age > third + 30) { check(true); return !over; }
+            if (third >= 0 && age > third + (solo ? 100 : 30)) { check(true); return !over; }
             return true;
         }
 
         @Override public void propHit(Player by, Entity prop) {
             if (over) return;
             for (int i = 0; i < 3; i++) if (prop.equals(clones[i])) {
-                if (third < 0) { fail(); return; }                       // 종이 다 울리기 전에 때림
+                if (third < 0) { fail("종이 다 울리기 전에 때렸다"); return; }
                 Integer own = mark.get(by.getUniqueId());
-                if (own != null && own == i) { fail(); return; }         // 내 표식 색
-                if (hitBy.containsKey(i)) { if (!hitBy.get(i).equals(by.getUniqueId())) fail(); return; }   // 둘이 같은 분신
+                if (own != null && own == i) { fail("자기 촛불 색 분신을 때렸다"); return; }
+                if (hitBy.containsKey(i)) { if (!hitBy.get(i).equals(by.getUniqueId())) fail("둘이 같은 분신을 때렸다"); return; }
                 hitBy.put(i, by.getUniqueId()); hitAt.put(i, age);
                 Fx.effect(f.plugin, "claude:pr_threebells/hit" + COLOR[i], prop.getLocation().add(0, 1.6, 0), 0, 20);
                 check(false); return;
@@ -594,23 +636,29 @@ final class ReaperBoss extends Mech {
 
         void check(boolean timeUp) {
             if (over) return;
+            // 원래: 세 분신 모두, 서로 다른 사람, 1초 안. 혼자 시험: 아무도 표식으로 가진 색이 아닌 분신만, 5초 안, 같은 사람 가능.
+            Set<Integer> need = new HashSet<>(List.of(0, 1, 2));
+            if (solo) { need.removeAll(mark.values()); if (need.isEmpty()) need.add(0); }
             int players = Math.max(1, Math.min(3, mark.size()));
-            boolean all = hitBy.size() == 3, distinct = new HashSet<>(hitBy.values()).size() >= Math.min(3, players);
+            boolean all = hitBy.keySet().containsAll(need), distinct = solo || new HashSet<>(hitBy.values()).size() >= Math.min(3, players);
             if (all) {
                 int lo = Collections.min(hitAt.values()), hi = Collections.max(hitAt.values());
-                if (distinct && hi - lo <= 20) { success(); return; }
-                fail(); return;
+                if (!distinct) { fail("한 사람이 여러 분신을 때렸다"); return; }
+                if (hi - lo > (solo ? 100 : 20)) { fail("타이밍이 어긋났다"); return; }
+                success(); return;
             }
-            if (timeUp) fail();
+            if (timeUp) fail("세 분신을 다 때리지 못했다");
         }
 
         void success() {
             over = true;
             for (Entity c : clones) if (c != null && c.isValid()) { Fx.effect(f.plugin, "claude:pr_threebells/split", c.getLocation(), 0, 30); c.remove(); }
             f.anim("laugh");
+            f.cleared("정답", "분신이 흩어졌다");
         }
-        void fail() {
+        void fail(String why) {
             over = true;
+            f.failed(why);
             f.anim("g2_merge_sweep");
             Fx.effect(f.plugin, "claude:pr_threebells/merge", f.center, 0, 40);
             for (Entity c : clones) if (c != null && c.isValid()) c.remove();
@@ -637,6 +685,8 @@ final class ReaperBoss extends Mech {
         LastLantern(Fight f) {
             this.f = f;
             f.anim("g3_lantern_drop");
+            f.title("§e§l마지막 등불", "§f빛 밖은 죽음 — 등불을 지켜라 (30초)");
+            f.say("불을 꺼 주지. 등불 하나면 충분하잖아?");
             f.later(27, () -> {
                 Fx.effect(f.plugin, "claude:pr_lastlantern/darkfall", f.center, 0, 50);
                 for (Player pl : f.players()) pl.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, LENGTH + 40, 0, false, false, false));
@@ -668,7 +718,7 @@ final class ReaperBoss extends Mech {
             // 든 사람: 초당 최대 체력 4%
             if (holder != null && age % 20 == 0) {
                 if (!holder.isValid() || holder.isDead()) drop();
-                else f.plugin.targets().hurt(f.boss, holder, Fight.maxOf(holder) * 0.04, "dark");
+                else if (!solo) f.plugin.targets().hurt(f.boss, holder, Fight.maxOf(holder) * 0.04, "dark");
             }
             // 허수아비 최대 4마리 (어둠 속, 빛 밖)
             scarecrows.removeIf(e -> !e.isValid());
@@ -701,8 +751,10 @@ final class ReaperBoss extends Mech {
                 f.anim("g3_arena_sweep");
                 f.warn(Shape.CIRCLE, f.center, 0, (float) f.arena, 0, 18, true, s -> {
                     Fx.effect(f.plugin, "claude:pr_lastlantern/sweep", f.center, 0, 40);
-                    Location safe = lightAt(); double rr = r * r;
-                    for (Player pl : f.players()) if (flat2(pl.getLocation(), safe) > rr) f.harvest(pl);
+                    Location safe = lightAt(); double rr = r * r; int out = 0;
+                    for (Player pl : f.players()) if (flat2(pl.getLocation(), safe) > rr) { f.harvest(pl); out++; }
+                    if (out == 0) f.cleared("새벽", "등불이 끝까지 버텼다");
+                    else { f.title("§6§l새벽", "§f빛 밖에 있던 " + out + "명이 수확당했다"); f.say("§c빛 밖은 내 밭이지."); }
                     over = true;
                 });
             }
@@ -757,7 +809,7 @@ final class ReaperBoss extends Mech {
         @EventHandler(priority = EventPriority.MONITOR)
         public void death(EntityDeathEvent e) {
             Fight f = FIGHTS.remove(e.getEntity().getUniqueId());
-            if (f != null) { f.close(); return; }
+            if (f != null) { f.title("§6§l하베스트 처치", "§f호박불이 꺼졌다"); f.say("내년... 할로윈에... 다시..."); f.close(); return; }
             if (!e.getEntity().getScoreboardTags().contains(TAG)) return;
             for (Fight fight : FIGHTS.values()) if (fight.gimmick != null) fight.gimmick.propGone(e.getEntity());
         }
