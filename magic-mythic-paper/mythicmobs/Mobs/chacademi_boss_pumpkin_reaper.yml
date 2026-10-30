@@ -1,17 +1,17 @@
-# 할로윈 3인 보스 "호박 리퍼" (2026-10-31). 진행(페이즈·기믹·대상 고르기)은 애드온 chaboss 가 맡는다 (ReaperBoss.java).
+# 할로윈 3인 보스 "하베스트" (2026-10-31). 진행(페이즈·기믹·대상 고르기)은 애드온 chaboss 가 맡는다 (ReaperBoss.java).
 # 경기장 = 보스 소환 위치 중심 반경 20 (chaboss arena=). 기믹 체력 70% / 40% / 15% (g1 g2 g3).
 # 모델: pumpkin_reaper(.bbmodel, 애니 26개) 는 완성. reaper_pumpkin_<얼굴>·reaper_lantern·reaper_candy·reaper_scarecrow 는 아직 Blockbench 제작 전 (아래 id 로 만들 것).
 # 체력·피해는 첫 값 (고위 미몹 빙핵의 수호자 1050 / 18.9 기준). 테스트 후 조정.
 
 CA_Boss_pumpkin_reaper:
   Type: HUSK
-  Display: '&6&l호박 리퍼'
+  Display: '&6&l하베스트'
   Health: 12000
   Damage: 20
   Armor: 10
   BossBar:
     Enabled: true
-    Title: '&6&l호박 리퍼'
+    Title: '&6&l하베스트'
     Range: 48
     Color: RED
     Style: SEGMENTED_10

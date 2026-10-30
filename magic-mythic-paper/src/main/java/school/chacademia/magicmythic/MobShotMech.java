@@ -22,7 +22,7 @@ import org.bukkit.util.Vector;
  *   tint=FFFFFF  burst=0 (radius: when the shot lands or hits, everything inside takes the hit instead - thrown rocks, bottles)
  *   orbit=0 (ticks the shots first circle the caster at 1.6 blocks before flying - foxfire) 
  *   back=false (boomerang: passes through targets and walls, turns at range and flies back to the caster's chest;
- *     each target is hit at most once per leg; hitvfx plays when it is caught - 호박 리퍼 부메랑 낫)
+ *     each target is hit at most once per leg; hitvfx plays when it is caught - 하베스트 부메랑 낫)
  *   count up to 8, spread up to 360 (radial bursts)
  *   Player AIM spells (no entity target): homing / orbit end aim at the aimed point (until a shot is within 1.5 blocks).
  *

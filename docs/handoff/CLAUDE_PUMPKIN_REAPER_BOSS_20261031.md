@@ -1,4 +1,4 @@
-# 할로윈 3인 보스 "호박 리퍼" — 미몹 + 애드온 진행자 (Claude 2026-10-31, **빌드 안 함**)
+# 할로윈 3인 보스 "하베스트" (호박 리퍼) — 미몹 + 애드온 진행자 (Claude 2026-10-31, **빌드 안 함**)
 
 브랜치 `claude/pumpkin-reaper-boss-20261031` (기준 `claude/magic-150-20261031` @ 5c31d3c). 이 환경에는 MythicMobs·Paper 의존성이 없어
 **컴파일을 못 했다** — 호스팅에서 `Build-Server.ps1 -Verify` 로 먼저 빌드·테스트할 것.
@@ -10,7 +10,7 @@
 | `magic-mythic-paper/src/main/java/.../ReaperBoss.java` (새) | 미몹 메커닉 `chaboss` (보스 진행자), `chavfx` (PortableVFX 한 번 재생 / 따라가기), 이벤트 `ReaperBoss.Hooks` |
 | `MagicMythicPlugin.java` | `chaboss`·`chavfx` 등록, Hooks 등록, 끌 때 `ReaperBoss.closeAll()` |
 | `MobShotMech.java` | `chamobshot` 에 `back=true` (부메랑: 사거리 끝에서 돌아옴, 관통, 구간마다 한 번씩 판정, 잡을 때 hitvfx) |
-| `MythicCommands.java` | `/테스트 보스 호박리퍼 <기믹 1~3 \| 패턴 p01~p10 \| 초기화>` (64칸 안 가장 가까운 보스) |
+| `MythicCommands.java` | `/테스트 보스 하베스트 <기믹 1~3 \| 패턴 p01~p10 \| 초기화>` (64칸 안 가장 가까운 보스) |
 | `magic-mythic-paper/mythicmobs/Mobs/chacademi_boss_pumpkin_reaper.yml` (새) | 보스 `CA_Boss_pumpkin_reaper` + 기믹 소품 9종 |
 | `magic-mythic-paper/mythicmobs/Skills/chacademi_boss_pumpkin_reaper.yml` (새) | `CHA_REAPER_*` 24개 (모션 14 + 패턴 10) |
 | `magic-mythic-paper/models/pumpkin_reaper/*.bbmodel` (새) | 보스 모델 기본·이로치 (애니 26개). ModelEngine blueprints 로 |
@@ -65,7 +65,7 @@
 ## 4. 시험 명령
 
 ```
-/테스트 보스 호박리퍼 기믹 1|2|3     (체력을 기준선으로 맞추고 바로 기믹)
-/테스트 보스 호박리퍼 패턴 p01~p10   (그 패턴 한 번, 다음 패턴은 5초 뒤)
-/테스트 보스 호박리퍼 초기화
+/테스트 보스 하베스트 기믹 1|2|3     (체력을 기준선으로 맞추고 바로 기믹)
+/테스트 보스 하베스트 패턴 p01~p10   (그 패턴 한 번, 다음 패턴은 5초 뒤)
+/테스트 보스 하베스트 초기화
 ```

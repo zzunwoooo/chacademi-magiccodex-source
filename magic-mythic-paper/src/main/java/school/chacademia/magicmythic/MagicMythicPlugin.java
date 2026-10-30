@@ -93,7 +93,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ChannelMech.Hooks(), this);
         getServer().getPluginManager().registerEvents(new SummonMech.Hooks(this), this);
         getServer().getPluginManager().registerEvents(new DiscoveryHooks(this), this);
-        getServer().getPluginManager().registerEvents(new ReaperBoss.Hooks(), this); // 할로윈 보스 호박 리퍼 (무적·기준선·소품 판정)
+        getServer().getPluginManager().registerEvents(new ReaperBoss.Hooks(), this); // 할로윈 보스 하베스트 (무적·기준선·소품 판정)
         dummies = new TrainingDummies(this); // #107 마법 연습장 훈련 허수아비
         getServer().getPluginManager().registerEvents(dummies, this);
         spellRoutes = new SpellRoutes(new java.io.File(getDataFolder().getParentFile(), "MagicCodexBridge/spell-runtime.yml"));
@@ -154,7 +154,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chaarcana" -> new ArcanaMech(this, p);
             case "chanova" -> new NovaMech(this, p);
             case "chagimmick" -> new GimmickMech(this, p);
-            case "chaboss" -> new ReaperBoss(this, p);      // 할로윈 보스 호박 리퍼 진행자
+            case "chaboss" -> new ReaperBoss(this, p);      // 할로윈 보스 하베스트 진행자
             case "chavfx" -> new ReaperBoss.VfxMech(this, p); // PortableVFX 한 번 재생 / 따라가기
             default -> null;
         };

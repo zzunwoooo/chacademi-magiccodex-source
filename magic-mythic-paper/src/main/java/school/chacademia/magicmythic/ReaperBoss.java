@@ -23,7 +23,7 @@ import school.magiccodex.protocol.TelegraphProtocol.Shape;
 import school.magiccodex.protocol.TelegraphProtocol.Show;
 
 /**
- * chaboss - 할로윈 3인 보스 "호박 리퍼" 진행자 (2026-10-31). 미몹 CA_Boss_pumpkin_reaper 의 ~onSpawn 에서
+ * chaboss - 할로윈 3인 보스 "하베스트" 진행자 (2026-10-31). 미몹 CA_Boss_pumpkin_reaper 의 ~onSpawn 에서
  * {@code chaboss{a=start;arena=20;g1=0.70;g2=0.40;g3=0.15} @self} 로 시작한다.
  *
  * <ul>
@@ -54,11 +54,11 @@ final class ReaperBoss extends Mech {
         return true;
     }
 
-    /** /테스트 보스 호박리퍼 - 가장 가까운 호박 리퍼(64칸 안)에 기믹·패턴을 바로 걸거나 처음 상태로. */
+    /** /테스트 보스 하베스트 - 가장 가까운 하베스트(64칸 안)에 기믹·패턴을 바로 걸거나 처음 상태로. */
     static String test(Player p, String action, String arg) {
         Fight f = null; double best = 64 * 64;
         for (Fight x : FIGHTS.values()) if (x.boss.getWorld().equals(p.getWorld())) { double d = x.boss.getLocation().distanceSquared(p.getLocation()); if (d < best) { best = d; f = x; } }
-        if (f == null) return "64칸 안에 호박 리퍼가 없어요 (/mm mobs spawn CA_Boss_pumpkin_reaper - 소환한 자리가 경기장 중심)";
+        if (f == null) return "64칸 안에 하베스트가 없어요 (/mm mobs spawn CA_Boss_pumpkin_reaper - 소환한 자리가 경기장 중심)";
         switch (action) {
             case "기믹" -> {
                 if (f.gimmick != null || f.invulnerable) return "이미 기믹 진행 중";
@@ -419,7 +419,7 @@ final class ReaperBoss extends Mech {
                 e.addScoreboardTag(TAG); e.addScoreboardTag(TAG + ":" + kind); e.setPersistent(false);
                 props.add(e);
                 return e;
-            } catch (RuntimeException | LinkageError ex) { plugin.getLogger().warning("호박 리퍼 소품 소환 실패: " + mob + " " + ex); return null; }
+            } catch (RuntimeException | LinkageError ex) { plugin.getLogger().warning("하베스트 소품 소환 실패: " + mob + " " + ex); return null; }
         }
 
         boolean near(Entity e) { return flat2(e.getLocation(), center) <= (arena + 6) * (arena + 6); }
@@ -486,7 +486,7 @@ final class ReaperBoss extends Mech {
             for (int k = 0; k < Math.max(ps.size(), 1) && !ps.isEmpty(); k++) {
                 StringBuilder sb = new StringBuilder();
                 for (int j = k; j < lines.size(); j += ps.size()) { if (sb.length() > 0) sb.append("  /  "); sb.append(lines.get(j)); }
-                if (k < ps.size()) { clues.put(ps.get(k).getUniqueId(), sb.toString()); ps.get(k).sendMessage("§6[호박 리퍼] §f속삭임이 들린다... §e" + sb); }
+                if (k < ps.size()) { clues.put(ps.get(k).getUniqueId(), sb.toString()); ps.get(k).sendMessage("§6[하베스트] §f속삭임이 들린다... §e" + sb); }
             }
             countdown = f.warn(Shape.CIRCLE, f.center, 0, (float) f.arena, 0, 300, true, s -> { if (!over) fail(); });
         }
