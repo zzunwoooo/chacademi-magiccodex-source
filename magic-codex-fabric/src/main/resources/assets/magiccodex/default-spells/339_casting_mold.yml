@@ -1,0 +1,14 @@
+id: casting_mold
+name: 주물 거푸집
+category: fire
+description: 적을 쇠 거푸집 안에 가두고 쇳물을 부어 2초 동안 움직이지 못하게 한 뒤, 거푸집째 터뜨립니다. 거푸집이 내려오기 전에 빠져나가면 갇히지 않습니다.
+icon: ''
+permission: magic.learned.casting_mold
+discovery:
+  description: 5서클 달성 후 단조 망치로 몬스터 80마리 처치하고, 고대 골렘 5마리 처치하기.
+research: 돌로 된 고대 골렘의 몸통을 망치로 내리쳤을 때, 갈라진 틈 속은 텅 빈 거푸집이었다. 그 빈자리를 쇳물로 채워 넣는 상상을 하자, 손안의 불이 틀의 모양을 배웠다.
+cast:
+  command: 마법 casting_mold
+  cooldown-seconds: 18
+  mana-cost: 55
+order: 339

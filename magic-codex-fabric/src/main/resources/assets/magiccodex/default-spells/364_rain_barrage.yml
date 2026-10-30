@@ -1,0 +1,14 @@
+id: rain_barrage
+name: 폭우
+category: water
+description: 조준한 곳 위에 먹구름을 불러 6초 동안 굵은 빗줄기를 쏟아붓습니다. 비를 맞는 적은 계속 피해를 입고, 큰 물결이 덮칠 때마다 더 큰 피해를 입고 느려집니다.
+icon: ''
+permission: magic.learned.rain_barrage
+discovery:
+  description: 5서클 달성 후 물장구로 몬스터 80마리 처치하고, 키츠네 5마리 처치하기.
+research: 키츠네의 여우불이 꺼진 자리에 물장구 소리가 오래 남았다. 북소리가 하늘까지 닿았는지 먹구름이 몰려들었고, 나는 그날 처음으로 비를 부르는 쪽에 서 있었다.
+cast:
+  command: 마법 rain_barrage
+  cooldown-seconds: 18
+  mana-cost: 55
+order: 364

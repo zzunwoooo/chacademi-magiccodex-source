@@ -1,0 +1,14 @@
+id: vacuum_corridor
+name: 진공 회랑
+category: wind
+description: 앞쪽으로 곧게 뻗은 진공 터널을 엽니다. 양옆의 적은 터널 안으로 빨려 들어와 계속 베이고, 터널이 무너질 때 크게 베입니다.
+icon: ''
+permission: magic.learned.vacuum_corridor
+discovery:
+  description: 5서클 달성 후 홀씨 지뢰밭으로 몬스터 60마리 처치하고, 와이번 3마리 처치하기.
+research: 와이번의 숨결이 홀씨 지뢰밭을 통째로 빨아들이는 것을 보았다. 날개 아래 생긴 빈 길로 모든 것이 끌려갔다. 숨 한 번이면 길을 비울 수 있었다.
+cast:
+  command: 마법 vacuum_corridor
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 319

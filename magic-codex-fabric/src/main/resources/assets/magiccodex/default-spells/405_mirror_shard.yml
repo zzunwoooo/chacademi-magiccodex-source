@@ -1,0 +1,14 @@
+id: mirror_shard
+name: 거울 조각
+category: light
+description: 회전하는 거울 조각을 쏩니다. 조각은 벽에 한 번 튕겨 계속 날아가며, 튕긴 뒤에 맞히면 더 큰 피해를 줍니다.
+icon: ''
+permission: magic.learned.mirror_shard
+discovery:
+  description: 분광 화살을 몬스터에게 20번 맞히기.
+research: 분광 화살이 박힌 몬스터의 윤곽이 벽 너머까지 빛나 보였다. 그 빛이 벽에 반사되어 내 눈으로 돌아오는 각도를 따라 손을 그었더니, 손바닥에 거울 조각이 하나 돋아났다.
+cast:
+  command: 마법 mirror_shard
+  cooldown-seconds: 3
+  mana-cost: 6
+order: 405

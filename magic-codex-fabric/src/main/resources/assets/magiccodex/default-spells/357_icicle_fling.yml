@@ -1,0 +1,14 @@
+id: icicle_fling
+name: 고드름 투척
+category: water
+description: 손에 고드름 두 개를 맺어 차례로 포물선을 그리며 던집니다. 고드름마다 맞은 적에게 피해를 줍니다.
+icon: ''
+permission: magic.learned.icicle_fling
+discovery:
+  description: 얼음 조각으로 몬스터 30마리 처치하기.
+research: 얼음 조각을 날릴 때마다 손안에 조금씩 냉기가 남았다. 어느 겨울 아침 그 냉기가 손바닥 위에서 길쭉하게 자라더니, 처마 끝 고드름과 꼭 같은 모양이 되어 있었다.
+cast:
+  command: 마법 icicle_fling
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 357

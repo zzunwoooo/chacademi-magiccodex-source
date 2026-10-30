@@ -1,0 +1,14 @@
+id: curtain_fall
+name: 막 내림
+category: dark
+description: 주위에 무대의 막을 내려 안에 갇힌 적들의 시야를 2초 동안 가립니다. 막이 찢겨 나가는 순간 막 안의 모든 적을 일제히 벱니다.
+icon: ''
+permission: magic.learned.curtain_fall
+discovery:
+  description: 7서클 달성 후 꼭두각시 무대에 마나 4,000을 쓰고, 봉인의 궁수 15마리 처치하기.
+research: 꼭두각시 무대 위에서 봉인의 궁수들과 끝없는 공연을 이어 갔다. 마지막 궁수가 시위를 놓친 순간 어디선가 막이 내려왔고, 어둠 속에서 칼날이 한꺼번에 울렸다.
+cast:
+  command: 마법 curtain_fall
+  cooldown-seconds: 40
+  mana-cost: 120
+order: 446

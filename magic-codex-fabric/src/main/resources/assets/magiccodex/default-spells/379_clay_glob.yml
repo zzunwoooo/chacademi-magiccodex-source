@@ -1,0 +1,14 @@
+id: clay_glob
+name: 점토 덩이
+category: earth
+description: 끈적한 점토 덩이를 던져 적에게 철퍽 붙입니다. 맞은 적은 발목에 점토가 엉겨 3초 동안 느려집니다.
+icon: ''
+permission: magic.learned.clay_glob
+discovery:
+  description: 흙 계열 블록을 누적 300개 설치하기.
+research: 흙을 한 삽씩 떠서 둑을 쌓고 또 쌓았다. 끝없이 흙을 만지다 보니 손바닥에 남은 점토가 떨어지지 않았고, 그 끈적함이 언젠가 쓸모 있으리라는 예감이 들었다.
+cast:
+  command: 마법 clay_glob
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 379

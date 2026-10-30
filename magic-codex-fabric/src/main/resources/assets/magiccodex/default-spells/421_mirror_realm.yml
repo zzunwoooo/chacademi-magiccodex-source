@@ -1,0 +1,14 @@
+id: mirror_realm
+name: 거울 세계
+category: light
+description: 곁에 거울 문을 열어 5초 동안 나의 거울상을 불러냅니다. 거울상은 내 움직임을 거울처럼 따라 하며, 내가 적을 공격할 때마다 같은 적을 한 번 더 때립니다.
+icon: ''
+permission: magic.learned.mirror_realm
+discovery:
+  description: 7서클 달성 후 거울 미궁에 마나 4,000을 쓰고, 투명한 몬스터 20마리 처치하기.
+research: 보이지 않는 몬스터는 거울 미궁 안에서만 모습을 드러냈다. 거울에 비친 그것을 쫓다 보니, 거울 속에서 나 역시 누군가를 쫓고 있었다. 내가 검을 휘두르자 거울 속의 나도 함께 휘둘렀다.
+cast:
+  command: 마법 mirror_realm
+  cooldown-seconds: 40
+  mana-cost: 110
+order: 421

@@ -1,0 +1,14 @@
+id: great_pinwheel
+name: 거대 바람개비
+category: wind
+description: 조준한 곳에 거대한 바람개비를 세워 6초 동안 돌립니다. 바람개비는 점점 빨라지며 주변의 적을 가운데로 끌어당겨 베고, 마지막에 날개가 터지며 적을 튕겨 냅니다.
+icon: ''
+permission: magic.learned.great_pinwheel
+discovery:
+  description: 7서클 달성 후 회전목마 돌풍에 마나 4,000을 쓰고, 와이번 5마리 처치하기.
+research: 와이번들이 회전목마 돌풍에 휘말려 떨어진 뒤에도 원은 쉽게 멈추지 않았다. 원 한가운데에 날개를 세우자, 돌풍 전체가 하나의 거대한 바람개비로 묶였다.
+cast:
+  command: 마법 great_pinwheel
+  cooldown-seconds: 40
+  mana-cost: 130
+order: 322

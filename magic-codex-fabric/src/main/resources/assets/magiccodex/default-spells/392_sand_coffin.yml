@@ -1,0 +1,14 @@
+id: sand_coffin
+name: 모래관
+category: earth
+description: 적을 모래관에 가둬 2초 동안 꼼짝 못 하게 한 뒤, 관을 안으로 무너뜨려 짓누릅니다.
+icon: ''
+permission: magic.learned.sand_coffin
+discovery:
+  description: 5서클 달성 후 모래 분수로 몬스터 80마리 처치하고, 망각의 해골술사 5마리 처치하기.
+research: 망각의 해골술사가 뼈를 일으켜 세울 때마다 모래 분수로 덮어 버렸다. 덮인 자리에 모래가 관처럼 굳는 것을 보고, 되살아나는 것을 묶어 두는 방법을 알게 되었다.
+cast:
+  command: 마법 sand_coffin
+  cooldown-seconds: 16
+  mana-cost: 55
+order: 392

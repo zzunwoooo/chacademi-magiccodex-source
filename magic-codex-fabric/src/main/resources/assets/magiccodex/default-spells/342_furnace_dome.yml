@@ -1,0 +1,14 @@
+id: furnace_dome
+name: 화로 돔
+category: fire
+description: 조준한 곳을 덮는 거대한 화로 돔을 세웁니다. 돔 안은 1초마다 뜨겁게 달아오르고, 5초 뒤 돔이 닫히면서 안쪽 전체가 폭발합니다.
+icon: ''
+permission: magic.learned.furnace_dome
+discovery:
+  description: 5서클 달성 후 쇳물 갑주를 100번 두르고, 봉인의 기사 5마리 처치하기.
+research: 봉인의 기사가 휘두른 검이 쇳물 갑주 위에서 미끄러졌다. 갑주를 두르고 또 두른 끝에, 나는 그것을 몸 밖으로 크게 부풀려 한 마당을 덮는 화로로 만들 수 있었다.
+cast:
+  command: 마법 furnace_dome
+  cooldown-seconds: 22
+  mana-cost: 70
+order: 342

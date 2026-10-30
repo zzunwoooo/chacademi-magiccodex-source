@@ -1,0 +1,14 @@
+id: molten_plating
+name: 쇳물 갑주
+category: fire
+description: 4초 동안 녹은 쇠로 몸을 감쌉니다. 그동안 나를 가까이서 때린 적은 튀는 쇳물에 데어 불이 붙습니다.
+icon: ''
+permission: magic.learned.molten_plating
+discovery:
+  description: 쇳물 방울로 몬스터 40마리 처치하고, 입고 있던 갑옷을 1번 부서뜨리기.
+research: 갑옷이 마지막 일격에 쩍 갈라져 흩어졌다. 맨몸으로 선 내 어깨 위에 던져 두었던 쇳물 방울들이 흘러내려 식으며, 부서진 갑옷보다 단단한 껍질이 되었다.
+cast:
+  command: 마법 molten_plating
+  cooldown-seconds: 10
+  mana-cost: 20
+order: 334

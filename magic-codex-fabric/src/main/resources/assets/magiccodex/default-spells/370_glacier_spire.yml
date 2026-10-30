@@ -1,0 +1,14 @@
+id: glacier_spire
+name: 빙하 결정탑
+category: water
+description: 조준한 곳에 높은 빙하 결정탑을 8초 동안 세웁니다. 탑은 주변에서 가장 가까운 적에게 1초마다 얼음 파편을 쏘고, 사라질 때 무너지며 주변에 피해를 줍니다.
+icon: ''
+permission: magic.learned.glacier_spire
+discovery:
+  description: 7서클 달성 후 서리 정원에 마나 4,000을 쓰고, 빙핵의 수호자 10마리 처치하기.
+research: 서리 정원을 수없이 피워 낸 땅에서 빙핵의 수호자가 또 하나 쓰러졌다. 녹지 않고 남은 결정들이 한 점으로 모여 하늘을 향해 자라기 시작했다. 정원에도 파수꾼이 필요했던 것이다.
+cast:
+  command: 마법 glacier_spire
+  cooldown-seconds: 35
+  mana-cost: 110
+order: 370

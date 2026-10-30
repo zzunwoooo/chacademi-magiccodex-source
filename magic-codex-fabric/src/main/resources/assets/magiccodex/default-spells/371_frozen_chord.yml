@@ -1,0 +1,14 @@
+id: frozen_chord
+name: 결빙 화음
+category: water
+description: 조준한 곳을 둘러싼 세 지점에 화음처럼 울리는 마법진을 그립니다. 잠시 뒤 세 곳에서 동시에 거대한 얼음 기둥이 솟아 적을 띄우고, 기둥이 깨질 때 한 번 더 피해를 줍니다.
+icon: ''
+permission: magic.learned.frozen_chord
+discovery:
+  description: 7서클 달성 후 빙산 낙하에 마나 4,000을 쓰고, 봉인의 궁수 15마리 처치하기.
+research: 봉인의 궁수가 시위를 당기는 소리, 빙산이 땅에 박히는 소리, 그리고 내 숨소리. 세 소리가 한 박자에 겹치자 땅이 세 곳에서 동시에 얼어붙어 솟아올랐다.
+cast:
+  command: 마법 frozen_chord
+  cooldown-seconds: 40
+  mana-cost: 120
+order: 371

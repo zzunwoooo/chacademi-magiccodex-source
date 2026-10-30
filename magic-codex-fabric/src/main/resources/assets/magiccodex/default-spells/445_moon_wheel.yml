@@ -1,0 +1,14 @@
+id: moon_wheel
+name: 월광 회전륜
+category: dark
+description: 달빛 칼날 여덟 개를 불러내 6초 동안 내 주위를 돌게 합니다. 가까이 다가온 적은 0.5초마다 칼날에 베입니다.
+icon: ''
+permission: magic.learned.moon_wheel
+discovery:
+  description: 7서클 달성 후 달빛 기둥에 마나 4,000을 쓰고, 팬텀 50마리 처치하기.
+research: 달빛 기둥을 몇 번이고 세우며 팬텀이 가득한 밤하늘을 지켰다. 어느 순간 기둥들이 쓰러지지 않고 내 주위를 돌기 시작했고, 칼날이 되어 바퀴처럼 굴러갔다.
+cast:
+  command: 마법 moon_wheel
+  cooldown-seconds: 35
+  mana-cost: 110
+order: 445

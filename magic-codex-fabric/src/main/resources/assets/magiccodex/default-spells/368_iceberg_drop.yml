@@ -1,0 +1,14 @@
+id: iceberg_drop
+name: 빙산 낙하
+category: water
+description: 조준한 곳 하늘에서 거대한 빙산을 떨어뜨립니다. 빙산은 땅에 박혀 주변 적에게 큰 피해를 주고, 잠시 뒤 부서지며 한 번 더 피해를 줍니다.
+icon: ''
+permission: magic.learned.iceberg_drop
+discovery:
+  description: 5서클 달성 후 고드름 처마로 몬스터 80마리 처치하고, 바실리스크 5마리 처치하기.
+research: 바실리스크의 눈빛을 피하려 고드름 처마 아래로 몸을 숨겼다. 고드름 하나로는 그 단단한 비늘을 뚫지 못했고, 나는 처마째로 떨어뜨리고 싶다고 간절히 바랐다. 하늘이 그 바람을 들어주었다.
+cast:
+  command: 마법 iceberg_drop
+  cooldown-seconds: 20
+  mana-cost: 65
+order: 368

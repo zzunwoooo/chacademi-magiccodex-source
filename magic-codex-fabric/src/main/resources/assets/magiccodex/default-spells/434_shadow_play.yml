@@ -1,0 +1,14 @@
+id: shadow_play
+name: 그림자극
+category: dark
+description: 적 뒤의 벽에 그 적의 그림자를 비춥니다. 3초 안에 그림자를 바라보고 휘두르면, 벽 너머에 숨은 적이라도 본체가 그대로 피해를 입습니다.
+icon: ''
+permission: magic.learned.shadow_play
+discovery:
+  description: 꼭두각시 당김으로 몬스터 40마리 처치하고, 그림자 걸음을 50번 사용하기.
+research: 그림자 사이를 걸음으로 건너며, 실로 끌어당긴 적들을 쓰러뜨렸다. 등불 아래 벽에 비친 그들의 그림자를 베었을 때, 쓰러진 것은 벽 너머의 본체였다.
+cast:
+  command: 마법 shadow_play
+  cooldown-seconds: 9
+  mana-cost: 22
+order: 434

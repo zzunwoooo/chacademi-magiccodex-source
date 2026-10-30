@@ -1,0 +1,14 @@
+id: cassiopeia
+name: 카시오페이아
+category: light
+description: 하늘에 카시오페이아 별자리를 그리고, 빛을 W자로 꺾어 보내 앞쪽의 적 다섯 명을 차례로 때립니다. 마지막 적에게는 더 큰 일격이 떨어집니다.
+icon: ''
+permission: magic.learned.cassiopeia
+discovery:
+  description: 5서클 달성 후 남십자성으로 몬스터 80마리 처치하고, 봉인의 술사 5마리 처치하기.
+research: 봉인의 술사들이 지팡이를 드는 순서를 지켜보았다. 남십자성의 별 하나하나를 그들 위로 옮겨 놓자, 빛은 W자로 꺾이며 한 명씩 차례로 찾아갔다.
+cast:
+  command: 마법 cassiopeia
+  cooldown-seconds: 15
+  mana-cost: 50
+order: 419

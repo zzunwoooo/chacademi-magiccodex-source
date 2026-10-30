@@ -1,0 +1,14 @@
+id: light_fan
+name: 빛 부채
+category: light
+description: 앞쪽 넓은 부채꼴을 빛으로 한 번 벱니다.
+icon: ''
+permission: magic.learned.light_fan
+discovery:
+  description: 밤에 횃불을 누적 100개 설치하기.
+research: 해가 진 뒤 동네 골목마다 횃불을 꽂으며 다녔다. 마지막 횃불을 세우고 돌아서는데, 지나온 길의 불빛들이 펼친 부채처럼 한 번에 일렁였다.
+cast:
+  command: 마법 light_fan
+  cooldown-seconds: 3
+  mana-cost: 7
+order: 407

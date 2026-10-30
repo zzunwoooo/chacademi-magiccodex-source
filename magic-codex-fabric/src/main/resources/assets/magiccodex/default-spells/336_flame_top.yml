@@ -1,0 +1,14 @@
+id: flame_top
+name: 불꽃 팽이
+category: fire
+description: 땅 위에 불꽃 팽이를 돌려 놓습니다. 팽이는 4초 동안 가까운 적을 쫓아 굴러다니며 부딪힐 때마다 태웁니다.
+icon: ''
+permission: magic.learned.flame_top
+discovery:
+  description: 숯불 투척으로 몬스터 50마리 처치하기.
+research: 두 번 튀고 터지는 숯이 땅 위에서 빙글빙글 돌다 멈추는 것을 여러 번 보았다. 어느 날 멈추지 말라고 속삭이자, 숯불은 팽이처럼 서서 적을 향해 굴러갔다.
+cast:
+  command: 마법 flame_top
+  cooldown-seconds: 10
+  mana-cost: 26
+order: 336

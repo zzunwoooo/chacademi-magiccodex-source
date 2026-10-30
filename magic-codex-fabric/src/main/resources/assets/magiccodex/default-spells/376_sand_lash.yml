@@ -1,0 +1,14 @@
+id: sand_lash
+name: 모래 채찍
+category: earth
+description: 모래를 채찍처럼 엮어 앞쪽을 두 번 연달아 휘두릅니다. 가까이 붙은 적에게 두 번 피해를 줍니다.
+icon: ''
+permission: magic.learned.sand_lash
+discovery:
+  description: 모래 한 줌으로 몬스터 30마리 처치하기.
+research: 모래를 한 줌씩 뿌려 몬스터의 눈을 가리던 어느 날, 손을 떠난 모래가 흩어지지 않고 손목에 매달린 채 길게 늘어졌다. 그대로 휘두르자 모래는 채찍이 되어 공기를 갈랐다.
+cast:
+  command: 마법 sand_lash
+  cooldown-seconds: 3
+  mana-cost: 6
+order: 376

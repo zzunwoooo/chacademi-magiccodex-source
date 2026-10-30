@@ -1,0 +1,14 @@
+id: sand_burrow
+name: 모래 두더지
+category: earth
+description: 땅속으로 모래 줄기를 보내 적의 발밑까지 파고들게 합니다. 모래가 솟아 다리를 감싸면 적은 1.6초 동안 움직이지 못합니다.
+icon: ''
+permission: magic.learned.sand_burrow
+discovery:
+  description: 모래 알갱이로 몬스터 50마리 처치하고, 영록 5마리 처치하기.
+research: 숲속에서 영록을 쫓던 날, 모래 알갱이를 피해 달아나던 사슴의 발굽 아래로 모래가 먼저 스며들었다. 땅을 파고 앞질러 간 모래는 사슴이 디딜 자리에서 조용히 기다리고 있었다.
+cast:
+  command: 마법 sand_burrow
+  cooldown-seconds: 8
+  mana-cost: 18
+order: 386

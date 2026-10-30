@@ -1,0 +1,14 @@
+id: moon_howl
+name: 달의 울음
+category: dark
+description: 달을 향해 길게 울부짖습니다. 주변의 적들은 피해를 입고 3초 동안 공포에 질려 달아나며, 울음의 메아리가 퍼지는 동안 범위에 들어온 적도 겁을 먹습니다.
+icon: ''
+permission: magic.learned.moon_howl
+discovery:
+  description: 5서클 달성 후 달의 인력으로 몬스터 80마리 처치하고, 검치호 10마리 처치하기.
+research: 검치호의 포효를 몇 번이고 맞받아치며 적들을 내 곁으로 끌어당겼다. 마지막 검치호가 쓰러진 고요 속에서, 내 목에서 달을 부르는 울음이 터져 나왔다.
+cast:
+  command: 마법 moon_howl
+  cooldown-seconds: 18
+  mana-cost: 55
+order: 439

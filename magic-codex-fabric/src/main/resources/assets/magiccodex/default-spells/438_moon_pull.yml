@@ -1,0 +1,14 @@
+id: moon_pull
+name: 달의 인력
+category: dark
+description: 머리 위에 작은 달을 띄워 밀물처럼 주변의 적들을 내 쪽으로 끌어당깁니다. 끌려와 모인 적들은 피해를 입고 2초 동안 느려집니다.
+icon: ''
+permission: magic.learned.moon_pull
+discovery:
+  description: 검은 나방으로 몬스터 40마리 처치하고, 팬텀 5마리 처치하기.
+research: 밤하늘에서 덮쳐 오는 팬텀을 검은 나방들이 끌어내리는 것을 보았다. 나방이 달을 향해 날아오르듯, 모든 것이 한 점으로 이끌리는 힘이 거기 있었다.
+cast:
+  command: 마법 moon_pull
+  cooldown-seconds: 12
+  mana-cost: 30
+order: 438

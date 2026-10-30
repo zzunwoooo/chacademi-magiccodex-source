@@ -1,0 +1,14 @@
+id: light_stitch
+name: 빛 바늘땀
+category: light
+description: 실을 단 빛 바늘 세 개를 부채꼴로 던집니다. 맞은 적은 느려지고, 여러 적이 맞으면 빛실로 서로 꿰매져 더 느려지며 멀리 떨어지지 못합니다.
+icon: ''
+permission: magic.learned.light_stitch
+discovery:
+  description: 햇살 꽂기로 몬스터 30마리 처치하고, 모루에서 도구를 5번 수리하기.
+research: 햇살 꽂기에 쓰러진 몬스터 곁에서, 이가 빠진 칼날을 모루에 올려 두드렸다. 금속이 이어 붙는 소리를 듣다가, 땅에 꽂혀 있던 햇살을 실처럼 뽑아 바늘에 꿰어 보았다.
+cast:
+  command: 마법 light_stitch
+  cooldown-seconds: 5
+  mana-cost: 9
+order: 404

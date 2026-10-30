@@ -1,0 +1,14 @@
+id: big_dipper
+name: 북두칠성
+category: light
+description: 조준한 곳에 북두칠성의 별 일곱 개를 차례로 떨어뜨린 뒤, 별자리 국자를 통째로 내리찍어 큰 피해를 줍니다.
+icon: ''
+permission: magic.learned.big_dipper
+discovery:
+  description: 5서클 달성 후 삼각 별자리로 몬스터 80마리 처치하고, 영록 10마리 처치하기.
+research: 영록의 뿔 사이로 별자리가 보였다. 삼각 별자리를 몇 번이고 그려 온 손이 이번에는 일곱 개의 별을 찍었고, 별들은 국자 모양으로 이어져 땅을 퍼 올렸다.
+cast:
+  command: 마법 big_dipper
+  cooldown-seconds: 18
+  mana-cost: 65
+order: 416

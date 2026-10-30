@@ -1,0 +1,14 @@
+id: furnace_gate
+name: 용광로의 문
+category: fire
+description: 하늘에 거대한 용광로의 문을 열어 쇳물과 불길을 폭포처럼 쏟아붓습니다. 문이 닫히는 순간 전장 전체가 폭발하고, 부서진 문의 파편이 불비가 되어 쏟아집니다.
+icon: ''
+permission: magic.learned.furnace_gate
+discovery:
+  description: 대장장이 신의 모루·태양 흑점·불나비 떼를 익힌 뒤, 피닉스 30마리 처치하기.
+research: 모루를 두드리고, 태양을 띄우고, 불나비를 날려 보낸 뒤에도 불사조만은 끝내 죽지 않았다. 재가 되어도 다시 타오르는 그 새를 쫓아 가장 뜨거운 하늘까지 올라갔을 때, 구름 한가운데에서 쇠 빗장이 풀리는 소리가 들렸다. 불사조가 돌아가던 곳, 태초의 불이 아직 꺼지지 않은 용광로의 문이 거기 있었다.
+cast:
+  command: 마법 furnace_gate
+  cooldown-seconds: 220
+  mana-cost: 420
+order: 350

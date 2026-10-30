@@ -1,0 +1,14 @@
+id: sundial_sweep
+name: 해시계 바늘
+category: light
+description: 발밑에 해시계를 그립니다. 빛의 바늘이 한 바퀴 돌며 주변의 적을 쓸어 내고, 마지막에 해시계 전체가 번쩍입니다.
+icon: ''
+permission: magic.learned.sundial_sweep
+discovery:
+  description: 빛 부채로 몬스터 50마리 처치하기.
+research: 빛 부채를 휘두를 때마다 그림자가 발밑을 한 바퀴씩 돌았다. 정오의 해 아래에서 그 그림자를 바늘 삼아 끝까지 돌려 보았더니, 둘레의 몬스터가 모두 쓸려 나갔다.
+cast:
+  command: 마법 sundial_sweep
+  cooldown-seconds: 11
+  mana-cost: 30
+order: 410

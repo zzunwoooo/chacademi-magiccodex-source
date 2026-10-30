@@ -1,0 +1,14 @@
+id: dead_calm
+name: 무풍지대
+category: wind
+description: 주변 반경 6블록의 바람을 모두 밀어내 5초 동안 무풍지대를 만듭니다. 그 안으로 날아든 적의 화살이나 투사체는 공중에 멈추고, 적은 돌진하지 못한 채 조여드는 압력에 계속 피해를 입습니다.
+icon: ''
+permission: magic.learned.dead_calm
+discovery:
+  description: 7서클 달성 후 진공 회랑에 마나 4,000을 쓰고, 하늘뱀 5마리 처치하기.
+research: 하늘뱀이 진공 회랑 한가운데서 몸부림치다 멈췄다. 모든 바람을 빨아들인 그 자리에는 소리도 흐름도 남아 있지 않았다. 바람의 끝은 고요였다.
+cast:
+  command: 마법 dead_calm
+  cooldown-seconds: 40
+  mana-cost: 120
+order: 321

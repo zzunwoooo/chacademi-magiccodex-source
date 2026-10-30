@@ -1,0 +1,14 @@
+id: molten_drip
+name: 쇳물 방울
+category: fire
+description: 뜨거운 쇳물 한 덩이를 포물선으로 던집니다. 떨어진 자리에는 2초 동안 쇳물 웅덩이가 남아, 그 위에 선 적을 계속 태웁니다.
+icon: ''
+permission: magic.learned.molten_drip
+discovery:
+  description: 용암에 물을 부어 흑요석을 누적 16개 만들고, 파이어 볼로 몬스터 20마리 처치하기.
+research: 용암 위에 물을 붓자 치익 소리와 함께 검은 돌이 굳었다. 그 곁에 남은 붉은 방울 하나를 화염구에 실어 던졌을 때, 불은 돌처럼 무겁게 떨어져 녹은 쇠처럼 고였다.
+cast:
+  command: 마법 molten_drip
+  cooldown-seconds: 5
+  mana-cost: 9
+order: 327

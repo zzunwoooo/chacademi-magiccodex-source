@@ -1,0 +1,14 @@
+id: windmill_blades
+name: 풍차 날개
+category: wind
+description: 바람으로 된 풍차 날개 세 장을 불러내 6초 동안 내 주위를 돌게 합니다. 가까이 다가온 적은 날개에 닿을 때마다 베입니다.
+icon: ''
+permission: magic.learned.windmill_blades
+discovery:
+  description: 바람개비 던지기로 몬스터 50마리 처치하기.
+research: 던진 바람개비들이 하나둘 돌아오지 않고 발밑에 쌓였다. 날개를 떼어 내 몸에 둘러 보니, 이제는 던질 필요가 없었다. 내가 축이 되면 그만이었다.
+cast:
+  command: 마법 windmill_blades
+  cooldown-seconds: 12
+  mana-cost: 28
+order: 309

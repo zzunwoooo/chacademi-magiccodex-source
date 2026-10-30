@@ -1,0 +1,14 @@
+id: fossil_wyrm
+name: 화석 뱀뼈
+category: earth
+description: 땅속에서 거대한 화석 뱀뼈를 불러내 앞으로 돌진시킵니다. 뱀뼈는 지나가는 길의 적을 물어뜯고 끝에서 다시 땅속으로 파고듭니다.
+icon: ''
+permission: magic.learned.fossil_wyrm
+discovery:
+  description: 5서클 달성 후 모래 두더지로 몬스터 80마리 처치하고, 와이번 3마리 처치하기.
+research: 와이번이 내려앉은 절벽 아래로 모래 두더지를 보냈다. 땅속을 헤집던 모래 줄기가 단단한 무언가에 부딪혔고, 이윽고 길고 오래된 뱀의 뼈가 모래를 털며 몸을 일으켰다.
+cast:
+  command: 마법 fossil_wyrm
+  cooldown-seconds: 16
+  mana-cost: 55
+order: 390

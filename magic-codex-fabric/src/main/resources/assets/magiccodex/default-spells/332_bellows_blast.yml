@@ -1,0 +1,14 @@
+id: bellows_blast
+name: 풀무질
+category: fire
+description: 풀무처럼 숨을 모았다가 앞쪽으로 뜨거운 바람을 한꺼번에 내뿜습니다. 바람에 맞은 적은 뒤로 크게 밀려납니다.
+icon: ''
+permission: magic.learned.bellows_blast
+discovery:
+  description: 화로에서 구운 음식을 누적 64개 꺼내고, 작은 불숨을 100번 사용하기.
+research: 화로에서 갓 구운 빵을 꺼내며 습관처럼 작은 불숨을 불어 넣었다. 숨을 끝까지 들이켜 한꺼번에 내뱉자, 열기가 숨결이 아니라 바람이 되어 부엌문을 밀어젖혔다.
+cast:
+  command: 마법 bellows_blast
+  cooldown-seconds: 6
+  mana-cost: 8
+order: 332

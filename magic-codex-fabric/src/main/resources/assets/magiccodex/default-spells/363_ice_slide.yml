@@ -1,0 +1,14 @@
+id: ice_slide
+name: 얼음 미끄럼
+category: water
+description: 발밑에 얼음 판을 깔고 앞으로 빠르게 미끄러져 나갑니다. 가는 길에 부딪힌 적은 피해를 입고 옆으로 튕겨 나갑니다.
+icon: ''
+permission: magic.learned.ice_slide
+discovery:
+  description: 안개 숨으로 몬스터 40마리 처치하고, 얼음 다리를 30번 놓기.
+research: 안개 숨으로 얼린 물 위에 얼음 다리를 놓다가 발이 쭉 미끄러졌다. 넘어지는 대신 그대로 몸을 맡기자, 다리 끝까지 얼음이 나를 실어 날랐다.
+cast:
+  command: 마법 ice_slide
+  cooldown-seconds: 7
+  mana-cost: 18
+order: 363

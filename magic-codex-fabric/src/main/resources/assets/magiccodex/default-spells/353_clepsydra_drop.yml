@@ -1,0 +1,14 @@
+id: clepsydra_drop
+name: 물시계 방울
+category: water
+description: 조준한 적의 머리 위에 작은 물시계를 띄웁니다. 2초 뒤 모인 물이 한꺼번에 떨어져 그 자리의 적에게 피해를 주고 잠시 느리게 만듭니다.
+icon: ''
+permission: magic.learned.clepsydra_drop
+discovery:
+  description: 물에 잠긴 채 30초 버티고, 물병 가득을 50번 사용하기.
+research: 숨을 참고 물속에 가라앉아 있으니 심장 소리가 물방울 떨어지는 소리처럼 들렸다. 물병을 채울 때마다 듣던 그 똑똑 소리가, 물 밖으로 나온 뒤에도 머리 위에서 멈추지 않았다.
+cast:
+  command: 마법 clepsydra_drop
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 353

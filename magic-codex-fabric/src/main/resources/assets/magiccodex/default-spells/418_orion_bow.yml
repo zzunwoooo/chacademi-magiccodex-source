@@ -1,0 +1,14 @@
+id: orion_bow
+name: 오리온의 활
+category: light
+description: 하늘에 별빛으로 된 거대한 활을 그려 시위를 당깁니다. 잠시 뒤 바라보는 방향으로 굵은 빛의 화살이 날아가 일직선 위의 적을 모두 꿰뚫습니다.
+icon: ''
+permission: magic.learned.orion_bow
+discovery:
+  description: 5서클 달성 후 별 잇기로 몬스터 80마리 처치하고, 70블록 밖의 적을 화살로 맞히기.
+research: 별 잇기로 긴 선을 그리다가, 그 선을 시위 삼아 화살을 당겨 보았다. 화살은 시야 끝 너머의 과녁에 꽂혔고, 고개를 드니 겨울 사냥꾼의 활이 하늘에 걸려 있었다.
+cast:
+  command: 마법 orion_bow
+  cooldown-seconds: 20
+  mana-cost: 70
+order: 418

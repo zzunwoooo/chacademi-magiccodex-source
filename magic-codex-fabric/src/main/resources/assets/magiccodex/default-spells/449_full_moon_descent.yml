@@ -1,0 +1,14 @@
+id: full_moon_descent
+name: 만월 강림
+category: dark
+description: 밤하늘을 열어 거대한 보름달을 불러 내립니다. 달빛이 내리는 동안 범위 안의 적들은 느려지고, 달이 땅에 떨어지는 순간 엄청난 피해를 입힌 뒤 거대한 초승달 참격이 한 번 더 휩쓸고 지나가 적들을 약화시킵니다.
+icon: ''
+permission: magic.learned.full_moon_descent
+discovery:
+  description: 9서클 달성 후, 월광 회전륜과 그믐 장막을 익힌 채로 망각의 해골술사 30마리와 팬텀 50마리 처치하기.
+research: 회전하는 달빛 칼날과 그믐의 장막을 두르고 밤마다 해골술사와 팬텀의 무리를 상대했다. 망각을 속삭이는 주문과 하늘을 가르는 날개가 모두 잠잠해진 새벽, 지는 줄 알았던 보름달이 오히려 내게로 다가왔다. 손을 뻗자 하늘의 무게가 통째로 내려앉았고, 그날 이후 달은 내 부름을 기다린다.
+cast:
+  command: 마법 full_moon_descent
+  cooldown-seconds: 210
+  mana-cost: 400
+order: 449

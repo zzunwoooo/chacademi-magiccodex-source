@@ -1,0 +1,14 @@
+id: bat_sovereign
+name: 박쥐 군주
+category: dark
+description: 박쥐 떼를 거느리고 8초 동안 주변 적들의 생명력을 계속 빨아들입니다. 1초마다 주변 적에게 피해를 주고, 그만큼 내 체력을 회복합니다.
+icon: ''
+permission: magic.learned.bat_sovereign
+discovery:
+  description: 5서클 달성 후 박쥐 망토로 몬스터 80마리 처치하고, 빛이 없는 동굴에서 120초 머무르기를 5번 하기.
+research: 빛이 들지 않는 동굴에서 여러 밤을 지새우며 박쥐들과 함께 사냥했다. 마지막 밤, 동굴의 모든 박쥐가 내 머리 위로 날아올라 왕관처럼 맴돌았다.
+cast:
+  command: 마법 bat_sovereign
+  cooldown-seconds: 22
+  mana-cost: 60
+order: 441

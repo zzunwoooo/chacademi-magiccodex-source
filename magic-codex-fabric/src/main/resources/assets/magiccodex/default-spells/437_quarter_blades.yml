@@ -1,0 +1,14 @@
+id: quarter_blades
+name: 상현·하현 칼
+category: dark
+description: 왼쪽과 오른쪽으로 반달 칼날을 한 번씩, 두 번 연속으로 베어 냅니다.
+icon: ''
+permission: magic.learned.quarter_blades
+discovery:
+  description: 초승달 낫으로 몬스터 50마리 처치하기.
+research: 초승달 낫을 수없이 휘두르자 궤적이 왼쪽에 하나, 돌아오는 길에 또 하나 남았다. 서로 등을 맞댄 두 반달이 칼날이 되어 손에 쥐어졌다.
+cast:
+  command: 마법 quarter_blades
+  cooldown-seconds: 7
+  mana-cost: 18
+order: 437

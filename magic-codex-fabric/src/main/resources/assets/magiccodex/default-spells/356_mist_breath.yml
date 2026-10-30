@@ -1,0 +1,14 @@
+id: mist_breath
+name: 안개 숨
+category: water
+description: 차가운 안개를 앞쪽으로 길게 내뿜습니다. 안개에 휩싸인 적은 여러 번 피해를 입고 3초 동안 느려집니다.
+icon: ''
+permission: magic.learned.mist_breath
+discovery:
+  description: 차가운 바다에 가 보고, 잔잔한 물결을 50번 사용하기.
+research: 차가운 바다 앞에 서서 잔잔한 물결을 띄우고 또 띄웠다. 바닷바람에 식은 숨을 길게 내쉬자, 그 입김이 물결을 따라 하얀 안개가 되어 수면 위로 미끄러져 갔다.
+cast:
+  command: 마법 mist_breath
+  cooldown-seconds: 5
+  mana-cost: 9
+order: 356

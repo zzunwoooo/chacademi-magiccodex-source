@@ -1,0 +1,14 @@
+id: sand_fall
+name: 모래 폭포
+category: earth
+description: 조준한 곳 위 하늘에 봉인을 열어 2초 동안 모래를 쏟아붓습니다. 그 아래의 적은 계속 피해를 입고 느려지며, 마지막에 큰 충격을 받습니다.
+icon: ''
+permission: magic.learned.sand_fall
+discovery:
+  description: 5서클 달성 후 진흙 폭탄으로 몬스터 80마리 처치하고, 검치호 5마리 처치하기.
+research: 검치호가 바위 위로 뛰어올라 진흙 폭탄을 피했다. 하늘을 올려다보며 다음 폭탄을 노리던 순간, 위에서 떨어뜨리면 피할 곳이 없다는 생각과 함께 머리 위에서 모래가 쏟아지기 시작했다.
+cast:
+  command: 마법 sand_fall
+  cooldown-seconds: 15
+  mana-cost: 50
+order: 394

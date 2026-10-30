@@ -1,0 +1,14 @@
+id: celestial_scope
+name: 천체 망원경
+category: light
+description: 10초 동안 천체 망원경을 눈앞에 펼칩니다. 그동안 좌클릭할 때마다 잠시 빛을 모은 뒤 바라보는 방향으로 아주 멀리까지 닿는 별빛 저격을 쏩니다(최대 3발).
+icon: ''
+permission: magic.learned.celestial_scope
+discovery:
+  description: 7서클 달성 후 오리온의 활과 등대에 마나를 각각 3,000씩 쓰고, 페가수스 15마리 처치하기.
+research: 페가수스는 등대 불빛보다 높이, 오리온의 화살보다 멀리 날았다. 두 빛을 겹쳐 눈앞에 대고 들여다보자 날갯짓 하나까지 손에 닿을 듯 가까워졌다.
+cast:
+  command: 마법 celestial_scope
+  cooldown-seconds: 45
+  mana-cost: 150
+order: 422

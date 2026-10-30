@@ -1,0 +1,14 @@
+id: mud_bomb
+name: 진흙 폭탄
+category: earth
+description: 마력이 깃든 진흙 덩이를 던집니다. 덩이가 터지면 주변 적이 피해를 입고, 남은 진흙 웅덩이 위의 적은 느려집니다.
+icon: ''
+permission: magic.learned.mud_bomb
+discovery:
+  description: 점토 덩이로 몬스터 50마리 처치하기.
+research: 점토 덩이를 맞은 몬스터들이 쓰러진 자리마다 진흙 웅덩이가 넓어졌다. 덩이를 더 크게 빚어 세게 던지자, 맞은 순간 사방으로 터지며 주변을 온통 진창으로 만들었다.
+cast:
+  command: 마법 mud_bomb
+  cooldown-seconds: 8
+  mana-cost: 18
+order: 387

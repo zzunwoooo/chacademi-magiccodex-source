@@ -1,0 +1,14 @@
+id: lunar_mark
+name: 달빛 표식
+category: dark
+description: 적에게 달빛 표식을 새깁니다. 4초 뒤 하늘에서 달빛이 떨어져 표식이 새겨진 적에게 큰 피해를 주고, 바로 옆의 적들에게도 절반의 피해를 줍니다.
+icon: ''
+permission: magic.learned.lunar_mark
+discovery:
+  description: 달빛 화살로 몬스터 50마리 처치하기.
+research: 달빛 화살이 꽂힌 자리마다 희미한 달무늬가 남았다. 무늬가 사라지기 전, 하늘의 달이 그 자리를 정확히 다시 찾아오는 것을 보았다.
+cast:
+  command: 마법 lunar_mark
+  cooldown-seconds: 8
+  mana-cost: 20
+order: 433

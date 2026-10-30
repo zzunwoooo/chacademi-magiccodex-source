@@ -1,0 +1,14 @@
+id: match_strike
+name: 성냥 긋기
+category: fire
+description: 발끝으로 바닥에 긴 선을 긋습니다. 1초 뒤 그 선을 따라 불길이 한꺼번에 솟아 위에 선 적을 태웁니다.
+icon: ''
+permission: magic.learned.match_strike
+discovery:
+  description: 촛불에 불을 20번 붙이기.
+research: 창가의 초에 하나씩 불을 붙여 나가던 저녁이었다. 성냥을 그은 자국이 탁자 위에 그을음으로 남았는데, 한 박자 늦게 그 자국에서 작은 불꽃이 피어올랐다.
+cast:
+  command: 마법 match_strike
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 329

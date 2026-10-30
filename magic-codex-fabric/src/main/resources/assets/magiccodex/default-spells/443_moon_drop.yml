@@ -1,0 +1,14 @@
+id: moon_drop
+name: 달 떨구기
+category: dark
+description: 작은 달을 불러내 조준한 곳에 떨어뜨립니다. 달이 땅에 닿으면 크게 터지며 넓은 범위의 적에게 피해를 줍니다.
+icon: ''
+permission: magic.learned.moon_drop
+discovery:
+  description: 5서클 달성 후 달빛 표식으로 몬스터 80마리 처치하고, 망각의 해골술사 5마리 처치하기.
+research: 망각의 해골술사가 하늘을 가리키며 무언가를 떠올리려 애썼다. 내가 새긴 달빛 표식들이 그 손끝 위로 모여 하나의 작은 달이 되었고, 나는 그것을 떨어뜨렸다.
+cast:
+  command: 마법 moon_drop
+  cooldown-seconds: 22
+  mana-cost: 70
+order: 443

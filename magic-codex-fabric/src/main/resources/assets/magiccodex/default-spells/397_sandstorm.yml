@@ -1,0 +1,14 @@
+id: sandstorm
+name: 모래폭풍
+category: earth
+description: 조준한 곳에 8초 동안 거대한 모래폭풍을 일으킵니다. 폭풍 속의 적은 계속 피해를 입고 앞을 제대로 보지 못합니다.
+icon: ''
+permission: magic.learned.sandstorm
+discovery:
+  description: 7서클 달성 후 유사 파도에 마나 4,000을 쓰고, 검치호 15마리 처치하기.
+research: 검치호 무리를 유사 파도로 몰아붙이던 날, 마나가 바닥나도록 파도를 일으키자 모래가 더 이상 땅에 머물지 않았다. 바람을 탄 모래는 누런 벽이 되어 하늘을 덮었고, 그 속에서 무리는 서로를 찾지 못했다.
+cast:
+  command: 마법 sandstorm
+  cooldown-seconds: 42
+  mana-cost: 130
+order: 397

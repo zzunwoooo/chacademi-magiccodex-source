@@ -1,0 +1,14 @@
+id: desertify
+name: 사막화
+category: earth
+description: 주변 7블록을 8초 동안 메마른 사막으로 바꿉니다. 사막 위의 적은 모래에 발이 빠져 느려지고, 나는 모래바람을 타고 빨라집니다.
+icon: ''
+permission: magic.learned.desertify
+discovery:
+  description: 7서클 달성 후 모래관과 모래 폭포에 마나를 각각 3,000씩 쓰고, 선인장을 누적 1,000개 수확하기.
+research: 모래관과 모래 폭포로 쏟아부은 모래가 선인장밭 한가운데 언덕처럼 쌓였다. 그 위에 서자 주위의 풀이 마르고 땅이 갈라졌지만, 메마른 바람은 오히려 내 발걸음을 가볍게 밀어 주었다.
+cast:
+  command: 마법 desertify
+  cooldown-seconds: 40
+  mana-cost: 110
+order: 398

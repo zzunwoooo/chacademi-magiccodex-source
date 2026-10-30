@@ -1,0 +1,14 @@
+id: jelly_swarm
+name: 해파리 떼
+category: water
+description: 해파리 네 마리를 불러 내 주위를 맴돌게 합니다. 해파리에 닿은 적은 쏘여서 피해를 입고 느려집니다.
+icon: ''
+permission: magic.learned.jelly_swarm
+discovery:
+  description: 물 리본으로 몬스터 40마리 처치하고, 낚싯대로 몬스터를 10번 끌어당기기.
+research: 낚싯대로 물속의 몬스터를 끌어당기다 물 리본이 엉켜 버렸다. 엉킨 물이 둥근 갓과 긴 촉수를 가진 모양으로 풀려 나오더니, 해파리처럼 내 곁을 둥실둥실 맴돌았다.
+cast:
+  command: 마법 jelly_swarm
+  cooldown-seconds: 10
+  mana-cost: 20
+order: 362

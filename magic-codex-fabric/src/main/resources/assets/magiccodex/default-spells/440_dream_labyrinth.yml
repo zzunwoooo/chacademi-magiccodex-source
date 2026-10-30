@@ -1,0 +1,14 @@
+id: dream_labyrinth
+name: 꿈의 미로
+category: dark
+description: 적 하나를 꿈속 미로에 3초 동안 가둬 아무것도 못 하게 만듭니다. 미로가 깨지며 꿈에서 깨어나는 순간 큰 피해를 입습니다.
+icon: ''
+permission: magic.learned.dream_labyrinth
+discovery:
+  description: 5서클 달성 후 꿈 조각으로 몬스터 80마리 처치하고, 키츠네 10마리 처치하기.
+research: 키츠네는 꼬리마다 다른 꿈을 감추고 있었다. 꿈 조각으로 그 꿈들을 하나씩 깨뜨리다 보니, 깨진 꿈들이 모여 빠져나갈 수 없는 미로가 되었다.
+cast:
+  command: 마법 dream_labyrinth
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 440

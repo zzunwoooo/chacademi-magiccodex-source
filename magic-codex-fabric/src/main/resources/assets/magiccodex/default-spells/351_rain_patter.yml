@@ -1,0 +1,14 @@
+id: rain_patter
+name: 빗방울 연사
+category: water
+description: 작은 물방울 세 발을 빠르게 연달아 쏩니다. 물방울마다 처음 닿은 적에게 피해를 줍니다.
+icon: ''
+permission: magic.learned.rain_patter
+discovery:
+  description: 물방울 탄환으로 몬스터 30마리 처치하기.
+research: 물방울 탄환을 몇 번이고 쏘다 보니 손끝에 물이 남아 있는 느낌이 사라지지 않았다. 한 발로는 모자라다 싶던 날, 손가락이 빗소리처럼 세 번을 연달아 튕겼다.
+cast:
+  command: 마법 rain_patter
+  cooldown-seconds: 3
+  mana-cost: 6
+order: 351

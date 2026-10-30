@@ -1,0 +1,14 @@
+id: magnet_palm
+name: 자석 손
+category: earth
+description: 손바닥에 자기장을 모아 앞쪽의 적들을 내 쪽으로 끌어당긴 뒤, 손앞에 들러붙은 순간 강하게 때립니다.
+icon: ''
+permission: magic.learned.magnet_palm
+discovery:
+  description: 자철 조각으로 몬스터 50마리 처치하기.
+research: 수없이 던지고 되돌려 받은 자철 조각이 어느새 손바닥에 딱 붙어 떨어지지 않았다. 손을 뻗자, 쓰러진 몬스터의 갑옷 조각들이 조각을 따라 내 쪽으로 끌려왔다.
+cast:
+  command: 마법 magnet_palm
+  cooldown-seconds: 8
+  mana-cost: 20
+order: 385

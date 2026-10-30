@@ -1,0 +1,14 @@
+id: great_hourglass
+name: 대사막의 모래시계
+category: earth
+description: 하늘 높이 거대한 모래시계를 불러내 뒤집습니다. 모래가 쏟아지는 동안 주변 적은 느려지며 중심으로 빨려 들고, 마지막 모래알이 떨어지는 순간 대지가 꺼지며 적을 삼킨 뒤 모래 간헐천으로 솟구쳐 올립니다.
+icon: ''
+permission: magic.learned.great_hourglass
+discovery:
+  description: 9서클 달성 후, 모래폭풍과 사막화를 익힌 채로 바실리스크 30마리와 검치호 30마리 처치하기.
+research: 모래폭풍이 걷히자 사막을 지키던 바실리스크와 검치호가 모두 모래 위에 쓰러져 있었다. 그 고요 속에서 발밑의 모래가 거꾸로 흘러 하늘로 올라가더니, 지평선만 한 모래시계가 머리 위에서 천천히 뒤집혔다. 마지막 모래알이 떨어지는 순간 대지가 꺼지며 싸움의 흔적을 모두 삼켰고, 그제야 알았다. 시간은 흐르는 것이 아니라 쌓이는 것이며, 쌓인 것은 언젠가 반드시 무너진다는 것을.
+cast:
+  command: 마법 great_hourglass
+  cooldown-seconds: 200
+  mana-cost: 400
+order: 399

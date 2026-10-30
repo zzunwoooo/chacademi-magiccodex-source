@@ -1,0 +1,14 @@
+id: thousand_cranes
+name: 천 마리 종이학
+category: wind
+description: 3초 동안 영창해 종이학 떼를 불러냅니다. 영창이 끝나면 종이학 떼가 조준한 적을 휘감아 여러 번 쪼고, 마지막에 한꺼번에 터집니다. 영창 중 움직이거나 공격받으면 실패합니다.
+icon: ''
+permission: magic.learned.thousand_cranes
+discovery:
+  description: 5서클 달성 후 종이학을 1,000번 날리기.
+research: 종이학을 날리고 또 날렸다. 손끝이 종이에 베이고 계절이 바뀔 즈음, 어디선가 돌아온 학들이 내 어깨에 하나둘 내려앉기 시작했다.
+cast:
+  command: 마법 thousand_cranes
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 315

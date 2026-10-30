@@ -1,0 +1,14 @@
+id: candle_hymn
+name: 촛불 성가
+category: light
+description: 촛불 세 개를 불러 8초 동안 곁에 띄웁니다. 적이 가까이 다가오면 촛불이 하나씩 그 적에게 섬광을 쏘고 꺼집니다.
+icon: ''
+permission: magic.learned.candle_hymn
+discovery:
+  description: 촛불에 불을 10번 붙이고, 좀비와 스켈레톤을 합쳐 100마리 처치하기.
+research: 언데드가 들끓던 밤, 지하 통로에 촛불을 하나씩 밝히며 나아갔다. 마지막 촛불이 켜지자 해골들이 움찔 물러섰고, 불꽃들이 성가처럼 일제히 내 쪽으로 기울었다.
+cast:
+  command: 마법 candle_hymn
+  cooldown-seconds: 6
+  mana-cost: 10
+order: 403

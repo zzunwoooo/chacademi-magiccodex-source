@@ -1,0 +1,14 @@
+id: pinwheel_toss
+name: 바람개비 던지기
+category: wind
+description: 빙글빙글 도는 바람개비를 던집니다. 바람개비는 적이나 벽에 박힌 뒤 3초 동안 계속 돌며 그 자리에 있는 적을 벱니다.
+icon: ''
+permission: magic.learned.pinwheel_toss
+discovery:
+  description: 되돌이 칼날로 몬스터 30마리 처치하기.
+research: 되돌아오는 칼날을 수없이 받아 내다 보니, 손을 떠난 바람이 원을 그리고 싶어 한다는 걸 알게 되었다. 이번에는 돌아오라고 부르지 않았다. 대신 박힌 그 자리에서 계속 돌라고 일렀다.
+cast:
+  command: 마법 pinwheel_toss
+  cooldown-seconds: 6
+  mana-cost: 10
+order: 302

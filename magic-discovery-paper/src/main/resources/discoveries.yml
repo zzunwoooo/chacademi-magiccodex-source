@@ -1494,3 +1494,1712 @@ spells:
       "kill.mob.wyvern": 1
     chance: 0.05
     prerequisites: []
+  # ---- 301~450 신규 150종 (magic-mythic-paper/tools/nova150_spells.py) ----
+  dandelion_volley:
+    name: "민들레 홀씨탄"
+    permission: "magic.learned.dandelion_volley"
+    icon: magiccodex:textures/spells/nova150/dandelion_volley.png
+    category: "wind"
+    condition-text: "꽃을 누적 20송이 심고, 바람 송곳으로 몬스터 20마리 처치하기."
+    requirements:
+      "plant.flower": 20
+      "kill.spell.wind_needle": 20
+    chance: 1.0
+    prerequisites: []
+  pinwheel_toss:
+    name: "바람개비 던지기"
+    permission: "magic.learned.pinwheel_toss"
+    icon: magiccodex:textures/spells/nova150/pinwheel_toss.png
+    category: "wind"
+    condition-text: "되돌이 칼날로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.returning_blade": 30
+    chance: 1.0
+    prerequisites: []
+  paper_crane:
+    name: "종이학"
+    permission: "magic.learned.paper_crane"
+    icon: magiccodex:textures/spells/nova150/paper_crane.png
+    category: "wind"
+    condition-text: "책을 직접 써서 서명하고, 페가수스 3마리 처치하기."
+    requirements:
+      "book.signed": 1
+      "kill.mob.pegasus": 3
+    chance: 1.0
+    prerequisites: []
+  whirl_cut:
+    name: "회전 베기"
+    permission: "magic.learned.whirl_cut"
+    icon: magiccodex:textures/spells/nova150/whirl_cut.png
+    category: "wind"
+    condition-text: "작은 회오리로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.mini_twister": 30
+    chance: 1.0
+    prerequisites: []
+  whistle_blade:
+    name: "휘파람 칼날"
+    permission: "magic.learned.whistle_blade"
+    icon: magiccodex:textures/spells/nova150/whistle_blade.png
+    category: "wind"
+    condition-text: "멀리 떨어진 적을 화살로 맞히고, 윈드 커터로 몬스터 30마리 처치하기."
+    requirements:
+      "arrow.distant_hit": 1
+      "kill.spell.vacuum_cleave": 30
+    chance: 1.0
+    prerequisites: []
+  gust_palm:
+    name: "돌풍 장타"
+    permission: "magic.learned.gust_palm"
+    icon: magiccodex:textures/spells/nova150/gust_palm.png
+    category: "wind"
+    condition-text: "윈드 푸쉬를 200번 사용하기."
+    requirements:
+      "cast.wind_push": 200
+    chance: 1.0
+    prerequisites: []
+  air_balloon:
+    name: "공기 풍선"
+    permission: "magic.learned.air_balloon"
+    icon: magiccodex:textures/spells/nova150/air_balloon.png
+    category: "wind"
+    condition-text: "폭죽 로켓을 30번 쏘아 올리고, 달리면서 300번 점프하기."
+    requirements:
+      "firework.launched": 30
+      "jump.sprinting": 300
+    chance: 1.0
+    prerequisites: []
+  kite_tether:
+    name: "연줄"
+    permission: "magic.learned.kite_tether"
+    icon: magiccodex:textures/spells/nova150/kite_tether.png
+    category: "wind"
+    condition-text: "종이학으로 몬스터 40마리 처치하고, 페가수스 5마리 처치하기."
+    requirements:
+      "kill.spell.paper_crane": 40
+      "kill.mob.pegasus": 5
+    chance: 1.0
+    prerequisites: []
+  windmill_blades:
+    name: "풍차 날개"
+    permission: "magic.learned.windmill_blades"
+    icon: magiccodex:textures/spells/nova150/windmill_blades.png
+    category: "wind"
+    condition-text: "바람개비 던지기로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.pinwheel_toss": 50
+    chance: 1.0
+    prerequisites: []
+  headwind_lane:
+    name: "역풍로"
+    permission: "magic.learned.headwind_lane"
+    icon: magiccodex:textures/spells/nova150/headwind_lane.png
+    category: "wind"
+    condition-text: "돌풍 장타로 몬스터 40마리 처치하고, 달리기로 누적 5,000블록 이동하기."
+    requirements:
+      "kill.spell.gust_palm": 40
+      "sprint.centimeters": 500000
+    chance: 1.0
+    prerequisites: []
+  seed_mines:
+    name: "홀씨 지뢰밭"
+    permission: "magic.learned.seed_mines"
+    icon: magiccodex:textures/spells/nova150/seed_mines.png
+    category: "wind"
+    condition-text: "민들레 홀씨탄으로 몬스터 50마리 처치하고, 꽃을 누적 64송이 심기."
+    requirements:
+      "kill.spell.dandelion_volley": 50
+      "plant.flower": 64
+    chance: 1.0
+    prerequisites: []
+  cyclone_kick:
+    name: "회오리 발차기"
+    permission: "magic.learned.cyclone_kick"
+    icon: magiccodex:textures/spells/nova150/cyclone_kick.png
+    category: "wind"
+    condition-text: "회전 베기로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.whirl_cut": 50
+    chance: 1.0
+    prerequisites: []
+  air_saw:
+    name: "바람 톱"
+    permission: "magic.learned.air_saw"
+    icon: magiccodex:textures/spells/nova150/air_saw.png
+    category: "wind"
+    condition-text: "휘파람 칼날로 몬스터 50마리 처치하고, 원목 껍질을 64번 벗기기."
+    requirements:
+      "kill.spell.whistle_blade": 50
+      "strip.log": 64
+    chance: 1.0
+    prerequisites: []
+  shear_curtain:
+    name: "칼바람 장막"
+    permission: "magic.learned.shear_curtain"
+    icon: magiccodex:textures/spells/nova150/shear_curtain.png
+    category: "wind"
+    condition-text: "5서클 달성 후 바람 톱으로 몬스터 80마리 처치하고, 검치호 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.air_saw": 80
+      "kill.mob.sabertooth": 5
+    chance: 1.0
+    prerequisites: []
+  thousand_cranes:
+    name: "천 마리 종이학"
+    permission: "magic.learned.thousand_cranes"
+    icon: magiccodex:textures/spells/nova150/thousand_cranes.png
+    category: "wind"
+    condition-text: "5서클 달성 후 종이학을 1,000번 날리기."
+    requirements:
+      "state.circle": 5
+      "cast.paper_crane": 1000
+    chance: 1.0
+    prerequisites: []
+  gust_canopy:
+    name: "바람 낙하산"
+    permission: "magic.learned.gust_canopy"
+    icon: magiccodex:textures/spells/nova150/gust_canopy.png
+    category: "wind"
+    condition-text: "5서클 달성 후 역풍로로 몬스터 60마리 처치하고, 히포그리프 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.headwind_lane": 60
+      "kill.mob.hippogryph": 5
+    chance: 1.0
+    prerequisites: []
+  carousel_gale:
+    name: "회전목마 돌풍"
+    permission: "magic.learned.carousel_gale"
+    icon: magiccodex:textures/spells/nova150/carousel_gale.png
+    category: "wind"
+    condition-text: "5서클 달성 후 풍차 날개로 몬스터 80마리 처치하고, 페가수스 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.windmill_blades": 80
+      "kill.mob.pegasus": 10
+    chance: 1.0
+    prerequisites: []
+  sky_blade_rain:
+    name: "칼날비"
+    permission: "magic.learned.sky_blade_rain"
+    icon: magiccodex:textures/spells/nova150/sky_blade_rain.png
+    category: "wind"
+    condition-text: "5서클 달성 후 회오리 발차기로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.cyclone_kick": 80
+      "kill.mob.phantom": 20
+    chance: 1.0
+    prerequisites: []
+  vacuum_corridor:
+    name: "진공 회랑"
+    permission: "magic.learned.vacuum_corridor"
+    icon: magiccodex:textures/spells/nova150/vacuum_corridor.png
+    category: "wind"
+    condition-text: "5서클 달성 후 홀씨 지뢰밭으로 몬스터 60마리 처치하고, 와이번 3마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.seed_mines": 60
+      "kill.mob.wyvern": 3
+    chance: 1.0
+    prerequisites: []
+  wind_chime_ward:
+    name: "풍경 결계"
+    permission: "magic.learned.wind_chime_ward"
+    icon: magiccodex:textures/spells/nova150/wind_chime_ward.png
+    category: "wind"
+    condition-text: "7서클 달성 후 칼바람 장막에 마나 4,000을 쓰고, 봉인의 술사 10마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.shear_curtain": 4000
+      "kill.mob.warden_mage": 10
+    chance: 1.0
+    prerequisites: []
+  dead_calm:
+    name: "무풍지대"
+    permission: "magic.learned.dead_calm"
+    icon: magiccodex:textures/spells/nova150/dead_calm.png
+    category: "wind"
+    condition-text: "7서클 달성 후 진공 회랑에 마나 4,000을 쓰고, 하늘뱀 5마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.vacuum_corridor": 4000
+      "kill.mob.sky_serpent": 5
+    chance: 1.0
+    prerequisites: []
+  great_pinwheel:
+    name: "거대 바람개비"
+    permission: "magic.learned.great_pinwheel"
+    icon: magiccodex:textures/spells/nova150/great_pinwheel.png
+    category: "wind"
+    condition-text: "7서클 달성 후 회전목마 돌풍에 마나 4,000을 쓰고, 와이번 5마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.carousel_gale": 4000
+      "kill.mob.wyvern": 5
+    chance: 1.0
+    prerequisites: []
+  kite_festival:
+    name: "연날리기 축제"
+    permission: "magic.learned.kite_festival"
+    icon: magiccodex:textures/spells/nova150/kite_festival.png
+    category: "wind"
+    condition-text: "7서클 달성 후 천 마리 종이학과 바람 낙하산에 마나를 각각 3,000씩 쓰고, 히포그리프 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.thousand_cranes": 3000
+      "mana.gust_canopy": 3000
+      "kill.mob.hippogryph": 15
+    chance: 1.0
+    prerequisites: []
+  sky_mill:
+    name: "천공의 방아"
+    permission: "magic.learned.sky_mill"
+    icon: magiccodex:textures/spells/nova150/sky_mill.png
+    category: "wind"
+    condition-text: "9서클 달성 후, 풍경 결계와 거대 바람개비를 익힌 채로 하늘뱀 20마리와 와이번 20마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.sky_serpent": 20
+      "kill.mob.wyvern": 20
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.wind_chime_ward"
+      - "magic.learned.great_pinwheel"
+  sky_sever:
+    name: "창공 절단"
+    permission: "magic.learned.sky_sever"
+    icon: magiccodex:textures/spells/nova150/sky_sever.png
+    category: "wind"
+    condition-text: "천공의 방아·무풍지대·연날리기 축제를 익힌 뒤, 천공의 방아로 몬스터 50마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.spell.sky_mill": 50
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.sky_mill"
+      - "magic.learned.dead_calm"
+      - "magic.learned.kite_festival"
+  ember_tongs:
+    name: "불티 집게"
+    permission: "magic.learned.ember_tongs"
+    icon: magiccodex:textures/spells/nova150/ember_tongs.png
+    category: "fire"
+    condition-text: "대장간에서 아이템을 5번 제작하기."
+    requirements:
+      "smithy.item_crafted": 5
+    chance: 1.0
+    prerequisites: []
+  molten_drip:
+    name: "쇳물 방울"
+    permission: "magic.learned.molten_drip"
+    icon: magiccodex:textures/spells/nova150/molten_drip.png
+    category: "fire"
+    condition-text: "용암에 물을 부어 흑요석을 누적 16개 만들고, 파이어 볼로 몬스터 20마리 처치하기."
+    requirements:
+      "water.obsidian_created": 16
+      "kill.spell.ember_bolt": 20
+    chance: 1.0
+    prerequisites: []
+  lantern_wisp:
+    name: "등롱 불씨"
+    permission: "magic.learned.lantern_wisp"
+    icon: magiccodex:textures/spells/nova150/lantern_wisp.png
+    category: "fire"
+    condition-text: "밤에 횃불을 누적 50개 설치하기."
+    requirements:
+      "place.torch_night": 50
+    chance: 1.0
+    prerequisites: []
+  match_strike:
+    name: "성냥 긋기"
+    permission: "magic.learned.match_strike"
+    icon: magiccodex:textures/spells/nova150/match_strike.png
+    category: "fire"
+    condition-text: "촛불에 불을 20번 붙이기."
+    requirements:
+      "candle.lit": 20
+    chance: 1.0
+    prerequisites: []
+  coal_lob:
+    name: "숯불 투척"
+    permission: "magic.learned.coal_lob"
+    icon: magiccodex:textures/spells/nova150/coal_lob.png
+    category: "fire"
+    condition-text: "불씨 튕기기로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.spark_flick": 30
+    chance: 1.0
+    prerequisites: []
+  flame_claw:
+    name: "불꽃 손톱"
+    permission: "magic.learned.flame_claw"
+    icon: magiccodex:textures/spells/nova150/flame_claw.png
+    category: "fire"
+    condition-text: "불타는 몬스터를 근접 공격으로 30마리 처치하기."
+    requirements:
+      "kill.burning_melee": 30
+    chance: 1.0
+    prerequisites: []
+  bellows_blast:
+    name: "풀무질"
+    permission: "magic.learned.bellows_blast"
+    icon: magiccodex:textures/spells/nova150/bellows_blast.png
+    category: "fire"
+    condition-text: "화로에서 구운 음식을 누적 64개 꺼내고, 작은 불숨을 100번 사용하기."
+    requirements:
+      "furnace.food_taken": 64
+      "cast.ember_puff": 100
+    chance: 1.0
+    prerequisites: []
+  forge_hammer:
+    name: "단조 망치"
+    permission: "magic.learned.forge_hammer"
+    icon: magiccodex:textures/spells/nova150/forge_hammer.png
+    category: "fire"
+    condition-text: "불티 집게로 몬스터 50마리 처치하고, 모루에서 도구를 10번 수리하기."
+    requirements:
+      "kill.spell.ember_tongs": 50
+      "anvil.repair_tool": 10
+    chance: 1.0
+    prerequisites: []
+  molten_plating:
+    name: "쇳물 갑주"
+    permission: "magic.learned.molten_plating"
+    icon: magiccodex:textures/spells/nova150/molten_plating.png
+    category: "fire"
+    condition-text: "쇳물 방울로 몬스터 40마리 처치하고, 입고 있던 갑옷을 1번 부서뜨리기."
+    requirements:
+      "kill.spell.molten_drip": 40
+      "armor.broken": 1
+    chance: 1.0
+    prerequisites: []
+  lantern_chain:
+    name: "등롱 사슬"
+    permission: "magic.learned.lantern_chain"
+    icon: magiccodex:textures/spells/nova150/lantern_chain.png
+    category: "fire"
+    condition-text: "등롱 불씨로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.lantern_wisp": 50
+    chance: 1.0
+    prerequisites: []
+  flame_top:
+    name: "불꽃 팽이"
+    permission: "magic.learned.flame_top"
+    icon: magiccodex:textures/spells/nova150/flame_top.png
+    category: "fire"
+    condition-text: "숯불 투척으로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.coal_lob": 50
+    chance: 1.0
+    prerequisites: []
+  flame_petals:
+    name: "화염 꽃잎"
+    permission: "magic.learned.flame_petals"
+    icon: magiccodex:textures/spells/nova150/flame_petals.png
+    category: "fire"
+    condition-text: "성냥 긋기로 몬스터 40마리 처치하고, 꽃을 누적 30송이 심기."
+    requirements:
+      "kill.spell.match_strike": 40
+      "plant.flower": 30
+    chance: 1.0
+    prerequisites: []
+  lava_bubbles:
+    name: "용암 거품"
+    permission: "magic.learned.lava_bubbles"
+    icon: magiccodex:textures/spells/nova150/lava_bubbles.png
+    category: "fire"
+    condition-text: "불꽃 손톱으로 몬스터 50마리 처치하고, 불이 붙은 채 30초 버티기."
+    requirements:
+      "kill.spell.flame_claw": 50
+      "burn.survive_thirty": 1
+    chance: 1.0
+    prerequisites: []
+  casting_mold:
+    name: "주물 거푸집"
+    permission: "magic.learned.casting_mold"
+    icon: magiccodex:textures/spells/nova150/casting_mold.png
+    category: "fire"
+    condition-text: "5서클 달성 후 단조 망치로 몬스터 80마리 처치하고, 고대 골렘 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.forge_hammer": 80
+      "kill.mob.golem": 5
+    chance: 1.0
+    prerequisites: []
+  sky_lantern_raid:
+    name: "풍등 폭격"
+    permission: "magic.learned.sky_lantern_raid"
+    icon: magiccodex:textures/spells/nova150/sky_lantern_raid.png
+    category: "fire"
+    condition-text: "5서클 달성 후 등롱 사슬로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.lantern_chain": 80
+      "kill.mob.phantom": 20
+    chance: 1.0
+    prerequisites: []
+  flame_loom:
+    name: "불실 그물"
+    permission: "magic.learned.flame_loom"
+    icon: magiccodex:textures/spells/nova150/flame_loom.png
+    category: "fire"
+    condition-text: "5서클 달성 후 불꽃 팽이로 몬스터 80마리 처치하고, 키츠네 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.flame_top": 80
+      "kill.mob.kitsune": 5
+    chance: 1.0
+    prerequisites: []
+  furnace_dome:
+    name: "화로 돔"
+    permission: "magic.learned.furnace_dome"
+    icon: magiccodex:textures/spells/nova150/furnace_dome.png
+    category: "fire"
+    condition-text: "5서클 달성 후 쇳물 갑주를 100번 두르고, 봉인의 기사 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "cast.molten_plating": 100
+      "kill.mob.warden_knight": 5
+    chance: 1.0
+    prerequisites: []
+  molten_wave:
+    name: "쇳물 해일"
+    permission: "magic.learned.molten_wave"
+    icon: magiccodex:textures/spells/nova150/molten_wave.png
+    category: "fire"
+    condition-text: "5서클 달성 후 용암 거품으로 몬스터 80마리 처치하고, 만티코어 3마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.lava_bubbles": 80
+      "kill.mob.manticore": 3
+    chance: 1.0
+    prerequisites: []
+  fire_lotus:
+    name: "불꽃 연꽃"
+    permission: "magic.learned.fire_lotus"
+    icon: magiccodex:textures/spells/nova150/fire_lotus.png
+    category: "fire"
+    condition-text: "5서클 달성 후 화염 꽃잎으로 몬스터 80마리 처치하고, 요정 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.flame_petals": 80
+      "kill.mob.fairy": 10
+    chance: 1.0
+    prerequisites: []
+  molten_grasp:
+    name: "쇳물 손"
+    permission: "magic.learned.molten_grasp"
+    icon: magiccodex:textures/spells/nova150/molten_grasp.png
+    category: "fire"
+    condition-text: "7서클 달성 후 주물 거푸집에 마나 4,000을 쓰고, 고대 골렘 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.casting_mold": 4000
+      "kill.mob.golem": 15
+    chance: 1.0
+    prerequisites: []
+  sunspot:
+    name: "태양 흑점"
+    permission: "magic.learned.sunspot"
+    icon: magiccodex:textures/spells/nova150/sunspot.png
+    category: "fire"
+    condition-text: "7서클 달성 후 화로 돔에 마나 4,000을 쓰고, 피닉스 5마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.furnace_dome": 4000
+      "kill.mob.phoenix": 5
+    chance: 1.0
+    prerequisites: []
+  crucible:
+    name: "도가니 붓기"
+    permission: "magic.learned.crucible"
+    icon: magiccodex:textures/spells/nova150/crucible.png
+    category: "fire"
+    condition-text: "7서클 달성 후 쇳물 해일에 마나 4,000을 쓰고, 만티코어 10마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.molten_wave": 4000
+      "kill.mob.manticore": 10
+    chance: 1.0
+    prerequisites: []
+  ember_butterflies:
+    name: "불나비 떼"
+    permission: "magic.learned.ember_butterflies"
+    icon: magiccodex:textures/spells/nova150/ember_butterflies.png
+    category: "fire"
+    condition-text: "7서클 달성 후 불꽃 연꽃과 불실 그물에 마나를 각각 3,000씩 쓰고, 요정 30마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.fire_lotus": 3000
+      "mana.flame_loom": 3000
+      "kill.mob.fairy": 30
+    chance: 1.0
+    prerequisites: []
+  forge_god_anvil:
+    name: "대장장이 신의 모루"
+    permission: "magic.learned.forge_god_anvil"
+    icon: magiccodex:textures/spells/nova150/forge_god_anvil.png
+    category: "fire"
+    condition-text: "9서클 달성 후, 쇳물 손과 도가니 붓기를 익힌 채로 고대 골렘 30마리와 만티코어 20마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.golem": 30
+      "kill.mob.manticore": 20
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.molten_grasp"
+      - "magic.learned.crucible"
+  furnace_gate:
+    name: "용광로의 문"
+    permission: "magic.learned.furnace_gate"
+    icon: magiccodex:textures/spells/nova150/furnace_gate.png
+    category: "fire"
+    condition-text: "대장장이 신의 모루·태양 흑점·불나비 떼를 익힌 뒤, 피닉스 30마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.phoenix": 30
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.forge_god_anvil"
+      - "magic.learned.sunspot"
+      - "magic.learned.ember_butterflies"
+  rain_patter:
+    name: "빗방울 연사"
+    permission: "magic.learned.rain_patter"
+    icon: magiccodex:textures/spells/nova150/rain_patter.png
+    category: "water"
+    condition-text: "물방울 탄환으로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.water_bolt": 30
+    chance: 1.0
+    prerequisites: []
+  spray_kick:
+    name: "물보라 발차기"
+    permission: "magic.learned.spray_kick"
+    icon: magiccodex:textures/spells/nova150/spray_kick.png
+    category: "water"
+    condition-text: "물살 베기로 몬스터 30마리 처치하고, 보트를 10번 설치하기."
+    requirements:
+      "kill.spell.tide_slash": 30
+      "place.boat": 10
+    chance: 1.0
+    prerequisites: []
+  clepsydra_drop:
+    name: "물시계 방울"
+    permission: "magic.learned.clepsydra_drop"
+    icon: magiccodex:textures/spells/nova150/clepsydra_drop.png
+    category: "water"
+    condition-text: "물에 잠긴 채 30초 버티고, 물병 가득을 50번 사용하기."
+    requirements:
+      "submerged.survive_thirty": 1
+      "cast.bottle_fill": 50
+    chance: 1.0
+    prerequisites: []
+  water_ribbon:
+    name: "물 리본"
+    permission: "magic.learned.water_ribbon"
+    icon: magiccodex:textures/spells/nova150/water_ribbon.png
+    category: "water"
+    condition-text: "낚시로 물고기를 누적 100마리 낚기."
+    requirements:
+      "fish.caught_fish": 100
+    chance: 1.0
+    prerequisites: []
+  rime_crystal:
+    name: "서리 결정"
+    permission: "magic.learned.rime_crystal"
+    icon: magiccodex:textures/spells/nova150/rime_crystal.png
+    category: "water"
+    condition-text: "눈덩이를 몬스터에게 누적 100번 맞히기."
+    requirements:
+      "hit.snowball_monster": 100
+    chance: 1.0
+    prerequisites: []
+  mist_breath:
+    name: "안개 숨"
+    permission: "magic.learned.mist_breath"
+    icon: magiccodex:textures/spells/nova150/mist_breath.png
+    category: "water"
+    condition-text: "차가운 바다에 가 보고, 잔잔한 물결을 50번 사용하기."
+    requirements:
+      "visit.cold_ocean": 1
+      "cast.calm_ripple": 50
+    chance: 1.0
+    prerequisites: []
+  icicle_fling:
+    name: "고드름 투척"
+    permission: "magic.learned.icicle_fling"
+    icon: magiccodex:textures/spells/nova150/icicle_fling.png
+    category: "water"
+    condition-text: "얼음 조각으로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.ice_shard": 30
+    chance: 1.0
+    prerequisites: []
+  water_drum:
+    name: "물장구"
+    permission: "magic.learned.water_drum"
+    icon: magiccodex:textures/spells/nova150/water_drum.png
+    category: "water"
+    condition-text: "빗방울 연사로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.rain_patter": 50
+    chance: 1.0
+    prerequisites: []
+  icicle_eaves:
+    name: "고드름 처마"
+    permission: "magic.learned.icicle_eaves"
+    icon: magiccodex:textures/spells/nova150/icicle_eaves.png
+    category: "water"
+    condition-text: "고드름 투척으로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.icicle_fling": 50
+    chance: 1.0
+    prerequisites: []
+  freeze_pulse:
+    name: "결빙 파동"
+    permission: "magic.learned.freeze_pulse"
+    icon: magiccodex:textures/spells/nova150/freeze_pulse.png
+    category: "water"
+    condition-text: "서리 결정으로 몬스터 50마리 처치하고, 빙핵의 수호자 1마리 처치하기."
+    requirements:
+      "kill.spell.rime_crystal": 50
+      "kill.mob.glacialcore": 1
+    chance: 1.0
+    prerequisites: []
+  whirlpool_disc:
+    name: "소용돌이 원반"
+    permission: "magic.learned.whirlpool_disc"
+    icon: magiccodex:textures/spells/nova150/whirlpool_disc.png
+    category: "water"
+    condition-text: "물보라 발차기로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.spray_kick": 50
+    chance: 1.0
+    prerequisites: []
+  jelly_swarm:
+    name: "해파리 떼"
+    permission: "magic.learned.jelly_swarm"
+    icon: magiccodex:textures/spells/nova150/jelly_swarm.png
+    category: "water"
+    condition-text: "물 리본으로 몬스터 40마리 처치하고, 낚싯대로 몬스터를 10번 끌어당기기."
+    requirements:
+      "kill.spell.water_ribbon": 40
+      "fish.monster_pulled": 10
+    chance: 1.0
+    prerequisites: []
+  ice_slide:
+    name: "얼음 미끄럼"
+    permission: "magic.learned.ice_slide"
+    icon: magiccodex:textures/spells/nova150/ice_slide.png
+    category: "water"
+    condition-text: "안개 숨으로 몬스터 40마리 처치하고, 얼음 다리를 30번 놓기."
+    requirements:
+      "kill.spell.mist_breath": 40
+      "cast.ice_bridge": 30
+    chance: 1.0
+    prerequisites: []
+  rain_barrage:
+    name: "폭우"
+    permission: "magic.learned.rain_barrage"
+    icon: magiccodex:textures/spells/nova150/rain_barrage.png
+    category: "water"
+    condition-text: "5서클 달성 후 물장구로 몬스터 80마리 처치하고, 키츠네 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.water_drum": 80
+      "kill.mob.kitsune": 5
+    chance: 1.0
+    prerequisites: []
+  rime_garden:
+    name: "서리 정원"
+    permission: "magic.learned.rime_garden"
+    icon: magiccodex:textures/spells/nova150/rime_garden.png
+    category: "water"
+    condition-text: "5서클 달성 후 결빙 파동으로 몬스터 80마리 처치하고, 빙핵의 수호자 3마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.freeze_pulse": 80
+      "kill.mob.glacialcore": 3
+    chance: 1.0
+    prerequisites: []
+  clepsydra_cage:
+    name: "물시계 감옥"
+    permission: "magic.learned.clepsydra_cage"
+    icon: magiccodex:textures/spells/nova150/clepsydra_cage.png
+    category: "water"
+    condition-text: "5서클 달성 후 물시계 방울로 몬스터 80마리 처치하고, 약초 도둑 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.clepsydra_drop": 80
+      "kill.mob.herbthief": 10
+    chance: 1.0
+    prerequisites: []
+  sea_of_fog:
+    name: "안개 바다"
+    permission: "magic.learned.sea_of_fog"
+    icon: magiccodex:textures/spells/nova150/sea_of_fog.png
+    category: "water"
+    condition-text: "5서클 달성 후 얼음 미끄럼으로 몬스터 60마리 처치하고, 투명한 몬스터 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.ice_slide": 60
+      "kill.invisible_monster": 10
+    chance: 1.0
+    prerequisites: []
+  iceberg_drop:
+    name: "빙산 낙하"
+    permission: "magic.learned.iceberg_drop"
+    icon: magiccodex:textures/spells/nova150/iceberg_drop.png
+    category: "water"
+    condition-text: "5서클 달성 후 고드름 처마로 몬스터 80마리 처치하고, 바실리스크 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.icicle_eaves": 80
+      "kill.mob.basilisk": 5
+    chance: 1.0
+    prerequisites: []
+  rip_current:
+    name: "이안류"
+    permission: "magic.learned.rip_current"
+    icon: magiccodex:textures/spells/nova150/rip_current.png
+    category: "water"
+    condition-text: "5서클 달성 후 소용돌이 원반으로 몬스터 80마리 처치하고, 하늘뱀 3마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.whirlpool_disc": 80
+      "kill.mob.sky_serpent": 3
+    chance: 1.0
+    prerequisites: []
+  glacier_spire:
+    name: "빙하 결정탑"
+    permission: "magic.learned.glacier_spire"
+    icon: magiccodex:textures/spells/nova150/glacier_spire.png
+    category: "water"
+    condition-text: "7서클 달성 후 서리 정원에 마나 4,000을 쓰고, 빙핵의 수호자 10마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.rime_garden": 4000
+      "kill.mob.glacialcore": 10
+    chance: 1.0
+    prerequisites: []
+  frozen_chord:
+    name: "결빙 화음"
+    permission: "magic.learned.frozen_chord"
+    icon: magiccodex:textures/spells/nova150/frozen_chord.png
+    category: "water"
+    condition-text: "7서클 달성 후 빙산 낙하에 마나 4,000을 쓰고, 봉인의 궁수 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.iceberg_drop": 4000
+      "kill.mob.warden_archer": 15
+    chance: 1.0
+    prerequisites: []
+  giant_droplet:
+    name: "거대 물방울"
+    permission: "magic.learned.giant_droplet"
+    icon: magiccodex:textures/spells/nova150/giant_droplet.png
+    category: "water"
+    condition-text: "7서클 달성 후 폭우에 마나 4,000을 쓰고, 바실리스크 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.rain_barrage": 4000
+      "kill.mob.basilisk": 15
+    chance: 1.0
+    prerequisites: []
+  deep_tentacles:
+    name: "심해 촉수"
+    permission: "magic.learned.deep_tentacles"
+    icon: magiccodex:textures/spells/nova150/deep_tentacles.png
+    category: "water"
+    condition-text: "7서클 달성 후 이안류와 물시계 감옥에 마나를 각각 3,000씩 쓰고, 하늘뱀 10마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.rip_current": 3000
+      "mana.clepsydra_cage": 3000
+      "kill.mob.sky_serpent": 10
+    chance: 1.0
+    prerequisites: []
+  celestial_clepsydra:
+    name: "천상의 물시계"
+    permission: "magic.learned.celestial_clepsydra"
+    icon: magiccodex:textures/spells/nova150/celestial_clepsydra.png
+    category: "water"
+    condition-text: "9서클 달성 후, 거대 물방울과 심해 촉수를 익힌 채로 바실리스크 30마리와 하늘뱀 20마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.basilisk": 30
+      "kill.mob.sky_serpent": 20
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.giant_droplet"
+      - "magic.learned.deep_tentacles"
+  glacial_epoch:
+    name: "영겁의 빙하"
+    permission: "magic.learned.glacial_epoch"
+    icon: magiccodex:textures/spells/nova150/glacial_epoch.png
+    category: "water"
+    condition-text: "천상의 물시계·빙하 결정탑·결빙 화음을 익힌 뒤, 빙핵의 수호자 30마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.glacialcore": 30
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.celestial_clepsydra"
+      - "magic.learned.glacier_spire"
+      - "magic.learned.frozen_chord"
+  sand_lash:
+    name: "모래 채찍"
+    permission: "magic.learned.sand_lash"
+    icon: magiccodex:textures/spells/nova150/sand_lash.png
+    category: "earth"
+    condition-text: "모래 한 줌으로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.sand_flick": 30
+    chance: 1.0
+    prerequisites: []
+  sand_pellet:
+    name: "모래 알갱이"
+    permission: "magic.learned.sand_pellet"
+    icon: magiccodex:textures/spells/nova150/sand_pellet.png
+    category: "earth"
+    condition-text: "조약돌 던지기로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.pebble_toss": 50
+    chance: 1.0
+    prerequisites: []
+  fossil_fang:
+    name: "화석 송곳니"
+    permission: "magic.learned.fossil_fang"
+    icon: magiccodex:textures/spells/nova150/fossil_fang.png
+    category: "earth"
+    condition-text: "다이아몬드 광석을 누적 10개 직접 캐고, 땅의 속삭임을 30번 사용하기."
+    requirements:
+      "mine.diamond_ore": 10
+      "cast.ore_whisper": 30
+    chance: 1.0
+    prerequisites: []
+  clay_glob:
+    name: "점토 덩이"
+    permission: "magic.learned.clay_glob"
+    icon: magiccodex:textures/spells/nova150/clay_glob.png
+    category: "earth"
+    condition-text: "흙 계열 블록을 누적 300개 설치하기."
+    requirements:
+      "place.dirt_family": 300
+    chance: 1.0
+    prerequisites: []
+  lodestone_shard:
+    name: "자철 조각"
+    permission: "magic.learned.lodestone_shard"
+    icon: magiccodex:textures/spells/nova150/lodestone_shard.png
+    category: "earth"
+    condition-text: "철 골렘을 직접 만들고, 모루에서 도구에 이름을 5번 붙이기."
+    requirements:
+      "build.iron_golem": 1
+      "anvil.rename_tool": 5
+    chance: 1.0
+    prerequisites: []
+  sand_stomp:
+    name: "흙먼지 발구르기"
+    permission: "magic.learned.sand_stomp"
+    icon: magiccodex:textures/spells/nova150/sand_stomp.png
+    category: "earth"
+    condition-text: "선인장을 누적 200개 수확하기."
+    requirements:
+      "harvest.cactus": 200
+    chance: 1.0
+    prerequisites: []
+  gem_splinter:
+    name: "보석 파편"
+    permission: "magic.learned.gem_splinter"
+    icon: magiccodex:textures/spells/nova150/gem_splinter.png
+    category: "earth"
+    condition-text: "광맥 파쇄로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.vein_fracture": 30
+    chance: 1.0
+    prerequisites: []
+  hourglass_pit:
+    name: "모래시계 구덩이"
+    permission: "magic.learned.hourglass_pit"
+    icon: magiccodex:textures/spells/nova150/hourglass_pit.png
+    category: "earth"
+    condition-text: "모래 채찍으로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.sand_lash": 50
+    chance: 1.0
+    prerequisites: []
+  sand_spout:
+    name: "모래 분수"
+    permission: "magic.learned.sand_spout"
+    icon: magiccodex:textures/spells/nova150/sand_spout.png
+    category: "earth"
+    condition-text: "흙먼지 발구르기로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.sand_stomp": 50
+    chance: 1.0
+    prerequisites: []
+  magnet_palm:
+    name: "자석 손"
+    permission: "magic.learned.magnet_palm"
+    icon: magiccodex:textures/spells/nova150/magnet_palm.png
+    category: "earth"
+    condition-text: "자철 조각으로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.lodestone_shard": 50
+    chance: 1.0
+    prerequisites: []
+  sand_burrow:
+    name: "모래 두더지"
+    permission: "magic.learned.sand_burrow"
+    icon: magiccodex:textures/spells/nova150/sand_burrow.png
+    category: "earth"
+    condition-text: "모래 알갱이로 몬스터 50마리 처치하고, 영록 5마리 처치하기."
+    requirements:
+      "kill.spell.sand_pellet": 50
+      "kill.mob.stag": 5
+    chance: 1.0
+    prerequisites: []
+  mud_bomb:
+    name: "진흙 폭탄"
+    permission: "magic.learned.mud_bomb"
+    icon: magiccodex:textures/spells/nova150/mud_bomb.png
+    category: "earth"
+    condition-text: "점토 덩이로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.clay_glob": 50
+    chance: 1.0
+    prerequisites: []
+  stone_top:
+    name: "바위 팽이"
+    permission: "magic.learned.stone_top"
+    icon: magiccodex:textures/spells/nova150/stone_top.png
+    category: "earth"
+    condition-text: "화석 송곳니로 몬스터 40마리 처치하고, 석재 벽돌을 누적 100개 설치하기."
+    requirements:
+      "kill.spell.fossil_fang": 40
+      "place.stone_bricks": 100
+    chance: 1.0
+    prerequisites: []
+  quicksand_tide:
+    name: "유사 파도"
+    permission: "magic.learned.quicksand_tide"
+    icon: magiccodex:textures/spells/nova150/quicksand_tide.png
+    category: "earth"
+    condition-text: "5서클 달성 후 모래시계 구덩이로 몬스터 80마리 처치하고, 바실리스크 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.hourglass_pit": 80
+      "kill.mob.basilisk": 5
+    chance: 1.0
+    prerequisites: []
+  fossil_wyrm:
+    name: "화석 뱀뼈"
+    permission: "magic.learned.fossil_wyrm"
+    icon: magiccodex:textures/spells/nova150/fossil_wyrm.png
+    category: "earth"
+    condition-text: "5서클 달성 후 모래 두더지로 몬스터 80마리 처치하고, 와이번 3마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.sand_burrow": 80
+      "kill.mob.wyvern": 3
+    chance: 1.0
+    prerequisites: []
+  petrify_touch:
+    name: "석화의 손"
+    permission: "magic.learned.petrify_touch"
+    icon: magiccodex:textures/spells/nova150/petrify_touch.png
+    category: "earth"
+    condition-text: "5서클 달성 후 바위 팽이로 몬스터 80마리 처치하고, 바실리스크 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.stone_top": 80
+      "kill.mob.basilisk": 10
+    chance: 1.0
+    prerequisites: []
+  sand_coffin:
+    name: "모래관"
+    permission: "magic.learned.sand_coffin"
+    icon: magiccodex:textures/spells/nova150/sand_coffin.png
+    category: "earth"
+    condition-text: "5서클 달성 후 모래 분수로 몬스터 80마리 처치하고, 망각의 해골술사 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.sand_spout": 80
+      "kill.mob.skeleton_mage": 5
+    chance: 1.0
+    prerequisites: []
+  iron_dust_storm:
+    name: "쇳가루 폭풍"
+    permission: "magic.learned.iron_dust_storm"
+    icon: magiccodex:textures/spells/nova150/iron_dust_storm.png
+    category: "earth"
+    condition-text: "5서클 달성 후 자석 손으로 몬스터 80마리 처치하고, 봉인의 기사 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.magnet_palm": 80
+      "kill.mob.warden_knight": 5
+    chance: 1.0
+    prerequisites: []
+  sand_fall:
+    name: "모래 폭포"
+    permission: "magic.learned.sand_fall"
+    icon: magiccodex:textures/spells/nova150/sand_fall.png
+    category: "earth"
+    condition-text: "5서클 달성 후 진흙 폭탄으로 몬스터 80마리 처치하고, 검치호 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.mud_bomb": 80
+      "kill.mob.sabertooth": 5
+    chance: 1.0
+    prerequisites: []
+  geode_bloom:
+    name: "정동 개화"
+    permission: "magic.learned.geode_bloom"
+    icon: magiccodex:textures/spells/nova150/geode_bloom.png
+    category: "earth"
+    condition-text: "7서클 달성 후 화석 뱀뼈에 마나 4,000을 쓰고, 다이아몬드 광석을 누적 64개 직접 캐기."
+    requirements:
+      "state.circle": 7
+      "mana.fossil_wyrm": 4000
+      "mine.diamond_ore": 64
+    chance: 1.0
+    prerequisites: []
+  dipole_prison:
+    name: "쌍극 감옥"
+    permission: "magic.learned.dipole_prison"
+    icon: magiccodex:textures/spells/nova150/dipole_prison.png
+    category: "earth"
+    condition-text: "7서클 달성 후 쇳가루 폭풍에 마나 4,000을 쓰고, 고대 골렘 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.iron_dust_storm": 4000
+      "kill.mob.golem": 15
+    chance: 1.0
+    prerequisites: []
+  sandstorm:
+    name: "모래폭풍"
+    permission: "magic.learned.sandstorm"
+    icon: magiccodex:textures/spells/nova150/sandstorm.png
+    category: "earth"
+    condition-text: "7서클 달성 후 유사 파도에 마나 4,000을 쓰고, 검치호 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.quicksand_tide": 4000
+      "kill.mob.sabertooth": 15
+    chance: 1.0
+    prerequisites: []
+  desertify:
+    name: "사막화"
+    permission: "magic.learned.desertify"
+    icon: magiccodex:textures/spells/nova150/desertify.png
+    category: "earth"
+    condition-text: "7서클 달성 후 모래관과 모래 폭포에 마나를 각각 3,000씩 쓰고, 선인장을 누적 1,000개 수확하기."
+    requirements:
+      "state.circle": 7
+      "mana.sand_coffin": 3000
+      "mana.sand_fall": 3000
+      "harvest.cactus": 1000
+    chance: 1.0
+    prerequisites: []
+  great_hourglass:
+    name: "대사막의 모래시계"
+    permission: "magic.learned.great_hourglass"
+    icon: magiccodex:textures/spells/nova150/great_hourglass.png
+    category: "earth"
+    condition-text: "9서클 달성 후, 모래폭풍과 사막화를 익힌 채로 바실리스크 30마리와 검치호 30마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.basilisk": 30
+      "kill.mob.sabertooth": 30
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.sandstorm"
+      - "magic.learned.desertify"
+  core_magnetosphere:
+    name: "지핵 자기장"
+    permission: "magic.learned.core_magnetosphere"
+    icon: magiccodex:textures/spells/nova150/core_magnetosphere.png
+    category: "earth"
+    condition-text: "대사막의 모래시계·정동 개화·쌍극 감옥을 익힌 뒤, 고대 골렘 30마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.golem": 30
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.great_hourglass"
+      - "magic.learned.geode_bloom"
+      - "magic.learned.dipole_prison"
+  star_needle:
+    name: "별똥 바늘"
+    permission: "magic.learned.star_needle"
+    icon: magiccodex:textures/spells/nova150/star_needle.png
+    category: "light"
+    condition-text: "나침반을 들고 누적 3,000블록 걷기."
+    requirements:
+      "walk.compass": 3000
+    chance: 1.0
+    prerequisites: []
+  focus_lens:
+    name: "초점 렌즈"
+    permission: "magic.learned.focus_lens"
+    icon: magiccodex:textures/spells/nova150/focus_lens.png
+    category: "light"
+    condition-text: "프리즘 탄으로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.prism_shot": 30
+    chance: 1.0
+    prerequisites: []
+  candle_hymn:
+    name: "촛불 성가"
+    permission: "magic.learned.candle_hymn"
+    icon: magiccodex:textures/spells/nova150/candle_hymn.png
+    category: "light"
+    condition-text: "촛불에 불을 10번 붙이고, 좀비와 스켈레톤을 합쳐 100마리 처치하기."
+    requirements:
+      "candle.lit": 10
+      "kill.zombie_skeleton": 100
+    chance: 1.0
+    prerequisites: []
+  light_stitch:
+    name: "빛 바늘땀"
+    permission: "magic.learned.light_stitch"
+    icon: magiccodex:textures/spells/nova150/light_stitch.png
+    category: "light"
+    condition-text: "햇살 꽂기로 몬스터 30마리 처치하고, 모루에서 도구를 5번 수리하기."
+    requirements:
+      "kill.spell.sunlance_drop": 30
+      "anvil.repair_tool": 5
+    chance: 1.0
+    prerequisites: []
+  mirror_shard:
+    name: "거울 조각"
+    permission: "magic.learned.mirror_shard"
+    icon: magiccodex:textures/spells/nova150/mirror_shard.png
+    category: "light"
+    condition-text: "분광 화살을 몬스터에게 20번 맞히기."
+    requirements:
+      "hit.spectral_monster": 20
+    chance: 1.0
+    prerequisites: []
+  star_hop:
+    name: "별빛 뛰기"
+    permission: "magic.learned.star_hop"
+    icon: magiccodex:textures/spells/nova150/star_hop.png
+    category: "light"
+    condition-text: "지도 이동의 공개 웨이포인트를 3곳 찾아내고, 달리면서 500번 점프하기."
+    requirements:
+      "state.travel_waypoints": 3
+      "jump.sprinting": 500
+    chance: 1.0
+    prerequisites: []
+  light_fan:
+    name: "빛 부채"
+    permission: "magic.learned.light_fan"
+    icon: magiccodex:textures/spells/nova150/light_fan.png
+    category: "light"
+    condition-text: "밤에 횃불을 누적 100개 설치하기."
+    requirements:
+      "place.torch_night": 100
+    chance: 1.0
+    prerequisites: []
+  mirror_pane:
+    name: "거울판"
+    permission: "magic.learned.mirror_pane"
+    icon: magiccodex:textures/spells/nova150/mirror_pane.png
+    category: "light"
+    condition-text: "거울 조각으로 몬스터 50마리 처치하고, 방패로 공격을 50번 막기."
+    requirements:
+      "kill.spell.mirror_shard": 50
+      "shield.block": 50
+    chance: 1.0
+    prerequisites: []
+  triad_constellation:
+    name: "삼각 별자리"
+    permission: "magic.learned.triad_constellation"
+    icon: magiccodex:textures/spells/nova150/triad_constellation.png
+    category: "light"
+    condition-text: "별똥 바늘로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.star_needle": 50
+    chance: 1.0
+    prerequisites: []
+  sundial_sweep:
+    name: "해시계 바늘"
+    permission: "magic.learned.sundial_sweep"
+    icon: magiccodex:textures/spells/nova150/sundial_sweep.png
+    category: "light"
+    condition-text: "빛 부채로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.light_fan": 50
+    chance: 1.0
+    prerequisites: []
+  southern_cross:
+    name: "남십자성"
+    permission: "magic.learned.southern_cross"
+    icon: magiccodex:textures/spells/nova150/southern_cross.png
+    category: "light"
+    condition-text: "촛불 성가로 몬스터 40마리 처치하고, 빛 마법으로 언데드 100마리 처치하기."
+    requirements:
+      "kill.spell.candle_hymn": 40
+      "kill.light_undead": 100
+    chance: 1.0
+    prerequisites: []
+  stained_shards:
+    name: "색유리 파편"
+    permission: "magic.learned.stained_shards"
+    icon: magiccodex:textures/spells/nova150/stained_shards.png
+    category: "light"
+    condition-text: "초점 렌즈로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.focus_lens": 50
+    chance: 1.0
+    prerequisites: []
+  star_link:
+    name: "별 잇기"
+    permission: "magic.learned.star_link"
+    icon: magiccodex:textures/spells/nova150/star_link.png
+    category: "light"
+    condition-text: "빛 바늘땀으로 몬스터 40마리 처치하고, 별빛 뛰기를 100번 사용하기."
+    requirements:
+      "kill.spell.light_stitch": 40
+      "cast.star_hop": 100
+    chance: 1.0
+    prerequisites: []
+  lighthouse:
+    name: "등대"
+    permission: "magic.learned.lighthouse"
+    icon: magiccodex:textures/spells/nova150/lighthouse.png
+    category: "light"
+    condition-text: "5서클 달성 후 해시계 바늘로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.sundial_sweep": 80
+      "kill.mob.phantom": 20
+    chance: 1.0
+    prerequisites: []
+  refraction_spear:
+    name: "굴절 창"
+    permission: "magic.learned.refraction_spear"
+    icon: magiccodex:textures/spells/nova150/refraction_spear.png
+    category: "light"
+    condition-text: "5서클 달성 후 색유리 파편으로 몬스터 80마리 처치하고, 봉인의 기사 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.stained_shards": 80
+      "kill.mob.warden_knight": 5
+    chance: 1.0
+    prerequisites: []
+  big_dipper:
+    name: "북두칠성"
+    permission: "magic.learned.big_dipper"
+    icon: magiccodex:textures/spells/nova150/big_dipper.png
+    category: "light"
+    condition-text: "5서클 달성 후 삼각 별자리로 몬스터 80마리 처치하고, 영록 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.triad_constellation": 80
+      "kill.mob.stag": 10
+    chance: 1.0
+    prerequisites: []
+  mirror_maze:
+    name: "거울 미궁"
+    permission: "magic.learned.mirror_maze"
+    icon: magiccodex:textures/spells/nova150/mirror_maze.png
+    category: "light"
+    condition-text: "5서클 달성 후 거울판으로 몬스터 80마리 처치하고, 키츠네 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.mirror_pane": 80
+      "kill.mob.kitsune": 5
+    chance: 1.0
+    prerequisites: []
+  orion_bow:
+    name: "오리온의 활"
+    permission: "magic.learned.orion_bow"
+    icon: magiccodex:textures/spells/nova150/orion_bow.png
+    category: "light"
+    condition-text: "5서클 달성 후 별 잇기로 몬스터 80마리 처치하고, 70블록 밖의 적을 화살로 맞히기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.star_link": 80
+      "arrow.distant_hit": 1
+    chance: 1.0
+    prerequisites: []
+  cassiopeia:
+    name: "카시오페이아"
+    permission: "magic.learned.cassiopeia"
+    icon: magiccodex:textures/spells/nova150/cassiopeia.png
+    category: "light"
+    condition-text: "5서클 달성 후 남십자성으로 몬스터 80마리 처치하고, 봉인의 술사 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.southern_cross": 80
+      "kill.mob.warden_mage": 5
+    chance: 1.0
+    prerequisites: []
+  nebula_weave:
+    name: "성운 직조"
+    permission: "magic.learned.nebula_weave"
+    icon: magiccodex:textures/spells/nova150/nebula_weave.png
+    category: "light"
+    condition-text: "7서클 달성 후 카시오페이아에 마나 4,000을 쓰고, 요정 30마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.cassiopeia": 4000
+      "kill.mob.fairy": 30
+    chance: 1.0
+    prerequisites: []
+  mirror_realm:
+    name: "거울 세계"
+    permission: "magic.learned.mirror_realm"
+    icon: magiccodex:textures/spells/nova150/mirror_realm.png
+    category: "light"
+    condition-text: "7서클 달성 후 거울 미궁에 마나 4,000을 쓰고, 투명한 몬스터 20마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.mirror_maze": 4000
+      "kill.invisible_monster": 20
+    chance: 1.0
+    prerequisites: []
+  celestial_scope:
+    name: "천체 망원경"
+    permission: "magic.learned.celestial_scope"
+    icon: magiccodex:textures/spells/nova150/celestial_scope.png
+    category: "light"
+    condition-text: "7서클 달성 후 오리온의 활과 등대에 마나를 각각 3,000씩 쓰고, 페가수스 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.orion_bow": 3000
+      "mana.lighthouse": 3000
+      "kill.mob.pegasus": 15
+    chance: 1.0
+    prerequisites: []
+  milky_way:
+    name: "은하수"
+    permission: "magic.learned.milky_way"
+    icon: magiccodex:textures/spells/nova150/milky_way.png
+    category: "light"
+    condition-text: "7서클 달성 후 북두칠성에 마나 4,000을 쓰고, 망각의 해골술사 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.big_dipper": 4000
+      "kill.mob.skeleton_mage": 15
+    chance: 1.0
+    prerequisites: []
+  zodiac_wheel:
+    name: "황도 12궁"
+    permission: "magic.learned.zodiac_wheel"
+    icon: magiccodex:textures/spells/nova150/zodiac_wheel.png
+    category: "light"
+    condition-text: "9서클 달성 후, 성운 직조와 은하수를 익힌 채로 봉인의 술사 30마리와 망각의 해골술사 30마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.warden_mage": 30
+      "kill.mob.skeleton_mage": 30
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.nebula_weave"
+      - "magic.learned.milky_way"
+  supernova:
+    name: "초신성"
+    permission: "magic.learned.supernova"
+    icon: magiccodex:textures/spells/nova150/supernova.png
+    category: "light"
+    condition-text: "황도 12궁·거울 세계·천체 망원경을 익힌 뒤, 빛 마법으로 언데드를 누적 1,000마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.light_undead": 1000
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.zodiac_wheel"
+      - "magic.learned.mirror_realm"
+      - "magic.learned.celestial_scope"
+  crescent_sickle:
+    name: "초승달 낫"
+    permission: "magic.learned.crescent_sickle"
+    icon: magiccodex:textures/spells/nova150/crescent_sickle.png
+    category: "dark"
+    condition-text: "영혼 낫으로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.soul_scythe": 30
+    chance: 1.0
+    prerequisites: []
+  bat_flurry:
+    name: "박쥐 떼"
+    permission: "magic.learned.bat_flurry"
+    icon: magiccodex:textures/spells/nova150/bat_flurry.png
+    category: "dark"
+    condition-text: "빛이 없는 동굴에서 횃불 없이 120초 머무르고, 그림자 송곳니로 몬스터 20마리 처치하기."
+    requirements:
+      "dark.cave_120": 1
+      "kill.spell.shadow_fang": 20
+    chance: 1.0
+    prerequisites: []
+  dream_splinter:
+    name: "꿈 조각"
+    permission: "magic.learned.dream_splinter"
+    icon: magiccodex:textures/spells/nova150/dream_splinter.png
+    category: "dark"
+    condition-text: "단잠의 주문을 50번 사용하기."
+    requirements:
+      "cast.sweet_sleep": 50
+    chance: 1.0
+    prerequisites: []
+  marionette_tug:
+    name: "꼭두각시 당김"
+    permission: "magic.learned.marionette_tug"
+    icon: magiccodex:textures/spells/nova150/marionette_tug.png
+    category: "dark"
+    condition-text: "그림자 매듭을 100번 사용하기."
+    requirements:
+      "cast.shadow_bind": 100
+    chance: 1.0
+    prerequisites: []
+  moonbeam_dart:
+    name: "달빛 화살"
+    permission: "magic.learned.moonbeam_dart"
+    icon: magiccodex:textures/spells/nova150/moonbeam_dart.png
+    category: "dark"
+    condition-text: "밤에 웅크린 채 누적 500블록 이동하기."
+    requirements:
+      "sneak.night": 500
+    chance: 1.0
+    prerequisites: []
+  moon_shard:
+    name: "달 조각"
+    permission: "magic.learned.moon_shard"
+    icon: magiccodex:textures/spells/nova150/moon_shard.png
+    category: "dark"
+    condition-text: "어둠 구슬로 몬스터 30마리 처치하기."
+    requirements:
+      "kill.spell.dusk_orb": 30
+    chance: 1.0
+    prerequisites: []
+  black_moth:
+    name: "검은 나방"
+    permission: "magic.learned.black_moth"
+    icon: magiccodex:textures/spells/nova150/black_moth.png
+    category: "dark"
+    condition-text: "촛불을 30번 끄고, 투명한 몬스터 3마리 처치하기."
+    requirements:
+      "candle.extinguished": 30
+      "kill.invisible_monster": 3
+    chance: 1.0
+    prerequisites: []
+  lunar_mark:
+    name: "달빛 표식"
+    permission: "magic.learned.lunar_mark"
+    icon: magiccodex:textures/spells/nova150/lunar_mark.png
+    category: "dark"
+    condition-text: "달빛 화살로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.moonbeam_dart": 50
+    chance: 1.0
+    prerequisites: []
+  shadow_play:
+    name: "그림자극"
+    permission: "magic.learned.shadow_play"
+    icon: magiccodex:textures/spells/nova150/shadow_play.png
+    category: "dark"
+    condition-text: "꼭두각시 당김으로 몬스터 40마리 처치하고, 그림자 걸음을 50번 사용하기."
+    requirements:
+      "kill.spell.marionette_tug": 40
+      "cast.shadow_step": 50
+    chance: 1.0
+    prerequisites: []
+  bat_cloak:
+    name: "박쥐 망토"
+    permission: "magic.learned.bat_cloak"
+    icon: magiccodex:textures/spells/nova150/bat_cloak.png
+    category: "dark"
+    condition-text: "박쥐 떼로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.bat_flurry": 50
+    chance: 1.0
+    prerequisites: []
+  half_moon_guard:
+    name: "반달 방패"
+    permission: "magic.learned.half_moon_guard"
+    icon: magiccodex:textures/spells/nova150/half_moon_guard.png
+    category: "dark"
+    condition-text: "달 조각으로 몬스터 40마리 처치하고, 방패로 막은 뒤 반격을 20번 하기."
+    requirements:
+      "kill.spell.moon_shard": 40
+      "shield.counter": 20
+    chance: 1.0
+    prerequisites: []
+  quarter_blades:
+    name: "상현·하현 칼"
+    permission: "magic.learned.quarter_blades"
+    icon: magiccodex:textures/spells/nova150/quarter_blades.png
+    category: "dark"
+    condition-text: "초승달 낫으로 몬스터 50마리 처치하기."
+    requirements:
+      "kill.spell.crescent_sickle": 50
+    chance: 1.0
+    prerequisites: []
+  moon_pull:
+    name: "달의 인력"
+    permission: "magic.learned.moon_pull"
+    icon: magiccodex:textures/spells/nova150/moon_pull.png
+    category: "dark"
+    condition-text: "검은 나방으로 몬스터 40마리 처치하고, 팬텀 5마리 처치하기."
+    requirements:
+      "kill.spell.black_moth": 40
+      "kill.mob.phantom": 5
+    chance: 1.0
+    prerequisites: []
+  moon_howl:
+    name: "달의 울음"
+    permission: "magic.learned.moon_howl"
+    icon: magiccodex:textures/spells/nova150/moon_howl.png
+    category: "dark"
+    condition-text: "5서클 달성 후 달의 인력으로 몬스터 80마리 처치하고, 검치호 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.moon_pull": 80
+      "kill.mob.sabertooth": 10
+    chance: 1.0
+    prerequisites: []
+  dream_labyrinth:
+    name: "꿈의 미로"
+    permission: "magic.learned.dream_labyrinth"
+    icon: magiccodex:textures/spells/nova150/dream_labyrinth.png
+    category: "dark"
+    condition-text: "5서클 달성 후 꿈 조각으로 몬스터 80마리 처치하고, 키츠네 10마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.dream_splinter": 80
+      "kill.mob.kitsune": 10
+    chance: 1.0
+    prerequisites: []
+  bat_sovereign:
+    name: "박쥐 군주"
+    permission: "magic.learned.bat_sovereign"
+    icon: magiccodex:textures/spells/nova150/bat_sovereign.png
+    category: "dark"
+    condition-text: "5서클 달성 후 박쥐 망토로 몬스터 80마리 처치하고, 빛이 없는 동굴에서 120초 머무르기를 5번 하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.bat_cloak": 80
+      "dark.cave_120": 5
+    chance: 1.0
+    prerequisites: []
+  puppet_stage:
+    name: "꼭두각시 무대"
+    permission: "magic.learned.puppet_stage"
+    icon: magiccodex:textures/spells/nova150/puppet_stage.png
+    category: "dark"
+    condition-text: "5서클 달성 후 그림자극으로 몬스터 60마리 처치하고, 봉인의 궁수 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.shadow_play": 60
+      "kill.mob.warden_archer": 5
+    chance: 1.0
+    prerequisites: []
+  moon_drop:
+    name: "달 떨구기"
+    permission: "magic.learned.moon_drop"
+    icon: magiccodex:textures/spells/nova150/moon_drop.png
+    category: "dark"
+    condition-text: "5서클 달성 후 달빛 표식으로 몬스터 80마리 처치하고, 망각의 해골술사 5마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.lunar_mark": 80
+      "kill.mob.skeleton_mage": 5
+    chance: 1.0
+    prerequisites: []
+  moon_pillar:
+    name: "달빛 기둥"
+    permission: "magic.learned.moon_pillar"
+    icon: magiccodex:textures/spells/nova150/moon_pillar.png
+    category: "dark"
+    condition-text: "5서클 달성 후 상현·하현 칼로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기."
+    requirements:
+      "state.circle": 5
+      "kill.spell.quarter_blades": 80
+      "kill.mob.phantom": 20
+    chance: 1.0
+    prerequisites: []
+  moon_wheel:
+    name: "월광 회전륜"
+    permission: "magic.learned.moon_wheel"
+    icon: magiccodex:textures/spells/nova150/moon_wheel.png
+    category: "dark"
+    condition-text: "7서클 달성 후 달빛 기둥에 마나 4,000을 쓰고, 팬텀 50마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.moon_pillar": 4000
+      "kill.mob.phantom": 50
+    chance: 1.0
+    prerequisites: []
+  curtain_fall:
+    name: "막 내림"
+    permission: "magic.learned.curtain_fall"
+    icon: magiccodex:textures/spells/nova150/curtain_fall.png
+    category: "dark"
+    condition-text: "7서클 달성 후 꼭두각시 무대에 마나 4,000을 쓰고, 봉인의 궁수 15마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.puppet_stage": 4000
+      "kill.mob.warden_archer": 15
+    chance: 1.0
+    prerequisites: []
+  new_moon_veil:
+    name: "그믐 장막"
+    permission: "magic.learned.new_moon_veil"
+    icon: magiccodex:textures/spells/nova150/new_moon_veil.png
+    category: "dark"
+    condition-text: "7서클 달성 후 꿈의 미로에 마나 4,000을 쓰고, 투명한 몬스터 20마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.dream_labyrinth": 4000
+      "kill.invisible_monster": 20
+    chance: 1.0
+    prerequisites: []
+  shadow_doppel:
+    name: "그림자 도플갱어"
+    permission: "magic.learned.shadow_doppel"
+    icon: magiccodex:textures/spells/nova150/shadow_doppel.png
+    category: "dark"
+    condition-text: "7서클 달성 후 박쥐 군주와 달의 울음에 마나를 각각 3,000씩 쓰고, 키츠네 20마리 처치하기."
+    requirements:
+      "state.circle": 7
+      "mana.bat_sovereign": 3000
+      "mana.moon_howl": 3000
+      "kill.mob.kitsune": 20
+    chance: 1.0
+    prerequisites: []
+  full_moon_descent:
+    name: "만월 강림"
+    permission: "magic.learned.full_moon_descent"
+    icon: magiccodex:textures/spells/nova150/full_moon_descent.png
+    category: "dark"
+    condition-text: "9서클 달성 후, 월광 회전륜과 그믐 장막을 익힌 채로 망각의 해골술사 30마리와 팬텀 50마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.skeleton_mage": 30
+      "kill.mob.phantom": 50
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.moon_wheel"
+      - "magic.learned.new_moon_veil"
+  moonlit_masquerade:
+    name: "월하 가면무도회"
+    permission: "magic.learned.moonlit_masquerade"
+    icon: magiccodex:textures/spells/nova150/moonlit_masquerade.png
+    category: "dark"
+    condition-text: "만월 강림·막 내림·그림자 도플갱어를 익힌 뒤, 키츠네 30마리 처치하기."
+    requirements:
+      "state.circle": 9
+      "kill.mob.kitsune": 30
+    chance: 1.0
+    prerequisites:
+      - "magic.learned.full_moon_descent"
+      - "magic.learned.curtain_fall"
+      - "magic.learned.shadow_doppel"

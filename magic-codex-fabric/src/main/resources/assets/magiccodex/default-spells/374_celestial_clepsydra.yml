@@ -1,0 +1,14 @@
+id: celestial_clepsydra
+name: 천상의 물시계
+category: water
+description: 조준한 곳 하늘에 거대한 물시계를 불러냅니다. 시계가 도는 동안 비, 얼음, 해류가 차례로 쏟아져 적을 괴롭히고, 마지막에 물시계가 깨지며 쏟아진 물이 전장 전체를 휩쓸어 버립니다.
+icon: ''
+permission: magic.learned.celestial_clepsydra
+discovery:
+  description: 9서클 달성 후, 거대 물방울과 심해 촉수를 익힌 채로 바실리스크 30마리와 하늘뱀 20마리 처치하기.
+research: 바실리스크의 돌빛 눈과 하늘뱀의 비늘이 하나둘 물속으로 사라지는 동안, 나는 거대한 물방울과 심해의 촉수를 번갈아 부렸다. 마지막 하늘뱀이 쓰러지던 밤, 위아래로 흐르던 물이 한꺼번에 하늘로 거슬러 올라가 거대한 물시계 하나를 이루었다. 바늘이 한 바퀴를 돌 때마다 비와 얼음과 물살이 차례로 흘러내렸고, 마지막 바늘이 멈추자 그릇이 깨지며 담겨 있던 모든 시간이 땅으로 쏟아졌다. 그 물이 빠져나간 뒤에야, 나는 그것이 내 손끝에서 시작되었다는 것을 알았다.
+cast:
+  command: 마법 celestial_clepsydra
+  cooldown-seconds: 200
+  mana-cost: 380
+order: 374

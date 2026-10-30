@@ -1,0 +1,14 @@
+id: giant_droplet
+name: 거대 물방울
+category: water
+description: 거대한 물방울을 만들어 앞으로 굴려 보냅니다. 물방울은 닿은 적을 삼킨 채 함께 굴러가며 피해를 주고, 끝에 다다르면 터지면서 크게 휩쓸어 버립니다.
+icon: ''
+permission: magic.learned.giant_droplet
+discovery:
+  description: 7서클 달성 후 폭우에 마나 4,000을 쓰고, 바실리스크 15마리 처치하기.
+research: 폭우를 부르고 또 불렀더니 빗방울들이 서로 합쳐지기 시작했다. 바실리스크의 돌 같은 시선도 그 커다란 물방울 속에서는 일그러져 아무것도 굳히지 못했다.
+cast:
+  command: 마법 giant_droplet
+  cooldown-seconds: 38
+  mana-cost: 115
+order: 372

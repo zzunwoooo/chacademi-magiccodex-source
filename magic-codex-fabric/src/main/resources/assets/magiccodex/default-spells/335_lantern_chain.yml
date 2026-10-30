@@ -1,0 +1,14 @@
+id: lantern_chain
+name: 등롱 사슬
+category: fire
+description: 등불 세 개를 앞쪽에 일렬로 던져 불줄로 잇습니다. 약 2.5초 동안 그 줄을 넘거나 닿는 적은 불에 그을립니다.
+icon: ''
+permission: magic.learned.lantern_chain
+discovery:
+  description: 등롱 불씨로 몬스터 50마리 처치하기.
+research: 등롱 하나로는 어둠의 한 귀퉁이밖에 밝히지 못했다. 쓰러진 적들 너머로 등불 셋을 나란히 띄워 보았을 때, 불빛과 불빛 사이에 가느다란 불줄이 저절로 이어졌다.
+cast:
+  command: 마법 lantern_chain
+  cooldown-seconds: 10
+  mana-cost: 24
+order: 335

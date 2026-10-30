@@ -1,0 +1,14 @@
+id: shear_curtain
+name: 칼바람 장막
+category: wind
+description: 앞으로 나아가는 거대한 세로 바람 장막을 펼칩니다. 장막에 휩쓸린 적은 모두 베이고, 장막이 멈추는 자리에서 칼바람이 흩어지며 한 번 더 벱니다.
+icon: ''
+permission: magic.learned.shear_curtain
+discovery:
+  description: 5서클 달성 후 바람 톱으로 몬스터 80마리 처치하고, 검치호 5마리 처치하기.
+research: 검치호의 송곳니가 코앞에서 바람 톱에 부서지던 순간, 원반 하나로는 모자라다는 것을 알았다. 원반을 세로로 길게 펼치자, 숲 하나를 가로막을 장막이 되었다.
+cast:
+  command: 마법 shear_curtain
+  cooldown-seconds: 16
+  mana-cost: 55
+order: 314

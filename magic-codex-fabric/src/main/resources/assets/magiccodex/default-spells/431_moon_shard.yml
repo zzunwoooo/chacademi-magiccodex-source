@@ -1,0 +1,14 @@
+id: moon_shard
+name: 달 조각
+category: dark
+description: 손바닥 위에 작은 달을 만들어 깨뜨린 뒤, 그 조각 세 개를 부채꼴로 흩뿌립니다. 가까이 있는 적일수록 여러 조각을 맞습니다.
+icon: ''
+permission: magic.learned.moon_shard
+discovery:
+  description: 어둠 구슬로 몬스터 30마리 처치하기.
+research: 어둠 구슬이 몬스터를 삼킬 때마다 구슬 안에 달빛이 조금씩 고였다. 가득 찬 구슬이 마침내 금이 가며 깨지자, 조각마다 작은 달이 박혀 있었다.
+cast:
+  command: 마법 moon_shard
+  cooldown-seconds: 4
+  mana-cost: 7
+order: 431

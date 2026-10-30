@@ -1,0 +1,14 @@
+id: gust_palm
+name: 돌풍 장타
+category: wind
+description: 손바닥에 돌풍을 모아 앞의 적을 강하게 밀쳐 칩니다. 맞은 적은 세 블록쯤 날아갑니다.
+icon: ''
+permission: magic.learned.gust_palm
+discovery:
+  description: 윈드 푸쉬를 200번 사용하기.
+research: 수백 번 바람을 밀어내던 손바닥이 어느 순간 무거워졌다. 더 이상 바람을 미는 게 아니었다. 손바닥 자체가 하나의 돌풍이 되어 있었다.
+cast:
+  command: 마법 gust_palm
+  cooldown-seconds: 5
+  mana-cost: 8
+order: 306

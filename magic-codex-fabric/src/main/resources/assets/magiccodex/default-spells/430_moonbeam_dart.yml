@@ -1,0 +1,14 @@
+id: moonbeam_dart
+name: 달빛 화살
+category: dark
+description: 가늘고 빠른 달빛 화살을 한 발 쏩니다.
+icon: ''
+permission: magic.learned.moonbeam_dart
+discovery:
+  description: 밤에 웅크린 채 누적 500블록 이동하기.
+research: 밤길을 몸을 낮춘 채 오래 걸었다. 숨죽인 발걸음 앞으로 달빛이 화살처럼 길을 그었고, 나는 그 빛을 따라 손끝을 겨누었다.
+cast:
+  command: 마법 moonbeam_dart
+  cooldown-seconds: 2
+  mana-cost: 5
+order: 430

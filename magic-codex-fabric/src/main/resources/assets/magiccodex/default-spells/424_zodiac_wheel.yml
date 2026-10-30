@@ -1,0 +1,14 @@
+id: zodiac_wheel
+name: 황도 12궁
+category: light
+description: 하늘에 황도 12궁의 고리를 펼칩니다. 열두 별자리가 차례로 빛의 창을 내리꽂아 적의 발을 묶고, 마지막에 고리 전체가 무너져 땅에 내리꽂히며 거대한 폭발을 일으킵니다.
+icon: ''
+permission: magic.learned.zodiac_wheel
+discovery:
+  description: 9서클 달성 후, 성운 직조와 은하수를 익힌 채로 봉인의 술사 30마리와 망각의 해골술사 30마리 처치하기.
+research: 봉인의 술사와 망각의 해골술사는 끝도 없이 나를 막아섰다. 성운을 짜고 은하수를 흘리며 그들을 하나씩 쓰러뜨리는 동안, 계절이 몇 번이고 바뀌었다. 마지막 술사가 무너진 밤, 열두 별자리가 태양이 지나는 길을 따라 차례로 불을 밝혔고, 한 해가 고리가 되어 내 머리 위로 내려앉았다. 시간이 한 바퀴 돌아 제자리로 오는 소리는 생각보다 훨씬 컸다.
+cast:
+  command: 마법 zodiac_wheel
+  cooldown-seconds: 200
+  mana-cost: 380
+order: 424

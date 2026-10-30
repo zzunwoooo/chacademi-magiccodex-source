@@ -1,0 +1,14 @@
+id: sand_spout
+name: 모래 분수
+category: earth
+description: 조준한 적의 발밑에서 모래가 분수처럼 솟구쳐 적을 공중으로 띄워 올립니다.
+icon: ''
+permission: magic.learned.sand_spout
+discovery:
+  description: 흙먼지 발구르기로 몬스터 50마리 처치하기.
+research: 발을 구를 때마다 흙먼지가 조금씩 더 높이 솟았다. 몇 번째인지 모를 발구르기 끝에, 먼지는 내 발밑이 아니라 쓰러진 몬스터의 발밑에서 분수처럼 터져 올랐다.
+cast:
+  command: 마법 sand_spout
+  cooldown-seconds: 7
+  mana-cost: 18
+order: 384

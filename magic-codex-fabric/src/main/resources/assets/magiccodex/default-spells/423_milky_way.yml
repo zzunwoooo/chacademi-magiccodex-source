@@ -1,0 +1,14 @@
+id: milky_way
+name: 은하수
+category: light
+description: 앞쪽으로 길게 빛의 강을 흘려보냅니다. 강 위의 적은 타오르며 하류로 떠밀리고, 마지막에 큰 물결이 강 끝까지 휩쓴 뒤 그 끝에서 폭발합니다.
+icon: ''
+permission: magic.learned.milky_way
+discovery:
+  description: 7서클 달성 후 북두칠성에 마나 4,000을 쓰고, 망각의 해골술사 15마리 처치하기.
+research: 북두칠성의 국자로 무덤가를 내리찍을 때마다 망각의 해골술사들이 다시 일어났다. 국자를 기울여 하늘의 강물을 땅으로 쏟자, 그들은 이름조차 기억하지 못한 채 강물에 실려 떠내려갔다.
+cast:
+  command: 마법 milky_way
+  cooldown-seconds: 35
+  mana-cost: 120
+order: 423

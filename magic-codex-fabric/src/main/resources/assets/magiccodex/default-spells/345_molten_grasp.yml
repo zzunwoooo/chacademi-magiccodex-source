@@ -1,0 +1,14 @@
+id: molten_grasp
+name: 쇳물 손
+category: fire
+description: 적의 발밑에서 거대한 쇳물 손을 솟아오르게 합니다. 손은 적을 움켜쥐고 쥐어짠 뒤 멀리 내던지고, 던져진 자리에서 쇳물 주먹이 터집니다.
+icon: ''
+permission: magic.learned.molten_grasp
+discovery:
+  description: 7서클 달성 후 주물 거푸집에 마나 4,000을 쓰고, 고대 골렘 15마리 처치하기.
+research: 거푸집 속에 붓고 또 부은 쇳물이 지쳐 굳기도 전에, 고대 골렘의 돌 주먹이 내 앞을 가로막았다. 그 주먹을 흉내 내 쇳물이 땅에서 손을 뻗어 올렸고, 이번에는 내가 움켜쥘 차례였다.
+cast:
+  command: 마법 molten_grasp
+  cooldown-seconds: 40
+  mana-cost: 120
+order: 345

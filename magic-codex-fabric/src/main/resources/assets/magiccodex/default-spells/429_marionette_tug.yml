@@ -1,0 +1,14 @@
+id: marionette_tug
+name: 꼭두각시 당김
+category: dark
+description: 적에게 보이지 않는 실을 걸어 내 바로 앞까지 한 번에 끌어옵니다. 실이 걸리는 순간 약한 피해를 줍니다.
+icon: ''
+permission: magic.learned.marionette_tug
+discovery:
+  description: 그림자 매듭을 100번 사용하기.
+research: 그림자 매듭을 셀 수 없이 묶고 풀다 보니, 어느 날 매듭 끝이 실처럼 길게 풀려 나갔다. 당기자 저편의 무언가가 인형처럼 끌려왔다.
+cast:
+  command: 마법 marionette_tug
+  cooldown-seconds: 6
+  mana-cost: 8
+order: 429

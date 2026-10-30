@@ -1,0 +1,14 @@
+id: gust_canopy
+name: 바람 낙하산
+category: wind
+description: 조준한 적을 상승 기류로 띄운 뒤 바람 낙하산에 매달아 3초 동안 공중에 묶어 둡니다. 낙하산이 터지면 적은 땅으로 떨어지며 피해를 입습니다.
+icon: ''
+permission: magic.learned.gust_canopy
+discovery:
+  description: 5서클 달성 후 역풍로로 몬스터 60마리 처치하고, 히포그리프 5마리 처치하기.
+research: 역풍에 떠밀린 히포그리프가 공중에서 날개를 퍼덕이며 버텼다. 떨어지지도 날아가지도 못한 채 매달린 그 모습이, 바람으로 짠 낙하산의 첫 도안이 되었다.
+cast:
+  command: 마법 gust_canopy
+  cooldown-seconds: 18
+  mana-cost: 50
+order: 316

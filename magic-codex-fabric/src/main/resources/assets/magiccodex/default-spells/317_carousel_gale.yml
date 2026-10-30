@@ -1,0 +1,14 @@
+id: carousel_gale
+name: 회전목마 돌풍
+category: wind
+description: 조준한 곳에 회전목마 같은 돌풍을 일으킵니다. 안에 있는 적은 원을 따라 빙글빙글 끌려 돌며 피해를 입고, 마지막에 바깥으로 튕겨 나갑니다.
+icon: ''
+permission: magic.learned.carousel_gale
+discovery:
+  description: 5서클 달성 후 풍차 날개로 몬스터 80마리 처치하고, 페가수스 10마리 처치하기.
+research: 풍차 날개 곁을 맴돌다 쓰러진 페가수스들이 남긴 말굽 자국은 모두 같은 원 위에 찍혀 있었다. 날개를 접고 원 자체를 돌리자, 바람이 회전목마처럼 놀이를 시작했다.
+cast:
+  command: 마법 carousel_gale
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 317

@@ -1,0 +1,14 @@
+id: coal_lob
+name: 숯불 투척
+category: fire
+description: 벌겋게 달군 숯덩이를 던집니다. 숯은 바닥에서 두 번 통통 튀다가 세 번째에 터지고, 도중에 적에게 닿으면 그 자리에서 터집니다.
+icon: ''
+permission: magic.learned.coal_lob
+discovery:
+  description: 불씨 튕기기로 몬스터 30마리 처치하기.
+research: 튕겨 낸 불씨가 땅에 떨어져서도 꺼지지 않고 한 번 더 튀어 오르는 걸 보았다. 불씨는 작을수록 끈질기다. 그렇다면 숯덩이는 얼마나 오래 버틸까.
+cast:
+  command: 마법 coal_lob
+  cooldown-seconds: 5
+  mana-cost: 9
+order: 330

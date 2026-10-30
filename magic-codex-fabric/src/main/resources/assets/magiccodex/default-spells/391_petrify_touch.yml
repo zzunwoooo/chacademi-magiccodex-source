@@ -1,0 +1,14 @@
+id: petrify_touch
+name: 석화의 손
+category: earth
+description: 손바닥으로 가까운 적을 쳐 3초 동안 돌로 굳힙니다. 석화가 풀리는 순간 돌 껍질이 산산이 부서지며 큰 피해를 줍니다.
+icon: ''
+permission: magic.learned.petrify_touch
+discovery:
+  description: 5서클 달성 후 바위 팽이로 몬스터 80마리 처치하고, 바실리스크 10마리 처치하기.
+research: 바실리스크의 눈을 피하며 싸우던 중, 바위 팽이에 맞은 녀석의 비늘이 잿빛으로 굳어 가는 것을 보았다. 그 차가운 비늘을 손으로 짚는 순간, 돌이 되는 힘이 손바닥으로 옮겨 왔다.
+cast:
+  command: 마법 petrify_touch
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 391

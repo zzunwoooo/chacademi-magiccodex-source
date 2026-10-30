@@ -1,0 +1,14 @@
+id: seed_mines
+name: 홀씨 지뢰밭
+category: wind
+description: 앞쪽 땅에 바람 홀씨 여섯 개를 심어 둡니다. 적이 홀씨를 밟으면 상승 기류가 터져 피해를 주고 적을 공중으로 띄웁니다. 홀씨는 10초 동안 남아 있습니다.
+icon: ''
+permission: magic.learned.seed_mines
+discovery:
+  description: 민들레 홀씨탄으로 몬스터 50마리 처치하고, 꽃을 누적 64송이 심기.
+research: 꽃밭이 들판 하나를 다 덮을 무렵, 흩뿌린 홀씨 몇 개가 날아가지 않고 흙 위에 웅크렸다. 그것들은 피어날 때가 아니라 밟힐 때를 기다리고 있었다.
+cast:
+  command: 마법 seed_mines
+  cooldown-seconds: 12
+  mana-cost: 20
+order: 311

@@ -1,0 +1,14 @@
+id: shadow_doppel
+name: 그림자 도플갱어
+category: dark
+description: 적의 등 뒤에 나의 그림자를 세웁니다. 3초 동안 내가 무엇이든 공격할 때마다 그림자가 그 동작을 따라 하며 등 뒤에서 그 적을 벱니다.
+icon: ''
+permission: magic.learned.shadow_doppel
+discovery:
+  description: 7서클 달성 후 박쥐 군주와 달의 울음에 마나를 각각 3,000씩 쓰고, 키츠네 20마리 처치하기.
+research: 키츠네는 내 울음을 흉내 내고 박쥐 떼의 날갯짓까지 따라 했다. 여우의 장난을 꿰뚫어 본 날부터, 내 그림자도 나를 흉내 내기 시작했다.
+cast:
+  command: 마법 shadow_doppel
+  cooldown-seconds: 35
+  mana-cost: 100
+order: 448

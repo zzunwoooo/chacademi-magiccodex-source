@@ -11,6 +11,11 @@
    "radius": 2.5,
    "range": 15
   },
+  "air_balloon": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 12
+  },
   "air_cannon": {
    "length": 20.0,
    "mode": "line",
@@ -21,6 +26,13 @@
   "air_choke": {
    "mode": "unit",
    "range": 12
+  },
+  "air_saw": {
+   "length": 12.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 12,
+   "width": 2.2
   },
   "air_stacking": {
    "mode": "point",
@@ -44,9 +56,28 @@
    "radius": 0.6,
    "range": 6
   },
+  "bat_flurry": {
+   "mode": "unit",
+   "range": 16
+  },
+  "bellows_blast": {
+   "angle": 60.0,
+   "length": 5.0,
+   "mode": "cone",
+   "range": 5
+  },
+  "big_dipper": {
+   "mode": "area",
+   "radius": 5.5,
+   "range": 20
+  },
   "binding_pull": {
    "mode": "unit",
    "range": 14
+  },
+  "black_moth": {
+   "mode": "unit",
+   "range": 18
   },
   "bone_grasp": {
    "mode": "area",
@@ -74,10 +105,30 @@
    "range": 15,
    "width": 1.2
   },
+  "carousel_gale": {
+   "mode": "area",
+   "radius": 5.0,
+   "range": 20
+  },
+  "cassiopeia": {
+   "angle": 180.0,
+   "length": 12.0,
+   "mode": "cone",
+   "range": 12
+  },
+  "casting_mold": {
+   "mode": "unit",
+   "range": 16
+  },
   "cauldron_fill": {
    "mode": "point",
    "radius": 0.6,
    "range": 15
+  },
+  "celestial_clepsydra": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 24
   },
   "chain_arrow": {
    "length": 22.0,
@@ -96,10 +147,41 @@
    "radius": 3.0,
    "range": 18
   },
+  "clay_glob": {
+   "length": 18.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 18,
+   "width": 0.7
+  },
+  "clepsydra_cage": {
+   "mode": "unit",
+   "range": 16
+  },
+  "clepsydra_drop": {
+   "mode": "unit",
+   "range": 16
+  },
+  "coal_lob": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 14
+  },
   "concrete_curing": {
    "mode": "point",
    "radius": 0.6,
    "range": 15
+  },
+  "core_magnetosphere": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 24
+  },
+  "crescent_sickle": {
+   "angle": 140.0,
+   "length": 2.8,
+   "mode": "cone",
+   "range": 3
   },
   "crimson_breath": {
    "angle": 50.0,
@@ -125,6 +207,10 @@
    "mode": "unit",
    "range": 15
   },
+  "crucible": {
+   "mode": "unit",
+   "range": 18
+  },
   "curse_transfer": {
    "mode": "unit",
    "range": 12
@@ -136,6 +222,21 @@
    "range": 20,
    "width": 1.4
   },
+  "dandelion_volley": {
+   "angle": 56.0,
+   "length": 9.0,
+   "mode": "cone",
+   "range": 9
+  },
+  "deep_tentacles": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 18
+  },
+  "dipole_prison": {
+   "mode": "unit",
+   "range": 16
+  },
   "discord": {
    "mode": "unit",
    "range": 12
@@ -143,6 +244,17 @@
   "dread_dream": {
    "mode": "unit",
    "range": 12
+  },
+  "dream_labyrinth": {
+   "mode": "unit",
+   "range": 16
+  },
+  "dream_splinter": {
+   "length": 18.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 18,
+   "width": 0.5
   },
   "droplet_relay": {
    "mode": "point",
@@ -185,6 +297,12 @@
    "length": 3.0,
    "mode": "cone",
    "range": 3
+  },
+  "ember_tongs": {
+   "angle": 70.0,
+   "length": 2.5,
+   "mode": "cone",
+   "range": 2.5
   },
   "ember_trap": {
    "mode": "area",
@@ -229,12 +347,23 @@
    "range": 12,
    "width": 6.0
   },
+  "fire_lotus": {
+   "mode": "area",
+   "radius": 6.0,
+   "range": 18
+  },
   "firebird_hunt": {
    "length": 12.0,
    "mode": "line",
    "origin": "eye",
    "range": 10,
    "width": 3.2
+  },
+  "flame_claw": {
+   "angle": 100.0,
+   "length": 2.4,
+   "mode": "cone",
+   "range": 2.4
   },
   "flame_javelin": {
    "length": 30.0,
@@ -246,6 +375,20 @@
   "flame_lash": {
    "mode": "unit",
    "range": 8
+  },
+  "flame_loom": {
+   "length": 16.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 16,
+   "width": 1.8
+  },
+  "flame_top": {
+   "length": 8.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 8,
+   "width": 1.4
   },
   "flame_wheel": {
    "length": 12.0,
@@ -268,10 +411,36 @@
    "range": 15,
    "width": 0.8
   },
+  "focus_lens": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 12
+  },
   "folding_tideplane": {
    "mode": "point",
    "radius": 0.6,
    "range": 10
+  },
+  "forge_god_anvil": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 24
+  },
+  "forge_hammer": {
+   "mode": "unit",
+   "range": 16
+  },
+  "fossil_fang": {
+   "mode": "area",
+   "radius": 1.3,
+   "range": 14
+  },
+  "fossil_wyrm": {
+   "length": 13.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 13,
+   "width": 2.5
   },
   "fox_orbit": {
    "length": 20.0,
@@ -297,16 +466,84 @@
    "radius": 2.5,
    "range": 15
   },
+  "frozen_chord": {
+   "mode": "area",
+   "radius": 5.7,
+   "range": 18
+  },
+  "full_moon_descent": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 30
+  },
+  "furnace_dome": {
+   "mode": "area",
+   "radius": 5.0,
+   "range": 18
+  },
+  "furnace_gate": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 24
+  },
   "gale_combo": {
    "angle": 130.0,
    "length": 4.5,
    "mode": "cone",
    "range": 5
   },
+  "gem_splinter": {
+   "angle": 30.0,
+   "length": 14.0,
+   "mode": "cone",
+   "range": 14
+  },
+  "geode_bloom": {
+   "mode": "area",
+   "radius": 6.0,
+   "range": 18
+  },
+  "giant_droplet": {
+   "length": 14.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 14,
+   "width": 3.2
+  },
+  "glacial_epoch": {
+   "mode": "area",
+   "radius": 15.0,
+   "range": 24
+  },
+  "glacier_spire": {
+   "mode": "area",
+   "radius": 9.0,
+   "range": 16
+  },
   "grass_sprouting": {
    "mode": "point",
    "radius": 0.6,
    "range": 8
+  },
+  "great_hourglass": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 24
+  },
+  "great_pinwheel": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 18
+  },
+  "gust_canopy": {
+   "mode": "unit",
+   "range": 16
+  },
+  "gust_palm": {
+   "angle": 70.0,
+   "length": 3.0,
+   "mode": "cone",
+   "range": 3
   },
   "halo_throw": {
    "length": 20.0,
@@ -327,6 +564,11 @@
   "hex_doll": {
    "mode": "unit",
    "range": 12
+  },
+  "hourglass_pit": {
+   "mode": "area",
+   "radius": 3.0,
+   "range": 16
   },
   "hunting_pounce": {
    "mode": "unit",
@@ -358,12 +600,57 @@
    "range": 16,
    "width": 0.6
   },
+  "iceberg_drop": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 20
+  },
+  "icicle_eaves": {
+   "length": 8.2,
+   "mode": "line",
+   "origin": "eye",
+   "range": 8,
+   "width": 3.0
+  },
+  "icicle_fling": {
+   "length": 14.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 14,
+   "width": 0.6
+  },
   "incandescent_break": {
    "length": 15.0,
    "mode": "line",
    "origin": "eye",
    "range": 15,
    "width": 1.2
+  },
+  "iron_dust_storm": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 18
+  },
+  "kite_festival": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 20
+  },
+  "kite_tether": {
+   "mode": "unit",
+   "range": 14
+  },
+  "lantern_chain": {
+   "length": 4.5,
+   "mode": "line",
+   "origin": "eye",
+   "range": 4,
+   "width": 5.2
+  },
+  "lava_bubbles": {
+   "mode": "area",
+   "radius": 2.5,
+   "range": 14
   },
   "leviathan_rise": {
    "mode": "area",
@@ -375,14 +662,38 @@
    "radius": 0.6,
    "range": 12
   },
+  "light_fan": {
+   "angle": 120.0,
+   "length": 3.0,
+   "mode": "cone",
+   "range": 3
+  },
   "light_mark": {
    "mode": "unit",
    "range": 20
+  },
+  "light_stitch": {
+   "angle": 24.0,
+   "length": 14.0,
+   "mode": "cone",
+   "range": 14
+  },
+  "lighthouse": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 16
   },
   "lightning_needle": {
    "mode": "area",
    "radius": 1.5,
    "range": 20
+  },
+  "lodestone_shard": {
+   "length": 16.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 16,
+   "width": 0.5
   },
   "loosen_grasp": {
    "mode": "unit",
@@ -393,10 +704,31 @@
    "radius": 0.6,
    "range": 12
   },
+  "lunar_mark": {
+   "mode": "unit",
+   "range": 18
+  },
+  "magnet_palm": {
+   "angle": 70.0,
+   "length": 5.5,
+   "mode": "cone",
+   "range": 5.5
+  },
   "mana_drain": {
    "mode": "area",
    "radius": 4.0,
    "range": 14
+  },
+  "marionette_tug": {
+   "mode": "unit",
+   "range": 12
+  },
+  "match_strike": {
+   "length": 5.5,
+   "mode": "line",
+   "origin": "eye",
+   "range": 5.5,
+   "width": 0.8
   },
   "material_exchange": {
    "mode": "unit",
@@ -416,14 +748,77 @@
    "range": 8,
    "width": 1.5
   },
+  "mirror_maze": {
+   "mode": "unit",
+   "range": 16
+  },
+  "mirror_shard": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 20,
+   "width": 0.5
+  },
   "misfortune_whisper": {
    "mode": "unit",
    "range": 12
+  },
+  "mist_breath": {
+   "angle": 50.0,
+   "length": 4.0,
+   "mode": "cone",
+   "range": 4
   },
   "moist_farmland": {
    "mode": "area",
    "radius": 2.0,
    "range": 15
+  },
+  "molten_drip": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 14
+  },
+  "molten_grasp": {
+   "mode": "unit",
+   "range": 16
+  },
+  "molten_wave": {
+   "length": 10.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 10,
+   "width": 4.8
+  },
+  "moon_drop": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 24
+  },
+  "moon_pillar": {
+   "length": 10.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 10,
+   "width": 2.6
+  },
+  "moon_shard": {
+   "angle": 34.0,
+   "length": 14.0,
+   "mode": "cone",
+   "range": 14
+  },
+  "moonbeam_dart": {
+   "length": 24.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 24,
+   "width": 0.45
+  },
+  "moonlit_masquerade": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 30
   },
   "mountain_back": {
    "length": 16.0,
@@ -431,6 +826,18 @@
    "origin": "caster",
    "range": 16,
    "width": 2.8
+  },
+  "mud_bomb": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 20,
+   "width": 0.8
+  },
+  "nebula_weave": {
+   "mode": "area",
+   "radius": 6.0,
+   "range": 20
   },
   "night_chain": {
    "mode": "point",
@@ -444,12 +851,34 @@
    "range": 20,
    "width": 1.8
   },
+  "orion_bow": {
+   "length": 40.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 40,
+   "width": 1.5
+  },
+  "paper_crane": {
+   "mode": "unit",
+   "range": 18
+  },
   "pebble_toss": {
    "length": 15.0,
    "mode": "line",
    "origin": "eye",
    "range": 15,
    "width": 1.0
+  },
+  "petrify_touch": {
+   "mode": "unit",
+   "range": 3.5
+  },
+  "pinwheel_toss": {
+   "length": 14.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 14,
+   "width": 0.5
   },
   "pollen_matchmaking": {
    "mode": "area",
@@ -484,6 +913,43 @@
    "range": 20,
    "width": 0.6
   },
+  "puppet_stage": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 18
+  },
+  "quarter_blades": {
+   "angle": 150.0,
+   "length": 3.2,
+   "mode": "cone",
+   "range": 3.2
+  },
+  "quicksand_tide": {
+   "length": 11.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 11,
+   "width": 5.2
+  },
+  "rain_barrage": {
+   "mode": "area",
+   "radius": 5.0,
+   "range": 20
+  },
+  "rain_patter": {
+   "length": 16.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 16,
+   "width": 0.5
+  },
+  "refraction_spear": {
+   "length": 30.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 30,
+   "width": 1.0
+  },
   "returning_blade": {
    "length": 14.0,
    "mode": "line",
@@ -491,15 +957,69 @@
    "range": 18,
    "width": 2.4
   },
+  "rime_crystal": {
+   "length": 18.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 18,
+   "width": 0.5
+  },
+  "rime_garden": {
+   "mode": "area",
+   "radius": 6.0,
+   "range": 18
+  },
+  "rip_current": {
+   "length": 14.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 14,
+   "width": 3.0
+  },
   "roar_leap": {
    "mode": "unit",
    "range": 14
+  },
+  "sand_burrow": {
+   "mode": "unit",
+   "range": 14
+  },
+  "sand_coffin": {
+   "mode": "unit",
+   "range": 16
+  },
+  "sand_fall": {
+   "mode": "area",
+   "radius": 2.0,
+   "range": 20
   },
   "sand_flick": {
    "angle": 60.0,
    "length": 3.5,
    "mode": "cone",
    "range": 4
+  },
+  "sand_lash": {
+   "angle": 120.0,
+   "length": 2.6,
+   "mode": "cone",
+   "range": 2.6
+  },
+  "sand_pellet": {
+   "length": 16.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 16,
+   "width": 0.5
+  },
+  "sand_spout": {
+   "mode": "unit",
+   "range": 14
+  },
+  "sandstorm": {
+   "mode": "area",
+   "radius": 7.0,
+   "range": 20
   },
   "scorch_lock": {
    "mode": "unit",
@@ -520,6 +1040,10 @@
   "shadow_bind": {
    "mode": "unit",
    "range": 10
+  },
+  "shadow_doppel": {
+   "mode": "unit",
+   "range": 16
   },
   "shadow_exchange": {
    "mode": "unit",
@@ -542,6 +1066,10 @@
    "mode": "unit",
    "range": 20
   },
+  "shadow_play": {
+   "mode": "unit",
+   "range": 16
+  },
   "shadow_scales": {
    "mode": "point",
    "radius": 0.6,
@@ -554,21 +1082,54 @@
    "range": 5,
    "width": 1.2
   },
+  "shear_curtain": {
+   "length": 11.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 11,
+   "width": 5.0
+  },
+  "sky_blade_rain": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 22
+  },
   "sky_dive": {
    "mode": "area",
    "radius": 3.0,
    "range": 12
+  },
+  "sky_lantern_raid": {
+   "mode": "area",
+   "radius": 3.2,
+   "range": 20
+  },
+  "sky_mill": {
+   "mode": "area",
+   "radius": 8.0,
+   "range": 28
   },
   "solar_judgment": {
    "mode": "point",
    "radius": 0.6,
    "range": 30
   },
+  "southern_cross": {
+   "mode": "area",
+   "radius": 3.5,
+   "range": 18
+  },
   "spark_flick": {
    "angle": 34.0,
    "length": 6.0,
    "mode": "cone",
    "range": 6
+  },
+  "spray_kick": {
+   "angle": 140.0,
+   "length": 2.2,
+   "mode": "cone",
+   "range": 2
   },
   "spring_ground": {
    "mode": "point",
@@ -579,6 +1140,34 @@
    "mode": "point",
    "radius": 0.6,
    "range": 20
+  },
+  "stained_shards": {
+   "mode": "area",
+   "radius": 3.5,
+   "range": 20
+  },
+  "star_hop": {
+   "mode": "unit",
+   "range": 12
+  },
+  "star_link": {
+   "mode": "point",
+   "radius": 0.6,
+   "range": 14
+  },
+  "star_needle": {
+   "length": 20.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 20,
+   "width": 0.5
+  },
+  "stone_top": {
+   "length": 12.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 12,
+   "width": 1.6
   },
   "stone_wall": {
    "depth": 1.2,
@@ -602,6 +1191,16 @@
    "mode": "unit",
    "range": 16
   },
+  "sunspot": {
+   "mode": "area",
+   "radius": 4.0,
+   "range": 20
+  },
+  "supernova": {
+   "mode": "area",
+   "radius": 10.0,
+   "range": 24
+  },
   "tail_spikes": {
    "mode": "area",
    "radius": 3.0,
@@ -613,6 +1212,10 @@
    "origin": "eye",
    "range": 15,
    "width": 1.0
+  },
+  "thousand_cranes": {
+   "mode": "unit",
+   "range": 20
   },
   "thundercloud": {
    "mode": "unit",
@@ -637,6 +1240,11 @@
    "origin": "eye",
    "range": 13,
    "width": 7.0
+  },
+  "triad_constellation": {
+   "mode": "area",
+   "radius": 3.2,
+   "range": 18
   },
   "vacuum_burst": {
    "mode": "area",
@@ -689,6 +1297,18 @@
    "range": 15,
    "width": 1.0
   },
+  "water_drum": {
+   "mode": "area",
+   "radius": 4.5,
+   "range": 14
+  },
+  "water_ribbon": {
+   "length": 4.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 4,
+   "width": 1.8
+  },
   "waterspout": {
    "mode": "area",
    "radius": 2.5,
@@ -703,6 +1323,23 @@
    "mode": "area",
    "radius": 5.0,
    "range": 15
+  },
+  "whirlpool_disc": {
+   "mode": "area",
+   "radius": 2.5,
+   "range": 14
+  },
+  "whistle_blade": {
+   "length": 7.0,
+   "mode": "line",
+   "origin": "eye",
+   "range": 7,
+   "width": 0.7
+  },
+  "wind_chime_ward": {
+   "mode": "area",
+   "radius": 3.5,
+   "range": 18
   },
   "wind_decoy": {
    "mode": "area",
@@ -730,6 +1367,11 @@
    "origin": "eye",
    "range": 15,
    "width": 2.0
+  },
+  "zodiac_wheel": {
+   "mode": "area",
+   "radius": 8.0,
+   "range": 24
   }
  },
  "version": 1

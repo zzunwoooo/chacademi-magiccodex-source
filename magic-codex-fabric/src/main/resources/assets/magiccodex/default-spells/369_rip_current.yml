@@ -1,0 +1,14 @@
+id: rip_current
+name: 이안류
+category: water
+description: 앞쪽으로 거센 해류를 일으킵니다. 물마루에 휩쓸린 적은 해류 끝까지 끌려가고, 끝에서 솟는 물기둥에 한 번 더 맞습니다.
+icon: ''
+permission: magic.learned.rip_current
+discovery:
+  description: 5서클 달성 후 소용돌이 원반으로 몬스터 80마리 처치하고, 하늘뱀 3마리 처치하기.
+research: 하늘뱀은 소용돌이 원반 위를 유유히 미끄러져 빠져나갔다. 물이 제자리에서 돌기만 해서는 붙잡을 수 없다는 것을 깨닫고, 소용돌이를 길게 풀어 한쪽으로 흐르게 했다.
+cast:
+  command: 마법 rip_current
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 369

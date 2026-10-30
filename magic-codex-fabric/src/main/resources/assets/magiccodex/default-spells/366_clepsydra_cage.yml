@@ -1,0 +1,14 @@
+id: clepsydra_cage
+name: 물시계 감옥
+category: water
+description: 조준한 적을 커다란 물방울 속에 3초 동안 가둡니다. 물이 차오를수록 피해가 커지고, 마지막에 물방울이 터지며 주변 적까지 휩쓸립니다.
+icon: ''
+permission: magic.learned.clepsydra_cage
+discovery:
+  description: 5서클 달성 후 물시계 방울로 몬스터 80마리 처치하고, 약초 도둑 10마리 처치하기.
+research: 약초 도둑은 언제나 달아나는 쪽이었다. 물시계 방울이 떨어질 때까지 그가 기다려 주지 않는다면, 물시계 안에 가둬 두면 되는 일이었다.
+cast:
+  command: 마법 clepsydra_cage
+  cooldown-seconds: 18
+  mana-cost: 55
+order: 366

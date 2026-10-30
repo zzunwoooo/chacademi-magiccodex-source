@@ -1,0 +1,14 @@
+id: star_needle
+name: 별똥 바늘
+category: light
+description: 어깨 위에 빛 바늘 세 개를 만들어 조준한 곳으로 하나씩 던집니다. 바늘마다 처음 닿은 적에게 피해를 주며, 세 발을 모두 한 적에게 꽂을 수도 있습니다.
+icon: ''
+permission: magic.learned.star_needle
+discovery:
+  description: 나침반을 들고 누적 3,000블록 걷기.
+research: 바늘이 늘 북쪽만 가리키는 나침반을 쥐고 끝없이 걸었다. 발이 무거워진 어느 밤, 하늘에서 별똥이 나침반 바늘처럼 가늘게 떨어지더니, 셋이 내 어깨 곁에 멈춰 섰다.
+cast:
+  command: 마법 star_needle
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 401

@@ -1,0 +1,14 @@
+id: kite_festival
+name: 연날리기 축제
+category: wind
+description: 조준한 곳 하늘에 바람 연 다섯 개를 띄웁니다. 연들이 번갈아 적에게 급강하해 들이받고, 마지막에는 다섯 개가 한꺼번에 한가운데로 내리꽂힙니다.
+icon: ''
+permission: magic.learned.kite_festival
+discovery:
+  description: 7서클 달성 후 천 마리 종이학과 바람 낙하산에 마나를 각각 3,000씩 쓰고, 히포그리프 15마리 처치하기.
+research: 종이학의 떼와 바람 낙하산이 같은 하늘을 채우던 날, 쫓기던 히포그리프들이 연처럼 하늘에 걸렸다. 그 하늘이 축제처럼 보였고, 나는 연을 띄우기로 했다.
+cast:
+  command: 마법 kite_festival
+  cooldown-seconds: 40
+  mana-cost: 130
+order: 323

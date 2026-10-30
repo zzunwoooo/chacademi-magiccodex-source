@@ -1,0 +1,14 @@
+id: crucible
+name: 도가니 붓기
+category: fire
+description: 조준한 적의 머리 위에 거대한 도가니를 불러 기울입니다. 쏟아지는 쇳물이 그 자리를 계속 태우고, 다 붓고 나면 고인 쇳물이 한꺼번에 솟구쳐 터집니다.
+icon: ''
+permission: magic.learned.crucible
+discovery:
+  description: 7서클 달성 후 쇳물 해일에 마나 4,000을 쓰고, 만티코어 10마리 처치하기.
+research: 만티코어 떼를 쇳물 해일로 밀어내고 또 밀어냈지만, 파도는 늘 옆으로 새어 나갔다. 흘러넘친 쇳물을 한데 모아 담을 그릇을 떠올렸을 때, 하늘에 거대한 도가니가 걸렸다.
+cast:
+  command: 마법 crucible
+  cooldown-seconds: 45
+  mana-cost: 140
+order: 347

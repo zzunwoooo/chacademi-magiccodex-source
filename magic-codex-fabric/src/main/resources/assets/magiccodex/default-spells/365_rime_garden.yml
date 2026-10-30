@@ -1,0 +1,14 @@
+id: rime_garden
+name: 서리 정원
+category: water
+description: 조준한 땅에서 서리 결정이 자라나며 정원처럼 퍼져 나갑니다. 퍼지는 서리에 닿은 적은 잠시 얼어붙고, 마지막에 결정이 한꺼번에 부서지며 큰 피해를 줍니다.
+icon: ''
+permission: magic.learned.rime_garden
+discovery:
+  description: 5서클 달성 후 결빙 파동으로 몬스터 80마리 처치하고, 빙핵의 수호자 3마리 처치하기.
+research: 빙핵의 수호자 셋을 쓰러뜨린 얼음 들판에 결빙 파동의 흔적이 겹겹이 남아 있었다. 다음 날 아침 그 동그라미마다 서리꽃이 피어 있는 것을 보고, 정원을 가꾸는 법을 알았다.
+cast:
+  command: 마법 rime_garden
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 365

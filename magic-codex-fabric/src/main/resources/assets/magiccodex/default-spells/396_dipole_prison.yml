@@ -1,0 +1,14 @@
+id: dipole_prison
+name: 쌍극 감옥
+category: earth
+description: 적의 양옆에 자석 기둥 두 개를 세웁니다. 두 기둥 사이에 자기장이 흐르면 그 안의 적은 4초 동안 공중에 떠서 꼼짝 못 하고, 자기장이 무너질 때 큰 피해를 입습니다.
+icon: ''
+permission: magic.learned.dipole_prison
+discovery:
+  description: 7서클 달성 후 쇳가루 폭풍에 마나 4,000을 쓰고, 고대 골렘 15마리 처치하기.
+research: 고대 골렘의 심장석은 언제나 두 개의 극을 품고 있었다. 쇳가루 폭풍 속에서 쓰러진 골렘의 심장 두 개를 마주 놓자, 그 사이의 쇳가루와 돌 부스러기가 소리 없이 공중에 떠올라 멈췄다.
+cast:
+  command: 마법 dipole_prison
+  cooldown-seconds: 40
+  mana-cost: 110
+order: 396

@@ -1,0 +1,14 @@
+id: bat_cloak
+name: 박쥐 망토
+category: dark
+description: 몸을 박쥐 떼로 흩뜨려 앞으로 4블록 날아갑니다. 지나가며 스친 적의 생명력을 빨아들여 체력을 회복합니다.
+icon: ''
+permission: magic.learned.bat_cloak
+discovery:
+  description: 박쥐 떼로 몬스터 50마리 처치하기.
+research: 박쥐 떼를 따라 사냥을 거듭하던 어느 밤, 나도 모르게 그들의 날갯짓 속으로 녹아들었다. 다시 사람의 모습으로 돌아왔을 때, 스쳐 지나온 것들의 온기가 내 안에 남아 있었다.
+cast:
+  command: 마법 bat_cloak
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 435

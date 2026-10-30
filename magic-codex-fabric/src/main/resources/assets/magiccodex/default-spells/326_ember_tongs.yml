@@ -1,0 +1,14 @@
+id: ember_tongs
+name: 불티 집게
+category: fire
+description: 달군 쇠 집게를 앞으로 내밀어 두 번 연달아 꽉 집습니다. 바로 앞에 붙은 적은 두 번 모두 맞습니다.
+icon: ''
+permission: magic.learned.ember_tongs
+discovery:
+  description: 대장간에서 아이템을 5번 제작하기.
+research: 대장간 모루 앞에서 달군 쇠를 몇 번이고 집어 올리다 보니, 어느새 집게가 손의 일부처럼 느껴졌다. 마지막 작품을 꺼내던 순간, 쇠 대신 튀어 오른 불티가 집게 끝에 맞물렸다.
+cast:
+  command: 마법 ember_tongs
+  cooldown-seconds: 3
+  mana-cost: 6
+order: 326

@@ -1,0 +1,14 @@
+id: air_saw
+name: 바람 톱
+category: wind
+description: 회전하는 바람 원반을 천천히 앞으로 밀어 보냅니다. 원반은 적을 꿰뚫고 지나가며 닿아 있는 동안 여러 번 베고, 벽에 부딪히면 부서지며 마지막으로 한 번 더 벱니다.
+icon: ''
+permission: magic.learned.air_saw
+discovery:
+  description: 휘파람 칼날로 몬스터 50마리 처치하고, 원목 껍질을 64번 벗기기.
+research: 도끼로 통나무 껍질을 벗기던 손이 휘파람 칼날을 쏘던 버릇을 그대로 따라 했다. 결을 따라 둥글게 깎이는 나무를 보며, 칼날을 원반처럼 굴리면 된다는 걸 알았다.
+cast:
+  command: 마법 air_saw
+  cooldown-seconds: 9
+  mana-cost: 26
+order: 313

@@ -1,0 +1,14 @@
+id: icicle_eaves
+name: 고드름 처마
+category: water
+description: 앞쪽 허공에 서리 처마를 만들어 고드름 다섯 개를 가까운 곳부터 차례로 떨어뜨립니다. 고드름에 맞은 적은 잠시 느려집니다.
+icon: ''
+permission: magic.learned.icicle_eaves
+discovery:
+  description: 고드름 투척으로 몬스터 50마리 처치하기.
+research: 고드름을 던지고 또 던지다 문득 고개를 들었다. 하늘 높이 처마가 있다면 굳이 던질 필요도 없겠다는 생각이 들었고, 그 생각만으로 머리 위에 서리 처마가 걸렸다.
+cast:
+  command: 마법 icicle_eaves
+  cooldown-seconds: 9
+  mana-cost: 24
+order: 359

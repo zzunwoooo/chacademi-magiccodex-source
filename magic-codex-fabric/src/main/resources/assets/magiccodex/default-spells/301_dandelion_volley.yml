@@ -1,0 +1,14 @@
+id: dandelion_volley
+name: 민들레 홀씨탄
+category: wind
+description: 느릿느릿 떠가는 민들레 홀씨 다섯 개를 앞쪽 부채꼴로 흩날려 보냅니다. 홀씨는 처음 닿은 적에게 부딪혀 터지며, 가까이 있는 적일수록 여러 개를 맞습니다.
+icon: ''
+permission: magic.learned.dandelion_volley
+discovery:
+  description: 꽃을 누적 20송이 심고, 바람 송곳으로 몬스터 20마리 처치하기.
+research: 꽃밭에 마지막 모종을 심고 허리를 펴는데, 바람 송곳이 지나간 자리마다 꽃잎이 흔들리며 홀씨를 날려 보냈다. 꿰뚫던 바람을 느슨하게 풀어 주자, 그것은 수많은 씨앗이 되어 흩어졌다.
+cast:
+  command: 마법 dandelion_volley
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 301

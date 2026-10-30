@@ -1,0 +1,14 @@
+id: lantern_wisp
+name: 등롱 불씨
+category: fire
+description: 어깨 위에 작은 등롱을 띄워 6초 동안 곁에 둡니다. 등롱은 가까이 다가온 적에게 불씨를 세 번 날려 보냅니다.
+icon: ''
+permission: magic.learned.lantern_wisp
+discovery:
+  description: 밤에 횃불을 누적 50개 설치하기.
+research: 밤길 내내 벽마다 횃불을 꽂으며 걸었다. 뒤를 돌아보니 늘어선 불빛 하나가 바람도 없는데 저 혼자 고개를 돌려, 어둠 속 무언가를 먼저 노려보고 있었다.
+cast:
+  command: 마법 lantern_wisp
+  cooldown-seconds: 8
+  mana-cost: 10
+order: 328

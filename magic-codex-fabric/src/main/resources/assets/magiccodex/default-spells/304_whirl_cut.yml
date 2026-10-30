@@ -1,0 +1,14 @@
+id: whirl_cut
+name: 회전 베기
+category: wind
+description: 제자리에서 몸을 한 바퀴 돌려 주위를 바람 칼날로 벱니다. 둘러싼 적을 한꺼번에 베고 살짝 밀어냅니다.
+icon: ''
+permission: magic.learned.whirl_cut
+discovery:
+  description: 작은 회오리로 몬스터 30마리 처치하기.
+research: 작은 회오리에 휩쓸려 쓰러지는 적들을 지켜보다가, 회오리의 한가운데가 늘 고요하다는 걸 깨달았다. 그 고요한 축에 내가 서서 한 바퀴 돌면 되는 일이었다.
+cast:
+  command: 마법 whirl_cut
+  cooldown-seconds: 3
+  mana-cost: 7
+order: 304

@@ -1,0 +1,14 @@
+id: southern_cross
+name: 남십자성
+category: light
+description: 조준한 곳에 별 네 개를 십자 모양으로 세웁니다. 별빛이 가운데로 모였다가 폭발해 주변의 적에게 피해를 줍니다.
+icon: ''
+permission: magic.learned.southern_cross
+discovery:
+  description: 촛불 성가로 몬스터 40마리 처치하고, 빛 마법으로 언데드 100마리 처치하기.
+research: 해골과 좀비가 무리 지어 오던 밤, 촛불 세 개가 차례로 꺼지고 마지막 하나만 남았다. 그 불빛을 가운데 두고 사방을 가로질러 별을 세우자, 십자의 한가운데가 터지며 어둠이 걷혔다.
+cast:
+  command: 마법 southern_cross
+  cooldown-seconds: 9
+  mana-cost: 26
+order: 411

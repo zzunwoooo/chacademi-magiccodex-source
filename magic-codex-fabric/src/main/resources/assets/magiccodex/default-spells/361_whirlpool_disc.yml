@@ -1,0 +1,14 @@
+id: whirlpool_disc
+name: 소용돌이 원반
+category: water
+description: 조준한 땅에 작은 소용돌이를 3초 동안 엽니다. 소용돌이 안의 적은 중심으로 빨려 들며 여러 번 피해를 입습니다.
+icon: ''
+permission: magic.learned.whirlpool_disc
+discovery:
+  description: 물보라 발차기로 몬스터 50마리 처치하기.
+research: 물보라 발차기의 마지막 돌려차기가 끝나고도 발밑의 물이 멈추지 않고 계속 돌았다. 한 바퀴, 또 한 바퀴. 나는 그 회전을 발로 붙잡아 땅에 내려놓았다.
+cast:
+  command: 마법 whirlpool_disc
+  cooldown-seconds: 9
+  mana-cost: 22
+order: 361

@@ -1,0 +1,14 @@
+id: water_drum
+name: 물장구
+category: water
+description: 조준한 땅에 물로 된 북을 놓습니다. 북이 세 번 울릴 때마다 점점 넓어지는 충격파가 퍼져 주변 적을 때리고 밀어냅니다.
+icon: ''
+permission: magic.learned.water_drum
+discovery:
+  description: 빗방울 연사로 몬스터 50마리 처치하기.
+research: 빗방울을 연달아 쏘는 손에 박자가 붙기 시작했다. 탁, 탁, 탁. 그 박자를 땅에 대고 두드려 보았더니, 발밑의 물이 북처럼 울리며 대답했다.
+cast:
+  command: 마법 water_drum
+  cooldown-seconds: 8
+  mana-cost: 22
+order: 358

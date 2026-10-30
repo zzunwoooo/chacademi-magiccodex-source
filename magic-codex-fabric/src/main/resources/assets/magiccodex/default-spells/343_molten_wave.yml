@@ -1,0 +1,14 @@
+id: molten_wave
+name: 쇳물 해일
+category: fire
+description: 녹은 쇠로 된 파도를 앞으로 밀어 보냅니다. 파도는 지나가는 적을 모두 태우며 밀어내고, 끝에서 무너지며 한 번 더 덮칩니다.
+icon: ''
+permission: magic.learned.molten_wave
+discovery:
+  description: 5서클 달성 후 용암 거품으로 몬스터 80마리 처치하고, 만티코어 3마리 처치하기.
+research: 만티코어가 용암 거품 사이로 몸을 낮춰 덮쳐 왔다. 녹은 땅이 놈의 발목을 감싸며 한쪽으로 쏠리는 것을 본 순간, 거품은 터지는 대신 파도가 되어 밀려갔다.
+cast:
+  command: 마법 molten_wave
+  cooldown-seconds: 16
+  mana-cost: 60
+order: 343

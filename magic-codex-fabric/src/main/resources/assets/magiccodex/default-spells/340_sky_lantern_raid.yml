@@ -1,0 +1,14 @@
+id: sky_lantern_raid
+name: 풍등 폭격
+category: fire
+description: 조준한 곳에서 풍등 여섯 개를 띄워 올립니다. 풍등은 잠시 뒤 주변 다섯 곳에 차례로 떨어져 터지고, 마지막 큰 풍등이 한가운데에 떨어져 크게 폭발합니다.
+icon: ''
+permission: magic.learned.sky_lantern_raid
+discovery:
+  description: 5서클 달성 후 등롱 사슬로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기.
+research: 밤하늘에서 팬텀이 내리꽂히는 것을 등롱 불빛 사이로 지켜보았다. 하늘에서 떨어지는 것이 저것들뿐일 필요는 없었다. 나는 등을 하늘 높이 띄워 올렸다.
+cast:
+  command: 마법 sky_lantern_raid
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 340

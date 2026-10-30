@@ -1,0 +1,14 @@
+id: sky_mill
+name: 천공의 방아
+category: wind
+description: 하늘에서 거대한 바람 풍차를 내려 조준한 곳을 통째로 갈아 버립니다. 풍차가 점점 빨라지며 땅 위의 적을 베고, 가운데 회오리로 적을 띄워 올린 뒤 하늘의 압력으로 한꺼번에 내리찍어 기절시킵니다.
+icon: ''
+permission: magic.learned.sky_mill
+discovery:
+  description: 9서클 달성 후, 풍경 결계와 거대 바람개비를 익힌 채로 하늘뱀 20마리와 와이번 20마리 처치하기.
+research: 풍경 소리가 울리고 거대한 바람개비가 도는 전장에서, 하늘뱀과 와이번이 끝없이 몰려왔다. 마지막 비늘이 바람에 흩어졌을 때 하늘이 낮게 내려앉았다. 구름이 맷돌처럼 돌기 시작했고, 그 아래에서 나는 처음으로 하늘을 방아로 쓰는 법을 배웠다.
+cast:
+  command: 마법 sky_mill
+  cooldown-seconds: 200
+  mana-cost: 380
+order: 324

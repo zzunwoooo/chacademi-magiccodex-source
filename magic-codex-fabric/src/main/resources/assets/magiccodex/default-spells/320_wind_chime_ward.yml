@@ -1,0 +1,14 @@
+id: wind_chime_ward
+name: 풍경 결계
+category: wind
+description: 조준한 곳에 풍경 네 개를 걸어 8초 동안 결계를 칩니다. 적이 풍경 곁을 지나가면 풍경이 차례로 울리며 소리 파동이 연달아 퍼져 나가 적을 벱니다.
+icon: ''
+permission: magic.learned.wind_chime_ward
+discovery:
+  description: 7서클 달성 후 칼바람 장막에 마나 4,000을 쓰고, 봉인의 술사 10마리 처치하기.
+research: 봉인의 술사가 결계를 칠 때마다 희미한 종소리가 났다. 칼바람 장막을 수없이 펼쳐 그 결계를 찢어 낸 끝에, 내 장막에도 종을 매달 수 있다는 걸 알았다.
+cast:
+  command: 마법 wind_chime_ward
+  cooldown-seconds: 35
+  mana-cost: 100
+order: 320

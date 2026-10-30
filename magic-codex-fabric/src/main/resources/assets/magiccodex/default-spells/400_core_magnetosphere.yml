@@ -1,0 +1,14 @@
+id: core_magnetosphere
+name: 지핵 자기장
+category: earth
+description: 땅속 깊은 지핵의 자기장을 끌어올립니다. 바위들이 뜯겨 나와 하늘에 거대한 구체를 이루는 동안 주변 적은 땅에 붙들리고, 구체가 내리꽂히는 순간 폭발과 함께 곳곳에서 용암이 솟구칩니다.
+icon: ''
+permission: magic.learned.core_magnetosphere
+discovery:
+  description: 대사막의 모래시계·정동 개화·쌍극 감옥을 익힌 뒤, 고대 골렘 30마리 처치하기.
+research: 마지막 고대 골렘이 무너질 때, 그 심장석이 땅속 깊은 곳을 향해 떨리고 있었다. 정동의 결정과 쌍극의 기둥과 모래시계의 모래가 모두 같은 방향으로 끌려가는 것을 따라 귀를 기울이자, 녹은 쇠의 심장이 대지 한가운데서 천천히 뛰고 있었다. 그 박동에 손을 얹는 순간 바위들이 하늘로 끌려 올라갔고, 세계를 붙들고 있던 힘이 단 한 번 내 손을 들어 주었다.
+cast:
+  command: 마법 core_magnetosphere
+  cooldown-seconds: 220
+  mana-cost: 420
+order: 400

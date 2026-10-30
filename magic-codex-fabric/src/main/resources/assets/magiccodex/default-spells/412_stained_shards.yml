@@ -1,0 +1,14 @@
+id: stained_shards
+name: 색유리 파편
+category: light
+description: 조준한 곳 하늘에 색유리 장미창을 만들고 깨뜨려, 날카로운 파편을 비처럼 쏟아붓습니다. 마지막 파편이 떨어질 때 가장 큰 피해를 줍니다.
+icon: ''
+permission: magic.learned.stained_shards
+discovery:
+  description: 초점 렌즈로 몬스터 50마리 처치하기.
+research: 초점 렌즈로 한 점을 태우던 중, 빛이 너무 모여 렌즈가 색색으로 금이 갔다. 깨진 렌즈 조각이 예배당 장미창처럼 하늘에 걸리더니, 이내 비가 되어 쏟아졌다.
+cast:
+  command: 마법 stained_shards
+  cooldown-seconds: 10
+  mana-cost: 30
+order: 412

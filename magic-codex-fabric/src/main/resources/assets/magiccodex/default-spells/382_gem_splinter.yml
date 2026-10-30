@@ -1,0 +1,14 @@
+id: gem_splinter
+name: 보석 파편
+category: earth
+description: 세 빛깔 보석 파편을 부채꼴로 한꺼번에 쏩니다. 가까운 적일수록 여러 개를 맞습니다.
+icon: ''
+permission: magic.learned.gem_splinter
+discovery:
+  description: 광맥 파쇄로 몬스터 30마리 처치하기.
+research: 광맥을 부수는 마법이 몬스터를 쓰러뜨렸을 때, 무너진 바위틈에서 황옥과 석류석과 에메랄드가 한꺼번에 튀어나왔다. 세 빛깔 파편은 서로 다른 방향으로 날았지만 모두 같은 적을 노리고 있었다.
+cast:
+  command: 마법 gem_splinter
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 382

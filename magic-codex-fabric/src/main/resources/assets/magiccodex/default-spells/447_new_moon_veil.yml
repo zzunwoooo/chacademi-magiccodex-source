@@ -1,0 +1,14 @@
+id: new_moon_veil
+name: 그믐 장막
+category: dark
+description: 그믐달의 장막으로 2.5초 동안 모습을 감춥니다. 그동안 몬스터는 나를 찾지 못하며, 장막이 풀리는 순간이나 그 전에 공격하는 순간 앞쪽의 적들에게 큰 일격을 날립니다.
+icon: ''
+permission: magic.learned.new_moon_veil
+discovery:
+  description: 7서클 달성 후 꿈의 미로에 마나 4,000을 쓰고, 투명한 몬스터 20마리 처치하기.
+research: 꿈의 미로 안에서 보이지 않는 몬스터를 쫓다 보니, 어느새 내 모습도 그들처럼 흐려져 있었다. 달이 없는 밤처럼 숨어 있다가, 다시 드러나는 순간 칼을 휘둘렀다.
+cast:
+  command: 마법 new_moon_veil
+  cooldown-seconds: 32
+  mana-cost: 100
+order: 447

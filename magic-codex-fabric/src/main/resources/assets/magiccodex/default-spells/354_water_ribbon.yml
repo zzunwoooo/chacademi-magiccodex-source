@@ -1,0 +1,14 @@
+id: water_ribbon
+name: 물 리본
+category: water
+description: 물로 된 리본을 채찍처럼 두 번 휘두릅니다. 두 번째 채찍에 맞은 적은 내 쪽으로 살짝 끌려옵니다.
+icon: ''
+permission: magic.learned.water_ribbon
+discovery:
+  description: 낚시로 물고기를 누적 100마리 낚기.
+research: 해가 지도록 낚싯줄을 드리우고 있었다. 찌 주위로 번지던 물결이 어느 순간 줄을 따라 리본처럼 감겨 올라왔고, 나는 줄을 당기듯 그 물결을 손목으로 끌어당겼다.
+cast:
+  command: 마법 water_ribbon
+  cooldown-seconds: 4
+  mana-cost: 7
+order: 354

@@ -1,0 +1,14 @@
+id: iron_dust_storm
+name: 쇳가루 폭풍
+category: earth
+description: 쇳가루 폭풍을 일으켜 안에 든 적들을 휘감아 돌립니다. 적이 많을수록 서로 부딪혀 더 큰 피해를 입고, 폭풍이 흩어질 때 바깥으로 튕겨 나갑니다.
+icon: ''
+permission: magic.learned.iron_dust_storm
+discovery:
+  description: 5서클 달성 후 자석 손으로 몬스터 80마리 처치하고, 봉인의 기사 5마리 처치하기.
+research: 봉인의 기사가 자석 손에 끌려올 때, 갑옷에서 깎여 나간 쇳가루가 손 주위를 맴돌며 사라지지 않았다. 쇳가루는 점점 불어나 폭풍이 되었고, 그 안에서 기사들은 서로의 갑옷에 부딪혀 쓰러졌다.
+cast:
+  command: 마법 iron_dust_storm
+  cooldown-seconds: 18
+  mana-cost: 60
+order: 393

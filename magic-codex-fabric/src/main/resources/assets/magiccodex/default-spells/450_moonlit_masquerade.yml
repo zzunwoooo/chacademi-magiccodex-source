@@ -1,0 +1,14 @@
+id: moonlit_masquerade
+name: 월하 가면무도회
+category: dark
+description: 달빛 아래 그림자 무도가 열두 명을 불러 가면무도회를 엽니다. 무도가들은 춤추며 무대 위의 적들을 베고, 가면을 벗는 순간 한가운데로 모여 일격을 가한 뒤 하늘에서 칼날 비를 쏟아 적들을 쓰러뜨립니다.
+icon: ''
+permission: magic.learned.moonlit_masquerade
+discovery:
+  description: 만월 강림·막 내림·그림자 도플갱어를 익힌 뒤, 키츠네 30마리 처치하기.
+research: 만월을 부르고, 막을 내리고, 그림자를 세우는 법까지 익혔지만 키츠네의 무리는 여전히 가면 뒤에서 웃고 있었다. 수없이 그 가면을 벗겨 낸 끝에, 달빛 아래 열두 개의 그림자가 내게 춤을 청했다. 마지막 곡이 울릴 때 비로소 알았다. 이 무도회의 주인은 처음부터 나였다는 것을.
+cast:
+  command: 마법 moonlit_masquerade
+  cooldown-seconds: 200
+  mana-cost: 380
+order: 450

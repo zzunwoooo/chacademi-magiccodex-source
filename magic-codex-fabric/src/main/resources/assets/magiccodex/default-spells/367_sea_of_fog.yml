@@ -1,0 +1,14 @@
+id: sea_of_fog
+name: 안개 바다
+category: water
+description: 주변에 짙은 안개를 8초 동안 펼칩니다. 안개 속에서는 몸이 보이지 않아 몬스터가 쉽게 찾지 못하며, 그 사이 처음 하는 공격은 훨씬 강해집니다.
+icon: ''
+permission: magic.learned.sea_of_fog
+discovery:
+  description: 5서클 달성 후 얼음 미끄럼으로 몬스터 60마리 처치하고, 투명한 몬스터 10마리 처치하기.
+research: 보이지 않는 몬스터를 쫓느라 얼음 위를 몇 번이고 미끄러지던 밤, 그들이 어떻게 숨는지 마침내 알아챘다. 몸을 감추는 것이 아니라 주위를 흐리게 만드는 것이었다.
+cast:
+  command: 마법 sea_of_fog
+  cooldown-seconds: 22
+  mana-cost: 50
+order: 367

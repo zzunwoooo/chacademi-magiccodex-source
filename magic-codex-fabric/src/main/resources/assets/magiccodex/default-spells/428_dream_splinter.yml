@@ -1,0 +1,14 @@
+id: dream_splinter
+name: 꿈 조각
+category: dark
+description: 꿈의 수정 조각을 날립니다. 맞은 적은 1.5초 동안 정신이 흐려져 엉뚱한 방향으로 걸어갑니다.
+icon: ''
+permission: magic.learned.dream_splinter
+discovery:
+  description: 단잠의 주문을 50번 사용하기.
+research: 몇 번이고 단잠을 불러 주던 끝에, 잠든 짐승의 꿈 한 귀퉁이가 손끝에 걸려 바스락 깨졌다. 깨진 조각은 꿈속처럼 반짝이며 내 손바닥에 남았다.
+cast:
+  command: 마법 dream_splinter
+  cooldown-seconds: 6
+  mana-cost: 9
+order: 428

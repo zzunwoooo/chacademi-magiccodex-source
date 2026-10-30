@@ -1,0 +1,14 @@
+id: lighthouse
+name: 등대
+category: light
+description: 조준한 곳에 등대를 6초 동안 세웁니다. 회전하는 빛줄기가 주변을 훑으며 적을 태우고, 마지막에 등불이 폭발합니다.
+icon: ''
+permission: magic.learned.lighthouse
+discovery:
+  description: 5서클 달성 후 해시계 바늘로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기.
+research: 팬텀이 하늘을 덮은 밤, 해시계 바늘을 쉬지 않고 돌리며 버텼다. 바늘 끝의 빛을 하늘로 들어 올리자, 그것은 바다를 지키는 등대처럼 어둠을 한 바퀴씩 훑었다.
+cast:
+  command: 마법 lighthouse
+  cooldown-seconds: 20
+  mana-cost: 60
+order: 414

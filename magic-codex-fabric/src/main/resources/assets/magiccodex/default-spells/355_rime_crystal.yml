@@ -1,0 +1,14 @@
+id: rime_crystal
+name: 서리 결정
+category: water
+description: 회전하는 서리 결정을 쏩니다. 같은 적에게 세 번 맞히면 그 적이 얼음에 갇혀 1초 동안 굳었다가 깨지면서 추가 피해를 입습니다.
+icon: ''
+permission: magic.learned.rime_crystal
+discovery:
+  description: 눈덩이를 몬스터에게 누적 100번 맞히기.
+research: 눈덩이를 뭉쳐 던지기를 수없이 되풀이하자 손바닥의 눈이 녹지 않고 단단한 결정으로 굳어 갔다. 마지막으로 던진 것은 눈덩이가 아니라 반짝이며 도는 서리였다.
+cast:
+  command: 마법 rime_crystal
+  cooldown-seconds: 2
+  mana-cost: 5
+order: 355

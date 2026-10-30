@@ -1,0 +1,14 @@
+id: paper_crane
+name: 종이학
+category: wind
+description: 종이학 한 마리를 날려 보냅니다. 종이학은 조준한 적을 끈질기게 따라가 부딪혀 터집니다. 벽 뒤로 숨으면 피할 수 있습니다.
+icon: ''
+permission: magic.learned.paper_crane
+discovery:
+  description: 책을 직접 써서 서명하고, 페가수스 3마리 처치하기.
+research: 서명한 책의 마지막 장을 찢어 접은 종이학이 페가수스가 쓰러진 하늘을 향해 고개를 들었다. 내 이름을 품은 종이는 내가 쫓던 것을 끝까지 쫓아가려 했다.
+cast:
+  command: 마법 paper_crane
+  cooldown-seconds: 6
+  mana-cost: 8
+order: 303

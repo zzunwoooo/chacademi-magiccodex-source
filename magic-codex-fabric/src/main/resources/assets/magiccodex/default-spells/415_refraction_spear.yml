@@ -1,0 +1,14 @@
+id: refraction_spear
+name: 굴절 창
+category: light
+description: 눈앞에 빛의 렌즈 두 개를 띄우고 창을 던집니다. 창은 렌즈를 지날 때마다 꺾이며 지그재그로 날아가, 그 경로에 있는 적을 모두 꿰뚫습니다.
+icon: ''
+permission: magic.learned.refraction_spear
+discovery:
+  description: 5서클 달성 후 색유리 파편으로 몬스터 80마리 처치하고, 봉인의 기사 5마리 처치하기.
+research: 봉인의 기사가 방패를 세울 때마다 색유리 파편이 그 둘레로 휘어 들어갔다. 빛이 곧게 가지 않아도 된다는 것을 알게 된 순간, 손에 쥔 빛이 창이 되어 렌즈 두 개를 지나 꺾였다.
+cast:
+  command: 마법 refraction_spear
+  cooldown-seconds: 14
+  mana-cost: 50
+order: 415

@@ -1,0 +1,14 @@
+id: sky_blade_rain
+name: 칼날비
+category: wind
+description: 조준한 곳 하늘에 봉인을 열어 3초 동안 바람 칼날을 비처럼 쏟아붓습니다. 마지막에는 거대한 칼날이 한가운데에 내리꽂힙니다.
+icon: ''
+permission: magic.learned.sky_blade_rain
+discovery:
+  description: 5서클 달성 후 회오리 발차기로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기.
+research: 밤하늘에서 팬텀을 차 떨어뜨리던 발차기가 어느 순간 위가 아닌 아래를 향했다. 하늘로 올려 보낸 회오리들이 칼날이 되어 쏟아져 내리고 있었다.
+cast:
+  command: 마법 sky_blade_rain
+  cooldown-seconds: 16
+  mana-cost: 55
+order: 318

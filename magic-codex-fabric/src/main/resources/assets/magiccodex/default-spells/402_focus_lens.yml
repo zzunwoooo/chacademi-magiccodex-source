@@ -1,0 +1,14 @@
+id: focus_lens
+name: 초점 렌즈
+category: light
+description: 눈앞에 빛 렌즈를 만들어 조준한 한 점에 햇빛을 모아 최대 2초 동안 태웁니다. 렌즈가 깨질 때 초점에서 불씨가 터지며, 시선을 돌리거나 자리를 뜨면 일찍 깨집니다.
+icon: ''
+permission: magic.learned.focus_lens
+discovery:
+  description: 프리즘 탄으로 몬스터 30마리 처치하기.
+research: 프리즘 탄이 몬스터에게 부딪혀 갈라질 때마다 빛이 어디로 휘는지 눈여겨보았다. 갈라진 빛을 거꾸로 되돌려 한 점에 모으자, 손끝 앞에 투명한 렌즈가 맺혔다.
+cast:
+  command: 마법 focus_lens
+  cooldown-seconds: 6
+  mana-cost: 10
+order: 402

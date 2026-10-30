@@ -1,0 +1,14 @@
+id: sand_stomp
+name: 흙먼지 발구르기
+category: earth
+description: 발을 힘껏 굴러 흙먼지를 일으킵니다. 주변 2블록 안의 적이 피해를 입고 살짝 떠오릅니다.
+icon: ''
+permission: magic.learned.sand_stomp
+discovery:
+  description: 선인장을 누적 200개 수확하기.
+research: 한낮의 선인장밭에서 가시를 피해 줄기를 베어 내다 지쳐 발을 굴렀다. 그 순간 발밑의 모래가 둥글게 튀어 올라, 바닥에 떨어진 선인장 조각들을 공중으로 띄웠다.
+cast:
+  command: 마법 sand_stomp
+  cooldown-seconds: 5
+  mana-cost: 7
+order: 381

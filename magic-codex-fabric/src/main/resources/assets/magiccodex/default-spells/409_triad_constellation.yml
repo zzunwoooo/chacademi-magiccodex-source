@@ -1,0 +1,14 @@
+id: triad_constellation
+name: 삼각 별자리
+category: light
+description: 조준한 곳에 별 세 개를 떨어뜨려 삼각형으로 잇습니다. 잠시 뒤 삼각형 안에 갇힌 적은 피해를 입고 1초 동안 기절합니다.
+icon: ''
+permission: magic.learned.triad_constellation
+discovery:
+  description: 별똥 바늘로 몬스터 50마리 처치하기.
+research: 별똥 바늘에 꿰뚫린 몬스터들이 쓰러진 자리를 이어 보니 모두 삼각형의 꼭짓점 위였다. 그 세 점을 손가락으로 잇자, 땅 위의 삼각형이 별빛으로 채워졌다.
+cast:
+  command: 마법 triad_constellation
+  cooldown-seconds: 10
+  mana-cost: 28
+order: 409

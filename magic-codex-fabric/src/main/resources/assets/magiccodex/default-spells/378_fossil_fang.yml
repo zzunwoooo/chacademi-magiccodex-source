@@ -1,0 +1,14 @@
+id: fossil_fang
+name: 화석 송곳니
+category: earth
+description: 조준한 땅에서 화석 송곳니가 솟아올라 그 자리에 선 적을 물어뜯습니다. 송곳니가 닫히기 전에 벗어나면 피할 수 있습니다.
+icon: ''
+permission: magic.learned.fossil_fang
+discovery:
+  description: 다이아몬드 광석을 누적 10개 직접 캐고, 땅의 속삭임을 30번 사용하기.
+research: 땅의 속삭임을 따라 깊은 갱도에서 다이아몬드를 캐던 중, 곡괭이 끝에 보석이 아닌 오래된 이빨이 걸렸다. 그 날카로운 뼈를 쥐자 발밑 어딘가에서 거대한 턱이 천천히 닫히는 소리가 들렸다.
+cast:
+  command: 마법 fossil_fang
+  cooldown-seconds: 4
+  mana-cost: 8
+order: 378

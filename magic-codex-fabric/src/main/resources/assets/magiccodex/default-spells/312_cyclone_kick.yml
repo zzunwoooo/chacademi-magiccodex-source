@@ -1,0 +1,14 @@
+id: cyclone_kick
+name: 회오리 발차기
+category: wind
+description: 회오리를 감은 올려차기로 앞의 적들을 한꺼번에 하늘로 띄워 올립니다.
+icon: ''
+permission: magic.learned.cyclone_kick
+discovery:
+  description: 회전 베기로 몬스터 50마리 처치하기.
+research: 수없이 몸을 돌려 베는 동안 발끝에도 바람이 감겨 있었다는 걸 몰랐다. 한 바퀴를 다 돌지 않고 다리를 그대로 차올리자, 감겨 있던 회오리가 하늘로 풀려났다.
+cast:
+  command: 마법 cyclone_kick
+  cooldown-seconds: 8
+  mana-cost: 20
+order: 312

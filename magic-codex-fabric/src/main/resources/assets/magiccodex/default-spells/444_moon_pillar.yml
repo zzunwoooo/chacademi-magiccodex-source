@@ -1,0 +1,14 @@
+id: moon_pillar
+name: 달빛 기둥
+category: dark
+description: 앞쪽 일직선으로 달빛 기둥 세 개를 차례로 솟구치게 합니다. 기둥에 휩쓸린 적은 피해를 입고 위로 떠오릅니다.
+icon: ''
+permission: magic.learned.moon_pillar
+discovery:
+  description: 5서클 달성 후 상현·하현 칼로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기.
+research: 팬텀 떼를 향해 상현과 하현을 번갈아 베자, 베인 자리에서 달빛이 위로 치솟았다. 땅에서 하늘까지, 빛은 한 줄로 곧게 서 있었다.
+cast:
+  command: 마법 moon_pillar
+  cooldown-seconds: 15
+  mana-cost: 50
+order: 444

@@ -1,0 +1,14 @@
+id: flame_petals
+name: 화염 꽃잎
+category: fire
+description: 몸 주위로 불꽃 꽃잎 여덟 장을 피워 바깥으로 퍼뜨렸다가 다시 거둬들입니다. 반경 안의 적은 꽃잎이 오갈 때마다 두 번 베입니다.
+icon: ''
+permission: magic.learned.flame_petals
+discovery:
+  description: 성냥 긋기로 몬스터 40마리 처치하고, 꽃을 누적 30송이 심기.
+research: 정원에 꽃을 심고 돌아서는데, 땅에 그어 두었던 성냥 자국 위로 불꽃이 둥글게 퍼졌다. 흙 위에 핀 것은 꽃잎을 닮은 불이었고, 불은 다시 내게로 돌아왔다.
+cast:
+  command: 마법 flame_petals
+  cooldown-seconds: 8
+  mana-cost: 22
+order: 337

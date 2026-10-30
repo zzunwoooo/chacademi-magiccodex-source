@@ -1,0 +1,14 @@
+id: forge_god_anvil
+name: 대장장이 신의 모루
+category: fire
+description: 하늘을 갈라 대장장이 신의 모루를 떨어뜨리고, 거대한 망치로 세 번 내리칩니다. 마지막 일격에 주변의 적은 기절하고, 갈라진 땅에서 쇳물이 솟구쳐 남은 적을 불태웁니다.
+icon: ''
+permission: magic.learned.forge_god_anvil
+discovery:
+  description: 9서클 달성 후, 쇳물 손과 도가니 붓기를 익힌 채로 고대 골렘 30마리와 만티코어 20마리 처치하기.
+research: 쇳물 손으로 고대 골렘의 심장을 움켜쥐고, 도가니를 기울여 만티코어의 갈기를 녹였다. 마지막 거인이 무너지던 날, 전장의 잔해 위에 녹슨 모루 하나가 남아 있었다. 손을 얹자 아득한 곳에서 망치 소리가 세 번 울렸다. 첫 번째는 하늘에서, 두 번째는 땅 밑에서, 세 번째는 내 심장에서.
+cast:
+  command: 마법 forge_god_anvil
+  cooldown-seconds: 200
+  mana-cost: 400
+order: 349

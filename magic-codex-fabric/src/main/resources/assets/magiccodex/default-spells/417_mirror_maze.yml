@@ -1,0 +1,14 @@
+id: mirror_maze
+name: 거울 미궁
+category: light
+description: 조준한 적 주위에 거울 네 장을 세워 가둡니다. 거울 사이를 오가는 반사광이 갇힌 적을 거듭 때리고, 마지막에 거울이 깨지며 폭발합니다.
+icon: ''
+permission: magic.learned.mirror_maze
+discovery:
+  description: 5서클 달성 후 거울판으로 몬스터 80마리 처치하고, 키츠네 5마리 처치하기.
+research: 키츠네는 거울판 앞에서 몇 번이고 모습을 바꾸며 나를 홀렸다. 진짜를 찾으려 거울을 네 장으로 늘려 둘러싸자, 도망칠 곳 없는 미궁 한가운데에 여우가 서 있었다.
+cast:
+  command: 마법 mirror_maze
+  cooldown-seconds: 18
+  mana-cost: 55
+order: 417

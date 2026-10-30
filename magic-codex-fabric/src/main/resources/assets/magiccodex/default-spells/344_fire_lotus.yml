@@ -1,0 +1,14 @@
+id: fire_lotus
+name: 불꽃 연꽃
+category: fire
+description: 조준한 땅에 불꽃 연꽃을 피웁니다. 꽃이 활짝 피면 한가운데가 폭발하고, 이어서 꽃잎을 따라 불길이 바깥으로 번져 나갑니다.
+icon: ''
+permission: magic.learned.fire_lotus
+discovery:
+  description: 5서클 달성 후 화염 꽃잎으로 몬스터 80마리 처치하고, 요정 10마리 처치하기.
+research: 요정이 날개를 접고 꽃잎 위에서 쉬는 모습을 보았다. 화염 꽃잎을 피우고 거두기를 수없이 거듭한 그날, 나는 꽃잎을 날려 보내는 대신 땅에 뿌리내리게 했다.
+cast:
+  command: 마법 fire_lotus
+  cooldown-seconds: 18
+  mana-cost: 65
+order: 344

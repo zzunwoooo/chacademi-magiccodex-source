@@ -1,0 +1,14 @@
+id: lodestone_shard
+name: 자철 조각
+category: earth
+description: 자철 파편을 던져 적에게 박습니다. 잠시 뒤 파편이 뽑혀 나오며 한 번 더 때리고, 손으로 되돌아오는 길에 있는 적도 스칩니다.
+icon: ''
+permission: magic.learned.lodestone_shard
+discovery:
+  description: 철 골렘을 직접 만들고, 모루에서 도구에 이름을 5번 붙이기.
+research: 모루 앞에서 아끼는 도구에 이름을 새기고 있을 때, 막 깨어난 철 골렘의 몸에서 떨어진 쇳조각이 내 손 쪽으로 미끄러져 왔다. 이름을 받은 쇠는 주인에게 돌아온다는 걸 그때 알았다.
+cast:
+  command: 마법 lodestone_shard
+  cooldown-seconds: 5
+  mana-cost: 9
+order: 380

@@ -1,0 +1,14 @@
+id: geode_bloom
+name: 정동 개화
+category: earth
+description: 조준한 땅에 거대한 정동을 피워 올립니다. 잠시 뒤 정동이 쪼개지며 결정 가시가 원을 그리며 퍼져 주변 적을 꿰뚫고, 가시가 부서질 때 한 번 더 피해를 줍니다.
+icon: ''
+permission: magic.learned.geode_bloom
+discovery:
+  description: 7서클 달성 후 화석 뱀뼈에 마나 4,000을 쓰고, 다이아몬드 광석을 누적 64개 직접 캐기.
+research: 화석 뱀뼈가 파 내려간 깊은 굴 끝에서 마지막 다이아몬드를 캐냈을 때, 곡괭이 자국 사이로 둥근 돌 하나가 굴러 나왔다. 쪼개진 돌 안에는 결정이 꽃처럼 피어 있었고, 땅은 가장 아름다운 것을 가장 깊이 숨긴다는 걸 알았다.
+cast:
+  command: 마법 geode_bloom
+  cooldown-seconds: 36
+  mana-cost: 120
+order: 395

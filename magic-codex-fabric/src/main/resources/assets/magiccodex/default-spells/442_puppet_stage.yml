@@ -1,0 +1,14 @@
+id: puppet_stage
+name: 꼭두각시 무대
+category: dark
+description: 바닥에 꼭두각시 무대를 펼칩니다. 무대 위의 적들은 피해를 입고, 3초 동안 공격하지 못한 채 내가 바라보는 방향으로 줄에 끌려 걸어갑니다.
+icon: ''
+permission: magic.learned.puppet_stage
+discovery:
+  description: 5서클 달성 후 그림자극으로 몬스터 60마리 처치하고, 봉인의 궁수 5마리 처치하기.
+research: 봉인의 궁수들은 마치 보이지 않는 줄에 매달린 듯 똑같이 시위를 당겼다. 그림자극으로 그들을 무너뜨리던 중, 그 줄의 다른 끝이 내 손에 쥐어져 있다는 것을 깨달았다.
+cast:
+  command: 마법 puppet_stage
+  cooldown-seconds: 20
+  mana-cost: 55
+order: 442

@@ -1,0 +1,14 @@
+id: freeze_pulse
+name: 결빙 파동
+category: water
+description: 발밑에서 냉기 파동을 세 번 내보냅니다. 파동은 점점 넓게 퍼지며 닿은 적에게 피해를 주고 느리게 만듭니다.
+icon: ''
+permission: magic.learned.freeze_pulse
+discovery:
+  description: 서리 결정으로 몬스터 50마리 처치하고, 빙핵의 수호자 1마리 처치하기.
+research: 빙핵의 수호자가 무너지던 순간, 그 심장에서 냉기가 둥글게 세 번 퍼져 나갔다. 서리 결정을 쥐고 있던 내 손이 그 떨림을 똑같이 따라 했다.
+cast:
+  command: 마법 freeze_pulse
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 360

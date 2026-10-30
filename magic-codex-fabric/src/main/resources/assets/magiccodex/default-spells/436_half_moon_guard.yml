@@ -1,0 +1,14 @@
+id: half_moon_guard
+name: 반달 방패
+category: dark
+description: 2초 동안 앞쪽에 반달 모양의 막을 세워 정면에서 오는 피해를 대부분 막아 냅니다. 막이 걷히면 막아 낸 피해를 실은 반달 칼날을 앞으로 날려 보냅니다.
+icon: ''
+permission: magic.learned.half_moon_guard
+discovery:
+  description: 달 조각으로 몬스터 40마리 처치하고, 방패로 막은 뒤 반격을 20번 하기.
+research: 방패로 공격을 받아 낸 뒤 되받아치는 법을 몸이 먼저 익혔다. 달 조각이 그 방패 앞에 반쪽짜리 달로 모여들던 날, 막아 낸 무게를 그대로 돌려줄 수 있음을 알았다.
+cast:
+  command: 마법 half_moon_guard
+  cooldown-seconds: 10
+  mana-cost: 25
+order: 436

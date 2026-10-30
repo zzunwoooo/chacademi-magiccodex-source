@@ -1,0 +1,14 @@
+id: lava_bubbles
+name: 용암 거품
+category: fire
+description: 조준한 땅을 녹여 용암 웅덩이를 만듭니다. 웅덩이에서 거품 세 개가 차례로 부풀어 올라 터지며 주변의 적을 태웁니다.
+icon: ''
+permission: magic.learned.lava_bubbles
+discovery:
+  description: 불꽃 손톱으로 몬스터 50마리 처치하고, 불이 붙은 채 30초 버티기.
+research: 옷자락에 붙은 불을 끄지 않고 버텼다. 숨이 턱에 차오를 무렵, 발밑의 흙이 끓는 죽처럼 부풀어 오르더니 퐁, 퐁, 거품이 터지며 뜨거운 숨결을 토해 냈다.
+cast:
+  command: 마법 lava_bubbles
+  cooldown-seconds: 9
+  mana-cost: 24
+order: 338

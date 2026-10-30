@@ -1,0 +1,14 @@
+id: star_link
+name: 별 잇기
+category: light
+description: 앞쪽과 조준한 곳에 별을 하나씩 세우고 빛의 선으로 잇습니다. 약 3초 동안 선에 걸린 적은 계속 피해를 입습니다.
+icon: ''
+permission: magic.learned.star_link
+discovery:
+  description: 빛 바늘땀으로 몬스터 40마리 처치하고, 별빛 뛰기를 100번 사용하기.
+research: 빛 바늘땀으로 몬스터를 꿰매고, 별빛처럼 들판을 뛰어다니던 날이었다. 한쪽 발자국과 다른 쪽 발자국 사이에 남은 실이 팽팽해지더니, 두 개의 별로 변해 선을 그었다.
+cast:
+  command: 마법 star_link
+  cooldown-seconds: 8
+  mana-cost: 22
+order: 413

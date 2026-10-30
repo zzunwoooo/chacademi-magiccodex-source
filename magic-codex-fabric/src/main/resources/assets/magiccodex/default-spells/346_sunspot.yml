@@ -1,0 +1,14 @@
+id: sunspot
+name: 태양 흑점
+category: fire
+description: 조준한 곳 하늘에 작은 태양을 띄웁니다. 태양은 6초 동안 아래로 열선을 쏟아붓다가, 마지막에 거대한 열선을 떨어뜨려 주변을 크게 태웁니다.
+icon: ''
+permission: magic.learned.sunspot
+discovery:
+  description: 7서클 달성 후 화로 돔에 마나 4,000을 쓰고, 피닉스 5마리 처치하기.
+research: 불사조가 화로 돔 위를 맴돌다 불꽃 속으로 녹아들었다가 다시 태어났다. 돔 안의 열기를 한 점으로 끌어모으자, 손바닥만 한 태양이 머리 위에서 검은 눈을 떴다.
+cast:
+  command: 마법 sunspot
+  cooldown-seconds: 40
+  mana-cost: 130
+order: 346

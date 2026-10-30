@@ -1,0 +1,14 @@
+id: black_moth
+name: 검은 나방
+category: dark
+description: 검은 나방 세 마리가 대상을 천천히 따라갑니다. 나방에 닿은 적은 피해를 입고, 날개 가루 때문에 2초 동안 앞이 보이지 않습니다.
+icon: ''
+permission: magic.learned.black_moth
+discovery:
+  description: 촛불을 30번 끄고, 투명한 몬스터 3마리 처치하기.
+research: 촛불을 하나씩 끌 때마다 연기 속에서 검은 날개가 팔랑였다. 보이지 않는 적을 쓰러뜨린 밤, 그 나방들이 빛 대신 내 그림자 곁으로 모여들었다.
+cast:
+  command: 마법 black_moth
+  cooldown-seconds: 6
+  mana-cost: 9
+order: 432

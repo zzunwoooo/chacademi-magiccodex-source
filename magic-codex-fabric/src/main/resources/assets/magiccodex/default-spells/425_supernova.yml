@@ -1,0 +1,14 @@
+id: supernova
+name: 초신성
+category: light
+description: 조준한 곳 하늘에 작은 별을 탄생시킵니다. 별은 주변의 적을 끌어당기며 부풀어 오르다가 초신성으로 폭발하고, 남은 핵이 떨어지며 별똥비가 쏟아집니다.
+icon: ''
+permission: magic.learned.supernova
+discovery:
+  description: 황도 12궁·거울 세계·천체 망원경을 익힌 뒤, 빛 마법으로 언데드를 누적 1,000마리 처치하기.
+research: 황도의 고리를 돌리고, 거울 속의 나와 함께 싸우고, 가장 먼 별까지 겨누며 밤마다 언데드를 빛으로 돌려보냈다. 그 수를 세는 것도 잊었을 무렵, 마지막 해골이 가루가 되며 손바닥 위에 작은 별 하나가 태어났다. 별은 부풀고, 숨을 멈추고, 마침내 터졌다. 그 빛이 지나간 묘지에는 한동안 아무 그림자도 남지 않았다.
+cast:
+  command: 마법 supernova
+  cooldown-seconds: 220
+  mana-cost: 420
+order: 425

@@ -1,0 +1,14 @@
+id: air_balloon
+name: 공기 풍선
+category: wind
+description: 공기를 가득 채운 풍선을 던집니다. 풍선이 터지면 주변 적이 피해를 입고 상승 기류에 살짝 떠오릅니다.
+icon: ''
+permission: magic.learned.air_balloon
+discovery:
+  description: 폭죽 로켓을 30번 쏘아 올리고, 달리면서 300번 점프하기.
+research: 축제 밤, 폭죽이 터지는 하늘 아래서 쉬지 않고 뛰어오르다 숨이 턱에 찼다. 가슴 가득 들이마신 공기가 문득 손바닥 위로 옮겨 가 동그랗게 부풀었다.
+cast:
+  command: 마법 air_balloon
+  cooldown-seconds: 5
+  mana-cost: 9
+order: 307

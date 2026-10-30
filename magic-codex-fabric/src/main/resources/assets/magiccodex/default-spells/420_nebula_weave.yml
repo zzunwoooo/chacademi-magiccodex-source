@@ -1,0 +1,14 @@
+id: nebula_weave
+name: 성운 직조
+category: light
+description: 하늘에 커다란 캔버스를 펼친 뒤, 약 3초 동안 바라보는 곳마다 별을 찍어 나만의 별자리를 그립니다. 그린 별자리 모양대로 빛이 쏟아지고, 마지막에 캔버스 전체가 터집니다.
+icon: ''
+permission: magic.learned.nebula_weave
+discovery:
+  description: 7서클 달성 후 카시오페이아에 마나 4,000을 쓰고, 요정 30마리 처치하기.
+research: 카시오페이아를 수없이 그리던 손이 지쳐 갈 무렵, 숲의 요정들이 날개 가루로 하늘에 낙서를 하며 놀았다. 나도 따라 이름 없는 별자리를 그렸고, 요정의 가루는 성운이 되어 그 모양대로 빛을 내렸다.
+cast:
+  command: 마법 nebula_weave
+  cooldown-seconds: 40
+  mana-cost: 130
+order: 420

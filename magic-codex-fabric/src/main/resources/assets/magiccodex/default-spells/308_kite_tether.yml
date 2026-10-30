@@ -1,0 +1,14 @@
+id: kite_tether
+name: 연줄
+category: wind
+description: 조준한 적에게 바람 연을 매달아 4초 동안 공중에 띄운 채 끌고 다닙니다. 연줄이 당겨질 때마다 피해를 주고, 연이 찢어지면 적이 떨어지며 한 번 더 피해를 입습니다.
+icon: ''
+permission: magic.learned.kite_tether
+discovery:
+  description: 종이학으로 몬스터 40마리 처치하고, 페가수스 5마리 처치하기.
+research: 페가수스를 뒤쫓던 종이학의 꼬리에 가느다란 바람 실이 이어져 있었다. 그 실을 손끝에 감아 잡아당기자, 날개 달린 짐승이 연처럼 끌려왔다.
+cast:
+  command: 마법 kite_tether
+  cooldown-seconds: 12
+  mana-cost: 25
+order: 308

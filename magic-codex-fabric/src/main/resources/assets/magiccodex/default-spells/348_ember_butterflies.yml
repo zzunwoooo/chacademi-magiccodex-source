@@ -1,0 +1,14 @@
+id: ember_butterflies
+name: 불나비 떼
+category: fire
+description: 등 뒤로 불꽃 날개를 펼쳐 불나비 열두 마리를 날려 보냅니다. 나비들은 주변의 적들에게 나뉘어 날아가 닿는 순간 터집니다.
+icon: ''
+permission: magic.learned.ember_butterflies
+discovery:
+  description: 7서클 달성 후 불꽃 연꽃과 불실 그물에 마나를 각각 3,000씩 쓰고, 요정 30마리 처치하기.
+research: 연꽃 위에 내려앉은 요정들이 불실 그물에 걸리지 않고 빠져나가는 것을 보았다. 그 가벼운 날갯짓을 따라 그물의 실 끝마다 불씨가 날개를 달더니, 나비가 되어 흩어졌다.
+cast:
+  command: 마법 ember_butterflies
+  cooldown-seconds: 35
+  mana-cost: 110
+order: 348

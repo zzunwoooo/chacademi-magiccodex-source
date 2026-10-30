@@ -1,0 +1,14 @@
+id: spray_kick
+name: 물보라 발차기
+category: water
+description: 물보라를 두른 발로 앞쪽을 세 번 연달아 걷어찹니다. 마지막 돌려차기에 맞은 적은 뒤로 밀려납니다.
+icon: ''
+permission: magic.learned.spray_kick
+discovery:
+  description: 물살 베기로 몬스터 30마리 처치하고, 보트를 10번 설치하기.
+research: 보트를 물에 띄우려고 뱃전을 발로 밀어내던 순간, 손에 익은 물살 베기의 궤적이 그대로 다리를 타고 내려왔다. 그날부터 물은 칼끝만이 아니라 발끝도 따랐다.
+cast:
+  command: 마법 spray_kick
+  cooldown-seconds: 4
+  mana-cost: 7
+order: 352

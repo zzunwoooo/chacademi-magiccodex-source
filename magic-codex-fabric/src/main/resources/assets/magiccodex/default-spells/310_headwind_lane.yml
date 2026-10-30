@@ -1,0 +1,14 @@
+id: headwind_lane
+name: 역풍로
+category: wind
+description: 앞쪽으로 곧게 뻗은 역풍의 길을 5초 동안 만듭니다. 길 위에 선 적은 계속 뒤로 떠밀리며 피해를 입습니다.
+icon: ''
+permission: magic.learned.headwind_lane
+discovery:
+  description: 돌풍 장타로 몬스터 40마리 처치하고, 달리기로 누적 5,000블록 이동하기.
+research: 먼 길을 쉬지 않고 달린 끝에, 등을 떠밀던 바람이 어느새 앞에서 불어오고 있었다. 돌풍을 내지르던 손을 펼쳐 그 맞바람에 길을 내주었다.
+cast:
+  command: 마법 headwind_lane
+  cooldown-seconds: 10
+  mana-cost: 22
+order: 310
