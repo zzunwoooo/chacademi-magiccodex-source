@@ -7,7 +7,7 @@ import java.util.*;
 
 /** Updates only recognized shipped defaults. Local edits and extra files remain untouched. */
 final class DefaultSpellMigration {
-    static final String VERSION="spells-renumber-288-20261025";
+    static final String VERSION="spells-150-20261031";
     private static final String ROOT="/assets/magiccodex/default-spells/";
     /** Owner-edited default that only migrates through its own exact-hash path (SpellYamlLoader.migrateHolyTamingDefault). */
     private static final String UNMANAGED_ID="rainbow_collar";

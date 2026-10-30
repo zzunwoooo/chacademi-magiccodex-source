@@ -186,12 +186,16 @@ S += _gimmick.routes()
 # 325~387 신규 63종 (tools/nova_spells.py + tools/nova/*.py are their source of truth)
 import nova_spells as _nova
 S += _nova.routes()
+# 301~450 신규 150종 (tools/nova150_spells.py + tools/nova150/*.py are their source of truth)
+import nova150_spells as _nova150
+S += _nova150.routes()
 
 EXTRA = {
  'CHA_solar_judgment_fire': ('solar_judgment', ['chazone{r=4;ticks=60;period=5;mult=0.15}'], '태양의 심판 영창 완료 후 3초 레이저 (chachannel then=)'),
 }
 EXTRA.update(_arcana.EXTRA)
 EXTRA.update(_nova.EXTRA)
+EXTRA.update(_nova150.EXTRA)
 SKIP = {
  'wind_message':'Bridge가 직접 처리하는 귓속말 마법',
  'rainbow_collar':'교화(HolyTaming): TamingBridge가 별도 처리',

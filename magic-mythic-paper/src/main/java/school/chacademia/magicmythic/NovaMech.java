@@ -6,7 +6,8 @@ import org.bukkit.entity.Player;
 /**
  * chanova{type=<spell id>;pack=<vfx pack>;...} — the 325~387 spells (source of truth: tools/nova_spells.py + tools/nova/*.py).
  * Each tier lives in its own class (NovaBasic 325~335, NovaMid 336~345, NovaMid2 346~355, NovaHigh 356~367, NovaUlt 368~373, NovaLife / NovaLife2 374~387)
- * and registers `type -> Impl`. Helpers (damage, status, VFX events, travelling shots, timers) are in {@link Nova}.
+ * and registers `type -> Impl`. 301~450 (150-spell set, tools/nova150_spells.py): Nova150Wind / Fire / Water / Earth / Light / Dark.
+ * Helpers (damage, status, VFX events, travelling shots, timers) are in {@link Nova}.
  * Player spells only (the Bridge casts them); a mob caster does nothing.
  */
 final class NovaMech extends Mech {
@@ -19,8 +20,10 @@ final class NovaMech extends Mech {
         if (!registered) {
             registered = true;
             NovaBasic.register(TYPES); NovaMid.register(TYPES); NovaMid2.register(TYPES); NovaHigh.register(TYPES); NovaUlt.register(TYPES); NovaLife.register(TYPES); NovaLife2.register(TYPES); NovaLife3.register(TYPES);
+            Nova150Wind.register(TYPES); Nova150Fire.register(TYPES); Nova150Water.register(TYPES); Nova150Earth.register(TYPES); Nova150Light.register(TYPES); Nova150Dark.register(TYPES);
         }
         NovaBasic.enable(plugin); NovaMid.enable(plugin); NovaMid2.enable(plugin); NovaHigh.enable(plugin); NovaUlt.enable(plugin); NovaLife.enable(plugin); NovaLife2.enable(plugin); NovaLife3.enable(plugin);
+        Nova150Wind.enable(plugin); Nova150Fire.enable(plugin); Nova150Water.enable(plugin); Nova150Earth.enable(plugin); Nova150Light.enable(plugin); Nova150Dark.enable(plugin);
     }
 
     NovaMech(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
