@@ -1,7 +1,7 @@
 id: casting_mold
 name: 주물 거푸집
 category: fire
-description: 적을 쇠 거푸집 안에 가두고 쇳물을 부어 2초 동안 움직이지 못하게 한 뒤, 거푸집째 터뜨립니다. 거푸집이 내려오기 전에 빠져나가면 갇히지 않습니다.
+description: 적을 쇠 거푸집 안에 가두고 쇳물을 부은 뒤, 거푸집째 터뜨립니다. 갇힌 적은 2초 동안 속박됩니다. 거푸집이 내려오기 전에 빠져나가면 갇히지 않습니다.
 icon: ''
 permission: magic.learned.casting_mold
 discovery:

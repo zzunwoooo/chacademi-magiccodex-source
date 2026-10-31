@@ -1,7 +1,7 @@
 id: kite_tether
 name: 연줄
 category: wind
-description: 조준한 적에게 바람 연을 매달아 4초 동안 공중에 띄운 채 끌고 다닙니다. 연줄이 당겨질 때마다 피해를 주고, 연이 찢어지면 적이 떨어지며 한 번 더 피해를 입습니다.
+description: 조준한 적에게 바람 연을 매달아 4초 동안 공중에 띄운 채 끌고 다닙니다(고정). 연줄이 당겨질 때마다 피해를 주고, 연이 찢어지면 적이 떨어지며 한 번 더 피해를 입습니다.
 icon: ''
 permission: magic.learned.kite_tether
 discovery:

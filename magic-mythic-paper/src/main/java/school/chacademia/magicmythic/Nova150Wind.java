@@ -142,42 +142,30 @@ final class Nova150Wind {
         });
 
         // ================================================================== 중급
-        // 308 연줄 (KiteTether): at 0.15 s a kite catches the target (50 %); for 3.85 s it is held 1.2 above the ground and dragged so it
-        // never gets more than 4.5 blocks from the caster; tug pulses at 0.62 + 0.45k s (k 0..6, 10 % each); the kite tears at 3.85 s (60 %).
-        // Bosses are not lifted and only dragged at 30 %.
+        // 308 연줄 (KiteTether): at 0.15 s a kite catches the target (50 %); then n.carry (고정 movement_lock, 3.85 s): held 1.2 above the
+        // ground and dragged so it never gets more than 4.5 blocks from the caster (artifact CC reduction / cleanse end it early; bosses get
+        // the status but are not carried); tug pulses at 0.62 + 0.45k s (k 0..6, 10 % each); the kite tears at 3.85 s (60 %).
         m.put("kite_tether", n -> {
             LivingEntity t = pick(n, 14);
             if (t == null) return false;
             double h = n.d("height", 1.2), leash = n.d("leash", 4.5);
-            boolean boss = n.boss(t);
             n.later(2, () -> {
                 if (!alive(t) || t.getWorld() != n.pl.getWorld()) return;
                 if (!tick(n, t, n.dmg(0.5))) return;
                 n.fx("kite", t.getLocation(), t);
                 n.fx("tether", Nova.chest(t), t);
-                Set<Integer> pulses = Set.of(12, 21, 30, 39, 48, 57, 66);
-                n.loop(77, age -> {
-                    if (!alive(t) || n.pl.isDead() || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > 24 * 24) return false;
+                n.carry(t, 77, age -> {
+                    if (n.pl.isDead() || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > 24 * 24) return null;
                     Location tl = t.getLocation(), cl = n.pl.getLocation();
-                    Vector to = cl.toVector().subtract(tl.toVector()).setY(0);
-                    double d = to.length();
-                    Vector v = t.getVelocity();
-                    double hx = v.getX() * 0.6, hz = v.getZ() * 0.6;
-                    if (d > leash && d > 1e-3) {
-                        double pull = Math.min(0.6, (d - leash) * 0.3 + 0.08) * (boss ? 0.3 : 1);
-                        hx = to.getX() / d * pull; hz = to.getZ() / d * pull;
-                    }
-                    double vy = v.getY();
-                    if (!boss) {
-                        double g = Telegraphs.ground(tl.clone().add(0, 0.3, 0));
-                        vy = Math.clamp((g + h - tl.getY()) * 0.3, -0.3, 0.4);
-                        t.setFallDistance(0);
-                    }
-                    t.setVelocity(new Vector(hx, vy, hz));
-                    if (pulses.contains(age)) tick(n, t, n.dmg(0.1));
-                    if (age >= 77) { tick(n, t, n.dmg(0.6)); return false; }
-                    return true;
-                }, null);
+                    Vector away = tl.toVector().subtract(cl.toVector()).setY(0);
+                    double d = away.length();
+                    Location to = d > leash && d > 1e-3 ? cl.clone().add(away.multiply(leash / d)) : tl.clone();
+                    to.setY(Telegraphs.ground(tl.clone().add(0, 0.3, 0)) + h);
+                    t.setFallDistance(0);
+                    return to;
+                }, 0.6, null);
+                for (int at : new int[]{12, 21, 30, 39, 48, 57, 66}) n.later(at - 1, () -> { if (alive(t)) tick(n, t, n.dmg(0.1)); });
+                n.later(76, () -> { if (alive(t)) tick(n, t, n.dmg(0.6)); });
             });
             return true;
         });
@@ -244,7 +232,7 @@ final class Nova150Wind {
                     state[k] = 2;
                     n.fx("pop", s);
                     n.later(0, () -> {
-                        for (LivingEntity e : n.near(s.clone().add(0, 0.6, 0), r)) if (tick(n, e, n.dmg())) n.knock(e, s, f, 0, 0.75);
+                        for (LivingEntity e : n.near(s.clone().add(0, 0.6, 0), r)) if (tick(n, e, n.dmg())) n.lift(e, 0.75);
                     });
                 }
                 return any;
@@ -344,54 +332,49 @@ final class Nova150Wind {
             return true;
         });
 
-        // 316 바람 낙하산 (GustCanopy): rune at the target's feet; 0.35 s updraft (50 %) lifts it to +2.35 over 0.35..0.7 s and holds it
-        // there (gravity ignored, pinned over the rune) until 3.5 s (10 % at 1.5 / 2.5 s); released, landing hit at 3.95 s (70 %).
-        // Players are given `gravity` while held. Bosses are not lifted: slow 3.5 s instead.
+        // 316 바람 낙하산 (GustCanopy): rune at the target's feet; 0.35 s updraft (50 %), then n.carry (고정 movement_lock 3.15 s) lifts it
+        // to +2.35 over 0.35 s and holds it over the rune until 3.5 s (10 % at 1.5 / 2.5 s); released, landing hit at 3.95 s (70 %).
+        // Bosses get the status (engine rules) but are not lifted.
         m.put("gust_canopy", n -> {
             LivingEntity t = pick(n, 16);
             if (t == null) return false;
             double lift = n.d("lift", 2.35);
             Location base = Nova.ground(t.getLocation().add(0, 0.5, 0));
             n.fx("main", base);
-            boolean boss = n.boss(t);
             n.later(6, () -> {
                 if (!alive(t) || t.getWorld() != base.getWorld()) return;
                 if (!tick(n, t, n.dmg(0.5))) return;
-                if (boss) { n.status(t, "slow:70"); }
                 n.later(22, () -> tick(n, t, n.dmg(0.1)));
                 n.later(42, () -> tick(n, t, n.dmg(0.1)));
                 n.later(71, () -> tick(n, t, n.dmg(0.7)));
-                if (boss) return;
-                if (t instanceof Player) n.status(t, "gravity:64");
-                n.loop(63, age -> {
-                    if (!alive(t) || t.getWorld() != base.getWorld() || t.getLocation().distanceSquared(base) > 12 * 12) return false;
-                    if (age >= 63) { t.setVelocity(new Vector(0, -0.5, 0)); return false; }
-                    Location tl = t.getLocation();
-                    double goal = base.getY() + lift * Math.min(1, (age + 1) / 7.0);
-                    t.setVelocity(new Vector((base.getX() - tl.getX()) * 0.3, Math.clamp((goal - tl.getY()) * 0.45, -0.3, 0.6), (base.getZ() - tl.getZ()) * 0.3));
+                // 공중 고정 = n.carry (고정 movement_lock 3.15 s): rises to +2.35 over 0.35 s, held over the rune, released (falls) when it ends
+                n.carry(t, 63, age -> {
+                    if (t.getWorld() != base.getWorld() || t.getLocation().distanceSquared(base) > 12 * 12) return null;
                     t.setFallDistance(0);
-                    return true;
-                }, null);
+                    return base.clone().add(0, lift * Math.min(1, (age + 1) / 7.0), 0);
+                }, 0.5, null);
             });
             return true;
         });
 
-        // 317 회전목마 돌풍 (CarouselGale): r 5 zone at the aimed ground; 0.8..4.8 s enemies inside (not bosses) are pulled onto the r 3.6
-        // orbit and dragged clockwise seen from above (~1.1 rad/s); 8 ticks at 1.0 + 0.5k s (15 %); 4.8 s finale (60 %) + flung outward
+        // 317 회전목마 돌풍 (CarouselGale): r 5 zone at the aimed ground; 0.8..4.8 s enemies inside are held (n.carry = 고정) on the r 3.6
+        // orbit and dragged clockwise seen from above (~1.1 rad/s; bosses get the status but are not carried); 8 ticks at 1.0 + 0.5k s (15 %); 4.8 s finale (60 %) + flung outward
         m.put("carousel_gale", n -> {
             Map<UUID, Boolean> ok = new HashMap<>();
             Location c = Nova.ground(n.aim().add(0, 1.5, 0));
             double r = n.d("r", 5), orbit = n.d("orbit", 3.6);
             n.fx("main", c);
+            Set<UUID> caught = new HashSet<>();
             n.loop(97, age -> {
-                if (age >= 16 && age < 96) for (LivingEntity e : ring(n, c, 0, r + 0.5, -1.5, 4)) {
-                    if (n.boss(e) || !movable(n, ok, e)) continue;
-                    Location l = e.getLocation();
-                    double dx = l.getX() - c.getX(), dz = l.getZ() - c.getZ(), d = Math.hypot(dx, dz);
-                    if (d < 1e-3) { dx = 0.01; d = 0.01; }
-                    double ux = dx / d, uz = dz / d, radial = Math.clamp((orbit - d) * 0.15, -0.3, 0.3), tang = 0.2;
-                    Vector v = e.getVelocity();
-                    e.setVelocity(new Vector(ux * radial - uz * tang, Math.min(v.getY(), 0.2), uz * radial + ux * tang));
+                // an enemy entering the zone is caught once: n.carry (고정 movement_lock until 4.8 s) along the r 3.6 orbit, clockwise from above
+                if (age >= 16 && age < 92 && age % 2 == 0) for (LivingEntity e : ring(n, c, 0, r + 0.5, -1.5, 4)) {
+                    if (caught.contains(e.getUniqueId()) || !allowed(n, ok, e)) continue;
+                    caught.add(e.getUniqueId());
+                    n.carry(e, 96 - age, k -> {
+                        Location l = e.getLocation();
+                        double a = Math.atan2(l.getZ() - c.getZ(), l.getX() - c.getX()) + 0.12;
+                        return new Location(c.getWorld(), c.getX() + orbit * Math.cos(a), l.getY(), c.getZ() + orbit * Math.sin(a));
+                    }, 0.25, null);
                 }
                 if (age >= 20 && age <= 90 && (age - 20) % 10 == 0) for (LivingEntity e : ring(n, c, 0, r, -1.5, 4)) tick(n, e, n.dmg(0.15));
                 if (age == 96) for (LivingEntity e : ring(n, c, 0, r + 0.5, -1.5, 4)) if (tick(n, e, n.dmg(0.6))) n.knock(e, c, n.flat(), 1.0, 0.4);
@@ -412,7 +395,7 @@ final class Nova150Wind {
         });
 
         // 319 진공 회랑 (VacuumCorridor): tunnel fixed at the cast (z 1..13, axis 1.2 up, r 1.6). 0.6..3.6 s enemies within 4 of the axis
-        // are sucked onto it (≈ 5 m/s, bosses 30 %); every 0.25 s (12 ticks) enemies in the tunnel take 8 %; 3.6 s collapse 80 %
+        // are sucked onto it (≈ 5 m/s, n.pull: 닻·면역 skip, bosses scaled); every 0.25 s (12 ticks) enemies in the tunnel take 8 %; 3.6 s collapse 80 %
         m.put("vacuum_corridor", n -> {
             Map<UUID, Boolean> ok = new HashMap<>();
             Location o = n.pl.getLocation();
@@ -421,14 +404,10 @@ final class Nova150Wind {
             n.fx("main", o);
             n.loop(73, age -> {
                 if (age >= 12 && age < 72) for (LivingEntity e : lane(n, o, f, 1, 13, 4, -1.5, 3.5)) {
-                    if (!movable(n, ok, e)) continue;
+                    if (!allowed(n, ok, e)) continue;
                     double x = e.getLocation().toVector().subtract(o.toVector()).dot(rt);
                     if (Math.abs(x) < 0.3) continue;
-                    double s = Math.min(pull, Math.abs(x) * 0.25) * (n.boss(e) ? 0.3 : 1) * -Math.signum(x);
-                    Vector v = e.getVelocity();
-                    Vector side = rt.clone().multiply(s);
-                    Vector along = f.clone().multiply(v.dot(f) * 0.5);
-                    e.setVelocity(new Vector(side.getX() + along.getX(), v.getY(), side.getZ() + along.getZ()));
+                    n.pull(e, e.getLocation().subtract(rt.clone().multiply(x)), Math.min(pull, Math.abs(x) * 0.25), 0);   // 끌기 to the axis (helper scales bosses)
                 }
                 if (age >= 12 && age <= 67 && (age - 12) % 5 == 0) for (LivingEntity e : lane(n, o, f, 1, 13, 1.6, -0.4, 2.8)) tick(n, e, n.dmg(each));
                 if (age == 72) for (LivingEntity e : lane(n, o, f, 1, 13, 1.8, -0.6, 3)) tick(n, e, n.dmg(0.8));
@@ -470,7 +449,7 @@ final class Nova150Wind {
         });
 
         // 321 무풍지대 (DeadCalm): r 6 at the caster's feet; calm 0.8..5.8 s: hostile vanilla projectiles inside (r 6.4) stop in the air
-        // (released with a small drop at the end), enemies inside lose fast horizontal motion (dashes / leaps: speed capped at 0.12);
+        // (released with a small drop at the end), enemies inside are slowed 50 % (status engine) and dashes / leaps are stopped (halt);
         // pressure ticks at 1.3 + k s (5 ticks, 20 %), collapse at 6.05 s (50 %)
         m.put("dead_calm", n -> {
             Location c = n.pl.getLocation();
@@ -504,10 +483,11 @@ final class Nova150Wind {
                         Location keep = (Location) h[1];
                         if (pr.getLocation().distanceSquared(keep) > 0.01) pr.teleport(keep);
                     }
+                    // 둔화 (slow 50 %, refreshed while inside) through the status engine; a dash / leap in progress is stopped (halt)
                     for (LivingEntity e : ring(n, c, 0, r, -2, 5)) {
+                        if (age % 10 == 6) n.status(e, "slow:24:0.5");
                         Vector v = e.getVelocity();
-                        double hs = Math.hypot(v.getX(), v.getZ());
-                        if (hs > 0.12) e.setVelocity(new Vector(v.getX() * 0.12 / hs, Math.min(v.getY(), 0.1), v.getZ() * 0.12 / hs));
+                        if (Math.hypot(v.getX(), v.getZ()) > 0.3 && n.movable(e)) n.halt(e);
                     }
                 }
                 if (age == 116) release.run();
@@ -519,7 +499,7 @@ final class Nova150Wind {
         });
 
         // 322 거대 바람개비 (GreatPinwheel): at the aimed ground; 0.8..6.8 s enemies within 5.6 are pulled to the centre (~1.5 m/s, stop
-        // inside 1 block, bosses 30 %); cuts every 0.25 s from 0.9 s (24 ticks, r 4, 6 %); 6.8 s blades burst (60 %) + flung outward
+        // inside 1 block, n.pull = 닻·면역 skip, bosses scaled); cuts every 0.25 s from 0.9 s (24 ticks, r 4, 6 %); 6.8 s blades burst (60 %) + flung outward
         m.put("great_pinwheel", n -> {
             Map<UUID, Boolean> ok = new HashMap<>();
             Location c = Nova.ground(n.aim().add(0, 1.5, 0));
@@ -527,13 +507,11 @@ final class Nova150Wind {
             n.fx("main", c);
             n.loop(137, age -> {
                 if (age >= 16 && age < 136) for (LivingEntity e : ring(n, c, 0, 5.6, -1.5, 4)) {
-                    if (!movable(n, ok, e)) continue;
+                    if (!allowed(n, ok, e)) continue;
                     Location l = e.getLocation();
                     double dx = c.getX() - l.getX(), dz = c.getZ() - l.getZ(), d = Math.hypot(dx, dz);
                     if (d < 1) continue;
-                    double s = pull * (n.boss(e) ? 0.3 : 1);
-                    Vector v = e.getVelocity();
-                    e.setVelocity(new Vector(v.getX() * 0.5 + dx / d * s, v.getY(), v.getZ() * 0.5 + dz / d * s));
+                    n.pull(e, c, pull, 0);
                 }
                 if (age >= 18 && age <= 133 && (age - 18) % 5 == 0) for (LivingEntity e : ring(n, c, 0, r, -1.5, 4)) tick(n, e, n.dmg(each));
                 if (age == 136) for (LivingEntity e : ring(n, c, 0, r + 0.5, -1.5, 4)) if (tick(n, e, n.dmg(0.6))) n.knock(e, c, n.flat(), 1.0, 0.35);
@@ -563,8 +541,8 @@ final class Nova150Wind {
 
         // ================================================================== 궁극
         // 324 천공의 방아 (SkyMill): r 8 at the aimed ground (12 s visual). 3.0..8.0 s ground blades grind every 0.5 s (11 ticks, 6 %);
-        // 7.2..8.0 s suction to the centre (not bosses); 8.0 s lift (40 % + up 1.0); 9.0 s slam (100 %, airborne enemies driven down,
-        // stun 1 s; bosses slow 2 s instead)
+        // 7.2..8.0 s suction to the centre (n.pull); 8.0 s lift (40 %, n.lift 1.0); 9.0 s slam (100 % + 기절 1 s, airborne: 중력 too;
+        // boss rules come from the status engine)
         m.put("sky_mill", n -> {
             Map<UUID, Boolean> ok = new HashMap<>();
             Location c = Nova.ground(n.aim().add(0, 1.5, 0));
@@ -573,19 +551,16 @@ final class Nova150Wind {
             n.loop(181, age -> {
                 if (age >= 60 && age <= 160 && (age - 60) % 10 == 0) for (LivingEntity e : ring(n, c, 0, r, -2, 6)) tick(n, e, n.dmg(each));
                 if (age >= 144 && age < 160) for (LivingEntity e : ring(n, c, 0, r + 1, -2, 6)) {
-                    if (n.boss(e) || !movable(n, ok, e)) continue;
+                    if (!allowed(n, ok, e)) continue;
                     Location l = e.getLocation();
                     double dx = c.getX() - l.getX(), dz = c.getZ() - l.getZ(), d = Math.hypot(dx, dz);
                     if (d < 1.2) continue;
-                    Vector v = e.getVelocity();
-                    e.setVelocity(new Vector(dx / d * 0.35, v.getY(), dz / d * 0.35));
+                    n.pull(e, c, 0.35, 0);
                 }
-                if (age == 160) for (LivingEntity e : ring(n, c, 0, r + 0.5, -2, 6)) if (tick(n, e, n.dmg(0.4))) { n.knock(e, c, n.flat(), 0, 1.0); e.setFallDistance(0); }
+                if (age == 160) for (LivingEntity e : ring(n, c, 0, r + 0.5, -2, 6)) if (tick(n, e, n.dmg(0.4))) { n.lift(e, 1.0); e.setFallDistance(0); }
                 if (age == 180) for (LivingEntity e : ring(n, c, 0, r + 0.5, -2, 10)) {
                     if (!tick(n, e, n.dmg())) continue;
-                    if (n.boss(e)) { n.status(e, "slow:40"); continue; }
-                    n.status(e, "stun:20");
-                    if (!e.isOnGround()) e.setVelocity(new Vector(0, -1.5, 0));
+                    n.status(e, e.isOnGround() ? "stun:20" : "gravity:20,stun:20");   // 중력 drags the airborne down; boss rules: engine
                 }
                 return age < 180;
             }, null);
@@ -607,7 +582,7 @@ final class Nova150Wind {
                     for (LivingEntity e : ring(n, g, 0, 2.2, -2, 5)) tick(n, e, n.dmg(each));
                 });
             }
-            n.later(185, () -> { for (LivingEntity e : lane(n, o, f, 3, 33, half, -2, 5)) if (tick(n, e, n.dmg(0.8))) n.knock(e, o, f, 0, 0.6); });
+            n.later(185, () -> { for (LivingEntity e : lane(n, o, f, 3, 33, half, -2, 5)) if (tick(n, e, n.dmg(0.8))) n.lift(e, 0.6); });
             return true;
         });
     }
@@ -624,7 +599,7 @@ final class Nova150Wind {
         return n.hit(e, amount);
     }
     /** May this spell move `e` (PvP / region rules: one zero-damage probe per target per cast)? */
-    private static boolean movable(Nova n, Map<UUID, Boolean> ok, LivingEntity e) {
+    private static boolean allowed(Nova n, Map<UUID, Boolean> ok, LivingEntity e) {
         return ok.computeIfAbsent(e.getUniqueId(), k -> n.hit(e, 0));
     }
 
@@ -703,7 +678,7 @@ final class Nova150Wind {
     /** 307: balloon burst at `p`: r damage + small lift. */
     private static void balloon(Nova n, Location p, double r) {
         n.fx("impact", p);
-        for (LivingEntity e : n.near(p, r)) if (tick(n, e, n.dmg())) n.knock(e, p, n.flat(), 0.05, 0.45);
+        for (LivingEntity e : n.near(p, r)) if (tick(n, e, n.dmg())) n.lift(e, 0.45);
     }
 
     /** 321: a hostile vanilla projectile the calm may stop (not pearls / hooks / grounded arrows / our own or allies' shots / other holds). */

@@ -1,7 +1,7 @@
 id: new_moon_veil
 name: 그믐 장막
 category: dark
-description: 그믐달의 장막으로 2.5초 동안 모습을 감춥니다. 그동안 몬스터는 나를 찾지 못하며, 장막이 풀리는 순간이나 그 전에 공격하는 순간 앞쪽의 적들에게 큰 일격을 날립니다.
+description: 그믐달의 장막으로 2.5초 동안 모습을 감춥니다. 나를 노리던 몬스터는 잠시 앞을 보지 못해 나를 놓치며, 장막이 풀리는 순간이나 그 전에 공격하는 순간 앞쪽의 적들에게 큰 일격을 날립니다.
 icon: ''
 permission: magic.learned.new_moon_veil
 discovery:

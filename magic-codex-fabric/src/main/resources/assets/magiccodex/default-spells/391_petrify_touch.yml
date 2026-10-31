@@ -1,7 +1,7 @@
 id: petrify_touch
 name: 석화의 손
 category: earth
-description: 손바닥으로 가까운 적을 쳐 3초 동안 돌로 굳힙니다. 석화가 풀리는 순간 돌 껍질이 산산이 부서지며 큰 피해를 줍니다.
+description: 손바닥으로 가까운 적을 쳐 3초 동안 돌로 굳혀 기절시킵니다. 석화가 풀리는 순간 돌 껍질이 산산이 부서지며 큰 피해를 줍니다.
 icon: ''
 permission: magic.learned.petrify_touch
 discovery:

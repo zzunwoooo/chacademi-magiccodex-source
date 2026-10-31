@@ -1,7 +1,7 @@
 id: dipole_prison
 name: 쌍극 감옥
 category: earth
-description: 적의 양옆에 자석 기둥 두 개를 세웁니다. 두 기둥 사이에 자기장이 흐르면 그 안의 적은 4초 동안 공중에 떠서 꼼짝 못 하고, 자기장이 무너질 때 큰 피해를 입습니다.
+description: 적의 양옆에 자석 기둥 두 개를 세웁니다. 두 기둥 사이에 자기장이 흐르면 그 안의 적은 4초 동안 고정된 채 공중에 붙잡혀 무기도 쓰지 못하고, 자기장이 무너질 때 큰 피해를 입습니다.
 icon: ''
 permission: magic.learned.dipole_prison
 discovery:

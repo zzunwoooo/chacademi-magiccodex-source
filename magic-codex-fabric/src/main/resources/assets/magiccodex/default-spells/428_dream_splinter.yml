@@ -1,7 +1,7 @@
 id: dream_splinter
 name: 꿈 조각
 category: dark
-description: 꿈의 수정 조각을 날립니다. 맞은 적은 1.5초 동안 정신이 흐려져 엉뚱한 방향으로 걸어갑니다.
+description: 꿈의 수정 조각을 날립니다. 맞은 적은 꿈에 홀려 1.5초 동안 공포에 질려 엉뚱한 곳으로 달아납니다.
 icon: ''
 permission: magic.learned.dream_splinter
 discovery:

@@ -1,7 +1,7 @@
 id: gust_canopy
 name: 바람 낙하산
 category: wind
-description: 조준한 적을 상승 기류로 띄운 뒤 바람 낙하산에 매달아 3초 동안 공중에 묶어 둡니다. 낙하산이 터지면 적은 땅으로 떨어지며 피해를 입습니다.
+description: 조준한 적을 상승 기류로 띄운 뒤 바람 낙하산에 매달아 3초 동안 공중에 묶어 둡니다(고정). 낙하산이 터지면 적은 땅으로 떨어지며 피해를 입습니다.
 icon: ''
 permission: magic.learned.gust_canopy
 discovery:

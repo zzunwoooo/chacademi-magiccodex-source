@@ -1,7 +1,6 @@
 package school.chacademia.magicmythic;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -14,7 +13,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
@@ -76,8 +74,8 @@ final class Nova150Dark {
             return true;
         });
 
-        // 428 꿈 조각 (DreamSplinter): crystal shard at +0.1 s, 18 blocks; hit -> damage + daze 1.5 s: a mob forgets its target and
-        // wanders to random spots (re-picked every 0.5 s), a player is nudged sideways, a boss is only slowed
+        // 428 꿈 조각 (DreamSplinter): crystal shard at +0.1 s, 18 blocks; hit -> damage + daze 1.5 s: fear 1.5 s through the status engine
+        // (mobs run off and drop their target; boss rule: engine)
         m.put("dream_splinter", n -> {
             int daze = n.i("ticks", 30);
             n.later(2, () -> {
@@ -96,7 +94,7 @@ final class Nova150Dark {
         });
 
         // 429 꼭두각시 당김 (MarionetteTug): thread (link hand -> target) + bind at the cast; caught at 0.18 s (damage),
-        // dragged 0.30~0.70 s to 1.5 m in front of the caster (bosses: not moved)
+        // dragged 0.30~0.70 s to 1.5 m in front of the caster (n.carry: movement_lock 8 ticks, engine/artifact rules; bosses not moved)
         m.put("marionette_tug", n -> {
             LivingEntity t = pick(n, n.d("range", 12));
             if (t == null) return false;
@@ -104,19 +102,11 @@ final class Nova150Dark {
             n.fx("bind", t.getLocation(), t);
             n.later(3, () -> n.hit(t, n.dmg()));
             n.later(6, () -> {
-                if (!t.isValid() || t.isDead() || n.boss(t) || t.getWorld() != n.pl.getWorld()) return;
-                n.loop(8, age -> {
-                    if (!t.isValid() || t.isDead()) return false;
-                    Location dest = n.pl.getLocation().add(n.flat().multiply(1.5));
-                    Vector to = dest.toVector().subtract(t.getLocation().toVector());
-                    double len = to.length();
-                    if (len < 0.8 || age >= 8 || len > 30) return false;
-                    Vector v = to.multiply(1.0 / Math.max(1, 8 - age));
-                    if (v.length() > 2.0) v.normalize().multiply(2.0);
-                    t.setVelocity(v.add(new Vector(0, 0.08, 0)));
+                if (!t.isValid() || t.isDead() || t.getWorld() != n.pl.getWorld()) return;
+                n.carry(t, 8, age -> {
                     t.setFallDistance(0);
-                    return true;
-                }, () -> { if (t.isValid()) t.setVelocity(t.getVelocity().multiply(0.2)); });
+                    return n.pl.getLocation().add(n.flat().multiply(1.5)).add(0, 0.1, 0);
+                }, n.d("step", 1.6), null);
             });
             return true;
         });
@@ -290,8 +280,8 @@ final class Nova150Dark {
             return true;
         });
 
-        // 438 달의 인력 (MoonPull): enemies within 6 m are pulled toward the caster between 0.2 and 1.0 s (to ~1.4 m; bosses 30 %),
-        // grip on each; convergence at 1.05 s: damage + slow 2 s to enemies within 3 m
+        // 438 달의 인력 (MoonPull): enemies within 6 m are pulled toward the caster between 0.2 and 1.0 s (to ~1.4 m, n.pull: anchors / immune skipped,
+        // bosses scaled), grip on each; convergence at 1.05 s: damage + slow 2 s to enemies within 3 m
         m.put("moon_pull", n -> {
             double r = n.d("r", 6), pull = n.d("pull", 0.9);
             Map<UUID, LivingEntity> held = new LinkedHashMap<>();
@@ -305,12 +295,10 @@ final class Nova150Dark {
                 }
                 if (age <= 20) for (LivingEntity e : held.values()) {
                     if (!e.isValid() || e.isDead() || e.getWorld() != c.getWorld()) continue;
-                    Vector to = c.toVector().subtract(e.getLocation().toVector()).setY(0);
-                    double d = to.length();
+                    Location l = e.getLocation();
+                    double d = Math.hypot(c.getX() - l.getX(), c.getZ() - l.getZ());
                     if (d < 1.6 || d > r + 4) continue;
-                    double step = Math.min(pull, (d - 1.4) / Math.max(1, 21 - age) * 1.6) * (n.boss(e) ? 0.3 : 1);
-                    Vector v = e.getVelocity();
-                    e.setVelocity(new Vector(0, Math.min(v.getY(), 0.1), 0).add(to.multiply(step / d)));
+                    n.pull(e, c, Math.min(pull, (d - 1.4) / Math.max(1, 21 - age) * 1.6), 0);
                 }
                 if (age >= 21) {
                     for (LivingEntity e : n.near(c.clone().add(0, 1, 0), n.d("hit_r", 3))) if (n.hit(e, n.dmg())) n.status(e, "slow:40");
@@ -321,7 +309,7 @@ final class Nova150Dark {
             return true;
         });
 
-        // 439 달의 울음 (MoonHowl): howl at 0.92 s: enemies within 7 m take damage + fear 3 s (bosses 1 s);
+        // 439 달의 울음 (MoonHowl): howl at 0.92 s: enemies within 7 m take damage + fear 3 s (boss rule: engine);
         // echoes at 1.65 / 2.35 s fear (1.5 s, no damage) enemies that came inside afterwards
         m.put("moon_howl", n -> {
             double r = n.d("r", 7);
@@ -331,26 +319,26 @@ final class Nova150Dark {
                 for (LivingEntity e : n.near(n.pl.getLocation().add(0, 1, 0), r)) {
                     if (!n.hit(e, n.dmg())) continue;
                     got.add(e.getUniqueId());
-                    n.status(e, "fear:" + (n.boss(e) ? 20 : fear));
+                    n.status(e, "fear:" + fear);
                 }
             });
             for (int at : new int[]{33, 47}) n.later(at, () -> {
                 for (LivingEntity e : n.near(n.pl.getLocation().add(0, 1, 0), r)) {
                     if (!got.add(e.getUniqueId()) || !n.hit(e, 0)) continue;
-                    n.status(e, "fear:" + (n.boss(e) ? 10 : 30));
+                    n.status(e, "fear:30");
                 }
             });
             return true;
         });
 
-        // 440 꿈의 미로 (DreamLabyrinth): dream prison at the target's feet; closed at 0.3 s = stun until 3.0 s (bosses 1 s);
+        // 440 꿈의 미로 (DreamLabyrinth): dream prison at the target's feet; closed at 0.3 s = stun until 3.0 s (boss rule: engine);
         // wakes at 3.0 s = big damage
         m.put("dream_labyrinth", n -> {
             LivingEntity t = pick(n, n.d("range", 16));
             if (t == null) return false;
             if (!n.hit(t, 0)) return refuse(n, "꿈에 가둘 수 없는 대상이에요");
             n.fx("dream", t.getLocation());
-            n.later(6, () -> { if (t.isValid() && !t.isDead()) n.status(t, "stun:" + (n.boss(t) ? 20 : n.i("ticks", 54))); });
+            n.later(6, () -> { if (t.isValid() && !t.isDead()) n.status(t, "stun:" + n.i("ticks", 54)); });
             n.later(60, () -> { if (t.isValid() && !t.isDead() && t.getWorld() == n.pl.getWorld()) n.hit(t, n.dmg()); });
             return true;
         });
@@ -369,7 +357,7 @@ final class Nova150Dark {
         });
 
         // 442 꼭두각시 무대 (PuppetStage): stage r 4.5 at the aimed ground; strings at 0.55 s: enemies on it take damage and are
-        // walked for 3 s in the caster's current facing (≈ 1.8 m/s, disarmed while puppeted; bosses 30 % / disarm 1 s)
+        // disarmed 3 s and walked (n.carry, movement_lock 3 s) in the caster's current facing at 2 m/s; bosses: status only
         m.put("puppet_stage", n -> {
             Location c = Nova.ground(n.aim().add(0, 1.5, 0));
             double r = n.d("r", 4.5), speed = n.d("speed", 0.1);
@@ -379,20 +367,9 @@ final class Nova150Dark {
                 for (LivingEntity e : n.near(c.clone().add(0, 1, 0), r)) {
                     if (Math.abs(e.getLocation().getY() - c.getY()) > 2.5 || !n.hit(e, n.dmg())) continue;
                     held.add(e);
-                    n.status(e, "disarm:" + (n.boss(e) ? 20 : ticks));
+                    n.status(e, "disarm:" + ticks);
                 }
-                if (held.isEmpty()) return;
-                n.loop(ticks, age -> {
-                    Vector f = n.flat();
-                    for (LivingEntity e : held) {
-                        if (!e.isValid() || e.isDead() || e.getWorld() != c.getWorld()) continue;
-                        if (e instanceof Mob mob && age % 5 == 0) mob.setTarget(null);
-                        double s = n.boss(e) ? speed * 0.3 : speed;
-                        Vector v = e.getVelocity();
-                        e.setVelocity(new Vector(f.getX() * s, Math.min(v.getY(), 0.2), f.getZ() * s));
-                    }
-                    return age < ticks;
-                }, null);
+                for (LivingEntity e : held) n.carry(e, ticks, age -> e.getLocation().add(n.flat()), speed, null);
             });
             return true;
         });
@@ -443,7 +420,7 @@ final class Nova150Dark {
         });
 
         // 446 막 내림 (CurtainFall): stage at the caster's feet (r 5.2); the curtain lands at 1.0 s: enemies inside are blinded 2 s
-        // and lose their target; the curtain tears at 3.0 s: every enemy inside takes damage
+        // (blindness status: mobs lose far targets); the curtain tears at 3.0 s: every enemy inside takes damage
         m.put("curtain_fall", n -> {
             Location c = n.pl.getLocation();
             double r = n.d("r", 5.2);
@@ -451,14 +428,13 @@ final class Nova150Dark {
                 for (LivingEntity e : inRing(n, c, r)) {
                     if (!n.hit(e, 0)) continue;
                     n.status(e, "blindness:" + n.i("ticks", 40));
-                    if (e instanceof Mob mob && mob.getTarget() == n.pl) mob.setTarget(null);
                 }
             });
             n.later(60, () -> { for (LivingEntity e : inRing(n, c, r + 0.3)) n.hit(e, n.dmg()); });
             return true;
         });
 
-        // 447 그믐 장막 (NewMoonVeil): veil rises, hidden at 0.72 s (invisible, mobs drop the caster) for 2.5 s; the veil breaks at
+        // 447 그믐 장막 (NewMoonVeil): veil rises, hidden at 0.72 s (invisible; mobs hunting the caster: blindness 1.5 s) for 2.5 s; the veil breaks at
         // the end or early when the caster attacks: strike = damage to enemies within 2.6 m of the point 1.6 m ahead at +0.05 s
         m.put("new_moon_veil", n -> {
             Player pl = n.pl;
@@ -486,7 +462,8 @@ final class Nova150Dark {
                 if (over[0] || pl.isDead()) { reveal.run(); return; }
                 VEILS.put(id, me[0]);
                 pl.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, hide + 2, 0, false, false, false));
-                for (Entity e : pl.getNearbyEntities(24, 12, 24)) if (e instanceof Mob mob && mob.getTarget() == pl) mob.setTarget(null);
+                for (Entity e : pl.getNearbyEntities(24, 12, 24))
+                    if (e instanceof Mob mob && mob.getTarget() == pl && n.enemy(mob)) n.status(mob, "blindness:" + n.i("blind", 30));   // engine: mobs lose far targets
                 n.later(1, () -> { if (!over[0]) n.fx("hidden", pl.getLocation(), pl); });
                 n.later(hide, reveal);
             });
@@ -527,7 +504,7 @@ final class Nova150Dark {
 
         // 450 월하 가면무도회 (MoonlitMasquerade): masked ball over the aimed ground (r 7). 2.5~7.5 s: 6 dance cuts (10 % each)
         // + slow while inside; 8.6 s the 12 dancers meet in the centre: 80 % (100 % within 2.5 m);
-        // 9.2 s blade rain: 60 % + stun 1 s (bosses: no stun)
+        // 9.2 s blade rain: 60 % + stun 1 s (boss rule: engine)
         m.put("moonlit_masquerade", n -> {
             Location c = Nova.ground(n.aim().add(0, 1.5, 0));
             double r = n.d("r", 7);
@@ -542,7 +519,7 @@ final class Nova150Dark {
                 }
             });
             n.later(183, () -> {
-                for (LivingEntity e : inRing(n, c, r + 0.5)) if (n.hit(e, n.dmg(0.6)) && !n.boss(e)) n.status(e, "stun:20");
+                for (LivingEntity e : inRing(n, c, r + 0.5)) if (n.hit(e, n.dmg(0.6))) n.status(e, "stun:20");
             });
             return true;
         });
@@ -600,26 +577,8 @@ final class Nova150Dark {
         return out;
     }
 
-    /** 428: confusion for `ticks` — mobs forget the target and wander, players are nudged sideways, bosses only slowed. */
-    private static void daze(Nova n, LivingEntity t, int ticks) {
-        if (n.boss(t)) { n.status(t, "slow:" + ticks + ":0.3"); return; }
-        var rnd = ThreadLocalRandom.current();
-        n.loop(ticks, age -> {
-            if (!t.isValid() || t.isDead()) return false;
-            if (age % 10 == 0) {
-                double a = rnd.nextDouble(0, Math.PI * 2);
-                Vector dir = new Vector(Math.cos(a), 0, Math.sin(a));
-                if (t instanceof Mob mob) {
-                    mob.setTarget(null);
-                    mob.getPathfinder().moveTo(t.getLocation().add(dir.multiply(4)), 1.0);
-                } else {
-                    Vector v = t.getVelocity();
-                    t.setVelocity(dir.multiply(0.3).setY(Math.min(v.getY(), 0.1)));
-                }
-            } else if (t instanceof Mob mob && mob.getTarget() != null) mob.setTarget(null);
-            return age < ticks;
-        }, () -> { if (t instanceof Mob mob && t.isValid()) mob.getPathfinder().stopPathfinding(); });
-    }
+    /** 428: dream confusion = 공포 (fear) through the status engine: mobs wander off and drop their target, players are pushed off. */
+    private static void daze(Nova n, LivingEntity t, int ticks) { n.status(t, "fear:" + ticks); }
 
     /** Keeps the player's current look when moving them. */
     private static boolean move(Player pl, Location to) {
@@ -696,12 +655,6 @@ final class Nova150Dark {
                 n.fx("mimic", Nova.chest(target));
                 n.hit(target, n.dmg());
             });
-        }
-
-        /** 447: mobs do not pick a hidden caster. */
-        @EventHandler(ignoreCancelled = true)
-        public void target(EntityTargetLivingEntityEvent e) {
-            if (!VEILS.isEmpty() && e.getTarget() instanceof Player p && VEILS.containsKey(p.getUniqueId())) e.setCancelled(true);
         }
 
         /** 434: an arm swing while looking at the shadow strikes it. */

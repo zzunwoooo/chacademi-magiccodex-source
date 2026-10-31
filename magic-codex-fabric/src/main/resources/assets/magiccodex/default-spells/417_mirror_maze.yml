@@ -1,7 +1,7 @@
 id: mirror_maze
 name: 거울 미궁
 category: light
-description: 조준한 적 주위에 거울 네 장을 세워 가둡니다. 거울 사이를 오가는 반사광이 갇힌 적을 거듭 때리고, 마지막에 거울이 깨지며 폭발합니다.
+description: 조준한 적 주위에 거울 네 장을 세워 안에 있던 적을 약 3초 동안 속박합니다. 거울 사이를 오가는 반사광이 속박된 적을 거듭 때리고, 마지막에 거울이 깨지며 폭발합니다.
 icon: ''
 permission: magic.learned.mirror_maze
 discovery:
