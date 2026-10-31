@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import school.magiccodex.protocol.StatusProtocol.Status;
 
 /** chanova types for the 150-spell set (301~450), element water. Rows: tools/nova150/water.py. VFX: PC 차카데미 vfx_Claude\<Bundle>\NOTES.md. */
 final class Nova150Water {
@@ -64,7 +65,7 @@ final class Nova150Water {
                     Location from = n.pl.getLocation(); Vector f = n.flat();
                     for (LivingEntity e : cone(n, r, half)) {
                         if (!n.hit(e, n.dmg())) continue;
-                        if (last) n.knock(e, from, f, n.boss(e) ? push * 0.3 : push, 0.15);
+                        if (last) n.knock(e, from, f, push, 0.15);
                     }
                 });
             }
@@ -93,10 +94,8 @@ final class Nova150Water {
                 for (LivingEntity e : lane(n, n.pl.getLocation(), n.flat(), 0.3, len, half)) if (n.hit(e, n.dmg())) got.add(e);
                 n.later(1, () -> {
                     for (LivingEntity e : got) {
-                        if (!e.isValid() || e.isDead() || n.boss(e)) continue;
-                        Vector to = n.pl.getLocation().toVector().subtract(e.getLocation().toVector()).setY(0);
-                        if (to.lengthSquared() < 1.5 * 1.5) continue;
-                        e.setVelocity(to.normalize().multiply(pull).setY(0.12));
+                        if (!e.isValid() || e.isDead() || e.getLocation().distanceSquared(n.pl.getLocation()) < 1.5 * 1.5) continue;
+                        n.pull(e, n.pl.getLocation(), pull, 0.12);
                     }
                 });
             });
@@ -104,7 +103,7 @@ final class Nova150Water {
         });
 
         // 355 서리 결정 (RimeCrystal): one crystal (18 blocks, 1.0 b/t); each hit = damage + 1 stack (5 s, per caster);
-        // 3 stacks = freeze (stun 1 s, bosses 0.5 s) + shatter 50 % at +1.0 s, stacks reset
+        // 3 stacks = freeze (stun 1 s; bosses: engine rule) + shatter 50 % at +1.0 s, stacks reset
         m.put("rime_crystal", n -> {
             double speed = n.d("speed", 1.0), range = n.d("range", 18);
             boolean[] hitOne = {false};
@@ -121,7 +120,7 @@ final class Nova150Water {
                     s[0]++; s[1] = now;
                     if (s[0] >= 3) {
                         mine.remove(t.getUniqueId());
-                        n.status(t, n.boss(t) ? "stun:10" : "stun:20");
+                        n.status(t, "stun:20");
                         n.fx("freeze", t.getLocation(), t);
                         n.later(19, () -> n.hit(t, n.dmg(0.5)));
                     } else mine.put(t.getUniqueId(), s);
@@ -180,7 +179,7 @@ final class Nova150Water {
                     for (LivingEntity e : disc(n, c, r, 3)) {
                         if (!n.hit(e, n.dmg())) continue;
                         Vector out = flatTo(c, e.getLocation());
-                        n.knock(e, c, out, n.boss(e) ? push * 0.3 : push, 0.2);
+                        n.knock(e, c, out, push, 0.2);
                     }
                 });
             }
@@ -285,7 +284,7 @@ final class Nova150Water {
                 for (LivingEntity e : n.near(front, 2.4, 8)) {
                     if (Targets.closestDistance(e, front) > 0.9 || !done.add(e.getUniqueId())) continue;
                     if (!n.hit(e, n.dmg())) continue;
-                    n.knock(e, pl.getLocation(), f, n.boss(e) ? knock * 0.3 : knock, 0.3);
+                    n.knock(e, pl.getLocation(), f, knock, 0.3);
                     n.fx("bump", Nova.chest(e));
                 }
                 return to < pts.size();
@@ -307,7 +306,7 @@ final class Nova150Water {
         });
 
         // 365 서리 정원 (RimeGarden): frost front 0 -> 6 m between 0.4 and 2.4 s; each enemy it reaches: x0.3 + freeze (stun 1.25 s,
-        // bosses slow 2 s) + freeze visual at the feet; all crystals shatter at 4.0 s: r 6 full damage + slow 3 s
+        // bosses: engine rule) + freeze visual at the feet; all crystals shatter at 4.0 s: r 6 full damage + slow 3 s
         m.put("rime_garden", n -> {
             Location c = spot(n);
             double r = n.d("r", 6), first = n.d("front", 0.3);
@@ -319,7 +318,7 @@ final class Nova150Water {
                     for (LivingEntity e : disc(n, c, front + 0.3, 4)) {
                         if (!frozen.add(e.getUniqueId())) continue;
                         if (!n.hit(e, n.dmg(first))) continue;
-                        n.status(e, n.boss(e) ? "slow:40" : "stun:25");
+                        n.status(e, "stun:25");
                         n.fx("freeze", e.getLocation());
                     }
                 }
@@ -340,17 +339,13 @@ final class Nova150Water {
             Location p = Nova.ground(t.getLocation().add(0, 0.5, 0));
             p.setYaw(n.pl.getLocation().getYaw()); p.setPitch(0);
             n.fx("main", p);
-            boolean boss = n.boss(t);
-            n.later(6, () -> { if (n.hit(t, 0)) n.status(t, boss ? "movement_lock:30" : "movement_lock:60"); });
+            Location hold = p.clone().add(0, 0.05, 0);
+            n.later(6, () -> { if (n.hit(t, 0)) n.carry(t, 60, a -> hold, 0.5, null); });
             double[] mult = {0.3, 0.45, 0.6};
             n.loop(68, age -> {
                 if (!t.isValid() || t.isDead() || t.getWorld() != p.getWorld()) return false;
                 Location l = t.getLocation();
                 double off = Math.hypot(l.getX() - p.getX(), l.getZ() - p.getZ());
-                if (!boss && age >= 7 && age < 67 && off > 0.4) {
-                    Vector to = p.toVector().subtract(l.toVector()).setY(0);
-                    t.setVelocity(to.multiply(Math.min(0.5, off) / off).setY(Math.min(0, t.getVelocity().getY())));
-                }
                 int k = age == 27 ? 0 : age == 47 ? 1 : age == 67 ? 2 : -1;
                 if (k >= 0 && off <= 2.0 && Math.abs(l.getY() - p.getY()) <= 3) n.hit(t, n.dmg(mult[k]));
                 if (age >= 67) {
@@ -377,7 +372,7 @@ final class Nova150Water {
                 if (age < 16 || age % 5 != 0 || !fog.inside(pl.getLocation())) return true;
                 pl.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 12, 0, false, false, false));
                 for (Entity e : pl.getNearbyEntities(24, 12, 24))
-                    if (e instanceof Mob mob && mob.getTarget() == pl && mob.getLocation().distanceSquared(pl.getLocation()) > 9) mob.setTarget(null);
+                    if (e instanceof Mob mob && mob.getTarget() == pl && n.enemy(mob) && mob.getLocation().distanceSquared(pl.getLocation()) > 9) n.status(mob, "blindness:30");
                 return true;
             }, () -> {
                 if (FOG.get(pl.getUniqueId()) == fog) FOG.remove(pl.getUniqueId());
@@ -414,22 +409,12 @@ final class Nova150Water {
                 if (age >= 6 && age <= 24) {
                     double front = Math.min(len, 1 + 14.4 * (age / 20.0 - 0.3));
                     for (LivingEntity e : lane(n, o, f, 0.6, front, half)) {
-                        if (caught.contains(e)) continue;
-                        caught.add(e);
-                        n.hit(e, n.dmg(0.5));
+                        if (!caught.add(e)) continue;
+                        if (n.hit(e, n.dmg(0.5))) n.carry(e, 46 - age, a -> end, drag, null);
                     }
                 }
-                for (LivingEntity e : caught) {
-                    if (!e.isValid() || e.isDead() || e.getWorld() != end.getWorld()) continue;
-                    Vector to = end.toVector().subtract(e.getLocation().toVector()).setY(0);
-                    double d = to.length();
-                    if (d < 0.8) continue;
-                    double s = Math.min(n.boss(e) ? drag * 0.3 : drag, d * 0.5);
-                    e.setVelocity(to.multiply(s / d).setY(Math.max(-0.2, Math.min(0.1, e.getVelocity().getY()))));
-                    e.setFallDistance(0);
-                }
                 if (age >= 47) {
-                    for (LivingEntity e : disc(n, end, 2.5, 4)) if (n.hit(e, n.dmg(0.7)) && !n.boss(e)) n.knock(e, end, f, 0.05, 0.6);
+                    for (LivingEntity e : disc(n, end, 2.5, 4)) if (n.hit(e, n.dmg(0.7))) n.lift(e, 0.6);
                     return false;
                 }
                 return true;
@@ -484,7 +469,7 @@ final class Nova150Water {
                 Set<UUID> once = new HashSet<>();
                 for (Location p : pts) for (LivingEntity e : disc(n, p, 1.7, 4)) {
                     if (!once.add(e.getUniqueId()) || !n.hit(e, n.dmg())) continue;
-                    if (!n.boss(e)) e.setVelocity(new Vector(0, n.d("lift", 0.75), 0));
+                    n.lift(e, n.d("lift", 0.75));
                 }
             });
             n.later(67, () -> {
@@ -510,7 +495,8 @@ final class Nova150Water {
                 Set<LivingEntity> held = new LinkedHashSet<>();
                 Map<UUID, Integer> touched = new HashMap<>();
                 double[] gone = {0};
-                n.loop((int) Math.ceil(range / speed) + 2, age -> {
+                int maxT = (int) Math.ceil(range / speed) + 2;
+                n.loop(maxT, age -> {
                     Location next = ctr.clone().add(f.clone().multiply(speed));
                     double gy = Telegraphs.ground(next.clone().add(0, 0.2, 0));
                     double feet = ctr.getY() - 1.6;
@@ -523,26 +509,21 @@ final class Nova150Water {
                     if (vis != null) vis.move(ctr, f);
                     for (LivingEntity e : n.near(ctr, 3.2, 12)) {
                         if (Targets.closestDistance(e, ctr) > 1.6) continue;
-                        if (!n.boss(e)) held.add(e);
+                        if (held.add(e) && n.hit(e, 0)) {
+                            int left = maxT - age;
+                            n.carry(e, left, a -> ctr.clone().add(0, -e.getHeight() / 2, 0).add(f.clone().multiply(speed)), 1.2, null);
+                        }
                         Integer last = touched.get(e.getUniqueId());
                         if (last == null || age - last >= 10) { touched.put(e.getUniqueId(), age); n.hit(e, n.dmg(tick)); }
-                    }
-                    for (LivingEntity e : held) {
-                        if (!e.isValid() || e.isDead() || e.getWorld() != ctr.getWorld()) continue;
-                        Location want = ctr.clone().add(0, -e.getHeight() / 2, 0);
-                        Vector v = want.toVector().subtract(e.getLocation().toVector()).multiply(0.5).add(f.clone().multiply(speed));
-                        if (v.length() > 1.2) v.normalize().multiply(1.2);
-                        e.setVelocity(v);
-                        e.setFallDistance(0);
                     }
                     return gone[0] < range;
                 }, () -> {
                     if (vis != null) vis.close();
                     n.fx("burst", ctr);
-                    for (LivingEntity e : held) if (e.isValid()) e.setVelocity(new Vector());
+                    for (LivingEntity e : held) if (e.isValid()) n.clear(e, Status.MOVEMENT_LOCK);
                     for (LivingEntity e : n.near(ctr, 3.0)) {
                         if (!n.hit(e, n.dmg(burst))) continue;
-                        n.knock(e, ctr, flatTo(ctr, e.getLocation()), n.boss(e) ? 0.15 : 0.5, 0.25);
+                        n.knock(e, ctr, flatTo(ctr, e.getLocation()), 0.5, 0.25);
                     }
                 });
             });
@@ -561,7 +542,7 @@ final class Nova150Water {
                 Location p = Nova.ground(c.clone().add(right.clone().multiply(2.2 * Math.cos(a))).add(f.clone().multiply(2.2 * Math.sin(a))).add(0, 1.5, 0));
                 n.later(rise[k], () -> {
                     for (LivingEntity e : disc(n, p, 1.2, 3))
-                        if (n.hit(e, n.dmg(0.25)) && !n.boss(e)) e.setVelocity(new Vector(0, n.d("lift", 0.6), 0));
+                        if (n.hit(e, n.dmg(0.25))) n.lift(e, n.d("lift", 0.6));
                 });
             }
             for (int at : new int[]{35, 51, 67})
@@ -586,11 +567,11 @@ final class Nova150Water {
                         else if (age >= 124) pullTo(n, e, c, 0.25);
                     }
                 }
-                if (age == 171) for (LivingEntity e : disc(n, c, r, 8)) if (n.hit(e, n.dmg(0.6))) n.status(e, n.boss(e) ? "stun:10" : "stun:20");
+                if (age == 171) for (LivingEntity e : disc(n, c, r, 8)) if (n.hit(e, n.dmg(0.6))) n.status(e, "stun:20");
                 if (age >= 181) {
                     for (LivingEntity e : disc(n, c, flood, 8)) {
                         if (!n.hit(e, n.dmg(0.5))) continue;
-                        n.knock(e, c, flatTo(c, e.getLocation()), n.boss(e) ? 0.2 : 0.8, 0.3);
+                        n.knock(e, c, flatTo(c, e.getLocation()), 0.8, 0.3);
                     }
                     return false;
                 }
@@ -615,7 +596,7 @@ final class Nova150Water {
                 if (age >= 90 && age < 160 && age % 20 == 0) for (LivingEntity e : disc(n, c, r, 8)) n.status(e, "slow:30");
                 if (age == 159) for (LivingEntity e : disc(n, c, r, 10)) n.hit(e, n.dmg(0.7));
                 if (age >= 174) {
-                    for (LivingEntity e : disc(n, c, r, 10)) if (n.hit(e, n.dmg(0.6))) n.status(e, n.boss(e) ? "stun:10" : "stun:30");
+                    for (LivingEntity e : disc(n, c, r, 10)) if (n.hit(e, n.dmg(0.6))) n.status(e, "stun:30");
                     return false;
                 }
                 return true;
@@ -712,15 +693,11 @@ final class Nova150Water {
         return v.lengthSquared() < 1e-4 ? new Vector(1, 0, 0) : v.normalize();
     }
 
-    /** Small horizontal pull toward c (bosses 30 %), not when already near the centre. */
+    /** Small horizontal pull toward c through Nova.pull (anchor / immunity / boss scaling), not when already near the centre. */
     private static void pullTo(Nova n, LivingEntity e, Location c, double s) {
         if (!e.isValid() || e.isDead()) return;
-        Vector to = c.toVector().subtract(e.getLocation().toVector()).setY(0);
-        double d = to.length();
-        if (d < 0.8) return;
-        double k = n.boss(e) ? s * 0.3 : s;
-        Vector v = e.getVelocity();
-        e.setVelocity(new Vector(v.getX() * 0.5, v.getY(), v.getZ() * 0.5).add(to.multiply(k / d)));
+        if (Math.hypot(e.getLocation().getX() - c.getX(), e.getLocation().getZ() - c.getZ()) < 0.8) return;
+        n.pull(e, c, s, 0);
     }
 
     /** Keeps the player's current look when moving them. */
@@ -762,14 +739,14 @@ final class Nova150Water {
             a.removePotionEffect(PotionEffectType.INVISIBILITY);
         }
 
-        /** 367: monsters cannot pick a hidden caster from more than 3 blocks away. */
-        @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+        /** 367: a monster that tries to pick the hidden caster from more than 3 blocks away is blinded (status engine: loses far targets). */
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void target(EntityTargetLivingEntityEvent e) {
-            if (!(e.getTarget() instanceof Player p)) return;
+            if (!(e.getTarget() instanceof Player p) || !(e.getEntity() instanceof LivingEntity mob)) return;
             Fog f = FOG.get(p.getUniqueId());
-            if (f == null || !f.active() || !f.inside(p.getLocation())) return;
-            if (e.getEntity().getWorld() == p.getWorld() && e.getEntity().getLocation().distanceSquared(p.getLocation()) <= 9) return;
-            e.setCancelled(true);
+            if (f == null || !f.active() || !f.inside(p.getLocation()) || !f.n.enemy(mob)) return;
+            if (mob.getWorld() == p.getWorld() && mob.getLocation().distanceSquared(p.getLocation()) <= 9) return;
+            if (!f.n.has(mob, Status.BLINDNESS)) f.n.status(mob, "blindness:30");
         }
 
         @EventHandler public void quit(PlayerQuitEvent e) {
