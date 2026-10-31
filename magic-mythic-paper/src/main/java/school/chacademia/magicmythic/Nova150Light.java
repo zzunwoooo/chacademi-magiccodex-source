@@ -127,7 +127,7 @@ final class Nova150Light {
         });
 
         // 404 빛 바늘땀 (LightStitch): 3 threaded needles fanned ±0.2 rad at 0.2 s (14 blocks); each hit = damage + slow 3 s.
-        // At 0.9 s the hit enemies are stitched in hit order (1–2, 2–3): stronger slow, pulled back together past 4.5 blocks; release at 3.9 s
+        // At 0.9 s the hit enemies are stitched in hit order (1–2, 2–3): stronger slow, pulled back together past 4.5 blocks (n.pull); release at 3.9 s
         m.put("light_stitch", n -> {
             double speed = n.d("speed", 1.3), range = n.d("range", 14), yaw = n.d("yaw", 0.2);
             List<LivingEntity> got = new ArrayList<>();
@@ -163,8 +163,8 @@ final class Nova150Light {
                         if (!alive(a) || !alive(b) || a.getWorld() != b.getWorld()) continue;
                         Vector ab = b.getLocation().toVector().subtract(a.getLocation().toVector()).setY(0);
                         if (ab.length() <= n.d("slack", 4.5)) continue;
-                        if (!n.boss(a)) push(n, a, ab, 0.3, 0.05);
-                        if (!n.boss(b)) push(n, b, ab.clone().multiply(-1), 0.3, 0.05);
+                        n.pull(a, b.getLocation(), 0.3, 0.05);                       // 끌기 도우미: 닻·면역 제외, 보스 감소
+                        n.pull(b, a.getLocation(), 0.3, 0.05);
                     }
                     return true;
                 }, () -> { for (LivingEntity e : live) if (alive(e)) n.fx("release", e.getLocation(), e); });
@@ -234,7 +234,7 @@ final class Nova150Light {
         });
 
         // 409 삼각 별자리 (TriadConstellation): triangle (circumradius 3.2, stars at local (0,-3.2) (∓2.77,1.6)) on the aimed ground;
-        // at 1.3 s enemies inside take damage + stun 1 s (bosses: slow 1 s)
+        // at 1.3 s enemies inside take damage + stun 1 s (status engine: boss rule, artifacts)
         m.put("triad_constellation", n -> {
             Location P = groundAim(n, n.d("range", 18));
             Vector f = n.flat(), x = side(f);
@@ -249,7 +249,7 @@ final class Nova150Light {
                     if (lz > R / 2 + m0) continue;                                                     // edge opposite the (0,-R) star
                     if ((lx * 0.8660 - lz * 0.5) > R / 2 + m0 || (-lx * 0.8660 - lz * 0.5) > R / 2 + m0) continue;
                     if (!n.hit(e, n.dmg())) continue;
-                    n.status(e, n.boss(e) ? "slow:20:0.4" : "stun:20");
+                    n.status(e, "stun:20");                                                  // 보스 규칙은 엔진이 적용
                     n.fx("stun", e.getLocation(), e);
                 }
             });
@@ -405,8 +405,8 @@ final class Nova150Light {
             return true;
         });
 
-        // 417 거울 미궁 (MirrorMaze): 4 mirrors (r 2.6) around the target's feet. Enemies inside at 0.7 s are caged until 3.9 s
-        // (pushed back from the edge; bosses only slowed); reflected beams hit the caged at 2.1 / 2.6 / 3.1 s (x0.25), 3.9 s blast r 3 full
+        // 417 거울 미궁 (MirrorMaze): 4 mirrors (r 2.6) around the target's feet. Enemies inside at 0.7 s are rooted (속박) until 3.9 s
+        // (status engine: bosses immune, artifacts shorten it); reflected beams hit the caged at 2.1 / 2.6 / 3.1 s (x0.25), 3.9 s blast r 3 full
         m.put("mirror_maze", n -> {
             LivingEntity t = pick(n, n.d("range", 16), n.d("mana", 55));
             if (t == null) return false;
@@ -415,15 +415,9 @@ final class Nova150Light {
             n.fx("main", P);
             Set<LivingEntity> caged = new LinkedHashSet<>();
             n.loop(80, age -> {
-                if (age == 14) caged.addAll(inCircle(n, P, R));
-                if (age > 14 && age < 78 && age % 2 == 0) {
-                    for (LivingEntity e : caged) {
-                        if (!alive(e) || e.getWorld() != P.getWorld()) continue;
-                        Vector in = P.toVector().subtract(e.getLocation().toVector()).setY(0);
-                        if (in.length() < R - 0.6 || in.length() > R + 4) continue;
-                        if (n.boss(e)) { if (age % 20 == 0) n.status(e, "slow:20:0.5"); continue; }
-                        push(n, e, in, 0.35, 0.05);
-                    }
+                if (age == 14) {                                                  // 감금 = 속박 3.2초 (보스 면역·아티팩트 감소는 엔진)
+                    caged.addAll(inCircle(n, P, R));
+                    for (LivingEntity e : caged) n.status(e, "root:" + n.i("root", 64));
                 }
                 if (age == 42 || age == 52 || age == 62)
                     for (LivingEntity e : caged) if (alive(e) && horiz(e.getLocation(), P) <= R + 0.6) n.hit(e, n.dmg(0.25));
@@ -590,7 +584,7 @@ final class Nova150Light {
                         if (!n.hit(e, n.dmg(0.12))) continue;
                         n.status(e, "burn:30");
                         n.fx("burn", Nova.chest(e));
-                        push(n, e, f, n.boss(e) ? 0.1 : 0.35, 0.05);
+                        push(n, e, f, 0.35, 0.05);
                     }
                 }
                 if (age >= 94 && age <= 103) {
@@ -632,7 +626,7 @@ final class Nova150Light {
         });
 
         // 425 초신성 (Supernova): a star is born 12 m over the aimed ground; 1.0–6.6 s it swells and draws enemies within 12 toward the
-        // centre (bosses: slowed); 7.3 s supernova: r 10 full damage + thrown out; 8.9 s the white core falls: r 4 x0.6;
+        // centre (n.pull: anchored / immune skipped, bosses scaled); 7.3 s supernova: r 10 full damage + thrown out; 8.9 s the white core falls: r 4 x0.6;
         // falling stars 9.5 / 10.0 / 10.5 s: 3 random spots within 13, r 2 x0.1
         m.put("supernova", n -> {
             Location P = groundAim(n, n.d("range", 24));
@@ -643,8 +637,7 @@ final class Nova150Light {
                     for (LivingEntity e : inCircle(n, P, 12)) {
                         Vector in = P.toVector().subtract(e.getLocation().toVector()).setY(0);
                         if (in.length() < 2) continue;
-                        if (n.boss(e)) { if (age % 20 == 0) n.status(e, "slow:20:0.3"); continue; }
-                        push(n, e, in, 0.18, 0.02);
+                        n.pull(e, P, 0.18, 0);                                          // 끌기 도우미 (보스 감소)
                     }
                 }
                 if (age == 146) for (LivingEntity e : inCircle(n, P, n.d("r", 10))) if (n.hit(e, n.dmg())) n.knock(e, P, f, 0.8, 0.4);
