@@ -77,7 +77,63 @@ final class Nova {
     }
     boolean has(LivingEntity t, Status s) { var st = plugin.status(); return st != null && st.has(t, s); }
     void clear(LivingEntity t, Status... s) { var st = plugin.status(); if (st != null) st.clear(t, s); }
-    void knock(LivingEntity t, Location from, Vector dir, double knock, double up) { plugin.targets().knock(t, from, dir == null ? look() : dir, knock, up); }
+    void knock(LivingEntity t, Location from, Vector dir, double knock, double up) { if (movable(t)) plugin.targets().knock(t, from, dir == null ? look() : dir, knock, up); }
+
+    // ------------------------------------------------------------------ 군중제어 (crowd control)
+    // Every CC goes through the server's status engine (StatusEffects.apply via status()): icons, boss rules
+    // (속박 면역, 기절·수면·공포 -> 둔화), 면역 가드, 아티팩트 CC 감소/무효 (MagicStatusEvent), 제압의 머리띠 (isControlled), 정화.
+    // Displacement (밀기·끌기·띄우기·붙잡아 나르기) has no status of its own, so it goes through these helpers:
+    // they skip anchored / immune targets (닻 장식 태그, 대지의 닻 가드, 면역 가드) and scale bosses like Targets.knock.
+    // Never setVelocity / setTarget / pathfind an enemy directly in a spell.
+
+    /** Can this target be displaced at all (not anchored, not immune, not a creative player)? */
+    boolean movable(LivingEntity t) {
+        if (t == null || !t.isValid() || t.isDead()) return false;
+        if (t instanceof Player p && (p.getGameMode() == org.bukkit.GameMode.CREATIVE || p.getGameMode() == org.bukkit.GameMode.SPECTATOR)) return false;
+        if (t.getScoreboardTags().contains(Reactions.ANCHOR_TAG)) return false;
+        var g = plugin.guards();
+        return g == null || (!g.has(t, Guards.Type.ANCHOR) && !g.has(t, Guards.Type.IMMUNE));
+    }
+    /** 끌기: velocity toward `to` (horizontal speed blocks/tick, plus `up`), bosses scaled. false = not moved. */
+    boolean pull(LivingEntity t, Location to, double speed, double up) {
+        if (!movable(t) || to == null || to.getWorld() != t.getWorld()) return false;
+        double k = plugin.targets().knockScale(t);
+        Vector d = to.toVector().subtract(t.getLocation().toVector()).setY(0);
+        double len = d.length();
+        Vector v = len < 1e-3 ? new Vector() : d.multiply(Math.min(speed, len) / len * k);
+        t.setVelocity(v.setY(up == 0 ? Math.min(t.getVelocity().getY(), 0.1) : up * k));
+        return true;
+    }
+    /** 띄우기 (에어본): upward velocity, bosses scaled. */
+    boolean lift(LivingEntity t, double up) {
+        if (!movable(t)) return false;
+        Vector v = t.getVelocity(); t.setVelocity(new Vector(v.getX(), up * plugin.targets().knockScale(t), v.getZ()));
+        return true;
+    }
+    /** Stops a displacement (velocity to rest, keeps falling). */
+    void halt(LivingEntity t) { if (t != null && t.isValid()) t.setVelocity(new Vector(0, Math.min(0, t.getVelocity().getY()), 0)); }
+    /**
+     * 붙잡아 나르기 / 공중 고정 / 끌고 다니기: applies 고정 (movement_lock) for `ticks` through the status engine and,
+     * while that status lasts (아티팩트 감소·정화·면역 shorten or cancel it), drives the target toward where.apply(age)
+     * at up to `step` blocks/tick. Bosses: the status is applied (engine rules) but they are not carried.
+     * end runs once when the hold ends (any reason). false = refused (no status, not movable).
+     */
+    boolean carry(LivingEntity t, int ticks, java.util.function.IntFunction<Location> where, double step, Runnable end) {
+        var st = plugin.status();
+        if (st == null || !movable(t) || !st.apply(pl, t, Status.MOVEMENT_LOCK, ticks, 0)) return false;
+        boolean boss = boss(t);
+        loop(ticks, age -> {
+            if (!t.isValid() || t.isDead() || !st.has(t, Status.MOVEMENT_LOCK) || !movable(t)) return false;
+            if (boss) return true;
+            Location to = where.apply(age);
+            if (to == null || to.getWorld() != t.getWorld()) return false;
+            Vector d = to.toVector().subtract(t.getLocation().toVector());
+            double len = d.length();
+            t.setVelocity(len < 1e-3 ? new Vector() : d.multiply(Math.min(step, len) / len));
+            return true;
+        }, () -> { if (!boss) halt(t); if (end != null) end.run(); });
+        return true;
+    }
     /** The entity the Bridge chose (ENTITY spells), or null. */
     LivingEntity target() { return c.target() instanceof LivingEntity le && le.isValid() ? le : null; }
     /** Aim point (AIM spells: the aimed block/entity point; SELF: the caster position). */

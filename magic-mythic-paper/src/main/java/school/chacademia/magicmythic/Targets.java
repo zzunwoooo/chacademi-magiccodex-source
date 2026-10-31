@@ -208,6 +208,9 @@ final class Targets {
         }
     }
 
+    /** Displacement multiplier (bosses: boss-knockback-multiplier). */
+    double knockScale(LivingEntity e) { return boss(e) ? bossKnock : 1; }
+
     /** Push away from `from` horizontally by `knock`, plus `up`. Bosses get a reduced push. */
     void knock(LivingEntity target, Location from, Vector fallbackDir, double knock, double up) {
         if (knock == 0 && up == 0) return;
