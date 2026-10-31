@@ -1,0 +1,5441 @@
+{
+ "schemaVersion": "1.21.0",
+ "name": "PR_Harvested",
+ "units": {
+  "length": "m (1 = 1 block)",
+  "time": "s",
+  "angle": "rad",
+  "angularVelocity": "rad/s",
+  "color": "sRGB 0..1",
+  "tint": "linear HDR multiplier"
+ },
+ "coordinateSystem": {
+  "handedness": "left",
+  "up": "+Y",
+  "forward": "+Z",
+  "eulerOrder": "Z, then X, then Y"
+ },
+ "simulation": {
+  "fixedTimeStep": 0.008333333333333333,
+  "gravity": 9.81
+ },
+ "post": {
+  "bloom": {
+   "threshold": 0.95,
+   "thresholdSpace": "gamma",
+   "softKnee": 0.5,
+   "intensity": 1.45,
+   "scatter": 0.7,
+   "tint": [
+    1,
+    0.9,
+    1
+   ]
+  },
+  "tonemapping": "neutral"
+ },
+ "materials": {
+  "slashHot": {
+   "texture": "textures/T_ScytheSlash_Sheet.png",
+   "blend": "additive",
+   "tint": [
+    3,
+    2.2,
+    1.6
+   ],
+   "depthWrite": false
+  },
+  "slashInk": {
+   "texture": "textures/T_ScytheSlash_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    0.22,
+    0.08,
+    0.3
+   ],
+   "depthWrite": false
+  },
+  "crack": {
+   "texture": "textures/T_Crack.png",
+   "blend": "alpha",
+   "tint": [
+    1.6,
+    1.1,
+    0.9
+   ],
+   "depthWrite": false
+  },
+  "mist": {
+   "texture": "textures/T_Mist_Sheet.png",
+   "blend": "alpha",
+   "tint": [
+    1,
+    1,
+    1
+   ],
+   "depthWrite": false
+  },
+  "soulFlame": {
+   "texture": "textures/T_SoulFlame_Sheet.png",
+   "blend": "additive",
+   "tint": [
+    1.4,
+    2.2,
+    2
+   ],
+   "depthWrite": false
+  },
+  "streakSoul": {
+   "texture": "textures/T_SoulStreak.png",
+   "blend": "additive",
+   "tint": [
+    1.4,
+    2.6,
+    2.4
+   ],
+   "depthWrite": false
+  },
+  "starSoul": {
+   "texture": "textures/T_Star.png",
+   "blend": "additive",
+   "tint": [
+    1.4,
+    2.8,
+    2.5
+   ],
+   "depthWrite": false
+  },
+  "glowSoul": {
+   "texture": "textures/T_Glow.png",
+   "blend": "additive",
+   "tint": [
+    0.3,
+    1.3,
+    1.1
+   ],
+   "depthWrite": false
+  },
+  "shard": {
+   "texture": "textures/T_InkShard.png",
+   "blend": "alpha",
+   "tint": [
+    1.6,
+    1.2,
+    1.2
+   ],
+   "depthWrite": false
+  },
+  "dotSoul": {
+   "texture": "textures/T_Dot.png",
+   "blend": "additive",
+   "tint": [
+    0.8,
+    2.4,
+    2
+   ],
+   "depthWrite": false
+  },
+  "shockSoul": {
+   "texture": "textures/T_Shock.png",
+   "blend": "additive",
+   "tint": [
+    0.5,
+    2,
+    1.8
+   ],
+   "depthWrite": false
+  },
+  "pillarSoul": {
+   "texture": "textures/T_SoulStreak.png",
+   "blend": "additive",
+   "tint": [
+    1,
+    2.4,
+    2.1
+   ],
+   "depthWrite": false
+  },
+  "ghost": {
+   "texture": "textures/T_Ghost.png",
+   "blend": "additive",
+   "tint": [
+    1.2,
+    2,
+    1.8
+   ],
+   "depthWrite": false
+  }
+ },
+ "meshes": {
+  "xa": {
+   "vertices": [
+    [
+     -0.93969,
+     0,
+     0.34202
+    ],
+    [
+     -0.86607,
+     0,
+     0.34553
+    ],
+    [
+     -0.82322,
+     0,
+     0.35794
+    ],
+    [
+     -0.78652,
+     0,
+     0.37094
+    ],
+    [
+     -0.75311,
+     0,
+     0.38373
+    ],
+    [
+     -0.72185,
+     0,
+     0.39602
+    ],
+    [
+     -0.69216,
+     0,
+     0.40771
+    ],
+    [
+     -0.66369,
+     0,
+     0.41876
+    ],
+    [
+     -0.63624,
+     0,
+     0.42915
+    ],
+    [
+     -0.60964,
+     0,
+     0.43888
+    ],
+    [
+     -0.58379,
+     0,
+     0.44796
+    ],
+    [
+     -0.55863,
+     0,
+     0.45642
+    ],
+    [
+     -0.53409,
+     0,
+     0.46428
+    ],
+    [
+     -0.51013,
+     0,
+     0.47156
+    ],
+    [
+     -0.48672,
+     0,
+     0.4783
+    ],
+    [
+     -0.46383,
+     0,
+     0.48452
+    ],
+    [
+     -0.44143,
+     0,
+     0.49025
+    ],
+    [
+     -0.4195,
+     0,
+     0.49553
+    ],
+    [
+     -0.39803,
+     0,
+     0.50039
+    ],
+    [
+     -0.37699,
+     0,
+     0.50485
+    ],
+    [
+     -0.35637,
+     0,
+     0.50894
+    ],
+    [
+     -0.33615,
+     0,
+     0.51271
+    ],
+    [
+     -0.31631,
+     0,
+     0.51617
+    ],
+    [
+     -0.29683,
+     0,
+     0.51935
+    ],
+    [
+     -0.2777,
+     0,
+     0.52228
+    ],
+    [
+     -0.2589,
+     0,
+     0.52499
+    ],
+    [
+     -0.2404,
+     0,
+     0.52751
+    ],
+    [
+     -0.22218,
+     0,
+     0.52985
+    ],
+    [
+     -0.20423,
+     0,
+     0.53203
+    ],
+    [
+     -0.18651,
+     0,
+     0.53409
+    ],
+    [
+     -0.16901,
+     0,
+     0.53603
+    ],
+    [
+     -0.1517,
+     0,
+     0.53788
+    ],
+    [
+     -0.13455,
+     0,
+     0.53965
+    ],
+    [
+     -0.11754,
+     0,
+     0.54135
+    ],
+    [
+     -0.10064,
+     0,
+     0.54299
+    ],
+    [
+     -0.08382,
+     0,
+     0.54459
+    ],
+    [
+     -0.06706,
+     0,
+     0.54616
+    ],
+    [
+     -0.05033,
+     0,
+     0.54769
+    ],
+    [
+     -0.03359,
+     0,
+     0.5492
+    ],
+    [
+     -0.01682,
+     0,
+     0.55068
+    ],
+    [
+     0,
+     0,
+     0.55213
+    ],
+    [
+     0.01691,
+     0,
+     0.55356
+    ],
+    [
+     0.03394,
+     0,
+     0.55495
+    ],
+    [
+     0.05112,
+     0,
+     0.5563
+    ],
+    [
+     0.06847,
+     0,
+     0.5576
+    ],
+    [
+     0.08601,
+     0,
+     0.55885
+    ],
+    [
+     0.10379,
+     0,
+     0.56002
+    ],
+    [
+     0.12183,
+     0,
+     0.56111
+    ],
+    [
+     0.14015,
+     0,
+     0.5621
+    ],
+    [
+     0.15877,
+     0,
+     0.56296
+    ],
+    [
+     0.17773,
+     0,
+     0.56369
+    ],
+    [
+     0.19705,
+     0,
+     0.56426
+    ],
+    [
+     0.21675,
+     0,
+     0.56465
+    ],
+    [
+     0.23686,
+     0,
+     0.56484
+    ],
+    [
+     0.25739,
+     0,
+     0.56479
+    ],
+    [
+     0.27838,
+     0,
+     0.5645
+    ],
+    [
+     0.29984,
+     0,
+     0.56392
+    ],
+    [
+     0.3218,
+     0,
+     0.56303
+    ],
+    [
+     0.34428,
+     0,
+     0.56181
+    ],
+    [
+     0.3673,
+     0,
+     0.56023
+    ],
+    [
+     0.3909,
+     0,
+     0.55826
+    ],
+    [
+     0.4151,
+     0,
+     0.55588
+    ],
+    [
+     0.43993,
+     0,
+     0.55306
+    ],
+    [
+     0.46543,
+     0,
+     0.54978
+    ],
+    [
+     0.49165,
+     0,
+     0.54603
+    ],
+    [
+     0.51864,
+     0,
+     0.54178
+    ],
+    [
+     0.54649,
+     0,
+     0.53704
+    ],
+    [
+     0.5753,
+     0,
+     0.5318
+    ],
+    [
+     0.6052,
+     0,
+     0.52609
+    ],
+    [
+     0.6364,
+     0,
+     0.51996
+    ],
+    [
+     0.66922,
+     0,
+     0.51351
+    ],
+    [
+     0.70419,
+     0,
+     0.50695
+    ],
+    [
+     0.74233,
+     0,
+     0.50071
+    ],
+    [
+     0.7861,
+     0,
+     0.49599
+    ],
+    [
+     0.84942,
+     0,
+     0.50034
+    ],
+    [
+     0.87673,
+     0,
+     0.48099
+    ],
+    [
+     0.89101,
+     0,
+     0.45399
+    ],
+    [
+     0.90446,
+     0,
+     0.42657
+    ],
+    [
+     0.91706,
+     0,
+     0.39875
+    ],
+    [
+     0.92881,
+     0,
+     0.37056
+    ],
+    [
+     0.93969,
+     0,
+     0.34202
+    ],
+    [
+     -0.93969,
+     0,
+     0.34202
+    ],
+    [
+     -0.92881,
+     0,
+     0.37056
+    ],
+    [
+     -0.91706,
+     0,
+     0.39875
+    ],
+    [
+     -0.90446,
+     0,
+     0.42657
+    ],
+    [
+     -0.89101,
+     0,
+     0.45399
+    ],
+    [
+     -0.87673,
+     0,
+     0.48099
+    ],
+    [
+     -0.86163,
+     0,
+     0.50754
+    ],
+    [
+     -0.84573,
+     0,
+     0.53361
+    ],
+    [
+     -0.82904,
+     0,
+     0.55919
+    ],
+    [
+     -0.81157,
+     0,
+     0.58425
+    ],
+    [
+     -0.79335,
+     0,
+     0.60876
+    ],
+    [
+     -0.77439,
+     0,
+     0.63271
+    ],
+    [
+     -0.75471,
+     0,
+     0.65606
+    ],
+    [
+     -0.73432,
+     0,
+     0.6788
+    ],
+    [
+     -0.71325,
+     0,
+     0.70091
+    ],
+    [
+     -0.69151,
+     0,
+     0.72236
+    ],
+    [
+     -0.66913,
+     0,
+     0.74314
+    ],
+    [
+     -0.64612,
+     0,
+     0.76323
+    ],
+    [
+     -0.62251,
+     0,
+     0.78261
+    ],
+    [
+     -0.59832,
+     0,
+     0.80125
+    ],
+    [
+     -0.57358,
+     0,
+     0.81915
+    ],
+    [
+     -0.54829,
+     0,
+     0.83629
+    ],
+    [
+     -0.5225,
+     0,
+     0.85264
+    ],
+    [
+     -0.49622,
+     0,
+     0.8682
+    ],
+    [
+     -0.46947,
+     0,
+     0.88295
+    ],
+    [
+     -0.44229,
+     0,
+     0.89687
+    ],
+    [
+     -0.41469,
+     0,
+     0.90996
+    ],
+    [
+     -0.38671,
+     0,
+     0.9222
+    ],
+    [
+     -0.35837,
+     0,
+     0.93358
+    ],
+    [
+     -0.32969,
+     0,
+     0.94409
+    ],
+    [
+     -0.30071,
+     0,
+     0.95372
+    ],
+    [
+     -0.27144,
+     0,
+     0.96246
+    ],
+    [
+     -0.24192,
+     0,
+     0.9703
+    ],
+    [
+     -0.21218,
+     0,
+     0.97723
+    ],
+    [
+     -0.18224,
+     0,
+     0.98325
+    ],
+    [
+     -0.15212,
+     0,
+     0.98836
+    ],
+    [
+     -0.12187,
+     0,
+     0.99255
+    ],
+    [
+     -0.0915,
+     0,
+     0.9958
+    ],
+    [
+     -0.06105,
+     0,
+     0.99813
+    ],
+    [
+     -0.03054,
+     0,
+     0.99953
+    ],
+    [
+     0,
+     0,
+     1
+    ],
+    [
+     0.03054,
+     0,
+     0.99953
+    ],
+    [
+     0.06105,
+     0,
+     0.99813
+    ],
+    [
+     0.0915,
+     0,
+     0.9958
+    ],
+    [
+     0.12187,
+     0,
+     0.99255
+    ],
+    [
+     0.15212,
+     0,
+     0.98836
+    ],
+    [
+     0.18224,
+     0,
+     0.98325
+    ],
+    [
+     0.21218,
+     0,
+     0.97723
+    ],
+    [
+     0.24192,
+     0,
+     0.9703
+    ],
+    [
+     0.27144,
+     0,
+     0.96246
+    ],
+    [
+     0.30071,
+     0,
+     0.95372
+    ],
+    [
+     0.32969,
+     0,
+     0.94409
+    ],
+    [
+     0.35837,
+     0,
+     0.93358
+    ],
+    [
+     0.38671,
+     0,
+     0.9222
+    ],
+    [
+     0.41469,
+     0,
+     0.90996
+    ],
+    [
+     0.44229,
+     0,
+     0.89687
+    ],
+    [
+     0.46947,
+     0,
+     0.88295
+    ],
+    [
+     0.49622,
+     0,
+     0.8682
+    ],
+    [
+     0.5225,
+     0,
+     0.85264
+    ],
+    [
+     0.54829,
+     0,
+     0.83629
+    ],
+    [
+     0.57358,
+     0,
+     0.81915
+    ],
+    [
+     0.59832,
+     0,
+     0.80125
+    ],
+    [
+     0.62251,
+     0,
+     0.78261
+    ],
+    [
+     0.64612,
+     0,
+     0.76323
+    ],
+    [
+     0.66913,
+     0,
+     0.74314
+    ],
+    [
+     0.69151,
+     0,
+     0.72236
+    ],
+    [
+     0.71325,
+     0,
+     0.70091
+    ],
+    [
+     0.73432,
+     0,
+     0.6788
+    ],
+    [
+     0.75471,
+     0,
+     0.65606
+    ],
+    [
+     0.77439,
+     0,
+     0.63271
+    ],
+    [
+     0.79335,
+     0,
+     0.60876
+    ],
+    [
+     0.81157,
+     0,
+     0.58425
+    ],
+    [
+     0.82904,
+     0,
+     0.55919
+    ],
+    [
+     0.84573,
+     0,
+     0.53361
+    ],
+    [
+     0.86163,
+     0,
+     0.50754
+    ],
+    [
+     0.87673,
+     0,
+     0.48099
+    ],
+    [
+     0.89101,
+     0,
+     0.45399
+    ],
+    [
+     0.90446,
+     0,
+     0.42657
+    ],
+    [
+     0.91706,
+     0,
+     0.39875
+    ],
+    [
+     0.92881,
+     0,
+     0.37056
+    ],
+    [
+     0.93969,
+     0,
+     0.34202
+    ]
+   ],
+   "uvs": [
+    [
+     0,
+     0
+    ],
+    [
+     0.0125,
+     0
+    ],
+    [
+     0.025,
+     0
+    ],
+    [
+     0.0375,
+     0
+    ],
+    [
+     0.05,
+     0
+    ],
+    [
+     0.0625,
+     0
+    ],
+    [
+     0.075,
+     0
+    ],
+    [
+     0.0875,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.1125,
+     0
+    ],
+    [
+     0.125,
+     0
+    ],
+    [
+     0.1375,
+     0
+    ],
+    [
+     0.15,
+     0
+    ],
+    [
+     0.1625,
+     0
+    ],
+    [
+     0.175,
+     0
+    ],
+    [
+     0.1875,
+     0
+    ],
+    [
+     0.2,
+     0
+    ],
+    [
+     0.2125,
+     0
+    ],
+    [
+     0.225,
+     0
+    ],
+    [
+     0.2375,
+     0
+    ],
+    [
+     0.25,
+     0
+    ],
+    [
+     0.2625,
+     0
+    ],
+    [
+     0.275,
+     0
+    ],
+    [
+     0.2875,
+     0
+    ],
+    [
+     0.3,
+     0
+    ],
+    [
+     0.3125,
+     0
+    ],
+    [
+     0.325,
+     0
+    ],
+    [
+     0.3375,
+     0
+    ],
+    [
+     0.35,
+     0
+    ],
+    [
+     0.3625,
+     0
+    ],
+    [
+     0.375,
+     0
+    ],
+    [
+     0.3875,
+     0
+    ],
+    [
+     0.4,
+     0
+    ],
+    [
+     0.4125,
+     0
+    ],
+    [
+     0.425,
+     0
+    ],
+    [
+     0.4375,
+     0
+    ],
+    [
+     0.45,
+     0
+    ],
+    [
+     0.4625,
+     0
+    ],
+    [
+     0.475,
+     0
+    ],
+    [
+     0.4875,
+     0
+    ],
+    [
+     0.5,
+     0
+    ],
+    [
+     0.5125,
+     0
+    ],
+    [
+     0.525,
+     0
+    ],
+    [
+     0.5375,
+     0
+    ],
+    [
+     0.55,
+     0
+    ],
+    [
+     0.5625,
+     0
+    ],
+    [
+     0.575,
+     0
+    ],
+    [
+     0.5875,
+     0
+    ],
+    [
+     0.6,
+     0
+    ],
+    [
+     0.6125,
+     0
+    ],
+    [
+     0.625,
+     0
+    ],
+    [
+     0.6375,
+     0
+    ],
+    [
+     0.65,
+     0
+    ],
+    [
+     0.6625,
+     0
+    ],
+    [
+     0.675,
+     0
+    ],
+    [
+     0.6875,
+     0
+    ],
+    [
+     0.7,
+     0
+    ],
+    [
+     0.7125,
+     0
+    ],
+    [
+     0.725,
+     0
+    ],
+    [
+     0.7375,
+     0
+    ],
+    [
+     0.75,
+     0
+    ],
+    [
+     0.7625,
+     0
+    ],
+    [
+     0.775,
+     0
+    ],
+    [
+     0.7875,
+     0
+    ],
+    [
+     0.8,
+     0
+    ],
+    [
+     0.8125,
+     0
+    ],
+    [
+     0.825,
+     0
+    ],
+    [
+     0.8375,
+     0
+    ],
+    [
+     0.85,
+     0
+    ],
+    [
+     0.8625,
+     0
+    ],
+    [
+     0.875,
+     0
+    ],
+    [
+     0.8875,
+     0
+    ],
+    [
+     0.9,
+     0
+    ],
+    [
+     0.9125,
+     0
+    ],
+    [
+     0.925,
+     0
+    ],
+    [
+     0.9375,
+     0
+    ],
+    [
+     0.95,
+     0
+    ],
+    [
+     0.9625,
+     0
+    ],
+    [
+     0.975,
+     0
+    ],
+    [
+     0.9875,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0.0125,
+     1
+    ],
+    [
+     0.025,
+     1
+    ],
+    [
+     0.0375,
+     1
+    ],
+    [
+     0.05,
+     1
+    ],
+    [
+     0.0625,
+     1
+    ],
+    [
+     0.075,
+     1
+    ],
+    [
+     0.0875,
+     1
+    ],
+    [
+     0.1,
+     1
+    ],
+    [
+     0.1125,
+     1
+    ],
+    [
+     0.125,
+     1
+    ],
+    [
+     0.1375,
+     1
+    ],
+    [
+     0.15,
+     1
+    ],
+    [
+     0.1625,
+     1
+    ],
+    [
+     0.175,
+     1
+    ],
+    [
+     0.1875,
+     1
+    ],
+    [
+     0.2,
+     1
+    ],
+    [
+     0.2125,
+     1
+    ],
+    [
+     0.225,
+     1
+    ],
+    [
+     0.2375,
+     1
+    ],
+    [
+     0.25,
+     1
+    ],
+    [
+     0.2625,
+     1
+    ],
+    [
+     0.275,
+     1
+    ],
+    [
+     0.2875,
+     1
+    ],
+    [
+     0.3,
+     1
+    ],
+    [
+     0.3125,
+     1
+    ],
+    [
+     0.325,
+     1
+    ],
+    [
+     0.3375,
+     1
+    ],
+    [
+     0.35,
+     1
+    ],
+    [
+     0.3625,
+     1
+    ],
+    [
+     0.375,
+     1
+    ],
+    [
+     0.3875,
+     1
+    ],
+    [
+     0.4,
+     1
+    ],
+    [
+     0.4125,
+     1
+    ],
+    [
+     0.425,
+     1
+    ],
+    [
+     0.4375,
+     1
+    ],
+    [
+     0.45,
+     1
+    ],
+    [
+     0.4625,
+     1
+    ],
+    [
+     0.475,
+     1
+    ],
+    [
+     0.4875,
+     1
+    ],
+    [
+     0.5,
+     1
+    ],
+    [
+     0.5125,
+     1
+    ],
+    [
+     0.525,
+     1
+    ],
+    [
+     0.5375,
+     1
+    ],
+    [
+     0.55,
+     1
+    ],
+    [
+     0.5625,
+     1
+    ],
+    [
+     0.575,
+     1
+    ],
+    [
+     0.5875,
+     1
+    ],
+    [
+     0.6,
+     1
+    ],
+    [
+     0.6125,
+     1
+    ],
+    [
+     0.625,
+     1
+    ],
+    [
+     0.6375,
+     1
+    ],
+    [
+     0.65,
+     1
+    ],
+    [
+     0.6625,
+     1
+    ],
+    [
+     0.675,
+     1
+    ],
+    [
+     0.6875,
+     1
+    ],
+    [
+     0.7,
+     1
+    ],
+    [
+     0.7125,
+     1
+    ],
+    [
+     0.725,
+     1
+    ],
+    [
+     0.7375,
+     1
+    ],
+    [
+     0.75,
+     1
+    ],
+    [
+     0.7625,
+     1
+    ],
+    [
+     0.775,
+     1
+    ],
+    [
+     0.7875,
+     1
+    ],
+    [
+     0.8,
+     1
+    ],
+    [
+     0.8125,
+     1
+    ],
+    [
+     0.825,
+     1
+    ],
+    [
+     0.8375,
+     1
+    ],
+    [
+     0.85,
+     1
+    ],
+    [
+     0.8625,
+     1
+    ],
+    [
+     0.875,
+     1
+    ],
+    [
+     0.8875,
+     1
+    ],
+    [
+     0.9,
+     1
+    ],
+    [
+     0.9125,
+     1
+    ],
+    [
+     0.925,
+     1
+    ],
+    [
+     0.9375,
+     1
+    ],
+    [
+     0.95,
+     1
+    ],
+    [
+     0.9625,
+     1
+    ],
+    [
+     0.975,
+     1
+    ],
+    [
+     0.9875,
+     1
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "triangles": [
+    0,
+    81,
+    1,
+    1,
+    81,
+    82,
+    1,
+    82,
+    2,
+    2,
+    82,
+    83,
+    2,
+    83,
+    3,
+    3,
+    83,
+    84,
+    3,
+    84,
+    4,
+    4,
+    84,
+    85,
+    4,
+    85,
+    5,
+    5,
+    85,
+    86,
+    5,
+    86,
+    6,
+    6,
+    86,
+    87,
+    6,
+    87,
+    7,
+    7,
+    87,
+    88,
+    7,
+    88,
+    8,
+    8,
+    88,
+    89,
+    8,
+    89,
+    9,
+    9,
+    89,
+    90,
+    9,
+    90,
+    10,
+    10,
+    90,
+    91,
+    10,
+    91,
+    11,
+    11,
+    91,
+    92,
+    11,
+    92,
+    12,
+    12,
+    92,
+    93,
+    12,
+    93,
+    13,
+    13,
+    93,
+    94,
+    13,
+    94,
+    14,
+    14,
+    94,
+    95,
+    14,
+    95,
+    15,
+    15,
+    95,
+    96,
+    15,
+    96,
+    16,
+    16,
+    96,
+    97,
+    16,
+    97,
+    17,
+    17,
+    97,
+    98,
+    17,
+    98,
+    18,
+    18,
+    98,
+    99,
+    18,
+    99,
+    19,
+    19,
+    99,
+    100,
+    19,
+    100,
+    20,
+    20,
+    100,
+    101,
+    20,
+    101,
+    21,
+    21,
+    101,
+    102,
+    21,
+    102,
+    22,
+    22,
+    102,
+    103,
+    22,
+    103,
+    23,
+    23,
+    103,
+    104,
+    23,
+    104,
+    24,
+    24,
+    104,
+    105,
+    24,
+    105,
+    25,
+    25,
+    105,
+    106,
+    25,
+    106,
+    26,
+    26,
+    106,
+    107,
+    26,
+    107,
+    27,
+    27,
+    107,
+    108,
+    27,
+    108,
+    28,
+    28,
+    108,
+    109,
+    28,
+    109,
+    29,
+    29,
+    109,
+    110,
+    29,
+    110,
+    30,
+    30,
+    110,
+    111,
+    30,
+    111,
+    31,
+    31,
+    111,
+    112,
+    31,
+    112,
+    32,
+    32,
+    112,
+    113,
+    32,
+    113,
+    33,
+    33,
+    113,
+    114,
+    33,
+    114,
+    34,
+    34,
+    114,
+    115,
+    34,
+    115,
+    35,
+    35,
+    115,
+    116,
+    35,
+    116,
+    36,
+    36,
+    116,
+    117,
+    36,
+    117,
+    37,
+    37,
+    117,
+    118,
+    37,
+    118,
+    38,
+    38,
+    118,
+    119,
+    38,
+    119,
+    39,
+    39,
+    119,
+    120,
+    39,
+    120,
+    40,
+    40,
+    120,
+    121,
+    40,
+    121,
+    41,
+    41,
+    121,
+    122,
+    41,
+    122,
+    42,
+    42,
+    122,
+    123,
+    42,
+    123,
+    43,
+    43,
+    123,
+    124,
+    43,
+    124,
+    44,
+    44,
+    124,
+    125,
+    44,
+    125,
+    45,
+    45,
+    125,
+    126,
+    45,
+    126,
+    46,
+    46,
+    126,
+    127,
+    46,
+    127,
+    47,
+    47,
+    127,
+    128,
+    47,
+    128,
+    48,
+    48,
+    128,
+    129,
+    48,
+    129,
+    49,
+    49,
+    129,
+    130,
+    49,
+    130,
+    50,
+    50,
+    130,
+    131,
+    50,
+    131,
+    51,
+    51,
+    131,
+    132,
+    51,
+    132,
+    52,
+    52,
+    132,
+    133,
+    52,
+    133,
+    53,
+    53,
+    133,
+    134,
+    53,
+    134,
+    54,
+    54,
+    134,
+    135,
+    54,
+    135,
+    55,
+    55,
+    135,
+    136,
+    55,
+    136,
+    56,
+    56,
+    136,
+    137,
+    56,
+    137,
+    57,
+    57,
+    137,
+    138,
+    57,
+    138,
+    58,
+    58,
+    138,
+    139,
+    58,
+    139,
+    59,
+    59,
+    139,
+    140,
+    59,
+    140,
+    60,
+    60,
+    140,
+    141,
+    60,
+    141,
+    61,
+    61,
+    141,
+    142,
+    61,
+    142,
+    62,
+    62,
+    142,
+    143,
+    62,
+    143,
+    63,
+    63,
+    143,
+    144,
+    63,
+    144,
+    64,
+    64,
+    144,
+    145,
+    64,
+    145,
+    65,
+    65,
+    145,
+    146,
+    65,
+    146,
+    66,
+    66,
+    146,
+    147,
+    66,
+    147,
+    67,
+    67,
+    147,
+    148,
+    67,
+    148,
+    68,
+    68,
+    148,
+    149,
+    68,
+    149,
+    69,
+    69,
+    149,
+    150,
+    69,
+    150,
+    70,
+    70,
+    150,
+    151,
+    70,
+    151,
+    71,
+    71,
+    151,
+    152,
+    71,
+    152,
+    72,
+    72,
+    152,
+    153,
+    72,
+    153,
+    73,
+    73,
+    153,
+    154,
+    73,
+    154,
+    74,
+    74,
+    154,
+    155,
+    74,
+    155,
+    75,
+    75,
+    155,
+    156,
+    75,
+    156,
+    76,
+    76,
+    156,
+    157,
+    76,
+    157,
+    77,
+    77,
+    157,
+    158,
+    77,
+    158,
+    78,
+    78,
+    158,
+    159,
+    78,
+    159,
+    79,
+    79,
+    159,
+    160,
+    79,
+    160,
+    80,
+    80,
+    160,
+    161
+   ],
+   "doubleSided": true
+  },
+  "quad": {
+   "vertices": [
+    [
+     -0.5,
+     0,
+     -0.5
+    ],
+    [
+     0.5,
+     0,
+     -0.5
+    ],
+    [
+     0.5,
+     0,
+     0.5
+    ],
+    [
+     -0.5,
+     0,
+     0.5
+    ]
+   ],
+   "uvs": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "triangles": [
+    0,
+    1,
+    2,
+    0,
+    2,
+    3
+   ],
+   "doubleSided": true
+  },
+  "pillar": {
+   "vertices": [
+    [
+     -0.175,
+     0,
+     0
+    ],
+    [
+     0.175,
+     0,
+     0
+    ],
+    [
+     -0.175,
+     1,
+     0
+    ],
+    [
+     0.175,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     -0.175
+    ],
+    [
+     0,
+     0,
+     0.175
+    ],
+    [
+     0,
+     1,
+     -0.175
+    ],
+    [
+     0,
+     1,
+     0.175
+    ]
+   ],
+   "uvs": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "triangles": [
+    0,
+    2,
+    1,
+    1,
+    2,
+    3,
+    4,
+    6,
+    5,
+    5,
+    6,
+    7
+   ],
+   "doubleSided": true
+  }
+ },
+ "models": {},
+ "features": {
+  "catalog": {
+   "billboard": {
+    "visualImpact": "high",
+    "description": "camera-facing quads"
+   },
+   "stretchedBillboard": {
+    "visualImpact": "medium",
+    "description": "quads stretched along velocity (streaks, sparks, flame tongues)"
+   },
+   "meshParticle": {
+    "visualImpact": "high",
+    "description": "each particle is a ribbon mesh (swirls, arcs, rings); defines the silhouette of strokes"
+   },
+   "flipbook": {
+    "visualImpact": "high",
+    "description": "texture sheet animation over lifetime (cel flame/smoke/stroke wipes)"
+   },
+   "additiveBlend": {
+    "visualImpact": "high",
+    "description": "additive blending for glows and strokes"
+   },
+   "alphaBlend": {
+    "visualImpact": "high",
+    "description": "straight alpha blending for cel flames, smoke, ink"
+   },
+   "hdrTint": {
+    "visualImpact": "medium",
+    "description": "material tint above 1.0; only visible as extra glow when bloom exists"
+   },
+   "bloom": {
+    "visualImpact": "high",
+    "description": "post bloom on HDR values; the anime glow look depends on it"
+   },
+   "tonemapNeutral": {
+    "visualImpact": "low",
+    "description": "Neutral tonemapping of the HDR image"
+   },
+   "worldSpace": {
+    "visualImpact": "medium",
+    "description": "particles stay where spawned while the emitter moves (trails)"
+   },
+   "rateOverDistance": {
+    "visualImpact": "medium",
+    "description": "emission proportional to emitter travel distance"
+   },
+   "rotation3D": {
+    "visualImpact": "medium",
+    "description": "per-particle 3D start rotation (mesh particles)"
+   },
+   "rotationOverLifetime": {
+    "visualImpact": "medium",
+    "description": "spinning particles (mesh spin is the swirl motion)"
+   },
+   "orbitalVelocity": {
+    "visualImpact": "high",
+    "description": "positions orbit the layer Y axis (vortex motion)"
+   },
+   "radialVelocity": {
+    "visualImpact": "low",
+    "description": "positions pushed away from the layer origin"
+   },
+   "linearVelocity": {
+    "visualImpact": "low",
+    "description": "velocity over lifetime (rising smoke/flames)"
+   },
+   "gravity": {
+    "visualImpact": "low",
+    "description": "gravity modifier"
+   },
+   "drag": {
+    "visualImpact": "low",
+    "description": "velocity damping"
+   },
+   "noise": {
+    "visualImpact": "low",
+    "description": "turbulent flutter of embers/sparkles (SCHEMA §4.3 function)"
+   },
+   "trails": {
+    "visualImpact": "medium",
+    "description": "per-particle ribbon trails"
+   },
+   "attachedFollow": {
+    "visualImpact": "high",
+    "description": "role \"attached\": the system transform follows a moving entity every frame (buffs/auras, SCHEMA §5)"
+   },
+   "linkTarget": {
+    "visualImpact": "high",
+    "description": "role \"link\": the system frame spans source → target (two runtime points, every frame) and exposes linkLength (SCHEMA §5)"
+   },
+   "pathFollow": {
+    "visualImpact": "high",
+    "description": "particle position follows a curved path from its spawn point to the link target over its lifetime (SCHEMA §4.8)"
+   },
+   "salvoSequence": {
+    "visualImpact": "high",
+    "description": "top-level salvo: N projectile instances fired one by one from caster-relative slots at fireStart + k·fireInterval (runtime inputs), each stopping its idle systems (SCHEMA §5.2)"
+   },
+   "instanceScale": {
+    "visualImpact": "medium",
+    "description": "whole cast scaled uniformly by clamp(input / reference, min, max) from a runtime input: targetHeight or (1.11.0) areaRadius; (1.15.0) only the systems in scale.systems when that list is given (SCHEMA §5.3)"
+   },
+   "phasedSequence": {
+    "visualImpact": "high",
+    "description": "systems with phase begin/sustain/end played on the sequence timeline with a runtime hold duration (SCHEMA §5.1)"
+   },
+   "depthWrite": {
+    "visualImpact": "high",
+    "description": "material writes depth (opaque alpha-blended solid mesh, e.g. a 3D rock): its own faces and later-drawn particles are depth-tested against it (SCHEMA §2 Material, 1.8.0)"
+   },
+   "flipbookCycles": {
+    "visualImpact": "medium",
+    "description": "flipbook.cycles > 1: the sheet loops several times per lifetime (flickering flames on long-lived particles, SCHEMA §4.5, 1.9.0)"
+   },
+   "stopTail": {
+    "visualImpact": "medium",
+    "description": "onStop.mode \"jumpToTail\": when the system stops emitting, live particles skip ahead so only `tail` s of life remain (they play their fade/break-up end at once, SCHEMA §4.9, 1.9.0)"
+   },
+   "modelParticle": {
+    "visualImpact": "high",
+    "description": "render.type \"model\": each particle is an animated 3D model (glTF binary, rigid node hierarchy, node TRS clips, vertex colors; 1.13.0: embedded baseColor textures, toon ramp, outline) shaded by models[].shading (SCHEMA §4.10)"
+   },
+   "widthScale": {
+    "visualImpact": "high",
+    "description": "top-level width: the listed systems are stretched along their right axis by clamp(effectWidth / reference, min, max) from a runtime input; listed layers scale their emission counts by the same factor (SCHEMA §5.4, 1.12.0)"
+   },
+   "triggeredEnd": {
+    "visualImpact": "high",
+    "description": "external trigger signal ends the phased sequence early with its own end branch (e.g. trap explosion) instead of the quiet expire end (SCHEMA §5.1, 1.7.0)"
+   }
+  },
+  "required": [
+   "additiveBlend",
+   "alphaBlend",
+   "billboard",
+   "bloom",
+   "drag",
+   "flipbook",
+   "gravity",
+   "hdrTint",
+   "linearVelocity",
+   "meshParticle",
+   "noise",
+   "radialVelocity",
+   "rotation3D",
+   "rotationOverLifetime",
+   "stretchedBillboard",
+   "tonemapNeutral"
+  ],
+  "byLayer": {
+   "harvest/X1_CutA": [
+    "additiveBlend",
+    "flipbook",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/X2_CutB": [
+    "additiveBlend",
+    "flipbook",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/X3_InkA": [
+    "alphaBlend",
+    "flipbook",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/X4_InkB": [
+    "alphaBlend",
+    "flipbook",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/X5_Flash": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "harvest/X5_FlashGlow": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint"
+   ],
+   "harvest/X6_Sparks": [
+    "additiveBlend",
+    "drag",
+    "gravity",
+    "hdrTint",
+    "stretchedBillboard"
+   ],
+   "harvest/X7_Shards": [
+    "alphaBlend",
+    "drag",
+    "gravity",
+    "hdrTint",
+    "stretchedBillboard"
+   ],
+   "harvest/X8_Shock": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/X8_Shock2": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/X9_Crack": [
+    "alphaBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ],
+   "harvest/S1_Soul": [
+    "additiveBlend",
+    "billboard",
+    "drag",
+    "hdrTint",
+    "linearVelocity",
+    "noise"
+   ],
+   "harvest/S2_SoulTrail": [
+    "additiveBlend",
+    "billboard",
+    "flipbook",
+    "hdrTint",
+    "linearVelocity"
+   ],
+   "harvest/S3_Motes": [
+    "additiveBlend",
+    "billboard",
+    "hdrTint",
+    "linearVelocity",
+    "noise"
+   ],
+   "harvest/S4_Mist": [
+    "alphaBlend",
+    "billboard",
+    "drag",
+    "flipbook",
+    "linearVelocity",
+    "radialVelocity",
+    "rotationOverLifetime"
+   ],
+   "harvest/S5_Pillar": [
+    "additiveBlend",
+    "hdrTint",
+    "meshParticle",
+    "rotation3D"
+   ]
+  }
+ },
+ "sequence": null,
+ "salvo": null,
+ "scale": null,
+ "width": null,
+ "systems": [
+  {
+   "id": "harvest",
+   "role": "impact",
+   "phase": "main",
+   "endBranch": "any",
+   "duration": 2.2,
+   "loop": false,
+   "layers": [
+    {
+     "id": "X1_CutA",
+     "material": "slashHot",
+     "render": {
+      "type": "mesh",
+      "mesh": "xa",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 10,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.32,
+       0.32
+      ],
+      "size": [
+       2.4,
+       2.4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0.9,
+        0.9
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 2,
+      "rows": 8,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "flipbook",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "X2_CutB",
+     "material": "slashHot",
+     "render": {
+      "type": "mesh",
+      "mesh": "xa",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 10,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.1,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.32,
+       0.32
+      ],
+      "size": [
+       2.4,
+       2.4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        -0.9,
+        -0.9
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 2,
+      "rows": 8,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "flipbook",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "X3_InkA",
+     "material": "slashInk",
+     "render": {
+      "type": "mesh",
+      "mesh": "xa",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 30,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.4
+      ],
+      "size": [
+       2.5,
+       2.5
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0.9,
+        0.9
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 2,
+      "rows": 8,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "flipbook",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "X4_InkB",
+     "material": "slashInk",
+     "render": {
+      "type": "mesh",
+      "mesh": "xa",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 30,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.1,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.4,
+       0.4
+      ],
+      "size": [
+       2.5,
+       2.5
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        -0.9,
+        -0.9
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 2,
+      "rows": 8,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "flipbook",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "X5_Flash",
+     "material": "starSoul",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -8,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.12,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.2,
+       0.2
+      ],
+      "size": [
+       2.6,
+       2.6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0.7854
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.25,
+       "value": 1.1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "X5_FlashGlow",
+     "material": "glowSoul",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -2,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.12,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.3
+      ],
+      "size": [
+       2.08,
+       2.08
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.4,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.2,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint"
+     ]
+    },
+    {
+     "id": "X6_Sparks",
+     "material": "streakSoul",
+     "render": {
+      "type": "stretched",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0.07,
+      "lengthScale": 1.6
+     },
+     "sortingFudge": -5,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.1,
+        "count": 24,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.4,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.3,
+       0.6
+      ],
+      "size": [
+       0.05,
+       0.1
+      ],
+      "speed": [
+       4,
+       9
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0.7,
+     "drag": 3,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "drag",
+      "gravity",
+      "hdrTint",
+      "stretchedBillboard"
+     ]
+    },
+    {
+     "id": "X7_Shards",
+     "material": "shard",
+     "render": {
+      "type": "stretched",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0.08,
+      "lengthScale": 1.4
+     },
+     "sortingFudge": 25,
+     "space": "local",
+     "position": [
+      0,
+      1.1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.1,
+        "count": 10,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.3,
+      "radiusThickness": 0.5,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.45,
+       0.8
+      ],
+      "size": [
+       0.14,
+       0.28
+      ],
+      "speed": [
+       3,
+       7
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 1.3,
+     "drag": 1,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 0.75,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "drag",
+      "gravity",
+      "hdrTint",
+      "stretchedBillboard"
+     ]
+    },
+    {
+     "id": "X8_Shock",
+     "material": "shockSoul",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 30,
+     "space": "local",
+     "position": [
+      0,
+      0.06,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.12,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.5
+      ],
+      "size": [
+       4,
+       4
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.75
+       },
+       {
+        "t": 0.5,
+        "a": 0.5
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.1,
+       "inTangent": 0,
+       "outTangent": 3
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "X8_Shock2",
+     "material": "shockSoul",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 31,
+     "space": "local",
+     "position": [
+      0,
+      0.07,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.2,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.65,
+       0.65
+      ],
+      "size": [
+       3.2,
+       3.2
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0.6
+       },
+       {
+        "t": 0.5,
+        "a": 0.4
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.1,
+       "inTangent": 0,
+       "outTangent": 2.5
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "X9_Crack",
+     "material": "crack",
+     "render": {
+      "type": "mesh",
+      "mesh": "quad",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 44,
+     "space": "local",
+     "position": [
+      0,
+      0.05,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.12,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       1.4,
+       1.4
+      ],
+      "size": [
+       2.6,
+       2.6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.06,
+        "a": 1
+       },
+       {
+        "t": 0.6,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.5,
+       "inTangent": 0,
+       "outTangent": 3
+      },
+      {
+       "t": 0.2,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    },
+    {
+     "id": "S1_Soul",
+     "material": "ghost",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 4,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.25,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       1.4,
+       1.4
+      ],
+      "size": [
+       1.3,
+       1.3
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0.5,
+     "noise": {
+      "strength": 0.3,
+      "frequency": 0.6,
+      "scrollSpeed": 0.4
+     },
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.4,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 0.2,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.3,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "drag",
+      "hdrTint",
+      "linearVelocity",
+      "noise"
+     ]
+    },
+    {
+     "id": "S2_SoulTrail",
+     "material": "soulFlame",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 0,
+     "space": "local",
+     "position": [
+      0,
+      1,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.25,
+        "count": 6,
+        "cycles": 1,
+        "interval": 0
+       },
+       {
+        "time": 0.5,
+        "count": 6,
+        "cycles": 1,
+        "interval": 0
+       },
+       {
+        "time": 0.75,
+        "count": 4,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.3,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.5,
+       0.8
+      ],
+      "size": [
+       0.4,
+       0.7
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        1.5,
+        2.5
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 1
+       },
+       {
+        "t": 1,
+        "a": 1
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "flipbook",
+      "hdrTint",
+      "linearVelocity"
+     ]
+    },
+    {
+     "id": "S3_Motes",
+     "material": "dotSoul",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": -7,
+     "space": "local",
+     "position": [
+      0,
+      0.2,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.25,
+        "count": 24,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "circle",
+      "radius": 0.8,
+      "radiusThickness": 0.8,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       1,
+       1.8
+      ],
+      "size": [
+       0.05,
+       0.12
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.6,
+        1.6
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": {
+      "strength": 0.6,
+      "frequency": 1,
+      "scrollSpeed": 0.6
+     },
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.1,
+        "a": 1
+       },
+       {
+        "t": 0.7,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 0.3,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "billboard",
+      "hdrTint",
+      "linearVelocity",
+      "noise"
+     ]
+    },
+    {
+     "id": "S4_Mist",
+     "material": "mist",
+     "render": {
+      "type": "billboard",
+      "mesh": null,
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 35,
+     "space": "local",
+     "position": [
+      0,
+      0.8,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.1,
+        "count": 6,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "sphere",
+      "radius": 0.4,
+      "radiusThickness": 0.6,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.9,
+       1.4
+      ],
+      "size": [
+       1,
+       1.6
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       6.28319
+      ],
+      "rotation3D": null
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       -0.5,
+       0.5
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "world",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0.05,
+        0.3
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0.8,
+       1.6
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 1.4,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.2,
+        "a": 0.55
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.6,
+       "inTangent": 0,
+       "outTangent": 0
+      },
+      {
+       "t": 1,
+       "value": 1.25,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": {
+      "columns": 4,
+      "rows": 4,
+      "frameOrder": "rowMajorFromTopLeft",
+      "playback": "oncePerLifetime",
+      "cycles": 1
+     },
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "alphaBlend",
+      "billboard",
+      "drag",
+      "flipbook",
+      "linearVelocity",
+      "radialVelocity",
+      "rotationOverLifetime"
+     ]
+    },
+    {
+     "id": "S5_Pillar",
+     "material": "pillarSoul",
+     "render": {
+      "type": "mesh",
+      "mesh": "pillar",
+      "model": null,
+      "velocityScale": 0,
+      "lengthScale": 1
+     },
+     "sortingFudge": 5,
+     "space": "local",
+     "position": [
+      0,
+      0,
+      0
+     ],
+     "emission": {
+      "rateOverTime": 0,
+      "rateOverDistance": 0,
+      "bursts": [
+       {
+        "time": 0.25,
+        "count": 1,
+        "cycles": 1,
+        "interval": 0
+       }
+      ]
+     },
+     "shape": {
+      "type": "none",
+      "radius": 0,
+      "radiusThickness": 1,
+      "offset": [
+       0,
+       0,
+       0
+      ],
+      "height": 0,
+      "width": 0,
+      "depth": 0
+     },
+     "start": {
+      "lifetime": [
+       0.7,
+       0.7
+      ],
+      "size": [
+       5,
+       5
+      ],
+      "speed": [
+       0,
+       0
+      ],
+      "rotation": [
+       0,
+       0
+      ],
+      "rotation3D": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        6.28319
+       ],
+       [
+        0,
+        0
+       ]
+      ]
+     },
+     "rotationOverLifetime": {
+      "x": [
+       0,
+       0
+      ],
+      "y": [
+       0,
+       0
+      ],
+      "z": [
+       0,
+       0
+      ]
+     },
+     "velocityOverLifetime": {
+      "space": "local",
+      "linear": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        0
+       ]
+      ],
+      "orbitalY": [
+       0,
+       0
+      ],
+      "radial": [
+       0,
+       0
+      ]
+     },
+     "gravityModifier": 0,
+     "drag": 0,
+     "noise": null,
+     "colorOverLifetime": {
+      "color": [
+       {
+        "t": 0,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       },
+       {
+        "t": 1,
+        "rgb": [
+         1,
+         1,
+         1
+        ]
+       }
+      ],
+      "alpha": [
+       {
+        "t": 0,
+        "a": 0
+       },
+       {
+        "t": 0.15,
+        "a": 0.8
+       },
+       {
+        "t": 1,
+        "a": 0
+       }
+      ]
+     },
+     "sizeOverLifetime": [
+      {
+       "t": 0,
+       "value": 0.2,
+       "inTangent": 0,
+       "outTangent": 4
+      },
+      {
+       "t": 0.3,
+       "value": 1,
+       "inTangent": 0,
+       "outTangent": 0
+      }
+     ],
+     "flipbook": null,
+     "animation": null,
+     "onStop": {
+      "mode": "finish",
+      "tail": 0
+     },
+     "trail": null,
+     "path": null,
+     "requires": [
+      "additiveBlend",
+      "hdrTint",
+      "meshParticle",
+      "rotation3D"
+     ]
+    }
+   ]
+  }
+ ],
+ "demo": {
+  "note": "non-normative preview scene; not part of the effect",
+  "interval": 2.6,
+  "bg": [
+   0.1,
+   0.08,
+   0.12
+  ],
+  "floor": [
+   0.08,
+   0.07,
+   0.09
+  ],
+  "grid": [
+   0.06,
+   0.05,
+   0.07
+  ],
+  "scenarios": {
+   "base": {
+    "label": "기본",
+    "from": [
+     0,
+     0,
+     0
+    ],
+    "to": [
+     0,
+     0,
+     0
+    ],
+    "normal": [
+     0,
+     1,
+     0
+    ],
+    "flight": 0.01,
+    "hits": [
+     {
+      "t": 0.1,
+      "point": [
+       0,
+       0,
+       0
+      ],
+      "normal": [
+       0,
+       1,
+       0
+      ],
+      "incoming": [
+       0,
+       -1,
+       0
+      ]
+     }
+    ],
+    "targets": [
+     [
+      0,
+      0,
+      0,
+      0
+     ]
+    ],
+    "camera": {
+     "target": [
+      0,
+      1.4,
+      0
+     ],
+     "dist": 7,
+     "yaw": -100,
+     "pitch": 12
+    }
+   }
+  }
+ }
+}

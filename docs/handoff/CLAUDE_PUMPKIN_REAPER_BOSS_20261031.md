@@ -14,6 +14,9 @@
 | `magic-mythic-paper/mythicmobs/Mobs/chacademi_boss_pumpkin_reaper.yml` (새) | 보스 `CA_Boss_pumpkin_reaper` + 기믹 소품 9종 |
 | `magic-mythic-paper/mythicmobs/Skills/chacademi_boss_pumpkin_reaper.yml` (새) | `CHA_REAPER_*` 24개 (모션 14 + 패턴 10) |
 | `magic-mythic-paper/models/pumpkin_reaper/*.bbmodel` (새) | 보스 모델 기본·이로치 (애니 26개). ModelEngine blueprints 로 |
+| `magic-mythic-paper/models/pumpkin_reaper/motion_preview.html`, `source/` (새) | 모델 3D 미리보기 + 모델 생성 원본 (models.py·anims.py 등) |
+| `portable-vfx-runtime/assets/PR_*/` (새, 16개) | **VFX 완성 팩** (vfx.json + textures + NOTES.md, 다른 assets 팩과 같은 구조). 예고 없음 |
+| `portable-vfx-runtime/tools/pumpkin_reaper_vfx/` (새) | VFX 원본 (lib.js, 팩 스펙 16, 텍스처 생성기, 빌드 스크립트, 서버 연동 표 _NOTES.md) |
 
 ## 1. 동작 요약
 
@@ -48,7 +51,7 @@
 2. `mythicmobs/Mobs/chacademi_boss_pumpkin_reaper.yml` → `plugins/MythicMobs/Mobs/`, `Skills/chacademi_boss_pumpkin_reaper.yml` → `plugins/MythicMobs/Skills/`, `/mm reload`.
 3. ModelEngine: `models/pumpkin_reaper/pumpkin_reaper.bbmodel` → blueprints (모델 id `pumpkin_reaper`). 이로치 bbmodel 은 지금 미몹에서 안 씀(필요하면 `CA_Boss_pumpkin_reaper_shiny` 추가).
    **아직 없는 모델 (사장님 Blockbench 제작 예정)**: `reaper_pumpkin_smile/angry/sad/blank/surprised`, `reaper_lantern`, `reaper_candy`, `reaper_scarecrow`. 없으면 소품은 기본 엔티티로 보임(허스크·갑옷 거치대) — 판정은 그대로.
-4. PortableVFX 팩 16개 (사장님 PC `Desktop\차카데미 vfx_Claude\PR_*` 또는 채팅의 PumpkinReaper_VFX_all.zip) → 클라이언트 PortableVFX `claude` 이름공간. 이 코드는 `claude:pr_<팩 이름 소문자>/<시스템 소문자>` 로 부른다
+4. PortableVFX 팩 16개 = 이 브랜치 `portable-vfx-runtime/assets/PR_*/` → 다른 assets 팩과 같은 방식으로 클라이언트 PortableVFX `claude` 이름공간에 배포. 이 코드는 `claude:pr_<팩 이름 소문자>/<시스템 소문자>` 로 부른다
    (예 `claude:pr_harvestslash/slashback`, `claude:pr_candyrain/sharemark`). 팩 id 규칙이 다르면 ReaperBoss.java·Skills yml 의 `pr_` id 만 바꾸면 된다.
 5. 보스 소환: 경기장 한가운데에서 `/mm mobs spawn CA_Boss_pumpkin_reaper` (소환 위치 = 경기장 중심, 정면 = 소환할 때 바라본 방향 → 호박 3개가 그 앞에 섬).
 
