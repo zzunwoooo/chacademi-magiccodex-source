@@ -139,12 +139,12 @@ final class Nova150Earth {
             double r = n.d("r", 1.4), up = n.d("up", 0.9);
             Location at = Nova.ground(t.getLocation().add(0, 0.5, 0));
             n.fx("main", at);
-            n.later(7, () -> { for (LivingEntity e : inside(n, at, r)) if (n.hit(e, n.dmg())) { e.setFallDistance(0); n.knock(e, at, n.flat(), 0, up); } });
+            n.later(7, () -> { for (LivingEntity e : inside(n, at, r)) if (n.hit(e, n.dmg())) { e.setFallDistance(0); n.lift(e, up); } });
             return true;
         });
 
         // 385 자석 손 (MagnetPalm): `cast` attached; enemies in the 5.5 m / ±35° cone at +0.3 s (6 t) are pulled to 1.3 m in front of
-        // the hand until 1.2 s (bosses 30 %); clamp at 1.2 s (24 t): damage to the caught ones still within 8 blocks
+        // the hand until 1.2 s (n.pull: anchored / immune targets stay, bosses scaled by the helper); clamp at 1.2 s (24 t): damage to the caught ones still within 8 blocks
         m.put("magnet_palm", n -> {
             double r = n.d("r", 5.5), half = n.d("half", 35), pull = n.d("pull", 0.35);
             List<LivingEntity> got = new ArrayList<>();
@@ -154,11 +154,9 @@ final class Nova150Earth {
                     Location to = n.pl.getLocation().add(n.flat().multiply(1.3));
                     for (LivingEntity e : got) {
                         if (!e.isValid() || e.isDead() || e.getWorld() != to.getWorld()) continue;
-                        Vector v = to.toVector().subtract(e.getLocation().toVector()).setY(0);
-                        double d = v.length();
-                        if (d < 0.9) { e.setVelocity(e.getVelocity().multiply(0.3)); continue; }
-                        double s = Math.min(pull * (n.boss(e) ? 0.3 : 1), d * 0.3);
-                        e.setVelocity(v.multiply(s / d).setY(Math.clamp(e.getVelocity().getY(), -0.4, 0.15)));
+                        double d = Math.hypot(to.getX() - e.getLocation().getX(), to.getZ() - e.getLocation().getZ());
+                        if (d < 0.9) { n.halt(e); continue; }
+                        n.pull(e, to, Math.min(pull, d * 0.3), 0);
                     }
                 }
                 if (age == 24) {
@@ -291,7 +289,7 @@ final class Nova150Earth {
             int ticks = n.i("ticks", 40);
             Location at = Nova.ground(t.getLocation().add(0, 0.5, 0));
             n.fx("main", at);
-            n.later(10, () -> { if (onSpot(t, at, 1.6, 3) && n.hit(t, 0)) { n.status(t, "stun:" + ticks); t.setVelocity(new Vector()); } });
+            n.later(10, () -> { if (onSpot(t, at, 1.6, 3) && n.hit(t, 0)) n.status(t, "stun:" + ticks); });
             n.later(52, () -> {
                 for (LivingEntity e : inside(n, at, 3)) {
                     boolean in = onSpot(e, at, 1.8, 3);
@@ -301,8 +299,9 @@ final class Nova150Earth {
             return true;
         });
 
-        // 393 쇳가루 폭풍 (IronDustStorm): `main` static r 4 on the aimed ground. 0.4~3.4 s (8~68 t): enemies inside swirl inward
-        // (not bosses); 8 collisions every 0.33 s from 0.75 s: an enemy with another enemy within 2.5 is flung into it (22 %), alone 12 %;
+        // 393 쇳가루 폭풍 (IronDustStorm): `main` static r 4 on the aimed ground. 0.4~3.4 s (8~67 t): enemies inside (checked every
+        // 0.25 s) are caught by n.carry (고정 status; artifacts / cleanse cut it short, bosses keep the status but are not moved) and swirled
+        // around the eye, slowly drawn in; 8 collisions every 0.33 s from 0.75 s: an enemy with another enemy within 2.5 takes 22 %, alone 12 %;
         // dispersal at 3.4 s (68 t): 50 % + push out
         m.put("iron_dust_storm", n -> {
             Location c = Nova.ground(n.aim().add(0, 0.5, 0));
@@ -311,16 +310,18 @@ final class Nova150Earth {
             n.fx("main", c);
             Set<Integer> hits = new HashSet<>();
             for (int k = 0; k < 8; k++) hits.add(15 + (int) Math.round(k * 6.6));
+            Set<UUID> caught = new HashSet<>();
             n.loop(68, age -> {
-                if (age >= 8 && age < 68 && age % 2 == 0) {
+                if (age >= 8 && age < 62 && age % 5 == 3) {
                     for (LivingEntity e : inside(n, c, r)) {
-                        if (n.boss(e)) continue;
-                        Vector to = c.toVector().subtract(e.getLocation().toVector()).setY(0);
-                        double d = to.length();
-                        if (d < 0.3) continue;
-                        Vector in = to.clone().multiply(0.07 / d), swirl = new Vector(-to.getZ(), 0, to.getX()).multiply(0.14 / d);
-                        Vector v = e.getVelocity();
-                        e.setVelocity(new Vector(v.getX() * 0.6, v.getY(), v.getZ() * 0.6).add(in).add(swirl));
+                        if (caught.contains(e.getUniqueId()) || !n.hit(e, 0)) continue;
+                        caught.add(e.getUniqueId());
+                        Location l0 = e.getLocation();
+                        double a0 = Math.atan2(l0.getZ() - c.getZ(), l0.getX() - c.getX()), d0 = Math.max(1, Math.hypot(l0.getX() - c.getX(), l0.getZ() - c.getZ()));
+                        n.carry(e, 67 - age, a -> {
+                            double ang = a0 + a * 0.12, rad = Math.max(1, d0 - a * 0.03);
+                            return new Location(c.getWorld(), c.getX() + Math.cos(ang) * rad, e.getLocation().getY(), c.getZ() + Math.sin(ang) * rad);
+                        }, 0.45, null);
                     }
                 }
                 if (hits.contains(age)) {
@@ -332,11 +333,7 @@ final class Nova150Earth {
                             double d2 = o.getLocation().distanceSquared(e.getLocation());
                             if (d2 < best) { best = d2; mate = o; }
                         }
-                        if (!n.hit(e, n.dmg(mate != null ? 0.22 : 0.12))) continue;
-                        if (mate != null && !n.boss(e)) {
-                            Vector to = mate.getLocation().toVector().subtract(e.getLocation().toVector()).setY(0);
-                            if (to.lengthSquared() > 1e-4) e.setVelocity(to.normalize().multiply(0.35).setY(0.15));
-                        }
+                        n.hit(e, n.dmg(mate != null ? 0.22 : 0.12));
                     }
                 }
                 if (age == 68) { for (LivingEntity e : inside(n, c, r + 0.5)) if (n.hit(e, n.dmg(0.5))) n.knock(e, c, n.flat(), 0.55, 0.25); return false; }
@@ -380,7 +377,8 @@ final class Nova150Earth {
         });
 
         // 396 쌍극 감옥 (DipolePrison): `main` static at the target's feet (caster facing). Field on at 0.95 s (19 t): enemies within
-        // 2.6 of the spot are lifted to ~0.8 blocks and held there until 5.0 s (100 t) with root + disarm (bosses: slow only, not lifted);
+        // 2.6 of the spot are held ~0.8 blocks up by n.carry (고정 status, 4 s; artifacts / cleanse shorten it, bosses get the status
+        // but are not lifted) + disarm 4 s;
         // collapse at 5.0 s: damage to the held ones and anyone within 2.6
         m.put("dipole_prison", n -> {
             LivingEntity t = pick(n, 16, n.d("mana", 110));
@@ -388,29 +386,21 @@ final class Nova150Earth {
             double r = n.d("r", 2.6);
             Location at = Nova.ground(t.getLocation().add(0, 0.5, 0));
             n.fx("main", at);
-            Map<LivingEntity, double[]> held = new LinkedHashMap<>();   // {x, z, ground y}
+            Set<LivingEntity> held = new LinkedHashSet<>();
             n.loop(100, age -> {
                 if (age == 19) {
                     for (LivingEntity e : inside(n, at, r)) {
                         if (!n.hit(e, 0)) continue;
-                        if (n.boss(e)) { n.status(e, "slow:81:0.45"); continue; }
-                        n.status(e, "root:81,disarm:81");
+                        held.add(e);
+                        n.status(e, "disarm:81");
                         Location l = e.getLocation();
-                        held.put(e, new double[]{l.getX(), l.getZ(), Nova.ground(l.clone().add(0, 0.5, 0)).getY()});
-                    }
-                }
-                if (age > 19 && age < 100) {
-                    for (var en : held.entrySet()) {
-                        LivingEntity e = en.getKey(); double[] b = en.getValue();
-                        if (!e.isValid() || e.isDead() || e.getWorld() != at.getWorld()) continue;
-                        Location l = e.getLocation();
-                        double vy = Math.clamp((b[2] + 0.8 - l.getY()) * 0.35, -0.3, 0.4);
-                        e.setVelocity(new Vector((b[0] - l.getX()) * 0.2, vy, (b[1] - l.getZ()) * 0.2));
-                        e.setFallDistance(0);
+                        Location hold = Nova.ground(l.clone().add(0, 0.5, 0)).add(0, 0.8, 0);
+                        hold.setX(l.getX()); hold.setZ(l.getZ());
+                        n.carry(e, 81, a -> { e.setFallDistance(0); return hold; }, 0.3, null);
                     }
                 }
                 if (age == 100) {
-                    Set<LivingEntity> all = new LinkedHashSet<>(held.keySet());
+                    Set<LivingEntity> all = new LinkedHashSet<>(held);
                     all.addAll(inside(n, at, r));
                     for (LivingEntity e : all) { e.setFallDistance(0); n.hit(e, n.dmg()); }
                     return false;
@@ -451,7 +441,7 @@ final class Nova150Earth {
 
         // ================================================================== 궁극 399~400
         // 399 대사막의 모래시계 (GreatHourglass): `main` static r 7 on the aimed ground (11.8 s). Storm 2.6~7.3 s (52~146 t): enemies
-        // inside slowed 30 % and drawn toward the centre (not bosses); sinkhole at 8.2 s (164 t): 45 % + root 0.5 s;
+        // inside slowed 30 % and drawn toward the centre (n.pull, bosses scaled); sinkhole at 8.2 s (164 t): 45 % + root 0.5 s;
         // geyser at 8.9 s (178 t): full damage + big lift (r 7.5)
         m.put("great_hourglass", n -> {
             Location c = Nova.ground(n.aim().add(0, 0.5, 0));
@@ -459,13 +449,11 @@ final class Nova150Earth {
             double r = n.d("r", 7);
             n.fx("main", c);
             n.loop(178, age -> {
-                if (age >= 52 && age <= 146 && age % 5 == 0) {
+                if (age >= 52 && age <= 146 && age % 2 == 0) {
                     for (LivingEntity e : inside(n, c, r)) {
-                        if (age % 10 == 0 && n.hit(e, 0)) n.status(e, "slow:20:0.3");
-                        if (n.boss(e)) continue;
-                        Vector to = c.toVector().subtract(e.getLocation().toVector()).setY(0);
-                        double d = to.length();
-                        if (d > 0.8) e.setVelocity(e.getVelocity().add(to.multiply(0.08 / d)));
+                        if (!n.hit(e, 0)) continue;
+                        if (age % 10 == 0) n.status(e, "slow:20:0.3");
+                        if (Math.hypot(e.getLocation().getX() - c.getX(), e.getLocation().getZ() - c.getZ()) > 0.8) n.pull(e, c, 0.12, 0);
                     }
                 }
                 if (age == 164) for (LivingEntity e : inside(n, c, r)) if (n.hit(e, n.dmg(0.45))) n.status(e, "root:10");
