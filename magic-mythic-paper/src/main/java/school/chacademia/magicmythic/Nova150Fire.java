@@ -164,7 +164,7 @@ final class Nova150Fire {
 
         // ================================================================ 중급
         // 333 단조 망치 (ForgeHammer): circle at the target's feet now, hammer lands at +0.62 s: r 1.8 there -> damage + stun 1 s
-        // (boss 0.3 s); moving off the spot dodges it
+        // (status engine: boss rules / artifacts); moving off the spot dodges it
         m.put("forge_hammer", n -> {
             LivingEntity t = pick(n, 16, n.d("mana", 22));
             if (t == null) return false;
@@ -175,7 +175,7 @@ final class Nova150Fire {
             n.later(12, () -> {
                 for (LivingEntity e : n.near(at, r + 1, 12)) {
                     if (!onSpot(e, at, r, 3)) continue;
-                    if (n.hit(e, n.dmg())) n.status(e, "stun:" + (n.boss(e) ? 6 : n.i("stun", 20)));
+                    if (n.hit(e, n.dmg())) n.status(e, "stun:" + n.i("stun", 20));   // engine: boss -> slow
                 }
             });
             return true;
@@ -294,7 +294,7 @@ final class Nova150Fire {
         });
 
         // ================================================================ 고급
-        // 339 주물 거푸집 (CastingMold): mold at the target's feet; at +0.6 s the target still within r 1.6 is locked 2 s (boss: slow 50 %);
+        // 339 주물 거푸집 (CastingMold): mold at the target's feet; at +0.6 s the target still within r 1.6 is rooted 2 s (속박, engine rules);
         // at +2.6 s the mold bursts: r 2.2 -> damage + burn 3 s
         m.put("casting_mold", n -> {
             LivingEntity t = pick(n, 16, n.d("mana", 55));
@@ -304,7 +304,7 @@ final class Nova150Fire {
             n.fx("main", at);
             n.later(12, () -> {
                 if (!onSpot(t, at, n.d("r", 1.6), 3) || !n.enemy(t)) return;
-                n.status(t, n.boss(t) ? "slow:40:0.5" : "movement_lock:40");
+                n.status(t, "root:" + n.i("root", 40));   // engine: bosses are immune to root
             });
             n.later(52, () -> { for (LivingEntity e : n.near(at, n.d("blast", 2.2))) if (n.hit(e, n.dmg())) n.status(e, "burn:60"); });
             return true;
@@ -394,7 +394,7 @@ final class Nova150Fire {
 
         // ================================================================ 비전
         // 345 쇳물 손 (MoltenGrasp): circle at the target's feet; 0.8 s hand erupts (r 1.8, 30 %); 1.55 s grab if the target is within r 2.2
-        // (movement_lock until 2.9 s, boss: slow); 1.9 / 2.4 s squeeze 15 %; 2.9 s throw forward+up along the caster facing (30 %);
+        // (n.carry: 고정 held in the hand until 2.9 s); 1.9 / 2.4 s squeeze 15 %; 2.9 s throw forward+up along the caster facing (30 %);
         // 3.3 s fist bursts where the target is (r 2.5, 40 %)
         m.put("molten_grasp", n -> {
             LivingEntity t = pick(n, 16, n.d("mana", 120));
@@ -408,7 +408,8 @@ final class Nova150Fire {
             n.later(31, () -> {
                 if (!onSpot(t, at, 2.2, 3) || !n.enemy(t)) return;
                 held[0] = true;
-                n.status(t, n.boss(t) ? "slow:27:0.5" : "movement_lock:27");
+                Location hold = at.clone().add(0, 0.6, 0);
+                n.carry(t, 27, age -> hold, 0.3, null);   // 고정 via the engine; bosses keep the status but are not moved
             });
             for (int k : new int[]{38, 48}) n.later(k, () -> { if (held[0] && onSpot(t, at, 3, 4)) n.hit(t, n.dmg(0.15)); });
             n.later(58, () -> {
@@ -490,7 +491,7 @@ final class Nova150Fire {
 
         // ================================================================ 궁극
         // 349 대장장이 신의 모루 (ForgeGodAnvil): forge circle r 7 at the aimed ground for 12 s. Anvil lands at 3.4 s -> slow 30 % inside
-        // (refreshed every 1 s until 7.8 s); strikes 5.1 s 25 % / 6.2 s 35 % (r 7), 7.8 s 100 % + stun 1 s (not bosses);
+        // (refreshed every 1 s until 7.8 s); strikes 5.1 s 25 % / 6.2 s 35 % (r 7), 7.8 s 100 % + stun 1 s (engine boss rules);
         // 8.15 s cracks erupt: r 9 -> 40 % + burn 4 s
         m.put("forge_god_anvil", n -> {
             Location at = Nova.ground(n.aim().add(0, 0.5, 0));
@@ -502,8 +503,7 @@ final class Nova150Fire {
             n.later(124, () -> { for (LivingEntity e : n.near(at, r)) if (onSpot(e, at, r, 6)) n.hit(e, n.dmg(0.35)); });
             n.later(156, () -> {
                 for (LivingEntity e : n.near(at, r)) {
-                    if (!onSpot(e, at, r, 6) || !n.hit(e, n.dmg())) continue;
-                    if (!n.boss(e)) n.status(e, "stun:20");
+                    if (onSpot(e, at, r, 6) && n.hit(e, n.dmg())) n.status(e, "stun:20");   // engine: boss -> slow
                 }
             });
             n.later(163, () -> { for (LivingEntity e : n.near(at, n.d("erupt", 9))) if (onSpot(e, at, 9, 6) && n.hit(e, n.dmg(0.4))) n.status(e, "burn:80"); });
