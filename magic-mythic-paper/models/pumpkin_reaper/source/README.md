@@ -6,4 +6,4 @@
 
 다시 만들기: `python3 run.py` → `/mnt/user-data/outputs/pumpkin_reaper(_shiny).bbmodel` (run.py 의 출력 경로 O 를 바꿔도 됨), 미리보기 `python3 build_html.py`.
 발광 본: `face_glow`, `robe_glow`, `*_sleeve_glow`, `scythe_glow`. 애니 이름은 Skills yml 의 state{s=...} 와 같다.
-아직 없는 소품 모델 (Blockbench 제작 예정): reaper_pumpkin_smile/angry/sad/blank/surprised, reaper_lantern, reaper_candy, reaper_scarecrow.
+소품 8종: `../props/*.bbmodel` — `props.py` 로 생성 (`python3 props.py <출력폴더>`). 호박 얼굴 면은 결무늬 없이 + 파낸 곳 둘레를 어둡게 해 멀리서도 표정이 읽히게 함. 히트박스 숨김.
