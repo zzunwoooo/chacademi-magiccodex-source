@@ -2,7 +2,7 @@ id: whistle_blade
 name: 휘파람 칼날
 category: wind
 description: 휘파람 소리와 함께 짧은 초승달 바람 칼날 두 개를 연달아 날립니다. 사거리는 짧지만 두 칼날을 모두 맞히면 꽤 아픕니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/whistle_blade.png
 permission: magic.learned.whistle_blade
 discovery:
   description: 염소 뿔피리를 10번 불기.

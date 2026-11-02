@@ -2,7 +2,7 @@ id: star_hop
 name: 별빛 뛰기
 category: light
 description: 작은 별빛이 조준한 적에게 튀어 간 뒤, 가까운 다른 적들 사이를 차례로 튀며 최대 세 번 때립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/star_hop.png
 permission: magic.learned.star_hop
 discovery:
   description: 알레이가 가져다준 아이템을 64개 받기.

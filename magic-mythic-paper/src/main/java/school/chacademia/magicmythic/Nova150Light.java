@@ -461,7 +461,7 @@ final class Nova150Light {
                 if (e.getLocation().toVector().subtract(o.toVector()).dot(f) < -1 || !n.pl.hasLineOfSight(e)) continue;
                 list.add(e);
             }
-            if (list.isEmpty()) { n.warn("마법을 걸 대상이 없어요"); n.refund(n.d("mana", 50)); return false; }
+            if (list.isEmpty()) { n.warn("마법을 걸 대상이 없습니다."); n.refund(n.d("mana", 50)); return false; }
             list.sort(Comparator.comparingDouble(e -> -e.getLocation().toVector().subtract(o.toVector()).dot(x)));
             n.fx("sign", o);
             n.later(9, () -> chain(n, list, 0, n.hand()));
@@ -518,7 +518,7 @@ final class Nova150Light {
         // (≥ 0.5 s apart, max 8) is echoed 0.12 s later for 40 % of it (capped at this spell's damage)
         m.put("mirror_realm", n -> {
             UUID id = n.pl.getUniqueId();
-            if (REALMS.containsKey(id)) { n.warn("거울 세계가 이미 열려 있어요"); n.refund(n.d("mana", 110)); return false; }
+            if (REALMS.containsKey(id)) { n.warn("거울 세계가 이미 열려 있습니다."); n.refund(n.d("mana", 110)); return false; }
             Location o = n.pl.getLocation();
             Vector f = n.flat();
             Vector x = null;
@@ -529,7 +529,7 @@ final class Nova150Light {
                 Location st = c.isChunkLoaded() ? Nova.stand(c) : null;
                 if (st != null && Math.abs(st.getY() - o.getY()) <= 1.5 && n.plugin.protection().at(st)) { x = xs; spot = st; break; }
             }
-            if (spot == null) { n.warn("거울상이 설 자리가 없어요"); n.refund(n.d("mana", 110)); return false; }
+            if (spot == null) { n.warn("거울상이 설 자리가 없습니다."); n.refund(n.d("mana", 110)); return false; }
             Vector xn = x;
             Location G = Nova.ground(o.clone().add(xn.clone().multiply(1.2)).add(0, 1, 0));
             spot.setX(o.getX() + xn.getX() * 2.4); spot.setZ(o.getZ() + xn.getZ() * 2.4);
@@ -565,7 +565,7 @@ final class Nova150Light {
             Scope s = new Scope(n, Bukkit.getCurrentTick());
             SCOPES.put(id, s);
             n.fx("scope", n.pl.getLocation(), n.pl);
-            n.info("천체 망원경: 10초 동안 좌클릭으로 별빛 저격 3발");
+            n.info("10초 동안 좌클릭으로 별빛을 3번 쏠 수 있습니다.");
             n.loop(200, age -> SCOPES.get(id) == s && !n.pl.isDead() && (s.shots < 3 || s.charging), () -> SCOPES.remove(id, s));
             return true;
         });
@@ -902,7 +902,7 @@ final class Nova150Light {
             t = l.isEmpty() ? null : l.get(0);
         }
         if (t == null || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > (range + 2) * (range + 2)) {
-            n.warn("마법을 걸 대상이 없어요");
+            n.warn("마법을 걸 대상이 없습니다.");
             n.refund(mana);
             return null;
         }

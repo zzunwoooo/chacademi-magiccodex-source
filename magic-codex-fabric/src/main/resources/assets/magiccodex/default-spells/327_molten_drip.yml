@@ -2,11 +2,11 @@ id: molten_drip
 name: 쇳물 방울
 category: fire
 description: 뜨거운 쇳물 한 덩이를 포물선으로 던집니다. 떨어진 자리에는 2초 동안 쇳물 웅덩이가 남아, 그 위에 선 적을 계속 태웁니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/molten_drip.png
 permission: magic.learned.molten_drip
 discovery:
-  description: 철 주괴를 256개 제련하기.
-research: 아, 그 견습생? 화로 앞에 쭈그려 앉아 희끄무레한 덩어리를 꺼내고 또 꺼내더라고. 상자가 미어터질 무렵엔 손끝에서 쇳물이 똑똑 떨어졌다지 뭐야.
+  description: 점적석에서 떨어진 용암으로 가마솥을 3번 채우기.
+research: 아, 그 견습생? 뾰족한 돌고드름 밑에 빈 솥을 받쳐 두고 며칠이고 기다리더라고. 위쪽엔 붉은 것이 고여 있었지. 솥이 가득 찰 때마다 그 애 손끝에서도 쇳물이 똑똑 떨어졌다지 뭐야.
 cast:
   command: 마법 molten_drip
   cooldown-seconds: 5

@@ -2,7 +2,7 @@ id: iron_dust_storm
 name: 쇳가루 폭풍
 category: earth
 description: 쇳가루 폭풍을 일으켜 안에 든 적들을 휘감아 돌립니다. 적이 많을수록 서로 부딪혀 더 큰 피해를 입고, 폭풍이 흩어질 때 바깥으로 튕겨 나갑니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/iron_dust_storm.png
 permission: magic.learned.iron_dust_storm
 discovery:
   description: 철 블록을 64개 만들기.

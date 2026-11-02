@@ -2,7 +2,7 @@ id: air_balloon
 name: 공기 풍선
 category: wind
 description: 공기를 가득 채운 풍선을 던집니다. 풍선이 터지면 주변 적이 피해를 입고 상승 기류에 살짝 떠오릅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/air_balloon.png
 permission: magic.learned.air_balloon
 discovery:
   description: 팬텀 막을 8개 모으기.

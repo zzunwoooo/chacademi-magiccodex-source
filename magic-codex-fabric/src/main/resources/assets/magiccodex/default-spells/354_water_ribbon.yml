@@ -2,7 +2,7 @@ id: water_ribbon
 name: 물 리본
 category: water
 description: 물로 된 리본을 채찍처럼 두 번 휘두릅니다. 두 번째 채찍에 맞은 적은 내 쪽으로 살짝 끌려옵니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/water_ribbon.png
 permission: magic.learned.water_ribbon
 discovery:
   description: 켈프를 256개 거두기.

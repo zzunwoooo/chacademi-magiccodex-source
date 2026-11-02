@@ -2,7 +2,7 @@ id: lava_bubbles
 name: 용암 거품
 category: fire
 description: 조준한 땅을 녹여 용암 웅덩이를 만듭니다. 웅덩이에서 거품 세 개가 차례로 부풀어 올라 터지며 주변의 적을 태웁니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/lava_bubbles.png
 permission: magic.learned.lava_bubbles
 discovery:
   description: 스트라이더를 타고 용암 위를 누적 500블록 건너기.

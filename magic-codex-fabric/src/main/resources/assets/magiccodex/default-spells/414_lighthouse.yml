@@ -2,7 +2,7 @@ id: lighthouse
 name: 등대
 category: light
 description: 조준한 곳에 등대를 6초 동안 세웁니다. 회전하는 빛줄기가 주변을 훑으며 적을 태우고, 마지막에 등불이 폭발합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/lighthouse.png
 permission: magic.learned.lighthouse
 discovery:
   description: 4단계 신호기를 완성하기.

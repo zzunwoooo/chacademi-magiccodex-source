@@ -2,7 +2,7 @@ id: milky_way
 name: 은하수
 category: light
 description: 앞쪽으로 길게 빛의 강을 흘려보냅니다. 강 위의 적은 타오르며 하류로 떠밀리고, 마지막에 큰 물결이 강 끝까지 휩쓴 뒤 그 끝에서 폭발합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/milky_way.png
 permission: magic.learned.milky_way
 discovery:
   description: 네더의 별을 3개 모으기.

@@ -2,11 +2,11 @@ id: match_strike
 name: 성냥 긋기
 category: fire
 description: 발끝으로 바닥에 긴 선을 긋습니다. 1초 뒤 그 선을 따라 불길이 한꺼번에 솟아 위에 선 적을 태웁니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/match_strike.png
 permission: magic.learned.match_strike
 discovery:
-  description: 모닥불을 16개 설치하기.
-research: "관찰 4일차: 장작을 쌓아 둔 자리마다 연기가 곧게 올라간다. 땅에 붙어 타는 불은 번지지 않고 얌전히 기다렸다가, 신호를 받은 듯 한 줄로 일어선다."
+  description: 네더 차원문에 불을 붙여 3번 열기.
+research: "관찰 7일차: 검은 돌로 쌓은 빈 문틀 안쪽에 불꽃 한 점을 그었더니, 틀 안이 보랏빛으로 일렁이며 다른 곳의 뜨거운 바람이 새어 나왔다. 세 번째 문을 열던 날, 내가 바닥에 그은 선을 따라 불이 한 줄로 일어섰다."
 cast:
   command: 마법 match_strike
   cooldown-seconds: 5

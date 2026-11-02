@@ -2,7 +2,7 @@ id: mirror_pane
 name: 거울판
 category: light
 description: 눈앞에 거울판을 6초 동안 세웁니다. 거울판은 날아오는 적의 투사체를 되돌려 보내고, 내가 쏜 빛의 탄환이 지나가면 가까운 적에게 꺾어 보냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/mirror_pane.png
 permission: magic.learned.mirror_pane
 discovery:
   description: 그림을 16개 걸기.

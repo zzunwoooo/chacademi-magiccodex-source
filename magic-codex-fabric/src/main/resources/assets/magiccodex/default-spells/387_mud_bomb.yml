@@ -2,7 +2,7 @@ id: mud_bomb
 name: 진흙 폭탄
 category: earth
 description: 마력이 깃든 진흙 덩이를 던집니다. 덩이가 터지면 주변 적이 피해를 입고, 남은 진흙 웅덩이 위의 적은 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/mud_bomb.png
 permission: magic.learned.mud_bomb
 discovery:
   description: 물병으로 진흙을 128개 만들기.

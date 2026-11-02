@@ -2,7 +2,7 @@ id: sand_burrow
 name: 모래 두더지
 category: earth
 description: 땅속으로 모래 줄기를 보내 적의 발밑까지 파고들게 합니다. 모래가 솟아 다리를 감싸면 적은 1.6초 동안 움직이지 못합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sand_burrow.png
 permission: magic.learned.sand_burrow
 discovery:
   description: 아르마딜로 인갑을 32개 모으기.

@@ -2,10 +2,10 @@ id: deep_tentacles
 name: 심해 촉수
 category: water
 description: 조준한 땅에 깊은 바다로 통하는 웅덩이를 열어 물 촉수 네 개를 불러냅니다. 촉수는 솟아오르며 적을 띄우고, 이어서 주변을 세 번 크게 휘둘러 때립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/deep_tentacles.png
 permission: magic.learned.deep_tentacles
 discovery:
-  description: 던전 보상 「심해 촉수 주문서」를 사용하기.
+  description: 「심해 촉수」 마법 스크롤 사용하기.
 research: 선배에게. 가라앉은 폐허 맨 아래에서 건진 두루마리가 아직도 마르지 않아요. 젖은 글씨가 촉수처럼 종이 밖으로 기어 나오려 해서, 결국 끝까지 읽어 버렸지 뭐예요. 그 뒤로 깊은 물이 저를 알아봐요.
 cast:
   command: 마법 deep_tentacles

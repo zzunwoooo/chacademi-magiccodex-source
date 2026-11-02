@@ -2,7 +2,7 @@ id: black_moth
 name: 검은 나방
 category: dark
 description: 검은 나방 세 마리가 대상을 천천히 따라갑니다. 나방에 닿은 적은 피해를 입고, 날개 가루 때문에 2초 동안 앞이 보이지 않습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/black_moth.png
 permission: magic.learned.black_moth
 discovery:
   description: 거미 눈을 64개 모으기.

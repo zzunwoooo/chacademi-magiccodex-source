@@ -2,11 +2,11 @@ id: bellows_blast
 name: 풀무질
 category: fire
 description: 풀무처럼 숨을 모았다가 앞쪽으로 뜨거운 바람을 한꺼번에 내뿜습니다. 바람에 맞은 적은 뒤로 크게 밀려납니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/bellows_blast.png
 permission: magic.learned.bellows_blast
 discovery:
-  description: 용광로로 광석을 128개 제련하기.
-research: 스승님은 말씀하셨다. "보통 화로보다 갑절은 빨리 숨 쉬는 화덕이 있다. 그 거친 숨소리를 오래 곁에서 들은 자는, 제 숨으로도 불을 밀어낼 수 있지."
+  description: 화염구를 32개 만들기.
+research: 스승님은 말씀하셨다. "불꽃 막대 가루에 숯과 화약을 버무려 뭉치면 던져도 꺼지지 않는 불덩이가 된다. 그걸 수없이 빚어 본 손은 숨만 불어도 불을 밀어낼 수 있지."
 cast:
   command: 마법 bellows_blast
   cooldown-seconds: 6

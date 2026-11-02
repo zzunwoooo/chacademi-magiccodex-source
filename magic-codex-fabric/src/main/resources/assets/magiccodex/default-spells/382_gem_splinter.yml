@@ -2,7 +2,7 @@ id: gem_splinter
 name: 보석 파편
 category: earth
 description: 세 빛깔 보석 파편을 부채꼴로 한꺼번에 쏩니다. 가까운 적일수록 여러 개를 맞습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/gem_splinter.png
 permission: magic.learned.gem_splinter
 discovery:
   description: 자수정 조각을 64개 모으기.

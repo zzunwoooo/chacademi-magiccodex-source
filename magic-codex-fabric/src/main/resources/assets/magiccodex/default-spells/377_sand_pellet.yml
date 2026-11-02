@@ -2,7 +2,7 @@ id: sand_pellet
 name: 모래 알갱이
 category: earth
 description: 돌처럼 단단하게 뭉친 모래 알갱이를 세 발 연달아 쏩니다. 한 적에게 모두 맞히면 꽤 아픕니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sand_pellet.png
 permission: magic.learned.sand_pellet
 discovery:
   description: 자갈에서 부싯돌을 64개 얻기.

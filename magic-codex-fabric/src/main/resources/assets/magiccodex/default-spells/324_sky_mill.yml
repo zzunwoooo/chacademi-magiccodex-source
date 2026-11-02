@@ -2,10 +2,10 @@ id: sky_mill
 name: 천공의 방아
 category: wind
 description: 하늘에서 거대한 바람 풍차를 내려 조준한 곳을 통째로 갈아 버립니다. 풍차가 점점 빨라지며 땅 위의 적을 베고, 가운데 회오리로 적을 띄워 올린 뒤 하늘의 압력으로 한꺼번에 내리찍어 기절시킵니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sky_mill.png
 permission: magic.learned.sky_mill
 discovery:
-  description: 던전 보상 「천공의 방아 주문서」를 사용하기.
+  description: 「천공의 방아」 마법 스크롤 사용하기.
 research: 연대기 제7권, 찢긴 장. 아무도 내려가 보지 못한 가장 깊은 곳에서, 한 마법사가 봉인된 두루마리를 들고 올라왔다. 그가 봉인을 뜯자 구름이 내려앉아 맷돌처럼 돌기 시작했다. 하늘의 바퀴는 땅 위의 모든 것을 갈아 바람으로 만들었고, 마지막 한 바퀴가 멈췄을 때 들판에는 고운 먼지만 남았다. 기록은 여기서 끊긴다.
 cast:
   command: 마법 sky_mill

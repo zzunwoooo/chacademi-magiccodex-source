@@ -169,7 +169,7 @@ final class Nova150Dark {
         m.put("lunar_mark", n -> {
             LivingEntity t = pick(n, n.d("range", 18));
             if (t == null) return false;
-            if (!n.hit(t, 0)) return refuse(n, "표식을 새길 수 없는 대상이에요");
+            if (!n.hit(t, 0)) return refuse(n, "표식을 새길 수 없는 대상입니다.");
             n.fx("mark", t.getLocation(), t);
             int delay = n.i("ticks", 80);
             n.later(delay - 1, () -> {
@@ -221,10 +221,10 @@ final class Nova150Dark {
         // not walls); each enemy passed (≤ 1.3 m) once: drain = damage + heal 40 % of it
         m.put("bat_cloak", n -> {
             Player pl = n.pl;
-            if (BroomLink.riding(pl)) return refuse(n, "빗자루 위에서는 쓸 수 없어요");
+            if (BroomLink.riding(pl)) return refuse(n, "빗자루에서 내린 뒤 사용해 주세요.");
             Location start = pl.getLocation(); Vector dir = n.flat();
             List<Location> pts = path(n.plugin, start, dir, n.d("dist", 4));
-            if (pts.size() < 3) return refuse(n, "앞쪽이 막혀 있어요");
+            if (pts.size() < 3) return refuse(n, "앞쪽이 막혀 있어 사용할 수 없습니다.");
             int dash = n.i("dash", 7), per = (int) Math.ceil(pts.size() / (double) dash);
             double heal = n.d("heal", 0.4);
             Set<UUID> drained = new HashSet<>();
@@ -336,7 +336,7 @@ final class Nova150Dark {
         m.put("dream_labyrinth", n -> {
             LivingEntity t = pick(n, n.d("range", 16));
             if (t == null) return false;
-            if (!n.hit(t, 0)) return refuse(n, "꿈에 가둘 수 없는 대상이에요");
+            if (!n.hit(t, 0)) return refuse(n, "꿈에 가둘 수 없는 대상입니다.");
             n.fx("dream", t.getLocation());
             n.later(6, () -> { if (t.isValid() && !t.isDead()) n.status(t, "stun:" + n.i("ticks", 54)); });
             n.later(60, () -> { if (t.isValid() && !t.isDead() && t.getWorld() == n.pl.getWorld()) n.hit(t, n.dmg()); });
@@ -439,7 +439,7 @@ final class Nova150Dark {
         m.put("new_moon_veil", n -> {
             Player pl = n.pl;
             UUID id = pl.getUniqueId();
-            if (VEILS.containsKey(id)) return refuse(n, "이미 모습을 숨기고 있어요");
+            if (VEILS.containsKey(id)) return refuse(n, "이미 모습을 숨기고 있습니다.");
             int hide = n.i("ticks", 50);
             boolean[] over = {false};
             Veil[] me = new Veil[1];
@@ -476,7 +476,7 @@ final class Nova150Dark {
         m.put("shadow_doppel", n -> {
             LivingEntity t = pick(n, n.d("range", 16));
             if (t == null) return false;
-            if (!n.hit(t, 0)) return refuse(n, "그림자를 세울 수 없는 대상이에요");
+            if (!n.hit(t, 0)) return refuse(n, "그림자를 세울 수 없는 대상입니다.");
             Location spot = t.getLocation().add(n.flat().multiply(1.2));
             spot.setY(Nova.ground(t.getLocation().add(0, 0.5, 0)).getY());
             spot.setYaw(n.pl.getLocation().getYaw()); spot.setPitch(0);
@@ -539,7 +539,7 @@ final class Nova150Dark {
             t = l.isEmpty() ? null : l.get(0);
         }
         if (t == null || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > (range + 2) * (range + 2)) {
-            refuse(n, "마법을 걸 대상이 없어요");
+            refuse(n, "마법을 걸 대상이 없습니다.");
             return null;
         }
         return t;

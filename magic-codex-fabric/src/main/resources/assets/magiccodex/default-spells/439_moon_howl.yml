@@ -2,7 +2,7 @@ id: moon_howl
 name: 달의 울음
 category: dark
 description: 달을 향해 길게 울부짖습니다. 주변의 적들은 피해를 입고 3초 동안 공포에 질려 달아나며, 울음의 메아리가 퍼지는 동안 범위에 들어온 적도 겁을 먹습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/moon_howl.png
 permission: magic.learned.moon_howl
 discovery:
   description: 늑대를 10마리 길들이기.

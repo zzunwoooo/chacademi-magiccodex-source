@@ -2,7 +2,7 @@ id: rain_patter
 name: 빗방울 연사
 category: water
 description: 작은 물방울 세 발을 빠르게 연달아 쏩니다. 물방울마다 처음 닿은 적에게 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/rain_patter.png
 permission: magic.learned.rain_patter
 discovery:
   description: 비 오는 날 하늘 아래에서 누적 30분 보내기.

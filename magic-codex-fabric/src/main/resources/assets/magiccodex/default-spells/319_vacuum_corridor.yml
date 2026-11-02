@@ -2,11 +2,11 @@ id: vacuum_corridor
 name: 진공 회랑
 category: wind
 description: 앞쪽으로 곧게 뻗은 진공 터널을 엽니다. 양옆의 적은 터널 안으로 빨려 들어와 계속 베이고, 터널이 무너질 때 크게 베입니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/vacuum_corridor.png
 permission: magic.learned.vacuum_corridor
 discovery:
-  description: 엔더 진주를 200번 던지기.
-research: "연구 메모: 검푸른 구슬을 던질 때마다 몸이 그 자리로 끌려간다. 수백 번쯤 되풀이했을 때, 나와 구슬 사이의 길에 공기가 한 줌도 남아 있지 않았다는 걸 알았다."
+  description: 광산 수레를 타고 누적 2,000블록 이동하기.
+research: "연구 메모: 레일 위 수레를 타고 끝없는 갱도를 달렸다. 바람은 뒤에서 밀어 주지 않고 앞에서 빨려 들어갔다. 한참을 달리고서야 알았다. 좁고 긴 길은 공기를 한쪽으로만 흐르게 한다는 것을."
 cast:
   command: 마법 vacuum_corridor
   cooldown-seconds: 18

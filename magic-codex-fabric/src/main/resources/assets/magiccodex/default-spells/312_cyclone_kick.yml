@@ -2,7 +2,7 @@ id: cyclone_kick
 name: 회오리 발차기
 category: wind
 description: 회오리를 감은 올려차기로 앞의 적들을 한꺼번에 하늘로 띄워 올립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/cyclone_kick.png
 permission: magic.learned.cyclone_kick
 discovery:
   description: 시련의 금고를 5번 열기.

@@ -2,7 +2,7 @@ id: refraction_spear
 name: 굴절 창
 category: light
 description: 눈앞에 빛의 렌즈 두 개를 띄우고 창을 던집니다. 창은 렌즈를 지날 때마다 꺾이며 지그재그로 날아가, 그 경로에 있는 적을 모두 꿰뚫습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/refraction_spear.png
 permission: magic.learned.refraction_spear
 discovery:
   description: 셜커를 30마리 처치하기.

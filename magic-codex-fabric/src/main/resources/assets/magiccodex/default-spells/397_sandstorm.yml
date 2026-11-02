@@ -2,10 +2,10 @@ id: sandstorm
 name: 모래폭풍
 category: earth
 description: 조준한 곳에 8초 동안 거대한 모래폭풍을 일으킵니다. 폭풍 속의 적은 계속 피해를 입고 앞을 제대로 보지 못합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sandstorm.png
 permission: magic.learned.sandstorm
 discovery:
-  description: 던전 보상 「모래폭풍 주문서」를 사용하기.
+  description: 「모래폭풍」 마법 스크롤 사용하기.
 research: 깊은 곳에서 주워 온 누런 두루마리를 펼치자마자 글자들이 바람에 날리는 알갱이처럼 흩어지더래. 눈을 떠 보니 사방이 누런 벽이었고, 그 속에서 길을 아는 건 자기 하나뿐이었다던데.
 cast:
   command: 마법 sandstorm

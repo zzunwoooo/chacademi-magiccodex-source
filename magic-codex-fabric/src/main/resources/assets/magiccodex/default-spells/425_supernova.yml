@@ -2,10 +2,10 @@ id: supernova
 name: 초신성
 category: light
 description: 조준한 곳 하늘에 작은 별을 탄생시킵니다. 별은 주변의 적을 끌어당기며 부풀어 오르다가 초신성으로 폭발하고, 남은 핵이 떨어지며 별똥비가 쏟아집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/supernova.png
 permission: magic.learned.supernova
 discovery:
-  description: 던전 보상 「초신성 주문서」를 사용하기.
+  description: 「초신성」 마법 스크롤 사용하기.
 research: — 이 기록을 찾은 자에게. 별을 품고 죽는 자는 없다. 나는 그 별을 깨우는 법을 이 종이에 적고, 아무도 닿지 못할 가장 깊은 곳에 묻는다. 이것을 펼친 그대가 손바닥에서 별이 부풀어 오르는 것을 느낀다면, 숨을 멈추지 마라. 그 빛이 지나간 자리에는 그림자조차 남지 않으니.
 cast:
   command: 마법 supernova

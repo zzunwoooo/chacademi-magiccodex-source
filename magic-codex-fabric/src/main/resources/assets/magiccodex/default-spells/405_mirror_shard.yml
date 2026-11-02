@@ -2,7 +2,7 @@ id: mirror_shard
 name: 거울 조각
 category: light
 description: 회전하는 거울 조각을 쏩니다. 조각은 벽에 한 번 튕겨 계속 날아가며, 튕긴 뒤에 맞히면 더 큰 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/mirror_shard.png
 permission: magic.learned.mirror_shard
 discovery:
   description: 발광 열매를 64개 따기.

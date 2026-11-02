@@ -2,7 +2,7 @@ id: sand_spout
 name: 모래 분수
 category: earth
 description: 조준한 적의 발밑에서 모래가 분수처럼 솟구쳐 적을 공중으로 띄워 올립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sand_spout.png
 permission: magic.learned.sand_spout
 discovery:
   description: 낙타를 타고 누적 2,000블록 이동하기.

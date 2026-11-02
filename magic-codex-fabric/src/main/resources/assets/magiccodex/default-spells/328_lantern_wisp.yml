@@ -2,11 +2,11 @@ id: lantern_wisp
 name: 등롱 불씨
 category: fire
 description: 어깨 위에 작은 등롱을 띄워 6초 동안 곁에 둡니다. 등롱은 가까이 다가온 적에게 불씨를 세 번 날려 보냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/lantern_wisp.png
 permission: magic.learned.lantern_wisp
 discovery:
-  description: 불붙은 화살로 몬스터를 50마리 처치하기.
-research: ♪ 시위에 불 한 점 얹어 보내면 / 밤하늘에 붉은 줄이 그어지네 / 쏘고 또 쏘아 어둠이 엷어질 무렵 / 떠도는 불씨가 제 길을 찾네 ♪
+  description: 랜턴을 32개 설치하기.
+research: ♪ 쇠 바구니에 불 한 점 담아 / 처마마다 하나씩 걸어 두면 / 걸고 또 걸어 골목이 환해질 무렵 / 떠도는 불씨가 제 길을 찾네 ♪
 cast:
   command: 마법 lantern_wisp
   cooldown-seconds: 8

@@ -2,10 +2,10 @@ id: crucible
 name: 도가니 붓기
 category: fire
 description: 조준한 적의 머리 위에 거대한 도가니를 불러 기울입니다. 쏟아지는 쇳물이 그 자리를 계속 태우고, 다 붓고 나면 고인 쇳물이 한꺼번에 솟구쳐 터집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/crucible.png
 permission: magic.learned.crucible
 discovery:
-  description: 던전 보상 「도가니 붓기 주문서」를 사용하기.
+  description: 「도가니 붓기」 마법 스크롤 사용하기.
 research: …제련소 지하 깊은 금고에 봉인된 두루마리가 있었다고 들었네. 끈을 푸는 순간 머리 위로 거대한 그릇이 기울더라는군. 자네라면 그 아래까지 내려가 보겠나.
 cast:
   command: 마법 crucible

@@ -2,7 +2,7 @@ id: molten_grasp
 name: 쇳물 손
 category: fire
 description: 적의 발밑에서 거대한 쇳물 손을 솟아오르게 합니다. 손은 적을 움켜쥐어 잠시 고정한 채 쥐어짠 뒤 멀리 내던지고, 던져진 자리에서 쇳물 주먹이 터집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/molten_grasp.png
 permission: magic.learned.molten_grasp
 discovery:
   description: 네더라이트 장비를 4개 만들기.

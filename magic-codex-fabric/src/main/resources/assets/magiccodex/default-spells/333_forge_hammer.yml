@@ -2,7 +2,7 @@ id: forge_hammer
 name: 단조 망치
 category: fire
 description: 조준한 적의 머리 위에 불타는 망치를 불러 내리찍습니다. 맞은 적은 1초 동안 기절합니다. 망치가 떨어지기 전에 자리를 피하면 빗나갑니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/forge_hammer.png
 permission: magic.learned.forge_hammer
 discovery:
   description: 대장장이 작업대로 갑옷에 장식을 10번 새기기.

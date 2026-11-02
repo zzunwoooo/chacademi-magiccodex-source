@@ -2,7 +2,7 @@ id: sand_lash
 name: 모래 채찍
 category: earth
 description: 모래를 채찍처럼 엮어 앞쪽을 두 번 연달아 휘두릅니다. 가까이 붙은 적에게 두 번 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sand_lash.png
 permission: magic.learned.sand_lash
 discovery:
   description: 모래를 512개 캐기.

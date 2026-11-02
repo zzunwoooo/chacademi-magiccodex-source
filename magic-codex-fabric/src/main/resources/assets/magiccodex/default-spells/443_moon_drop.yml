@@ -2,7 +2,7 @@ id: moon_drop
 name: 달 떨구기
 category: dark
 description: 작은 달을 불러내 조준한 곳에 떨어뜨립니다. 달이 땅에 닿으면 크게 터지며 넓은 범위의 적에게 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/moon_drop.png
 permission: magic.learned.moon_drop
 discovery:
   description: 몬스터의 머리를 5개 모으기.

@@ -2,7 +2,7 @@ id: whirl_cut
 name: 회전 베기
 category: wind
 description: 제자리에서 몸을 한 바퀴 돌려 주위를 바람 칼날로 벱니다. 둘러싼 적을 한꺼번에 베고 살짝 밀어냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/whirl_cut.png
 permission: magic.learned.whirl_cut
 discovery:
   description: 검의 휩쓸기 공격으로 몬스터 여러 마리를 한 번에 50번 맞히기.

@@ -2,7 +2,7 @@ id: gust_palm
 name: 돌풍 장타
 category: wind
 description: 손바닥에 돌풍을 모아 앞의 적을 강하게 밀쳐 칩니다. 맞은 적은 세 블록쯤 날아갑니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/gust_palm.png
 permission: magic.learned.gust_palm
 discovery:
   description: 돌풍구(윈드 차지)를 50번 던지기.

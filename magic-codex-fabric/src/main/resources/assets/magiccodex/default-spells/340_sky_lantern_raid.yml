@@ -2,7 +2,7 @@ id: sky_lantern_raid
 name: 풍등 폭격
 category: fire
 description: 조준한 곳에서 풍등 여섯 개를 띄워 올립니다. 풍등은 잠시 뒤 주변 다섯 곳에 차례로 떨어져 터지고, 마지막 큰 풍등이 한가운데에 떨어져 크게 폭발합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sky_lantern_raid.png
 permission: magic.learned.sky_lantern_raid
 discovery:
   description: 가스트를 20마리 처치하기.

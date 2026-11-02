@@ -2,11 +2,11 @@ id: rime_garden
 name: 서리 정원
 category: water
 description: 조준한 땅에서 서리 결정이 자라나며 정원처럼 퍼져 나갑니다. 퍼지는 서리에 닿은 적은 잠시 얼어붙고, 마지막에 결정이 한꺼번에 부서지며 큰 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/rime_garden.png
 permission: magic.learned.rime_garden
 discovery:
-  description: 차가운 걸음으로 물 위를 누적 1,000블록 걷기.
-research: "수업 노트, 교수님 말씀: \"발에 서리 깃든 신을 신고 물 위를 걸으면 발자국마다 꽃이 핀다. 차갑고 하얀 꽃이지. 오래 걸을수록 정원은 넓어진다.\""
+  description: 눈 골렘을 5마리 만들기.
+research: "수업 노트, 교수님 말씀: \"눈 뭉치 두 덩이 위에 호박을 얹으면 정원지기가 생긴다. 그 아이들이 지나간 자리마다 차갑고 하얀 꽃이 핀다. 정원지기가 많을수록 정원은 넓어진다.\""
 cast:
   command: 마법 rime_garden
   cooldown-seconds: 20

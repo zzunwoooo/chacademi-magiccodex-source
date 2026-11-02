@@ -2,7 +2,7 @@ id: clepsydra_drop
 name: 물시계 방울
 category: water
 description: 조준한 적의 머리 위에 작은 물시계를 띄웁니다. 2초 뒤 모인 물이 한꺼번에 떨어져 그 자리의 적에게 피해를 주고 잠시 느리게 만듭니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/clepsydra_drop.png
 permission: magic.learned.clepsydra_drop
 discovery:
   description: 시계를 4개 만들기.

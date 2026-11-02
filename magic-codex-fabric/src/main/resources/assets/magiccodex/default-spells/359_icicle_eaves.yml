@@ -2,7 +2,7 @@ id: icicle_eaves
 name: 고드름 처마
 category: water
 description: 앞쪽 허공에 서리 처마를 만들어 고드름 다섯 개를 가까운 곳부터 차례로 떨어뜨립니다. 고드름에 맞은 적은 잠시 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/icicle_eaves.png
 permission: magic.learned.icicle_eaves
 discovery:
   description: 뾰족한 점적석을 64개 설치하기.

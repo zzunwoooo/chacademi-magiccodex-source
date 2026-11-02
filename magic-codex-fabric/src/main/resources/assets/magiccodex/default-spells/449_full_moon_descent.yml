@@ -2,10 +2,10 @@ id: full_moon_descent
 name: 만월 강림
 category: dark
 description: 밤하늘을 열어 거대한 보름달을 불러 내립니다. 달빛이 내리는 동안 범위 안의 적들은 느려지고, 달이 땅에 떨어지는 순간 엄청난 피해를 입힌 뒤 거대한 초승달 참격이 한 번 더 휩쓸고 지나가 적들을 약화시킵니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/full_moon_descent.png
 permission: magic.learned.full_moon_descent
 discovery:
-  description: 던전 보상 「만월 강림 주문서」를 사용하기.
+  description: 「만월 강림」 마법 스크롤 사용하기.
 research: 이 봉인을 읽는 이에게. 달빛이 한 번도 닿지 않던 땅속 가장 깊은 방에서, 나는 이 두루마리를 품고 잠들었다. 펼치면 하늘이 열리고, 흰 달이 너의 손을 향해 내려올 것이다. 그 무게를 감당할 수 없다면 다시 말아 두라. 감당할 수 있다면, 이제 달은 너의 것이다.
 cast:
   command: 마법 full_moon_descent

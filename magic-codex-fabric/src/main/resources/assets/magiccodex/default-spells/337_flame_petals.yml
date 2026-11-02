@@ -2,7 +2,7 @@ id: flame_petals
 name: 화염 꽃잎
 category: fire
 description: 몸 주위로 불꽃 꽃잎 여덟 장을 피워 바깥으로 퍼뜨렸다가 다시 거둬들입니다. 반경 안의 적은 꽃잎이 오갈 때마다 두 번 베입니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/flame_petals.png
 permission: magic.learned.flame_petals
 discovery:
   description: 횃불꽃을 10송이 키워 거두기.

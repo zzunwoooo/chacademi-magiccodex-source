@@ -2,7 +2,7 @@ id: ember_butterflies
 name: 불나비 떼
 category: fire
 description: 등 뒤로 불꽃 날개를 펼쳐 불나비 열두 마리를 날려 보냅니다. 나비들은 주변의 적들에게 나뉘어 날아가 닿는 순간 터집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/ember_butterflies.png
 permission: magic.learned.ember_butterflies
 discovery:
   description: 불사의 토템을 5개 모으기.

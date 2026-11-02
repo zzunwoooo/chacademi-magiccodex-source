@@ -2,7 +2,7 @@ id: iceberg_drop
 name: 빙산 낙하
 category: water
 description: 조준한 곳 하늘에서 거대한 빙산을 떨어뜨립니다. 빙산은 땅에 박혀 주변 적에게 큰 피해를 주고, 잠시 뒤 부서지며 한 번 더 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/iceberg_drop.png
 permission: magic.learned.iceberg_drop
 discovery:
   description: 파란 얼음을 128개 모으기.

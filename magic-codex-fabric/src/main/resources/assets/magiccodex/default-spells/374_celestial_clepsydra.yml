@@ -2,10 +2,10 @@ id: celestial_clepsydra
 name: 천상의 물시계
 category: water
 description: 조준한 곳 하늘에 거대한 물시계를 불러냅니다. 시계가 도는 동안 비, 얼음, 해류가 차례로 쏟아져 적을 괴롭히고, 마지막에 물시계가 깨지며 쏟아진 물이 전장 전체를 휩쓸어 버립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/celestial_clepsydra.png
 permission: magic.learned.celestial_clepsydra
 discovery:
-  description: 던전 보상 「천상의 물시계 주문서」를 사용하기.
+  description: 「천상의 물시계」 마법 스크롤 사용하기.
 research: 옛 천문대가 무너진 자리, 가장 깊은 방의 봉인된 상자에는 별자리로 묶인 기록 한 장이 잠들어 있었다고 전한다. 그것을 펼친 자의 머리 위로 물이 거꾸로 흘러 하늘에 거대한 물시계를 이루었다. 바늘이 돌 때마다 비와 서리와 물살이 차례로 쏟아졌고, 마지막 바늘이 멈추자 그릇이 깨지며 담겨 있던 시간이 모두 땅을 덮었다. 물이 빠진 뒤 그의 손에 남은 것은 젖지도 않은 빈 종이 한 장뿐이었다.
 cast:
   command: 마법 celestial_clepsydra

@@ -2,10 +2,10 @@ id: curtain_fall
 name: 막 내림
 category: dark
 description: 주위에 무대의 막을 내려 안에 갇힌 적들의 시야를 2초 동안 가립니다. 막이 찢겨 나가는 순간 막 안의 모든 적을 일제히 벱니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/curtain_fall.png
 permission: magic.learned.curtain_fall
 discovery:
-  description: 던전 보상 「막 내림 주문서」를 사용하기.
+  description: 「막 내림」 마법 스크롤 사용하기.
 research: …무너진 땅 밑 극장 터에서 이 두루마리를 찾았소. 봉인을 뜯자 어디선가 박수 소리가 들렸고, 무대의 막이 천천히 내려오는 환영이 보였다오. 다음 사람을 위해 적어 두오.
 cast:
   command: 마법 curtain_fall

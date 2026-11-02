@@ -2,7 +2,7 @@ id: marionette_tug
 name: 꼭두각시 당김
 category: dark
 description: 적에게 보이지 않는 실을 걸어 내 바로 앞까지 한 번에 끌어옵니다. 실이 걸리는 순간 약한 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/marionette_tug.png
 permission: magic.learned.marionette_tug
 discovery:
   description: 실을 128개 모으기.

@@ -2,7 +2,7 @@ id: big_dipper
 name: 북두칠성
 category: light
 description: 조준한 곳에 북두칠성의 별 일곱 개를 차례로 떨어뜨린 뒤, 별자리 국자를 통째로 내리찍어 큰 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/big_dipper.png
 permission: magic.learned.big_dipper
 discovery:
   description: 셜커 상자를 7개 만들기.

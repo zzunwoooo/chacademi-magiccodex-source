@@ -2,7 +2,7 @@ id: molten_wave
 name: 쇳물 해일
 category: fire
 description: 녹은 쇠로 된 파도를 앞으로 밀어 보냅니다. 파도는 지나가는 적을 모두 태우며 밀어내고, 끝에서 무너지며 한 번 더 덮칩니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/molten_wave.png
 permission: magic.learned.molten_wave
 discovery:
   description: 화염 저항 물약을 10번 마시기.

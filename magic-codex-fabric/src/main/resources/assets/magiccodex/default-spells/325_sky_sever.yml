@@ -2,10 +2,10 @@ id: sky_sever
 name: 창공 절단
 category: wind
 description: 하늘을 정면으로 길게 베어 갈라 진공 균열을 엽니다. 균열에서 거대한 바람 칼날이 떨어져 일직선 위의 적을 모두 베고, 땅에 남은 흉터가 차례로 터진 뒤 균열이 닫히며 다시 한번 한꺼번에 폭발합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sky_sever.png
 permission: magic.learned.sky_sever
 discovery:
-  description: 던전 보상 「창공 절단 주문서」를 사용하기.
+  description: 「창공 절단」 마법 스크롤 사용하기.
 research: 내가 남길 것은 이 낡은 종이 한 장뿐이다. 바닥이 보이지 않는 곳에서 피 묻은 손으로 건져 올린 것이니, 함부로 펼치지 마라. 펼치는 순간 너는 하늘에 솔기를 그을 것이고, 그 솔기 너머에서 소리마저 숨죽인 진공이 내려다볼 것이다. 칼날은 하늘 끝에서 땅 끝까지 단숨에 떨어진다. 그 자리엔 오래도록 풀 한 포기 자라지 않으리라. — 스승의 마지막 편지
 cast:
   command: 마법 sky_sever

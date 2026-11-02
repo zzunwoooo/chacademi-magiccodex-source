@@ -2,7 +2,7 @@ id: headwind_lane
 name: 역풍로
 category: wind
 description: 앞쪽으로 곧게 뻗은 역풍의 길을 5초 동안 만듭니다. 길 위에 선 적은 계속 뒤로 떠밀리며 피해를 입습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/headwind_lane.png
 permission: magic.learned.headwind_lane
 discovery:
   description: 말을 타고 누적 3,000블록 달리기.

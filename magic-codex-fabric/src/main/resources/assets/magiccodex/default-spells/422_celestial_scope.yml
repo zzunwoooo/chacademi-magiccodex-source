@@ -2,10 +2,10 @@ id: celestial_scope
 name: 천체 망원경
 category: light
 description: 10초 동안 천체 망원경을 눈앞에 펼칩니다. 그동안 좌클릭할 때마다 잠시 빛을 모은 뒤 바라보는 방향으로 아주 멀리까지 닿는 별빛 저격을 쏩니다(최대 3발).
-icon: ''
+icon: magiccodex:textures/spells/nova150/celestial_scope.png
 permission: magic.learned.celestial_scope
 discovery:
-  description: 던전 보상 「천체 망원경 주문서」를 사용하기.
+  description: 「천체 망원경」 마법 스크롤 사용하기.
 research: 「이 종이, 어디서 났어?」 「제일 깊은 데서. 지키던 놈이 쓰러지니까 상자 맨 밑에 렌즈 그림이 그려진 채로 있더라.」 「…읽었어? 그럼 이제 네 눈은 별까지 닿겠네.」
 cast:
   command: 마법 celestial_scope

@@ -2,7 +2,7 @@ id: quicksand_tide
 name: 유사 파도
 category: earth
 description: 모래 파도를 앞으로 밀어 보냅니다. 파도에 휩쓸린 적은 발목까지 모래에 묻혀 잠시 움직이지 못하고, 빠져나온 뒤에도 한동안 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/quicksand_tide.png
 permission: magic.learned.quicksand_tide
 discovery:
   description: 좀벌레를 100마리 처치하기.

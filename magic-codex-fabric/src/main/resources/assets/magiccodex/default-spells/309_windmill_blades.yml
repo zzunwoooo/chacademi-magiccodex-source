@@ -2,7 +2,7 @@ id: windmill_blades
 name: 풍차 날개
 category: wind
 description: 바람으로 된 풍차 날개 세 장을 불러내 6초 동안 내 주위를 돌게 합니다. 가까이 다가온 적은 날개에 닿을 때마다 베입니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/windmill_blades.png
 permission: magic.learned.windmill_blades
 discovery:
   description: 브리즈를 30마리 처치하기.

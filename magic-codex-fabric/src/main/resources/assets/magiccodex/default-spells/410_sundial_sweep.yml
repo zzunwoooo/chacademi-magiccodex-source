@@ -2,7 +2,7 @@ id: sundial_sweep
 name: 해시계 바늘
 category: light
 description: 발밑에 해시계를 그립니다. 빛의 바늘이 한 바퀴 돌며 주변의 적을 쓸어 내고, 마지막에 해시계 전체가 번쩍입니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sundial_sweep.png
 permission: magic.learned.sundial_sweep
 discovery:
   description: 햇빛 감지기를 16개 설치하기.

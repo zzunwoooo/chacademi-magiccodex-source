@@ -2,7 +2,7 @@ id: stained_shards
 name: 색유리 파편
 category: light
 description: 조준한 곳 하늘에 색유리 장미창을 만들고 깨뜨려, 날카로운 파편을 비처럼 쏟아붓습니다. 마지막 파편이 떨어질 때 가장 큰 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/stained_shards.png
 permission: magic.learned.stained_shards
 discovery:
   description: 16가지 색의 색유리를 모두 만들기.

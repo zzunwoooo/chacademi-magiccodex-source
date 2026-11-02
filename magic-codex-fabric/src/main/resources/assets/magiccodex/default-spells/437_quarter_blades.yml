@@ -2,11 +2,11 @@ id: quarter_blades
 name: 상현·하현 칼
 category: dark
 description: 왼쪽과 오른쪽으로 반달 칼날을 한 번씩, 두 번 연속으로 베어 냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/quarter_blades.png
 permission: magic.learned.quarter_blades
 discovery:
-  description: 낚시로 보물을 20번 낚기.
-research: 찌가 잠길 때마다 물고기 대신 반짝이는 것이 올라오는 날들이 있었다. 녹슨 날붙이가 연달아 걸려 나온 밤, 물에 비친 달도 둘로 갈라져 있었다.
+  description: 숫돌로 마법 부여를 10번 지우기.
+research: 날에 깃든 빛을 숫돌에 갈아 지울 때마다 경험의 구슬이 몇 알씩 굴러 나왔다. 빛이 벗겨진 맨 칼날은 차오르기 전의 달처럼 가늘고 날카로웠다.
 cast:
   command: 마법 quarter_blades
   cooldown-seconds: 7

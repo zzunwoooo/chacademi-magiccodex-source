@@ -2,7 +2,7 @@ id: jelly_swarm
 name: 해파리 떼
 category: water
 description: 해파리 네 마리를 불러 내 주위를 맴돌게 합니다. 해파리에 닿은 적은 쏘여서 피해를 입고 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/jelly_swarm.png
 permission: magic.learned.jelly_swarm
 discovery:
   description: 발광 오징어를 30마리 처치하기.

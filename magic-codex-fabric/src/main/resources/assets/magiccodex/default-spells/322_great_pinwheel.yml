@@ -2,7 +2,7 @@ id: great_pinwheel
 name: 거대 바람개비
 category: wind
 description: 조준한 곳에 거대한 바람개비를 세워 6초 동안 돌립니다. 바람개비는 점점 빨라지며 주변의 적을 가운데로 끌어당겨 베고, 마지막에 날개가 터지며 적을 튕겨 냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/great_pinwheel.png
 permission: magic.learned.great_pinwheel
 discovery:
   description: 엔드 함선에서 겉날개를 3개 얻기.

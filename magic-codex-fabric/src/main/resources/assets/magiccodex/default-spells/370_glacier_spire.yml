@@ -2,7 +2,7 @@ id: glacier_spire
 name: 빙하 결정탑
 category: water
 description: 조준한 곳에 높은 빙하 결정탑을 8초 동안 세웁니다. 탑은 주변에서 가장 가까운 적에게 1초마다 얼음 파편을 쏘고, 사라질 때 무너지며 주변에 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/glacier_spire.png
 permission: magic.learned.glacier_spire
 discovery:
   description: 전달체를 활성화하기.

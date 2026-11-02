@@ -2,10 +2,10 @@ id: glacial_epoch
 name: 영겁의 빙하
 category: water
 description: 조준한 곳을 중심으로 넓은 땅을 영원한 빙하 시대로 되돌립니다. 퍼지는 서리가 적을 느리게 만들고 거대한 빙하 기둥들이 솟아오른 뒤, 모든 기둥이 산산조각 나고 절대영도의 일격이 내리꽂혀 적을 얼려 버립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/glacial_epoch.png
 permission: magic.learned.glacial_epoch
 discovery:
-  description: 던전 보상 「영겁의 빙하 주문서」를 사용하기.
+  description: 「영겁의 빙하」 마법 스크롤 사용하기.
 research: 얼음 밑, 다시 얼음 밑. / 수만 년 겨울을 지나온 손이 쓴 마지막 장은 / 펼치는 이의 숨을 빌려 깨어난다. / 그 숨을 내준 날, 들판은 하얗게 멈췄고 / 하늘에는 눈꽃 하나가 떨어질 때를 기다렸다.
 cast:
   command: 마법 glacial_epoch

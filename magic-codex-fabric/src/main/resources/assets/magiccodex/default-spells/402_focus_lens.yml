@@ -2,11 +2,11 @@ id: focus_lens
 name: 초점 렌즈
 category: light
 description: 눈앞에 빛 렌즈를 만들어 조준한 한 점에 햇빛을 모아 최대 2초 동안 태웁니다. 렌즈가 깨질 때 초점에서 불씨가 터지며, 시선을 돌리거나 자리를 뜨면 일찍 깨집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/focus_lens.png
 permission: magic.learned.focus_lens
 discovery:
-  description: 유리를 256개 굽기.
-research: "실험 기록 — 재료: 사막에서 퍼 온 것, 쉬지 않고 돌린 화로, 잠 못 잔 밤들. 결과: 꺼낸 것이 너무 맑아서, 그 너머의 햇빛이 한 점으로 모여 손등을 데웠음."
+  description: 망원경을 3개 만들기.
+research: "실험 기록 — 재료: 구리 대롱, 보랏빛 결정 조각. 결과: 대롱 끝에 결정을 물린 세 번째 것을 들어 올렸을 때, 그 너머의 햇빛이 한 점으로 모여 손등을 데웠음."
 cast:
   command: 마법 focus_lens
   cooldown-seconds: 6

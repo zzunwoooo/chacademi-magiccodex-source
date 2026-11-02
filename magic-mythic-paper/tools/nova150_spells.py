@@ -37,6 +37,7 @@ def write_all():
         fn = f'{o:03d}_{i}.yml'; path = os.path.join(ds, fn)
         old = _a._read(path) if os.path.exists(path) else ''
         icon = (re.search(r'(?m)^icon: (.*)$', old) or [None, "''"])[1]
+        if icon.strip() in ("''", '""', ''): icon = f'magiccodex:textures/spells/nova150/{i}.png'   # 2026-11-03 할로윈 12종처럼 아이콘 자리 미리 (그림 없으면 원소 문장)
         y = (f"id: {i}\nname: {nm}\ncategory: {cat}\ndescription: {_a._q(desc)}\nicon: {icon}\npermission: magic.learned.{i}\n"
              f"discovery:\n  description: {_a._q(disc) if disc else _a._q('아직 알려지지 않았습니다.')}\nresearch: {_a._q(res) if res else chr(39)*2}\n"
              f"cast:\n  command: 마법 {i}\n  cooldown-seconds: {cd}\n  mana-cost: {mana}\norder: {o}\n")
@@ -85,16 +86,17 @@ def write_all():
     # 서버 세션용 카운터 명세 (조건 키는 아직 서버가 안 셈 — 서버 세션이 구현)
     c = ['# 신규 150종 발견 조건 카운터 명세 (서버 세션 구현용, Claude 2026-11-03)', '',
          '오너: "조건을 실제로 만들건 없고 서버 세션에다가 말해서 제작할거야 / 궁극들이랑 몇개는 스크롤 사용 / 던전 보상 같은걸로".',
+         '오너 2026-11-03: "발견 조건 겹치는거 빼고 / 스크롤로 된건 우리 스크롤 시스템 할로윈에 했던거" → 운영 중 조건과 겹치던 19종 교체, 주문서 24종 = 할로윈 마법 스크롤.',
          '정의는 `magic-discovery-paper/src/main/resources/discoveries.yml` 끝 구간 (tools/nova150/discovery.py 에서 생성). 아래 키를 `MagicDiscovery.signal(uuid, key, amount)` 로 올려 주면 됩니다.',
          '`state.*` 키는 `MagicDiscovery.state()` 의 허용 목록에 추가 필요 (`state.popularity`). 이동 거리 키는 블록 단위(정수 누적).', '',
          f'- 주문서: {SCROLL_RULE}', '', '| 키 | 셀 것 | 쓰는 마법 | 목표 |', '|---|---|---|---|']
     for (o, i, nm, *_r) in sorted(M):
         for k, v in DISC[i][1].items():
             if not k.startswith('scroll.'): c.append(f'| `{k}` | {KEYS[k]} | {o} {nm} | {v:g} |')
-    c += ['', '## 주문서 (던전 보상) 24종', '', '| # | id | 주문서 이름 | 키 |', '|---|---|---|---|']
+    c += ['', '## 마법 스크롤 24종 (할로윈 때 만든 스크롤 그대로 — 서버에 새로 만들 것 없음, 던전 보상 등으로 나눠 주기만)', '', '| # | id | 스크롤 | 키 |', '|---|---|---|---|']
     for (o, i, nm, *_r) in sorted(M):
         for k in DISC[i][1]:
-            if k.startswith('scroll.'): c.append(f'| {o} | `{i}` | {nm} 주문서 | `{k}` |')
+            if k.startswith('scroll.'): c.append(f'| {o} | `{i}` | 「{nm}」 마법 스크롤 (`/마법스크롤 {i}`) | `{k}` |')
     _a._write_if(os.path.join(REPO, 'docs/handoff/NOVA150_DISCOVERY_COUNTERS.md'), '\n'.join(c) + '\n')
     t = ['| # | id | 이름 | 대상 | 마나 / 쿨 | 피해 (base + 마력×) | 구현 | 임시값 | 발견 조건 | VFX 팩 |', '|---|---|---|---|---|---|---|---|---|---|']
     for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, bundle, hold, P, en) in sorted(M):

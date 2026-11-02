@@ -2,7 +2,7 @@ id: dandelion_volley
 name: 민들레 홀씨탄
 category: wind
 description: 느릿느릿 떠가는 민들레 홀씨 다섯 개를 앞쪽 부채꼴로 흩날려 보냅니다. 홀씨는 처음 닿은 적에게 부딪혀 터지며, 가까이 있는 적일수록 여러 개를 맞습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/dandelion_volley.png
 permission: magic.learned.dandelion_volley
 discovery:
   description: 민들레를 64송이 꺾기.

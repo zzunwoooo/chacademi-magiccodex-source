@@ -2,7 +2,7 @@ id: freeze_pulse
 name: 결빙 파동
 category: water
 description: 발밑에서 냉기 파동을 세 번 내보냅니다. 파동은 점점 넓게 퍼지며 닿은 적에게 피해를 주고 느리게 만듭니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/freeze_pulse.png
 permission: magic.learned.freeze_pulse
 discovery:
   description: 가루눈에 빠져 3번 얼어붙기.

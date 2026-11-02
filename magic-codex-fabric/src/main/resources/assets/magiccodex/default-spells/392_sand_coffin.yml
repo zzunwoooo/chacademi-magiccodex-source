@@ -2,7 +2,7 @@ id: sand_coffin
 name: 모래관
 category: earth
 description: 적을 모래관에 가둬 2초 동안 꼼짝 못 하게 한 뒤, 관을 안으로 무너뜨려 짓누릅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sand_coffin.png
 permission: magic.learned.sand_coffin
 discovery:
   description: 좀비 주민을 3명 치료하기.

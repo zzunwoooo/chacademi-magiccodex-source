@@ -2,10 +2,10 @@ id: core_magnetosphere
 name: 지핵 자기장
 category: earth
 description: 땅속 깊은 지핵의 자기장을 끌어올립니다. 바위들이 뜯겨 나와 하늘에 거대한 구체를 이루는 동안 주변 적은 땅에 붙들리고, 구체가 내리꽂히는 순간 폭발과 함께 곳곳에서 용암이 솟구칩니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/core_magnetosphere.png
 permission: magic.learned.core_magnetosphere
 discovery:
-  description: 던전 보상 「지핵 자기장 주문서」를 사용하기.
+  description: 「지핵 자기장」 마법 스크롤 사용하기.
 research: 이 아래 잠든 이는 땅의 심장 소리를 처음 받아 적은 자. 그의 마지막 한 장은 어둠 가장 깊은 곳, 녹슨 함 속에 남겨졌다. 그것을 펼친 자에게 — 나침반들은 일제히 발밑을 가리킬 것이요, 바위는 하늘로 끌려 오를 것이며, 녹은 쇠의 박동이 그대의 맥박과 겹칠 것이다. 세계를 붙든 힘이, 단 한 번 그대의 손을 들어 주리라.
 cast:
   command: 마법 core_magnetosphere

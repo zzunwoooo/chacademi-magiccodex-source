@@ -2,10 +2,10 @@ id: kite_festival
 name: 연날리기 축제
 category: wind
 description: 조준한 곳 하늘에 바람 연 다섯 개를 띄웁니다. 연들이 번갈아 적에게 급강하해 들이받고, 마지막에는 다섯 개가 한꺼번에 한가운데로 내리꽂힙니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/kite_festival.png
 permission: magic.learned.kite_festival
 discovery:
-  description: 던전 보상 「연날리기 축제 주문서」를 사용하기.
+  description: 「연날리기 축제」 마법 스크롤 사용하기.
 research: 선배, 그 무너진 성채 맨 아래층에서 색실로 묶인 두루마리를 찾았어요. 펼치는 순간 천장 너머로 연들이 떠올라 저마다 내려앉을 곳을 고르더라고요. 누가 왜 거기 묻어 두었는지는 끝내 모르겠어요.
 cast:
   command: 마법 kite_festival

@@ -2,7 +2,7 @@ id: rain_barrage
 name: 폭우
 category: water
 description: 조준한 곳 위에 먹구름을 불러 6초 동안 굵은 빗줄기를 쏟아붓습니다. 비를 맞는 적은 계속 피해를 입고, 큰 물결이 덮칠 때마다 더 큰 피해를 입고 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/rain_barrage.png
 permission: magic.learned.rain_barrage
 discovery:
   description: 뇌우 속에서 삼지창으로 번개를 5번 불러내기.

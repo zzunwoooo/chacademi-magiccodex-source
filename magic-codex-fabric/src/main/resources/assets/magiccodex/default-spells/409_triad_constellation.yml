@@ -2,7 +2,7 @@ id: triad_constellation
 name: 삼각 별자리
 category: light
 description: 조준한 곳에 별 세 개를 떨어뜨려 삼각형으로 잇습니다. 잠시 뒤 삼각형 안에 갇힌 적은 피해를 입고 1초 동안 기절합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/triad_constellation.png
 permission: magic.learned.triad_constellation
 discovery:
   description: 30레벨 마법 부여를 10번 하기.

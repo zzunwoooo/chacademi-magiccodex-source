@@ -2,7 +2,7 @@ id: furnace_dome
 name: 화로 돔
 category: fire
 description: 조준한 곳을 덮는 거대한 화로 돔을 세웁니다. 돔 안은 1초마다 뜨겁게 달아오르고, 5초 뒤 돔이 닫히면서 안쪽 전체가 폭발합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/furnace_dome.png
 permission: magic.learned.furnace_dome
 discovery:
   description: 피글린과 금 주괴로 64번 물물교환하기.

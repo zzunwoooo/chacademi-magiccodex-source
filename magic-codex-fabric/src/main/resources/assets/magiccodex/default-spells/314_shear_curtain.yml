@@ -2,11 +2,11 @@ id: shear_curtain
 name: 칼바람 장막
 category: wind
 description: 앞으로 나아가는 거대한 세로 바람 장막을 펼칩니다. 장막에 휩쓸린 적은 모두 베이고, 장막이 멈추는 자리에서 칼바람이 흩어지며 한 번 더 벱니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/shear_curtain.png
 permission: magic.learned.shear_curtain
 discovery:
-  description: 브리즈 막대를 32개 모으기.
-research: 회오리 녀석들이 떨구는 막대 말이오? 한 다발 모아다 나란히 세워 두면, 그 사이로 바람이 벽처럼 꼿꼿이 서 있더이다. 손대면 베여요, 손님.
+  description: 가위로 거미줄을 32개 끊기.
+research: 버려진 갱도의 끈적한 줄 말이오? 가위로 서걱서걱 끊다 보면, 끊긴 자리마다 바람이 벽처럼 꼿꼿이 서 있더이다. 손대면 베여요, 손님.
 cast:
   command: 마법 shear_curtain
   cooldown-seconds: 16

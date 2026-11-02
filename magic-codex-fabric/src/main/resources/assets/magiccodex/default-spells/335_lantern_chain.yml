@@ -2,7 +2,7 @@ id: lantern_chain
 name: 등롱 사슬
 category: fire
 description: 등불 세 개를 앞쪽에 일렬로 던져 불줄로 잇습니다. 약 2.5초 동안 그 줄을 넘거나 닿는 적은 불에 그을립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/lantern_chain.png
 permission: magic.learned.lantern_chain
 discovery:
   description: 사슬을 64개 설치하기.

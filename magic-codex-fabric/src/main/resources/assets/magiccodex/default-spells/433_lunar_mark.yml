@@ -2,7 +2,7 @@ id: lunar_mark
 name: 달빛 표식
 category: dark
 description: 적에게 달빛 표식을 새깁니다. 4초 뒤 하늘에서 달빛이 떨어져 표식이 새겨진 적에게 큰 피해를 주고, 바로 옆의 적들에게도 절반의 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/lunar_mark.png
 permission: magic.learned.lunar_mark
 discovery:
   description: 달의 모양 8가지를 모두 보기.

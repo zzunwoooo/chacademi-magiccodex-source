@@ -2,7 +2,7 @@ id: hourglass_pit
 name: 모래시계 구덩이
 category: earth
 description: 조준한 곳에 4초 동안 모래 구덩이를 엽니다. 안에 있는 적은 점점 더 느려지다가 3초째에 모래에 묻혀 1초 동안 움직이지 못하고, 모래 둔덕이 터질 때 한 번 더 피해를 입습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/hourglass_pit.png
 permission: magic.learned.hourglass_pit
 discovery:
   description: 사막 피라미드의 보물 상자를 3번 열기.

@@ -2,7 +2,7 @@ id: shadow_play
 name: 그림자극
 category: dark
 description: 적 뒤의 벽에 그 적의 그림자를 비춥니다. 3초 안에 그림자를 바라보고 휘두르면, 벽 너머에 숨은 적이라도 본체가 그대로 피해를 입습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/shadow_play.png
 permission: magic.learned.shadow_play
 discovery:
   description: 갑옷 거치대 10개에 장비를 입히기.

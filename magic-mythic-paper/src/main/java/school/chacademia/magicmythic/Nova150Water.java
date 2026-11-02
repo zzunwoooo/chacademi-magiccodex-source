@@ -266,10 +266,10 @@ final class Nova150Water {
         // not on a broom); every enemy within 0.9 ahead is hit once + knocked along the slide (bosses weakly)
         m.put("ice_slide", n -> {
             Player pl = n.pl;
-            if (BroomLink.riding(pl)) return refuse(n, "빗자루 위에서는 쓸 수 없어요");
+            if (BroomLink.riding(pl)) return refuse(n, "빗자루에서 내린 뒤 사용해 주세요.");
             Location start = pl.getLocation(); Vector f = n.flat();
             List<Location> pts = path(n.plugin, start, f, n.d("dist", 7));
-            if (pts.size() < 3) return refuse(n, "앞쪽이 막혀 있어요");
+            if (pts.size() < 3) return refuse(n, "앞쪽이 막혀 있어 사용할 수 없습니다.");
             int dur = n.i("ticks", 14);
             double knock = n.d("knock", 0.9);
             Set<UUID> done = new HashSet<>();
@@ -626,7 +626,7 @@ final class Nova150Water {
             t = l.isEmpty() ? null : l.get(0);
         }
         if (t == null || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > (range + 2) * (range + 2)) {
-            refuse(n, "마법을 걸 대상이 없어요");
+            refuse(n, "마법을 걸 대상이 없습니다.");
             return null;
         }
         return t;

@@ -2,7 +2,7 @@ id: southern_cross
 name: 남십자성
 category: light
 description: 조준한 곳에 별 네 개를 십자 모양으로 세웁니다. 별빛이 가운데로 모였다가 폭발해 주변의 적에게 피해를 줍니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/southern_cross.png
 permission: magic.learned.southern_cross
 discovery:
   description: 지도 제작대로 지도를 10번 넓히기.

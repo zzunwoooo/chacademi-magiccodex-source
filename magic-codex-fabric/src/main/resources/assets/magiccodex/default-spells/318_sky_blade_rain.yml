@@ -2,11 +2,11 @@ id: sky_blade_rain
 name: 칼날비
 category: wind
 description: 조준한 곳 하늘에 봉인을 열어 3초 동안 바람 칼날을 비처럼 쏟아붓습니다. 마지막에는 거대한 칼날이 한가운데에 내리꽂힙니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sky_blade_rain.png
 permission: magic.learned.sky_blade_rain
 discovery:
-  description: 뇌우 속에서 몬스터를 100마리 처치하기.
-research: 하늘이 갈라지고 / 번쩍임과 번쩍임 사이마다 / 어둠 속 것들이 쓰러졌다 / 그 밤의 빗줄기는 / 모두 칼날이었다
+  description: 10블록 넘게 높은 곳에서 화살로 몬스터를 30마리 처치하기.
+research: 높은 곳에서 / 시위를 놓을 때마다 / 아래의 것들이 쓰러졌다 / 떨어지는 화살은 / 모두 칼날비였다
 cast:
   command: 마법 sky_blade_rain
   cooldown-seconds: 16

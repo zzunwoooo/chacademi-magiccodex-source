@@ -2,7 +2,7 @@ id: magnet_palm
 name: 자석 손
 category: earth
 description: 손바닥에 자기장을 모아 앞쪽의 적들을 내 쪽으로 끌어당긴 뒤, 손앞에 들러붙은 순간 강하게 때립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/magnet_palm.png
 permission: magic.learned.magnet_palm
 discovery:
   description: 피뢰침을 16개 설치하기.

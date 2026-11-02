@@ -2,7 +2,7 @@ id: moon_pillar
 name: 달빛 기둥
 category: dark
 description: 앞쪽 일직선으로 달빛 기둥 세 개를 차례로 솟구치게 합니다. 기둥에 휩쓸린 적은 피해를 입고 위로 떠오릅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/moon_pillar.png
 permission: magic.learned.moon_pillar
 discovery:
   description: 드래곤의 숨결을 32병 모으기.

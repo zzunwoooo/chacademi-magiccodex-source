@@ -2,7 +2,7 @@ id: rip_current
 name: 이안류
 category: water
 description: 앞쪽으로 거센 해류를 일으킵니다. 물마루에 휩쓸린 적은 해류 끝까지 끌려가고, 끝에서 솟는 물기둥에 한 번 더 맞습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/rip_current.png
 permission: magic.learned.rip_current
 discovery:
   description: 가디언을 100마리 처치하기.

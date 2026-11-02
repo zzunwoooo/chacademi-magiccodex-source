@@ -2,11 +2,11 @@ id: kite_tether
 name: 연줄
 category: wind
 description: 조준한 적에게 바람 연을 매달아 4초 동안 공중에 띄운 채 끌고 다닙니다(고정). 연줄이 당겨질 때마다 피해를 주고, 연이 찢어지면 적이 떨어지며 한 번 더 피해를 입습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/kite_tether.png
 permission: magic.learned.kite_tether
 discovery:
-  description: 끈으로 묶은 동물을 데리고 누적 300블록 이동하기.
-research: "\"그 끈 좀 풀어 줘, 얘가 지쳤잖아.\" / \"조금만 더. 끌려오는 게 얘인지 바람인지 아직 모르겠거든.\""
+  description: 끈(목줄)을 8개 만들기.
+research: "\"끈적한 덩이에 실을 엮어서 뭘 그렇게 많이 만들어?\" / \"연 날릴 줄이지. 짐승도 묶고, 바람도 묶을 거야.\""
 cast:
   command: 마법 kite_tether
   cooldown-seconds: 12

@@ -2,7 +2,7 @@ id: sea_of_fog
 name: 안개 바다
 category: water
 description: 주변에 짙은 안개를 8초 동안 펼칩니다. 안개 속에서는 몸이 보이지 않아 몬스터가 쉽게 찾지 못하며, 그 사이 처음 하는 공격은 훨씬 강해집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sea_of_fog.png
 permission: magic.learned.sea_of_fog
 discovery:
   description: 보물 지도로 묻힌 보물을 5번 찾아내기.

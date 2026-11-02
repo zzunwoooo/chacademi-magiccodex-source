@@ -2,7 +2,7 @@ id: carousel_gale
 name: 회전목마 돌풍
 category: wind
 description: 조준한 곳에 회전목마 같은 돌풍을 일으킵니다. 안에 있는 적은 원을 따라 빙글빙글 끌려 돌며 피해를 입고, 마지막에 바깥으로 튕겨 나갑니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/carousel_gale.png
 permission: magic.learned.carousel_gale
 discovery:
   description: 바닐라 동물 10마리에게 안장을 얹기.

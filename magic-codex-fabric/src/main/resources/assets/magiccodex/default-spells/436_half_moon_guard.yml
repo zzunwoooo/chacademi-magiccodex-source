@@ -2,7 +2,7 @@ id: half_moon_guard
 name: 반달 방패
 category: dark
 description: 2초 동안 앞쪽에 반달 모양의 막을 세워 정면에서 오는 피해를 대부분 막아 냅니다. 막이 걷히면 막아 낸 피해를 실은 반달 칼날을 앞으로 날려 보냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/half_moon_guard.png
 permission: magic.learned.half_moon_guard
 discovery:
   description: 검을 다 써서 5자루 부러뜨리기.

@@ -2,7 +2,7 @@ id: dream_splinter
 name: 꿈 조각
 category: dark
 description: 꿈의 수정 조각을 날립니다. 맞은 적은 꿈에 홀려 1.5초 동안 공포에 질려 엉뚱한 곳으로 달아납니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/dream_splinter.png
 permission: magic.learned.dream_splinter
 discovery:
   description: 수상한 스튜를 10번 먹기.

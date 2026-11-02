@@ -2,7 +2,7 @@ id: sand_fall
 name: 모래 폭포
 category: earth
 description: 조준한 곳 위 하늘에 봉인을 열어 2초 동안 모래를 쏟아붓습니다. 그 아래의 적은 계속 피해를 입고 느려지며, 마지막에 큰 충격을 받습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sand_fall.png
 permission: magic.learned.sand_fall
 discovery:
   description: 떨어지는 모래·자갈에 깔려 10번 질식 피해를 받기.

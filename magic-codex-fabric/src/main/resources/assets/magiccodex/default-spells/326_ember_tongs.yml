@@ -2,11 +2,11 @@ id: ember_tongs
 name: 불티 집게
 category: fire
 description: 달군 쇠 집게를 앞으로 내밀어 두 번 연달아 꽉 집습니다. 바로 앞에 붙은 적은 두 번 모두 맞습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/ember_tongs.png
 permission: magic.learned.ember_tongs
 discovery:
-  description: 부싯돌과 부시로 불을 50번 붙이기.
-research: 쇠와 돌을 맞부딪칠 때마다 손등에 불똥이 튀었다. 손목이 시큰거릴 만큼 긋고 또 긋고 나서야, 튀어 나간 불똥이 집게처럼 다시 내 쪽으로 물려 온다는 걸 알았다.
+  description: 모닥불 연기를 피워 벌집 조각을 10번 거두기.
+research: 벌통 아래 장작을 지펴 연기를 올리고서야 벌들이 얌전해졌다. 가위로 밀랍을 떼어 낼 때 불티 하나가 튀었는데, 집게로 집은 듯 내 손끝에 얌전히 물려 있었다.
 cast:
   command: 마법 ember_tongs
   cooldown-seconds: 3

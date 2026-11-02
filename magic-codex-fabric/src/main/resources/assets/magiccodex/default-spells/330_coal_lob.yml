@@ -2,7 +2,7 @@ id: coal_lob
 name: 숯불 투척
 category: fire
 description: 벌겋게 달군 숯덩이를 던집니다. 숯은 바닥에서 두 번 통통 튀다가 세 번째에 터지고, 도중에 적에게 닿으면 그 자리에서 터집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/coal_lob.png
 permission: magic.learned.coal_lob
 discovery:
   description: 숯을 128개 굽기.

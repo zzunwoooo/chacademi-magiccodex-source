@@ -2,7 +2,7 @@ id: light_fan
 name: 빛 부채
 category: light
 description: 앞쪽 넓은 부채꼴을 빛으로 한 번 벱니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/light_fan.png
 permission: magic.learned.light_fan
 discovery:
   description: 발광석을 64개 캐기.

@@ -2,7 +2,7 @@ id: moon_wheel
 name: 월광 회전륜
 category: dark
 description: 달빛 칼날 여덟 개를 불러내 6초 동안 내 주위를 돌게 합니다. 가까이 다가온 적은 0.5초마다 칼날에 베입니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/moon_wheel.png
 permission: magic.learned.moon_wheel
 discovery:
   description: 위더를 소환해 처치하기.

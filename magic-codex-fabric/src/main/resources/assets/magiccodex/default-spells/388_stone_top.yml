@@ -2,7 +2,7 @@ id: stone_top
 name: 바위 팽이
 category: earth
 description: 돌 팽이를 땅에 굴려 보냅니다. 팽이는 4초 동안 적을 쫓듯 굴러다니며 부딪히는 적을 튕겨 냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/stone_top.png
 permission: magic.learned.stone_top
 discovery:
   description: 장식된 항아리를 5개 만들기.

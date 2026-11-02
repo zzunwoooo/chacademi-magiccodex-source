@@ -2,7 +2,7 @@ id: seed_mines
 name: 홀씨 지뢰밭
 category: wind
 description: 앞쪽 땅에 바람 홀씨 여섯 개를 심어 둡니다. 적이 홀씨를 밟으면 상승 기류가 터져 피해를 주고 적을 공중으로 띄웁니다. 홀씨는 10초 동안 남아 있습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/seed_mines.png
 permission: magic.learned.seed_mines
 discovery:
   description: 압력판을 32개 설치하기.

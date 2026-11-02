@@ -2,7 +2,7 @@ id: spray_kick
 name: 물보라 발차기
 category: water
 description: 물보라를 두른 발로 앞쪽을 세 번 연달아 걷어찹니다. 마지막 돌려차기에 맞은 적은 뒤로 밀려납니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/spray_kick.png
 permission: magic.learned.spray_kick
 discovery:
   description: 돌고래의 은총을 10번 받기.

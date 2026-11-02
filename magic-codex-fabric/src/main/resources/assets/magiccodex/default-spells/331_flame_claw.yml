@@ -2,7 +2,7 @@ id: flame_claw
 name: 불꽃 손톱
 category: fire
 description: 손끝에 불꽃 손톱 세 갈래를 세워 앞을 크게 할큅니다. 할퀸 자리에는 짧은 화상이 남습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/flame_claw.png
 permission: magic.learned.flame_claw
 discovery:
   description: 용암을 양동이로 10번 뜨기.

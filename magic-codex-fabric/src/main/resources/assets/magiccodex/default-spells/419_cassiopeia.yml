@@ -2,7 +2,7 @@ id: cassiopeia
 name: 카시오페이아
 category: light
 description: 하늘에 카시오페이아 별자리를 그리고, 빛을 W자로 꺾어 보내 앞쪽의 적 다섯 명을 차례로 때립니다. 마지막 적에게는 더 큰 일격이 떨어집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/cassiopeia.png
 permission: magic.learned.cassiopeia
 discovery:
   description: 인기도 300 달성하기.

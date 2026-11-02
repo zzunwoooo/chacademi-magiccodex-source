@@ -2,7 +2,7 @@ id: air_saw
 name: 바람 톱
 category: wind
 description: 회전하는 바람 원반을 천천히 앞으로 밀어 보냅니다. 원반은 적을 꿰뚫고 지나가며 닿아 있는 동안 여러 번 베고, 벽에 부딪히면 부서지며 마지막으로 한 번 더 벱니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/air_saw.png
 permission: magic.learned.air_saw
 discovery:
   description: 석재 절단기로 블록을 256개 깎기.

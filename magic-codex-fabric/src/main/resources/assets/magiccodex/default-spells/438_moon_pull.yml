@@ -2,11 +2,11 @@ id: moon_pull
 name: 달의 인력
 category: dark
 description: 머리 위에 작은 달을 띄워 밀물처럼 주변의 적들을 내 쪽으로 끌어당깁니다. 끌려와 모인 적들은 피해를 입고 2초 동안 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/moon_pull.png
 permission: magic.learned.moon_pull
 discovery:
-  description: 밤에 팬텀을 50마리 처치하기.
-research: 잠 안 자고 버티는 사람 머리 위로 내리꽂히는 그 날개 놈들 있잖아. 밤마다 그걸 잡아 떨구던 친구가, 요즘은 손짓 한 번에 죄다 끌어 내린다던데.
+  description: 슬라임을 50마리 처치하기.
+research: 늪 사람들 말로는 둥근 달이 뜬 밤일수록 늪에서 통통 튀는 초록 덩이가 많이 올라온다더라. 달이 끌어올리는 거래. 그걸 실컷 잡아 본 사람은 달이 무얼 어떻게 끌어당기는지 손으로 알게 된다나.
 cast:
   command: 마법 moon_pull
   cooldown-seconds: 12

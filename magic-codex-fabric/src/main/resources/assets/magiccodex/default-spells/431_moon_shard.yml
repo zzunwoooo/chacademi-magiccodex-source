@@ -2,11 +2,11 @@ id: moon_shard
 name: 달 조각
 category: dark
 description: 손바닥 위에 작은 달을 만들어 깨뜨린 뒤, 그 조각 세 개를 부채꼴로 흩뿌립니다. 가까이 있는 적일수록 여러 조각을 맞습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/moon_shard.png
 permission: magic.learned.moon_shard
 discovery:
-  description: 엔더맨을 50마리 처치하기.
-research: 눈을 마주치지 말 것 / 그래도 마주쳤다면 끝까지 싸울 것 / 키 큰 그림자가 흩어질 때마다 / 보랏빛 조각을 주워 모을 것.
+  description: 후렴과를 20번 먹기.
+research: 끝의 섬 바깥, 보랏빛 가지에 맺힌 열매를 베어 물면 몸이 제멋대로 자리를 옮긴다. 몇 번이고 베어 물고 나니, 몸이 조각나 흩어졌다 다시 모이는 그 감각이 달이 이지러지는 모양과 꼭 닮아 있었다.
 cast:
   command: 마법 moon_shard
   cooldown-seconds: 4

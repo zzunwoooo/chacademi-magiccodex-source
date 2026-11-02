@@ -2,7 +2,7 @@ id: puppet_stage
 name: 꼭두각시 무대
 category: dark
 description: 바닥에 꼭두각시 무대를 펼칩니다. 무대 위의 적들은 피해를 입고, 3초 동안 공격하지 못한 채 내가 바라보는 방향으로 줄에 끌려 걸어갑니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/puppet_stage.png
 permission: magic.learned.puppet_stage
 discovery:
   description: 충전된 크리퍼를 3마리 처치하기.

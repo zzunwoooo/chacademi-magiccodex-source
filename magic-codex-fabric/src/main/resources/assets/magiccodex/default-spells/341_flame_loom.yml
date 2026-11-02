@@ -2,7 +2,7 @@ id: flame_loom
 name: 불실 그물
 category: fire
 description: 불타는 실로 엮은 그물을 앞으로 던집니다. 그물에 걸린 적은 3초 동안 느려지고 그물이 탈 때마다 피해를 입으며, 마지막에 그물이 타 버리면서 한 번 더 데입니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/flame_loom.png
 permission: magic.learned.flame_loom
 discovery:
   description: 마그마 큐브를 100마리 처치하기.

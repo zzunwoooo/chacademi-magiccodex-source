@@ -2,10 +2,10 @@ id: desertify
 name: 사막화
 category: earth
 description: 주변 7블록을 8초 동안 메마른 사막으로 바꿉니다. 사막 위의 적은 모래에 발이 빠져 느려지고, 나는 모래바람을 타고 빨라집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/desertify.png
 permission: magic.learned.desertify
 discovery:
-  description: 던전 보상 「사막화 주문서」를 사용하기.
+  description: 「사막화」 마법 스크롤 사용하기.
 research: …이 기록을 읽는 자여, 우리 마을의 샘이 마른 까닭을 묻지 말라. 무너진 성소 가장 아래 함에 이 종이를 봉하노니, 펼치는 자의 발밑부터 풀이 마르리라. 다만 그 메마른 바람은 펼친 자의 등만을 밀어 줄 것이다.
 cast:
   command: 마법 desertify

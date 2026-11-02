@@ -2,7 +2,7 @@ id: crescent_sickle
 name: 초승달 낫
 category: dark
 description: 초승달 모양의 낫을 휘둘러 앞쪽 부채꼴을 벱니다. 베인 적은 출혈로 1초 동안 두 번 더 피해를 입습니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/crescent_sickle.png
 permission: magic.learned.crescent_sickle
 discovery:
   description: 밤에 괭이로 흙을 256칸 갈기.

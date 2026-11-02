@@ -2,7 +2,7 @@ id: lodestone_shard
 name: 자철 조각
 category: earth
 description: 자철 파편을 던져 적에게 박습니다. 잠시 뒤 파편이 뽑혀 나오며 한 번 더 때리고, 손으로 되돌아오는 길에 있는 적도 스칩니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/lodestone_shard.png
 permission: magic.learned.lodestone_shard
 discovery:
   description: 자석석 나침반을 3개 만들기.

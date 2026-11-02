@@ -2,7 +2,7 @@ id: ice_slide
 name: 얼음 미끄럼
 category: water
 description: 발밑에 얼음 판을 깔고 앞으로 빠르게 미끄러져 나갑니다. 가는 길에 부딪힌 적은 피해를 입고 옆으로 튕겨 나갑니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/ice_slide.png
 permission: magic.learned.ice_slide
 discovery:
   description: 얼음 위에서 보트로 누적 1,000블록 미끄러지기.

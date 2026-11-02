@@ -2,7 +2,7 @@ id: clepsydra_cage
 name: 물시계 감옥
 category: water
 description: 조준한 적을 커다란 물방울 속에 3초 동안 가둡니다. 물이 차오를수록 피해가 커지고, 마지막에 물방울이 터지며 주변 적까지 휩쓸립니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/clepsydra_cage.png
 permission: magic.learned.clepsydra_cage
 discovery:
   description: 엘더 가디언을 3마리 처치하기.

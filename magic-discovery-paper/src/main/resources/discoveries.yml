@@ -1570,9 +1570,9 @@ spells:
     permission: "magic.learned.kite_tether"
     icon: magiccodex:textures/spells/nova150/kite_tether.png
     category: "wind"
-    condition-text: "끈으로 묶은 동물을 데리고 누적 300블록 이동하기."
+    condition-text: "끈(목줄)을 8개 만들기."
     requirements:
-      "leash.travel": 300
+      "craft.lead": 8
     chance: 1.0
     prerequisites: []
   windmill_blades:
@@ -1630,9 +1630,9 @@ spells:
     permission: "magic.learned.shear_curtain"
     icon: magiccodex:textures/spells/nova150/shear_curtain.png
     category: "wind"
-    condition-text: "브리즈 막대를 32개 모으기."
+    condition-text: "가위로 거미줄을 32개 끊기."
     requirements:
-      "obtain.breeze_rod": 32
+      "shear.cobweb": 32
     chance: 1.0
     prerequisites: []
   thousand_cranes:
@@ -1670,9 +1670,9 @@ spells:
     permission: "magic.learned.sky_blade_rain"
     icon: magiccodex:textures/spells/nova150/sky_blade_rain.png
     category: "wind"
-    condition-text: "뇌우 속에서 몬스터를 100마리 처치하기."
+    condition-text: "10블록 넘게 높은 곳에서 화살로 몬스터를 30마리 처치하기."
     requirements:
-      "kill.thunderstorm": 100
+      "kill.arrow_from_above": 30
     chance: 1.0
     prerequisites: []
   vacuum_corridor:
@@ -1680,9 +1680,9 @@ spells:
     permission: "magic.learned.vacuum_corridor"
     icon: magiccodex:textures/spells/nova150/vacuum_corridor.png
     category: "wind"
-    condition-text: "엔더 진주를 200번 던지기."
+    condition-text: "광산 수레를 타고 누적 2,000블록 이동하기."
     requirements:
-      "throw.ender_pearl": 200
+      "ride.minecart": 2000
     chance: 1.0
     prerequisites: []
   wind_chime_ward:
@@ -1700,7 +1700,7 @@ spells:
     permission: "magic.learned.dead_calm"
     icon: magiccodex:textures/spells/nova150/dead_calm.png
     category: "wind"
-    condition-text: "던전 보상 「무풍지대 주문서」를 사용하기."
+    condition-text: "「무풍지대」 마법 스크롤 사용하기."
     requirements:
       "scroll.dead_calm": 1
     chance: 1.0
@@ -1720,7 +1720,7 @@ spells:
     permission: "magic.learned.kite_festival"
     icon: magiccodex:textures/spells/nova150/kite_festival.png
     category: "wind"
-    condition-text: "던전 보상 「연날리기 축제 주문서」를 사용하기."
+    condition-text: "「연날리기 축제」 마법 스크롤 사용하기."
     requirements:
       "scroll.kite_festival": 1
     chance: 1.0
@@ -1730,7 +1730,7 @@ spells:
     permission: "magic.learned.sky_mill"
     icon: magiccodex:textures/spells/nova150/sky_mill.png
     category: "wind"
-    condition-text: "던전 보상 「천공의 방아 주문서」를 사용하기."
+    condition-text: "「천공의 방아」 마법 스크롤 사용하기."
     requirements:
       "scroll.sky_mill": 1
     chance: 1.0
@@ -1740,7 +1740,7 @@ spells:
     permission: "magic.learned.sky_sever"
     icon: magiccodex:textures/spells/nova150/sky_sever.png
     category: "wind"
-    condition-text: "던전 보상 「창공 절단 주문서」를 사용하기."
+    condition-text: "「창공 절단」 마법 스크롤 사용하기."
     requirements:
       "scroll.sky_sever": 1
     chance: 1.0
@@ -1750,9 +1750,9 @@ spells:
     permission: "magic.learned.ember_tongs"
     icon: magiccodex:textures/spells/nova150/ember_tongs.png
     category: "fire"
-    condition-text: "부싯돌과 부시로 불을 50번 붙이기."
+    condition-text: "모닥불 연기를 피워 벌집 조각을 10번 거두기."
     requirements:
-      "use.flint_and_steel": 50
+      "harvest.honeycomb_smoked": 10
     chance: 1.0
     prerequisites: []
   molten_drip:
@@ -1760,9 +1760,9 @@ spells:
     permission: "magic.learned.molten_drip"
     icon: magiccodex:textures/spells/nova150/molten_drip.png
     category: "fire"
-    condition-text: "철 주괴를 256개 제련하기."
+    condition-text: "점적석에서 떨어진 용암으로 가마솥을 3번 채우기."
     requirements:
-      "smelt.iron": 256
+      "cauldron.lava_drip": 3
     chance: 1.0
     prerequisites: []
   lantern_wisp:
@@ -1770,9 +1770,9 @@ spells:
     permission: "magic.learned.lantern_wisp"
     icon: magiccodex:textures/spells/nova150/lantern_wisp.png
     category: "fire"
-    condition-text: "불붙은 화살로 몬스터를 50마리 처치하기."
+    condition-text: "랜턴을 32개 설치하기."
     requirements:
-      "kill.flaming_arrow": 50
+      "place.lantern": 32
     chance: 1.0
     prerequisites: []
   match_strike:
@@ -1780,9 +1780,9 @@ spells:
     permission: "magic.learned.match_strike"
     icon: magiccodex:textures/spells/nova150/match_strike.png
     category: "fire"
-    condition-text: "모닥불을 16개 설치하기."
+    condition-text: "네더 차원문에 불을 붙여 3번 열기."
     requirements:
-      "place.campfire": 16
+      "light.nether_portal": 3
     chance: 1.0
     prerequisites: []
   coal_lob:
@@ -1810,9 +1810,9 @@ spells:
     permission: "magic.learned.bellows_blast"
     icon: magiccodex:textures/spells/nova150/bellows_blast.png
     category: "fire"
-    condition-text: "용광로로 광석을 128개 제련하기."
+    condition-text: "화염구를 32개 만들기."
     requirements:
-      "smelt.blast": 128
+      "craft.fire_charge": 32
     chance: 1.0
     prerequisites: []
   forge_hammer:
@@ -1950,7 +1950,7 @@ spells:
     permission: "magic.learned.sunspot"
     icon: magiccodex:textures/spells/nova150/sunspot.png
     category: "fire"
-    condition-text: "던전 보상 「태양 흑점 주문서」를 사용하기."
+    condition-text: "「태양 흑점」 마법 스크롤 사용하기."
     requirements:
       "scroll.sunspot": 1
     chance: 1.0
@@ -1960,7 +1960,7 @@ spells:
     permission: "magic.learned.crucible"
     icon: magiccodex:textures/spells/nova150/crucible.png
     category: "fire"
-    condition-text: "던전 보상 「도가니 붓기 주문서」를 사용하기."
+    condition-text: "「도가니 붓기」 마법 스크롤 사용하기."
     requirements:
       "scroll.crucible": 1
     chance: 1.0
@@ -1980,7 +1980,7 @@ spells:
     permission: "magic.learned.forge_god_anvil"
     icon: magiccodex:textures/spells/nova150/forge_god_anvil.png
     category: "fire"
-    condition-text: "던전 보상 「대장장이 신의 모루 주문서」를 사용하기."
+    condition-text: "「대장장이 신의 모루」 마법 스크롤 사용하기."
     requirements:
       "scroll.forge_god_anvil": 1
     chance: 1.0
@@ -1990,7 +1990,7 @@ spells:
     permission: "magic.learned.furnace_gate"
     icon: magiccodex:textures/spells/nova150/furnace_gate.png
     category: "fire"
-    condition-text: "던전 보상 「용광로의 문 주문서」를 사용하기."
+    condition-text: "「용광로의 문」 마법 스크롤 사용하기."
     requirements:
       "scroll.furnace_gate": 1
     chance: 1.0
@@ -2060,9 +2060,9 @@ spells:
     permission: "magic.learned.icicle_fling"
     icon: magiccodex:textures/spells/nova150/icicle_fling.png
     category: "water"
-    condition-text: "스트레이를 30마리 처치하기."
+    condition-text: "얼음 가시 바이옴에서 누적 10분 머무르기."
     requirements:
-      "kill.stray": 30
+      "visit.ice_spikes_seconds": 600
     chance: 1.0
     prerequisites: []
   water_drum:
@@ -2140,9 +2140,9 @@ spells:
     permission: "magic.learned.rime_garden"
     icon: magiccodex:textures/spells/nova150/rime_garden.png
     category: "water"
-    condition-text: "차가운 걸음으로 물 위를 누적 1,000블록 걷기."
+    condition-text: "눈 골렘을 5마리 만들기."
     requirements:
-      "walk.frost_walker": 1000
+      "build.snow_golem": 5
     chance: 1.0
     prerequisites: []
   clepsydra_cage:
@@ -2200,7 +2200,7 @@ spells:
     permission: "magic.learned.frozen_chord"
     icon: magiccodex:textures/spells/nova150/frozen_chord.png
     category: "water"
-    condition-text: "던전 보상 「결빙 화음 주문서」를 사용하기."
+    condition-text: "「결빙 화음」 마법 스크롤 사용하기."
     requirements:
       "scroll.frozen_chord": 1
     chance: 1.0
@@ -2220,7 +2220,7 @@ spells:
     permission: "magic.learned.deep_tentacles"
     icon: magiccodex:textures/spells/nova150/deep_tentacles.png
     category: "water"
-    condition-text: "던전 보상 「심해 촉수 주문서」를 사용하기."
+    condition-text: "「심해 촉수」 마법 스크롤 사용하기."
     requirements:
       "scroll.deep_tentacles": 1
     chance: 1.0
@@ -2230,7 +2230,7 @@ spells:
     permission: "magic.learned.celestial_clepsydra"
     icon: magiccodex:textures/spells/nova150/celestial_clepsydra.png
     category: "water"
-    condition-text: "던전 보상 「천상의 물시계 주문서」를 사용하기."
+    condition-text: "「천상의 물시계」 마법 스크롤 사용하기."
     requirements:
       "scroll.celestial_clepsydra": 1
     chance: 1.0
@@ -2240,7 +2240,7 @@ spells:
     permission: "magic.learned.glacial_epoch"
     icon: magiccodex:textures/spells/nova150/glacial_epoch.png
     category: "water"
-    condition-text: "던전 보상 「영겁의 빙하 주문서」를 사용하기."
+    condition-text: "「영겁의 빙하」 마법 스크롤 사용하기."
     requirements:
       "scroll.glacial_epoch": 1
     chance: 1.0
@@ -2280,9 +2280,9 @@ spells:
     permission: "magic.learned.clay_glob"
     icon: magiccodex:textures/spells/nova150/clay_glob.png
     category: "earth"
-    condition-text: "테라코타를 64개 굽기."
+    condition-text: "점토 덩이를 128개 모으기."
     requirements:
-      "smelt.terracotta": 64
+      "obtain.clay_ball": 128
     chance: 1.0
     prerequisites: []
   lodestone_shard:
@@ -2300,9 +2300,9 @@ spells:
     permission: "magic.learned.sand_stomp"
     icon: magiccodex:textures/spells/nova150/sand_stomp.png
     category: "earth"
-    condition-text: "허스크를 50마리 처치하기."
+    condition-text: "파괴수를 5마리 처치하기."
     requirements:
-      "kill.husk": 50
+      "kill.ravager": 5
     chance: 1.0
     prerequisites: []
   gem_splinter:
@@ -2460,7 +2460,7 @@ spells:
     permission: "magic.learned.sandstorm"
     icon: magiccodex:textures/spells/nova150/sandstorm.png
     category: "earth"
-    condition-text: "던전 보상 「모래폭풍 주문서」를 사용하기."
+    condition-text: "「모래폭풍」 마법 스크롤 사용하기."
     requirements:
       "scroll.sandstorm": 1
     chance: 1.0
@@ -2470,7 +2470,7 @@ spells:
     permission: "magic.learned.desertify"
     icon: magiccodex:textures/spells/nova150/desertify.png
     category: "earth"
-    condition-text: "던전 보상 「사막화 주문서」를 사용하기."
+    condition-text: "「사막화」 마법 스크롤 사용하기."
     requirements:
       "scroll.desertify": 1
     chance: 1.0
@@ -2480,7 +2480,7 @@ spells:
     permission: "magic.learned.great_hourglass"
     icon: magiccodex:textures/spells/nova150/great_hourglass.png
     category: "earth"
-    condition-text: "던전 보상 「대사막의 모래시계 주문서」를 사용하기."
+    condition-text: "「대사막의 모래시계」 마법 스크롤 사용하기."
     requirements:
       "scroll.great_hourglass": 1
     chance: 1.0
@@ -2490,7 +2490,7 @@ spells:
     permission: "magic.learned.core_magnetosphere"
     icon: magiccodex:textures/spells/nova150/core_magnetosphere.png
     category: "earth"
-    condition-text: "던전 보상 「지핵 자기장 주문서」를 사용하기."
+    condition-text: "「지핵 자기장」 마법 스크롤 사용하기."
     requirements:
       "scroll.core_magnetosphere": 1
     chance: 1.0
@@ -2500,9 +2500,9 @@ spells:
     permission: "magic.learned.star_needle"
     icon: magiccodex:textures/spells/nova150/star_needle.png
     category: "light"
-    condition-text: "망원경을 50번 들여다보기."
+    condition-text: "불꽃 별을 32개 만들기."
     requirements:
-      "use.spyglass": 50
+      "craft.firework_star": 32
     chance: 1.0
     prerequisites: []
   focus_lens:
@@ -2510,9 +2510,9 @@ spells:
     permission: "magic.learned.focus_lens"
     icon: magiccodex:textures/spells/nova150/focus_lens.png
     category: "light"
-    condition-text: "유리를 256개 굽기."
+    condition-text: "망원경을 3개 만들기."
     requirements:
-      "smelt.glass": 256
+      "craft.spyglass": 3
     chance: 1.0
     prerequisites: []
   candle_hymn:
@@ -2690,7 +2690,7 @@ spells:
     permission: "magic.learned.nebula_weave"
     icon: magiccodex:textures/spells/nova150/nebula_weave.png
     category: "light"
-    condition-text: "던전 보상 「성운 직조 주문서」를 사용하기."
+    condition-text: "「성운 직조」 마법 스크롤 사용하기."
     requirements:
       "scroll.nebula_weave": 1
     chance: 1.0
@@ -2710,7 +2710,7 @@ spells:
     permission: "magic.learned.celestial_scope"
     icon: magiccodex:textures/spells/nova150/celestial_scope.png
     category: "light"
-    condition-text: "던전 보상 「천체 망원경 주문서」를 사용하기."
+    condition-text: "「천체 망원경」 마법 스크롤 사용하기."
     requirements:
       "scroll.celestial_scope": 1
     chance: 1.0
@@ -2730,7 +2730,7 @@ spells:
     permission: "magic.learned.zodiac_wheel"
     icon: magiccodex:textures/spells/nova150/zodiac_wheel.png
     category: "light"
-    condition-text: "던전 보상 「황도 12궁 주문서」를 사용하기."
+    condition-text: "「황도 12궁」 마법 스크롤 사용하기."
     requirements:
       "scroll.zodiac_wheel": 1
     chance: 1.0
@@ -2740,7 +2740,7 @@ spells:
     permission: "magic.learned.supernova"
     icon: magiccodex:textures/spells/nova150/supernova.png
     category: "light"
-    condition-text: "던전 보상 「초신성 주문서」를 사용하기."
+    condition-text: "「초신성」 마법 스크롤 사용하기."
     requirements:
       "scroll.supernova": 1
     chance: 1.0
@@ -2790,9 +2790,9 @@ spells:
     permission: "magic.learned.moonbeam_dart"
     icon: magiccodex:textures/spells/nova150/moonbeam_dart.png
     category: "dark"
-    condition-text: "보름달이 뜬 밤에 몬스터를 50마리 처치하기."
+    condition-text: "쇠뇌로 몬스터를 50마리 처치하기."
     requirements:
-      "kill.full_moon": 50
+      "kill.crossbow": 50
     chance: 1.0
     prerequisites: []
   moon_shard:
@@ -2800,9 +2800,9 @@ spells:
     permission: "magic.learned.moon_shard"
     icon: magiccodex:textures/spells/nova150/moon_shard.png
     category: "dark"
-    condition-text: "엔더맨을 50마리 처치하기."
+    condition-text: "후렴과를 20번 먹기."
     requirements:
-      "kill.enderman": 50
+      "eat.chorus_fruit": 20
     chance: 1.0
     prerequisites: []
   black_moth:
@@ -2860,9 +2860,9 @@ spells:
     permission: "magic.learned.quarter_blades"
     icon: magiccodex:textures/spells/nova150/quarter_blades.png
     category: "dark"
-    condition-text: "낚시로 보물을 20번 낚기."
+    condition-text: "숫돌로 마법 부여를 10번 지우기."
     requirements:
-      "fish.treasure": 20
+      "use.grindstone": 10
     chance: 1.0
     prerequisites: []
   moon_pull:
@@ -2870,9 +2870,9 @@ spells:
     permission: "magic.learned.moon_pull"
     icon: magiccodex:textures/spells/nova150/moon_pull.png
     category: "dark"
-    condition-text: "밤에 팬텀을 50마리 처치하기."
+    condition-text: "슬라임을 50마리 처치하기."
     requirements:
-      "kill.phantom_night": 50
+      "kill.slime": 50
     chance: 1.0
     prerequisites: []
   moon_howl:
@@ -2950,7 +2950,7 @@ spells:
     permission: "magic.learned.curtain_fall"
     icon: magiccodex:textures/spells/nova150/curtain_fall.png
     category: "dark"
-    condition-text: "던전 보상 「막 내림 주문서」를 사용하기."
+    condition-text: "「막 내림」 마법 스크롤 사용하기."
     requirements:
       "scroll.curtain_fall": 1
     chance: 1.0
@@ -2970,7 +2970,7 @@ spells:
     permission: "magic.learned.shadow_doppel"
     icon: magiccodex:textures/spells/nova150/shadow_doppel.png
     category: "dark"
-    condition-text: "던전 보상 「그림자 도플갱어 주문서」를 사용하기."
+    condition-text: "「그림자 도플갱어」 마법 스크롤 사용하기."
     requirements:
       "scroll.shadow_doppel": 1
     chance: 1.0
@@ -2980,7 +2980,7 @@ spells:
     permission: "magic.learned.full_moon_descent"
     icon: magiccodex:textures/spells/nova150/full_moon_descent.png
     category: "dark"
-    condition-text: "던전 보상 「만월 강림 주문서」를 사용하기."
+    condition-text: "「만월 강림」 마법 스크롤 사용하기."
     requirements:
       "scroll.full_moon_descent": 1
     chance: 1.0
@@ -2990,7 +2990,7 @@ spells:
     permission: "magic.learned.moonlit_masquerade"
     icon: magiccodex:textures/spells/nova150/moonlit_masquerade.png
     category: "dark"
-    condition-text: "던전 보상 「월하 가면무도회 주문서」를 사용하기."
+    condition-text: "「월하 가면무도회」 마법 스크롤 사용하기."
     requirements:
       "scroll.moonlit_masquerade": 1
     chance: 1.0

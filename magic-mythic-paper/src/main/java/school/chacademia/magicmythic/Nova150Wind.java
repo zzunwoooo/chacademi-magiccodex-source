@@ -307,7 +307,7 @@ final class Nova150Wind {
             if (t == null) return false;
             UUID id = n.pl.getUniqueId();
             Integer old = CHANTING.get(id);
-            if (old != null && Bukkit.getCurrentTick() - old < 70) return refuse(n, "이미 영창 중이에요");
+            if (old != null && Bukkit.getCurrentTick() - old < 70) return refuse(n, "이미 영창 중입니다.");
             double r = n.d("r", 2), move = n.d("move", 0.3);
             Location start = n.pl.getLocation();
             int began = Bukkit.getCurrentTick();
@@ -616,7 +616,7 @@ final class Nova150Wind {
             t = l.isEmpty() ? null : l.get(0);
         }
         if (t == null || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > (range + 2) * (range + 2)) {
-            refuse(n, "마법을 걸 대상이 없어요");
+            refuse(n, "마법을 걸 대상이 없습니다.");
             return null;
         }
         return t;

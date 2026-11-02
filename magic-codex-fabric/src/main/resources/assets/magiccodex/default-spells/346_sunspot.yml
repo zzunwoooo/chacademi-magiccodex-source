@@ -2,10 +2,10 @@ id: sunspot
 name: 태양 흑점
 category: fire
 description: 조준한 곳 하늘에 작은 태양을 띄웁니다. 태양은 6초 동안 아래로 열선을 쏟아붓다가, 마지막에 거대한 열선을 떨어뜨려 주변을 크게 태웁니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/sunspot.png
 permission: magic.learned.sunspot
 discovery:
-  description: 던전 보상 「태양 흑점 주문서」를 사용하기.
+  description: 「태양 흑점」 마법 스크롤 사용하기.
 research: 무너진 석실 바닥, 그을린 종이 한 장이 마치 해를 기다리듯 펼쳐져 있었다. 글자를 읽어 내려가자 종이는 재가 되었고, 하늘에는 검은 눈을 가진 해가 하나 더 떠올랐다.
 cast:
   command: 마법 sunspot

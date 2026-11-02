@@ -2,7 +2,7 @@ id: bat_cloak
 name: 박쥐 망토
 category: dark
 description: 몸을 박쥐 떼로 흩뜨려 앞으로 4블록 날아갑니다. 지나가며 스친 적의 생명력을 빨아들여 체력을 회복합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/bat_cloak.png
 permission: magic.learned.bat_cloak
 discovery:
   description: 투명화 물약을 10번 마시기.

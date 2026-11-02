@@ -636,7 +636,7 @@ final class Nova150Fire {
             t = l.isEmpty() ? null : l.get(0);
         }
         if (t == null || t.getWorld() != n.pl.getWorld() || t.getLocation().distanceSquared(n.pl.getLocation()) > (range + 2) * (range + 2)) {
-            n.warn("마법을 걸 대상이 없어요");
+            n.warn("마법을 걸 대상이 없습니다.");
             n.refund(mana);
             return null;
         }

@@ -2,7 +2,7 @@ id: bat_sovereign
 name: 박쥐 군주
 category: dark
 description: 박쥐 떼를 거느리고 8초 동안 주변 적들의 생명력을 계속 빨아들입니다. 1초마다 주변 적에게 피해를 주고, 그만큼 내 체력을 회복합니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/bat_sovereign.png
 permission: magic.learned.bat_sovereign
 discovery:
   description: 몬스터 생성기를 3개 부수기.

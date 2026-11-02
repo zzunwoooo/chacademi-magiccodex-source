@@ -2,7 +2,7 @@ id: fossil_wyrm
 name: 화석 뱀뼈
 category: earth
 description: 땅속에서 거대한 화석 뱀뼈를 불러내 앞으로 돌진시킵니다. 뱀뼈는 지나가는 길의 적을 물어뜯고 끝에서 다시 땅속으로 파고듭니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/fossil_wyrm.png
 permission: magic.learned.fossil_wyrm
 discovery:
   description: 스니퍼 알을 부화시키기.

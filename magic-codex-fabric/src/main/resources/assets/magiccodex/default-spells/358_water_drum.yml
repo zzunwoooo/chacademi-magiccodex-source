@@ -2,7 +2,7 @@ id: water_drum
 name: 물장구
 category: water
 description: 조준한 땅에 물로 된 북을 놓습니다. 북이 세 번 울릴 때마다 점점 넓어지는 충격파가 퍼져 주변 적을 때리고 밀어냅니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/water_drum.png
 permission: magic.learned.water_drum
 discovery:
   description: 소리 블록을 200번 울리기.

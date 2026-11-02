@@ -2,11 +2,11 @@ id: clay_glob
 name: 점토 덩이
 category: earth
 description: 끈적한 점토 덩이를 던져 적에게 철퍽 붙입니다. 맞은 적은 발목에 점토가 엉겨 3초 동안 느려집니다.
-icon: ''
+icon: magiccodex:textures/spells/nova150/clay_glob.png
 permission: magic.learned.clay_glob
 discovery:
-  description: 테라코타를 64개 굽기.
-research: 아, 그 붉은 흙덩이요? 화덕에 넣어 두면 돌처럼 단단하게 구워지지요. 손님처럼 그걸 산더미로 구워 가는 사람은 처음 봤는데, 요새 손에서 끈적한 게 안 떨어진다고요? 허허, 그거 병 아닙니다.
+  description: 점토 덩이를 128개 모으기.
+research: 아, 그 회색 흙덩이요? 물가 바닥을 파면 말랑한 게 나오지요. 손님처럼 그걸 자루째 퍼 가는 사람은 처음 봤는데, 요새 손에서 끈적한 게 안 떨어진다고요? 허허, 그거 병 아닙니다.
 cast:
   command: 마법 clay_glob
   cooldown-seconds: 5
