@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>재의 그림자 뷰어</title>
+<style>
+/* 레이아웃: 화면 가득 3D 무대 + 왼쪽 위 이름, 아래 조작 패널 */
+:root{
+  --bg:#efebe6; --fg:#1f1a18; --muted:#6a5f58; --panel:#fbf8f5; --line:#d9cfc6;
+  --stage-top:#d8d0c7; --stage-bot:#b9ada2; --accent:#c4501b; --shiny:#2f86c9; --on:#1f1a18; --on-fg:#fbf8f5;
+  --body:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141110; --fg:#efe7e1; --muted:#a2948b; --panel:#1d1816; --line:#352d2a;
+  --stage-top:#3a332f; --stage-bot:#1a1615; --accent:#ff8a45; --shiny:#7cc6ff; --on:#efe7e1; --on-fg:#141110; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141110; --fg:#efe7e1; --muted:#a2948b; --panel:#1d1816; --line:#352d2a;
+  --stage-top:#3a332f; --stage-bot:#1a1615; --accent:#ff8a45; --shiny:#7cc6ff; --on:#efe7e1; --on-fg:#141110; color-scheme:dark}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;display:grid;grid-template-rows:minmax(0,1fr) auto;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}
+#stageWrap{position:relative;min-height:320px;background:linear-gradient(var(--stage-top),var(--stage-bot))}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+.title{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:14px;pointer-events:none}
+.title h1{margin:0;font-size:26px;letter-spacing:-.01em}
+.title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.hint{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:16px;color:var(--muted);font-size:12px;pointer-events:none;text-align:right}
+.panel{background:var(--panel);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.lab{font-size:12px;color:var(--muted);margin-right:2px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:999px;padding:2px;gap:2px}
+.seg button,.btn{font:inherit;border:0;background:transparent;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--on);color:var(--on-fg)}
+.seg.sh button[data-v="shiny"][aria-pressed="true"]{background:var(--shiny);color:#fff}
+.btn{border:1px solid var(--line);color:var(--fg)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=range]{accent-color:var(--accent);width:110px}
+.desc{flex-basis:100%;font-size:14px;color:var(--fg)}
+.info{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:0}
+label.chk{display:inline-flex;gap:6px;align-items:center;color:var(--muted);cursor:pointer}
+@media (max-width:600px){.title h1{font-size:20px}.hint{display:none}}
+</style>
+</head>
+<body>
+<div id="stageWrap">
+  <canvas id="c" aria-label="재의 그림자 3D 모델"></canvas>
+  <div class="title"><h1>재의 그림자</h1><p id="sub"></p></div>
+  <div class="hint">드래그: 회전 · 휠/핀치: 확대<br>오른쪽 드래그 또는 Shift+드래그: 이동</div>
+</div>
+<div class="panel">
+  <div class="grp"><span class="lab">형태</span>
+    <div class="seg" id="segForm">
+      <button data-f="ash_shadow" aria-pressed="true">기본형</button>
+      <button data-f="ash_shadow_enraged" aria-pressed="false">광폭화형</button>
+    </div></div>
+  <div class="grp"><span class="lab">색</span>
+    <div class="seg sh" id="segVar">
+      <button data-v="orig" aria-pressed="true">원본</button>
+      <button data-v="shiny" aria-pressed="false">이로치</button>
+    </div></div>
+  <div class="grp" style="flex-basis:100%"><span class="lab">동작</span><div class="seg" id="segAnim"></div></div>
+  <div class="grp">
+    <button class="btn" id="play">일시정지</button>
+    <label class="lab" for="spd">속도</label><input type="range" id="spd" min="0.1" max="2" step="0.05" value="1">
+    <label class="chk"><input type="checkbox" id="hb" checked>히트박스</label>
+    <label class="chk"><input type="checkbox" id="human" checked>사람 크기 비교</label>
+    <button class="btn" id="reset">시점 초기화</button>
+  </div>
+  <div class="info" id="info"></div>
+  <div class="desc" id="desc"></div>
+</div>
+
+<script id="models" type="application/json">__MODELS__</script>
+<script>
+"use strict";
+const MODELS=JSON.parse(document.getElementById('models').textContent);
+const ORDER=['spawn','idle','walk','attack','skill_dash','skill_slam','skill_ash_rain','skill_sink','skill_emerge','skill_grasp','skill_afterimage','skill_veil','skill_ring','skill_ward','skill_desperate','barrage_start','barrage_loop','groggy_start','groggy_loop','transform','death'];
+const NAMES={spawn:'등장',idle:'대기',walk:'이동',attack:'기본 공격',skill_dash:'잿빛 돌진',skill_slam:'그림자 손 내려찍기',skill_ash_rain:'추적하는 재',skill_sink:'잠행',skill_emerge:'솟구침',skill_grasp:'그림자 손아귀',skill_afterimage:'잔상',skill_veil:'재의 장막',skill_ring:'화장의 고리',skill_ward:'빛의 수호',skill_desperate:'발악',barrage_start:'탄막 시작',barrage_loop:'탄막 유지',groggy_start:'그로기',groggy_loop:'그로기 유지',transform:'변신(흡수)',death:'사망'};
+const DESC={spawn:'땅속에서 솟아오르며 등손을 펼치고 촛불 고리가 돈다 / 광폭화: 웅크렸다 몸을 펴며 포효',
+idle:'가슴 등불이 두 번씩 맥박치고, 고개를 기울이다 가끔 경련',
+walk:'앞으로 기울어 미끄러지듯 활공 (광폭화는 더 빠르게)',
+attack:'앞팔로 크게 할퀴기',
+skill_dash:'[유도] 몸을 젖혔다가 등손을 앞으로 내지르며 돌진',
+skill_slam:'[유도] 등손을 좌우 번갈아 3번 내려찍음 (광폭화 4번)',
+skill_ash_rain:'[유도] 두 팔을 들고 손가락을 4번 튕겨 재를 떨어뜨림',
+skill_sink:'[유도] 바닥으로 녹아내리며 사라짐',
+skill_emerge:'[유도] 플레이어가 있던 자리에서 등손을 펼치며 솟구침',
+skill_grasp:'[견제] 오른 등손을 뻗어 쥐었다가 끌어당김',
+skill_afterimage:'[견제] 고개가 꺾이는 경련 — 직전 패턴의 잔상 시전',
+skill_veil:'[견제] 등손으로 몸을 감쌌다가 펼치며 장막을 터뜨림',
+skill_ring:'[견제] 두 손을 들어 바닥을 3번 내리침, 고리가 회전',
+skill_ward:'[견제] 장치 하나를 손가락으로 가리켜 보호막 부여',
+skill_desperate:'[소등 직후] 비명, 몸이 두 번 부풀었다 수축',
+barrage_start:'[50% 탄막] 공중으로 떠올라 팔을 벌리고 고리가 커짐',
+barrage_loop:'[50% 탄막] 25초 동안 떠서 고리 회전 유지',
+groggy_start:'[탄막 성공] 바닥으로 추락, 고리가 기울어 내려앉음',
+groggy_loop:'[그로기 10초] 축 늘어져 숨쉬기',
+transform:'[변신] 장치를 흡수하며 가슴 등불이 부풀었다 터짐 → 광폭화 등장으로 이어짐',
+death:'비명 후 재로 가라앉으며 사라짐'};
+
+// ---------- 수학 ----------
+const D2R=Math.PI/180;
+function m4(){return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]}
+function mul(a,b){const o=new Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s}return o}
+function tr(x,y,z){const m=m4();m[12]=x;m[13]=y;m[14]=z;return m}
+function sc(x,y,z){const m=m4();m[0]=x;m[5]=y;m[10]=z;return m}
+function rotZYX(r){ // Rz*Ry*Rx (degrees), same as render.py
+  const [x,y,z]=r.map(v=>v*D2R);
+  const cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);
+  const Rx=[1,0,0,0, 0,cx,sx,0, 0,-sx,cx,0, 0,0,0,1];
+  const Ry=[cy,0,-sy,0, 0,1,0,0, sy,0,cy,0, 0,0,0,1];
+  const Rz=[cz,sz,0,0, -sz,cz,0,0, 0,0,1,0, 0,0,0,1];
+  return mul(Rz,mul(Ry,Rx));
+}
+function xf(m,p){return [m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12], m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13], m[2]*p[0]+m[6]*p[1]+m[10]*p[2]+m[14]]}
+function persp(f,a,n,fa){const t=1/Math.tan(f/2);return [t/a,0,0,0, 0,t,0,0, 0,0,(fa+n)/(n-fa),-1, 0,0,2*fa*n/(n-fa),0]}
+function lookAt(e,c,u){
+  let z=[e[0]-c[0],e[1]-c[1],e[2]-c[2]];let l=Math.hypot(...z);z=z.map(v=>v/l);
+  let x=[u[1]*z[2]-u[2]*z[1],u[2]*z[0]-u[0]*z[2],u[0]*z[1]-u[1]*z[0]];l=Math.hypot(...x);x=x.map(v=>v/l);
+  const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+  return [x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0, -(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]),-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]),-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]),1];
+}
+
+// ---------- 애니메이션 샘플링 ----------
+function kv(k){const d=k.data_points[0];return [+d.x,+d.y,+d.z]}
+function sample(keys,t,def){
+  if(!keys||!keys.length)return def;
+  if(t<=keys[0].time)return kv(keys[0]);
+  const n=keys.length;
+  if(t>=keys[n-1].time)return kv(keys[n-1]);
+  for(let i=0;i<n-1;i++){
+    const a=keys[i],b=keys[i+1];
+    if(t<=b.time){
+      const f=(t-a.time)/Math.max(1e-6,b.time-a.time);
+      const A=kv(a),B=kv(b);
+      if(a.interpolation==='catmullrom'||b.interpolation==='catmullrom'){
+        const P=kv(keys[Math.max(0,i-1)]),N=kv(keys[Math.min(n-1,i+2)]);
+        const f2=f*f,f3=f2*f;
+        return A.map((v,j)=>0.5*((2*v)+(-P[j]+B[j])*f+(2*P[j]-5*v+4*B[j]-N[j])*f2+(-P[j]+3*v-3*B[j]+N[j])*f3));
+      }
+      return A.map((v,j)=>v+(B[j]-v)*f);
+    }
+  }
+  return kv(keys[n-1]);
+}
+
+// ---------- 모델 준비 ----------
+const canvas=document.getElementById('c');
+const gl=canvas.getContext('webgl',{antialias:true,premultipliedAlpha:false});
+function prep(m){
+  const el={};m.elements.forEach(e=>el[e.uuid]=e);
+  const anims={};
+  for(const a of m.animations){
+    const short=a.name.split('.').pop(),bones={};
+    for(const v of Object.values(a.animators)){
+      const ch={};for(const k of v.keyframes){(ch[k.channel]=ch[k.channel]||[]).push(k)}
+      for(const c in ch)ch[c].sort((x,y)=>x.time-y.time);
+      bones[v.name]=ch;
+    }
+    anims[short]={len:+a.length,loop:a.loop,bones};
+  }
+  let hb=null,eye=null;
+  for(const g of m.outliner)if(g.name==='hitbox')for(const c of g.children){const e=el[c];if(e.name==='hitbox')hb=e;if(e.name==='eye_height')eye=e}
+  const img=new Image();img.src=m.textures[0].source;
+  const tex=gl.createTexture();
+  const res=m.resolution;
+  img.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,tex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    m._ready=true};
+  const cubes=m.elements.filter(e=>e.name!=='hitbox'&&e.name!=='eye_height').length;
+  return Object.assign(m,{el,anims,hb,eye,tex,res,cubes});
+}
+for(const k in MODELS)prep(MODELS[k]);
+
+function buildGeom(m,anim,t){
+  const pos=[],uv=[],nrm=[];
+  const A=anim?m.anims[anim]:null;
+  const W=m.res.width,H=m.res.height;
+  function cube(e,M){
+    const o=e.origin,Rc=rotZYX(e.rotation||[0,0,0]);
+    const Mc=mul(M,mul(tr(o[0],o[1],o[2]),mul(Rc,tr(-o[0],-o[1],-o[2]))));
+    const inf=e.inflate||0,f=e.from.map(v=>v-inf),T=e.to.map(v=>v+inf);
+    const [X0,Y0,Z0]=f,[X1,Y1,Z1]=T;
+    for(const face in e.faces){
+      const u=e.faces[face].uv;
+      const x1=Math.min(u[0],u[2]),x2=Math.max(u[0],u[2]),y1=Math.min(u[1],u[3]),y2=Math.max(u[1],u[3]);
+      if(x2<=x1||y2<=y1)continue;
+      const P={north:[[X1,Y1,Z0],[X0,Y1,Z0],[X1,Y0,Z0]],south:[[X0,Y1,Z1],[X1,Y1,Z1],[X0,Y0,Z1]],
+        east:[[X1,Y1,Z1],[X1,Y1,Z0],[X1,Y0,Z1]],west:[[X0,Y1,Z0],[X0,Y1,Z1],[X0,Y0,Z0]],
+        up:[[X1,Y1,Z1],[X0,Y1,Z1],[X1,Y1,Z0]],down:[[X1,Y0,Z0],[X0,Y0,Z0],[X1,Y0,Z1]]}[face];
+      const c0=xf(Mc,P[0]),cu=xf(Mc,P[1]),cv=xf(Mc,P[2]);
+      const c3=[cu[0]+cv[0]-c0[0],cu[1]+cv[1]-c0[1],cu[2]+cv[2]-c0[2]];
+      const a=[cu[0]-c0[0],cu[1]-c0[1],cu[2]-c0[2]],b=[cv[0]-c0[0],cv[1]-c0[1],cv[2]-c0[2]];
+      let n=[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];const l=Math.hypot(...n)||1;n=n.map(v=>v/l);
+      const U0=x1/W,U1=x2/W,V0=y1/H,V1=y2/H;
+      const quad=[[c0,U0,V0],[cu,U1,V0],[c3,U1,V1],[c0,U0,V0],[c3,U1,V1],[cv,U0,V1]];
+      for(const [p,uu,vv] of quad){pos.push(p[0],p[1],p[2]);uv.push(uu,vv);nrm.push(n[0],n[1],n[2])}
+    }
+  }
+  function walk(g,M){
+    const k=A?A.bones[g.name]:null,o=g.origin;
+    let p=k?sample(k.position,t,[0,0,0]):[0,0,0],r=k?sample(k.rotation,t,[0,0,0]):[0,0,0],s=k?sample(k.scale,t,[1,1,1]):[1,1,1];
+    r=[-r[0],-r[1],r[2]];p=[-p[0],p[1],p[2]];
+    const gr=g.rotation||[0,0,0];
+    const R=rotZYX([gr[0]+r[0],gr[1]+r[1],gr[2]+r[2]]);
+    const L=mul(tr(o[0]+p[0],o[1]+p[1],o[2]+p[2]),mul(R,mul(sc(s[0],s[1],s[2]),tr(-o[0],-o[1],-o[2]))));
+    const M2=mul(M,L);
+    for(const c of g.children){if(typeof c==='string')cube(m.el[c],M2);else walk(c,M2)}
+  }
+  for(const g of m.outliner)if(g.export!==false)walk(g,m4());
+  return {pos:new Float32Array(pos),uv:new Float32Array(uv),nrm:new Float32Array(nrm),n:pos.length/3};
+}
+
+// ---------- 셰이더 ----------
+function sh(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(s);return s}
+function prog(vs,fs){const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,vs));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);return p}
+const P=prog(`attribute vec3 p;attribute vec2 u;attribute vec3 n;uniform mat4 mvp;varying vec2 vu;varying vec3 vn;varying float vy;
+void main(){vu=u;vn=n;vy=p.y;gl_Position=mvp*vec4(p,1.0);}`,
+`precision mediump float;uniform sampler2D tex;uniform vec3 L;varying vec2 vu;varying vec3 vn;varying float vy;
+void main(){vec4 c=texture2D(tex,vu);if(c.a<0.5)discard;
+ float d=max(dot(normalize(vn),L),0.0);float lit=0.62+0.78*d;
+ float mx=max(c.r,max(c.g,c.b)),mn=min(c.r,min(c.g,c.b));
+ float emis=step(0.62,mx)*step(0.32,mx-mn);
+ gl_FragColor=vec4(c.rgb*mix(lit,1.15,emis),1.0);}`);
+const PL=prog(`attribute vec3 p;uniform mat4 mvp;void main(){gl_Position=mvp*vec4(p,1.0);}`,
+`precision mediump float;uniform vec4 col;void main(){gl_FragColor=col;}`);
+const bPos=gl.createBuffer(),bUv=gl.createBuffer(),bN=gl.createBuffer(),bL=gl.createBuffer();
+
+// ---------- 상태 ----------
+let form='ash_shadow',variant='orig',anim='idle',playing=true,speed=1,t=0,last=performance.now();
+let yaw=-28,pitch=12,dist=300,target=[0,64,0];
+const DEF={yaw:-28,pitch:12,dist:300,target:[0,64,0]};
+function curModel(){return MODELS[form+(variant==='shiny'?'_shiny':'')]}
+
+// 사람(1.8블록) 실루엣 + 바닥 격자 + 히트박스 라인
+function lines(m){
+  const L=[];const g=96,s=16;
+  for(let i=-g;i<=g;i+=s){L.push(i,0,-g,i,0,g, -g,0,i,g,0,i)}
+  return new Float32Array(L);
+}
+function boxLines(f,t2){
+  const [a,b,c]=f,[d,e,h]=t2,v=[[a,b,c],[d,b,c],[d,b,h],[a,b,h],[a,e,c],[d,e,c],[d,e,h],[a,e,h]];
+  const ed=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];const L=[];
+  for(const [i,j] of ed)L.push(...v[i],...v[j]);return L;
+}
+function humanBoxes(){ // 1.8블록 사람: x 오프셋에 세움
+  const x=-58;const L=[];
+  L.push(...boxLines([x-4,0,-2],[x+4,12,2]));      // 다리
+  L.push(...boxLines([x-4,12,-2],[x+4,24,2]));     // 몸
+  L.push(...boxLines([x-8,12,-2],[x-4,24,2]),...boxLines([x+4,12,-2],[x+8,24,2])); // 팔
+  L.push(...boxLines([x-4,24,-4],[x+4,32,4]));     // 머리
+  return new Float32Array(L);
+}
+const GRID=lines(),HUMAN=humanBoxes();
+
+function resize(){const r=canvas.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);
+  canvas.width=Math.max(1,r.width*d|0);canvas.height=Math.max(1,r.height*d|0)}
+new ResizeObserver(resize).observe(canvas);resize();
+
+function draw(now){
+  const dt=(now-last)/1000;last=now;
+  const m=curModel(),A=m.anims[anim];
+  if(playing&&A){t+=dt*speed;const hold=(A.loop==='loop')?0:1.0;if(t>A.len+hold)t=0}
+  const tt=A?Math.min(t,A.len):0;
+  gl.viewport(0,0,canvas.width,canvas.height);
+  gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+  const cy=Math.cos(yaw*D2R),sy=Math.sin(yaw*D2R),cp=Math.cos(pitch*D2R),sp=Math.sin(pitch*D2R);
+  const eye=[target[0]+dist*cp*sy,target[1]+dist*sp,target[2]-dist*cp*cy];
+  const V=lookAt(eye,target,[0,1,0]),Pm=persp(40*D2R,canvas.width/canvas.height,4,4000),MVP=mul(Pm,V);
+  // 라인
+  gl.useProgram(PL);
+  const lp=gl.getAttribLocation(PL,'p');gl.uniformMatrix4fv(gl.getUniformLocation(PL,'mvp'),false,new Float32Array(MVP));
+  const col=gl.getUniformLocation(PL,'col');
+  function drawLines(arr,c){gl.bindBuffer(gl.ARRAY_BUFFER,bL);gl.bufferData(gl.ARRAY_BUFFER,arr,gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(lp);gl.vertexAttribPointer(lp,3,gl.FLOAT,false,0,0);gl.uniform4fv(col,c);gl.drawArrays(gl.LINES,0,arr.length/3)}
+  const dark=matchMedia('(prefers-color-scheme: dark)').matches&&document.documentElement.dataset.theme!=='light'||document.documentElement.dataset.theme==='dark';
+  drawLines(GRID,dark?[1,1,1,.12]:[0,0,0,.14]);
+  if(document.getElementById('human').checked)drawLines(HUMAN,dark?[.6,.85,1,.9]:[.15,.35,.7,.9]);
+  if(document.getElementById('hb').checked&&m.hb){
+    drawLines(new Float32Array(boxLines(m.hb.from,m.hb.to)),[.9,.2,.2,.9]);
+    if(m.eye)drawLines(new Float32Array(boxLines(m.eye.from,m.eye.to)),[.25,.45,.95,.9]);
+  }
+  // 모델
+  if(m._ready){
+    const G=buildGeom(m,anim,tt);
+    gl.useProgram(P);
+    const ap=gl.getAttribLocation(P,'p'),au=gl.getAttribLocation(P,'u'),an=gl.getAttribLocation(P,'n');
+    gl.bindBuffer(gl.ARRAY_BUFFER,bPos);gl.bufferData(gl.ARRAY_BUFFER,G.pos,gl.DYNAMIC_DRAW);gl.enableVertexAttribArray(ap);gl.vertexAttribPointer(ap,3,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,bUv);gl.bufferData(gl.ARRAY_BUFFER,G.uv,gl.DYNAMIC_DRAW);gl.enableVertexAttribArray(au);gl.vertexAttribPointer(au,2,gl.FLOAT,false,0,0);
+    gl.bindBuffer(gl.ARRAY_BUFFER,bN);gl.bufferData(gl.ARRAY_BUFFER,G.nrm,gl.DYNAMIC_DRAW);gl.enableVertexAttribArray(an);gl.vertexAttribPointer(an,3,gl.FLOAT,false,0,0);
+    gl.uniformMatrix4fv(gl.getUniformLocation(P,'mvp'),false,new Float32Array(MVP));
+    const l=[-0.45,0.8,-0.55],ll=Math.hypot(...l);gl.uniform3fv(gl.getUniformLocation(P,'L'),l.map(v=>v/ll));
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,m.tex);gl.uniform1i(gl.getUniformLocation(P,'tex'),0);
+    gl.disable(gl.CULL_FACE);
+    gl.drawArrays(gl.TRIANGLES,0,G.n);
+    gl.disableVertexAttribArray(au);gl.disableVertexAttribArray(an);
+  }
+  document.getElementById('info').textContent=`${form}${variant==='shiny'?'_shiny':''}.bbmodel · 큐브 ${m.cubes} · 텍스처 ${m.res.width}×${m.res.height} · ${anim} ${tt.toFixed(2)}/${A?A.len:0}s`;
+  requestAnimationFrame(draw);
+}
+
+// ---------- UI ----------
+function updSub(){const m=curModel();const hb=m.hb;
+  const h=hb?((hb.to[1]-hb.from[1])/16).toFixed(1):'?',w=hb?((hb.to[0]-hb.from[0])/16).toFixed(1):'?';
+  document.getElementById('sub').textContent=(form==='ash_shadow'?'기본형 · 재 가면을 쓴 그림자':'광폭화형 · 깨진 가면과 불붙은 촛불 고리, 다리 없이 부유')+` · 히트박스 ${w}×${h} 블록 (사람 1.8)`}
+function press(box,key,val){box.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset[key]===val))}
+const segAnim=document.getElementById('segAnim');
+function buildAnimTabs(){const m=curModel();const list=ORDER.filter(a=>m.anims[a]);if(!m.anims[anim])anim='idle';
+segAnim.innerHTML=list.map(a=>`<button data-a="${a}" aria-pressed="${a===anim}">${NAMES[a]||a}</button>`).join('');
+document.getElementById('desc').textContent=DESC[anim]||'';}
+buildAnimTabs();
+segAnim.onclick=e=>{const b=e.target.closest('button');if(!b)return;anim=b.dataset.a;t=0;press(segAnim,'a',anim);document.getElementById('desc').textContent=DESC[anim]||''};
+document.getElementById('segForm').onclick=e=>{const b=e.target.closest('button');if(!b)return;form=b.dataset.f;t=0;press(e.currentTarget,'f',form);updSub();buildAnimTabs()};
+document.getElementById('segVar').onclick=e=>{const b=e.target.closest('button');if(!b)return;variant=b.dataset.v;press(e.currentTarget,'v',variant);updSub()};
+const pb=document.getElementById('play');pb.onclick=()=>{playing=!playing;pb.textContent=playing?'일시정지':'재생'};
+document.getElementById('spd').oninput=e=>speed=+e.target.value;
+document.getElementById('reset').onclick=()=>{yaw=DEF.yaw;pitch=DEF.pitch;dist=DEF.dist;target=DEF.target.slice()};
+// 조작
+let drag=null;const ptrs=new Map();
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+  drag={x:e.clientX,y:e.clientY,pan:e.button===2||e.shiftKey,pd:null}});
+canvas.addEventListener('pointermove',e=>{if(!drag)return;
+  if(ptrs.size===2){ptrs.set(e.pointerId,[e.clientX,e.clientY]);const [a,b]=[...ptrs.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+    if(drag.pd)dist=Math.min(900,Math.max(60,dist*drag.pd/d));drag.pd=d;return}
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
+  if(drag.pan){const k=dist/600,cy=Math.cos(yaw*D2R),sy=Math.sin(yaw*D2R);
+    target[0]+=(-dx*cy)*k;target[2]+=(-dx*sy)*k;target[1]+=dy*k}
+  else{yaw-=dx*0.4;pitch=Math.max(-80,Math.min(85,pitch+dy*0.3))}});
+const up=e=>{ptrs.delete(e.pointerId);if(!ptrs.size)drag=null;else if(drag)drag.pd=null};
+canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+canvas.addEventListener('wheel',e=>{e.preventDefault();dist=Math.min(900,Math.max(60,dist*Math.exp(e.deltaY*0.001)))},{passive:false});
+updSub();requestAnimationFrame(draw);
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+out_*/
+fin_*/
+cap_*/
+specs_*/
+tex_*/
+specs/
+out/
+fin/
+tex/
+logs_*
+*.png

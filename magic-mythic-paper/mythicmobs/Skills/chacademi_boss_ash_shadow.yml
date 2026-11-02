@@ -1,0 +1,127 @@
+# 재의 그림자 보스 + 잡몹 스킬 (2026-11-03).
+# 보스 패턴(예고·판정·VFX·대상 고르기)은 전부 애드온 chaash (AshShadowBoss.java) 안에 있다. 여기는 모델 모션과 모델 교체만.
+# 애드온이 CHA_ASH_a_<모션> 을 부르면 그 이름의 ModelEngine 상태를 재생. 기본형·광폭화 모델이 같은 모션 이름을 쓴다.
+
+# ---------------- 보스 모션 (기본형 21 / 광폭화 14 중 애드온이 부르는 것)
+CHA_ASH_a_spawn:
+  Skills:
+  - state{s=spawn;li=0;lo=3} @self
+CHA_ASH_a_attack:
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+CHA_ASH_a_skill_dash:
+  Skills:
+  - state{s=skill_dash;li=0;lo=2} @self
+CHA_ASH_a_skill_slam:
+  Skills:
+  - state{s=skill_slam;li=0;lo=3} @self
+CHA_ASH_a_skill_ash_rain:
+  Skills:
+  - state{s=skill_ash_rain;li=0;lo=3} @self
+CHA_ASH_a_skill_sink:
+  Skills:
+  - state{s=skill_sink;li=0;lo=0} @self
+CHA_ASH_a_skill_emerge:
+  Skills:
+  - state{s=skill_sink;r=true} @self
+  - state{s=skill_emerge;li=0;lo=3} @self
+CHA_ASH_a_skill_grasp:
+  Skills:
+  - state{s=skill_grasp;li=0;lo=3} @self
+CHA_ASH_a_skill_afterimage:
+  Skills:
+  - state{s=skill_afterimage;li=0;lo=2} @self
+CHA_ASH_a_skill_veil:
+  Skills:
+  - state{s=skill_veil;li=0;lo=3} @self
+CHA_ASH_a_skill_ring:
+  Skills:
+  - state{s=skill_ring;li=0;lo=3} @self
+CHA_ASH_a_skill_ward:
+  Skills:
+  - state{s=skill_ward;li=0;lo=3} @self
+CHA_ASH_a_skill_desperate:
+  Skills:
+  - state{s=skill_desperate;li=0;lo=3} @self
+# 50% 탄막: 시작(떠오름, 마지막 자세 유지) → 0.9초 뒤 유지 루프
+CHA_ASH_a_barrage_start:
+  Skills:
+  - state{s=barrage_start;li=0;lo=0} @self
+  - delay 34
+  - state{s=barrage_loop;li=0;lo=0} @self
+# 그로기: 탄막 상태 끄고 추락 (마지막 자세 유지) → 애드온이 1.1초 뒤 groggy_loop
+CHA_ASH_a_groggy_start:
+  Skills:
+  - state{s=barrage_loop;r=true} @self
+  - state{s=barrage_start;r=true} @self
+  - state{s=groggy_start;li=0;lo=0} @self
+CHA_ASH_a_groggy_loop:
+  Skills:
+  - state{s=groggy_loop;li=0;lo=0} @self
+# 변신: 그로기 끄고 흡수 모션 (3초, 마지막 자세 유지) → 애드온이 3초에 CHA_ASH_swap + spawn(광폭화 등장)
+CHA_ASH_a_transform:
+  Skills:
+  - state{s=groggy_loop;r=true} @self
+  - state{s=groggy_start;r=true} @self
+  - state{s=transform;li=0;lo=0} @self
+CHA_ASH_swap:
+  Skills:
+  - state{s=transform;r=true} @self
+  - model{mid=ash_shadow;r=true} @self
+  - model{mid=ash_shadow_enraged;n=false;drive=true} @self
+
+# ---------------- 잡몹
+
+# 재 사냥개 - 물어뜯기: 몸 앞 부채꼴 반경 3.5 · 100°, 체술이라 예고 없음 (모션 0.38초에 판정). 피해 16.
+CHA_MOB_ash_hound_bite:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=4} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=cone;at=caster;r=3.5;angle=100;ticks=8;warn=false;flat=16;element=fire;vfx=am_houndbite/bite;vfxref=3.5;vfxlead=0;spell=mob_ash_hound_bite} @target
+CHA_MOB_ash_hound_bite_shiny:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=4} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=cone;at=caster;r=3.5;angle=100;ticks=8;warn=false;flat=16;element=fire;vfx=am_houndbite/bite_shiny;vfxref=3.5;vfxlead=0;spell=mob_ash_hound_bite} @target
+
+# 촛농 짐승 - 내려찍기: 자기 중심 원 반경 4.5, 예고 0.75초 (모션 0.75초에 내려찍음). 피해 26 + 밀침 + 둔화 2초.
+CHA_MOB_wax_brute_stomp:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=15;flat=26;element=fire;knock=1;up=0.4;status=slow:40:0.3;vfx=am_brutestomp/stomp;vfxref=4.5;vfxlead=0;spell=mob_wax_brute_stomp} @target
+CHA_MOB_wax_brute_stomp_shiny:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=4.5;ticks=15;flat=26;element=fire;knock=1;up=0.4;status=slow:40:0.3;vfx=am_brutestomp/stomp_shiny;vfxref=4.5;vfxlead=0;spell=mob_wax_brute_stomp} @target
+
+# 등불 사슴 - 등불 잿불탄: 대상 발밑 원 반경 2.5, 예고 1.5초. 0~0.75초 등불에 불 모음 → 0.75초 던짐(투사체는 보여주기, 판정은 예고 원). 피해 20 + 화상.
+CHA_MOB_lantern_stag_bolt:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=22} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=am_staglantern/charge;at=caster;ticks=20}
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=30;flat=20;element=fire;ignite=40;vfx=am_staglantern/hit;vfxref=2.5;vfxlead=0;spell=mob_lantern_stag_bolt} @target
+  - delay 15
+  - chamobshot{flat=0;radius=0.2;speed=0.75;rise=0.35;range=26;fromy=2.2;fromz=1.0;vfx=am_staglantern/bolt} @target
+CHA_MOB_lantern_stag_bolt_shiny:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=22} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=am_staglantern/charge_shiny;at=caster;ticks=20}
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=30;flat=20;element=fire;ignite=40;vfx=am_staglantern/hit_shiny;vfxref=2.5;vfxlead=0;spell=mob_lantern_stag_bolt} @target
+  - delay 15
+  - chamobshot{flat=0;radius=0.2;speed=0.75;rise=0.35;range=26;fromy=2.2;fromz=1.0;vfx=am_staglantern/bolt_shiny} @target

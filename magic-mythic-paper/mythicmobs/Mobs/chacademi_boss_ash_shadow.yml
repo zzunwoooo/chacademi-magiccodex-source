@@ -1,0 +1,270 @@
+# 1인 던전 보스 "재의 그림자" + 같은 던전 잡몹 3종 (2026-11-03). 진행(장치·패턴·50% 탄막·그로기·변신·광폭화)은 애드온 chaash (AshShadowBoss.java).
+# 경기장 = 보스 소환 위치 중심 반경 16 (chaash arena=). 장치 3개는 소환 정면 기준 90°·210°·330°, 중심에서 반경 9 (arena × 0.56).
+#
+# 체력 설계 (사장님 2026-11-03: "지능 140 유저가 그로기 때 극딜하면 20% 남게"):
+#   지능(마력) 140 기준 마법 한 방 = base + 비율 × 140 → 중앙값 약 60, 궁극기 약 300 (server-config/spell-runtime.yml).
+#   그로기 10초 극딜 ≈ 궁극기 2 + 일반 4~5발 + 짧은 쿨 반복 ≈ 1200 → 최대 체력의 30% (50% → 20%) 이 되게 Health 4000.
+#   20% 이하는 처형 마법 구간. 실제 딜이 다르면 Health 만 바꾸면 된다 (나머지는 비율).
+# 공격력: 패턴 피해는 애드온 안의 값 × 장치 배율(3개 2.0 / 2개 1.7 / 1개 1.4 / 0개 1.0), 광폭화 흡수 배율(0 1.5 / 1 1.7 / 2 1.9 / 3 2.2).
+#   아래 Damage(근접)도 같은 배율이 붙는다 (AshShadowBoss.Hooks.melee). 탄막은 맞으면 최대 체력 55% (2번 = 죽음).
+# 모델: ModelEngine ash_shadow / ash_shadow_enraged (models/ash_shadow/*.bbmodel). 변신 때 CHA_ASH_swap 으로 교체.
+
+CA_Boss_ash_shadow:
+  Type: HUSK
+  Display: '&8&l재의 그림자'
+  Health: 4000
+  Damage: 22
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&8&l재의 그림자'
+    Range: 40
+    Color: WHITE
+    Style: SEGMENTED_10
+    CreateFog: true
+    DarkenSky: true
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.27
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=ash_shadow;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - chaash{a=start;arena=16} @self ~onSpawn
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 빛 발산 장치 (애드온이 소환·파괴). 던전 기믹 모델 gm_light_receiver(빛 수신 수정) 재사용. 직접 때려서는 안 부서짐 (보스 유도 패턴으로만).
+CA_Ash_light_device:
+  Type: HUSK
+  Display: '&e빛 발산 장치'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=gm_light_receiver;n=false} @self ~onSpawn
+
+# ======================================================================== 잡몹 (재의 그림자 던전)
+# 공격 VFX 기준점(빈 본): ash_hound fx_bite·fx_claw_r / wax_brute fx_maw·fx_stomp_r·fx_back / lantern_stag fx_lantern (지금은 서버가 몹 발밑·정면 기준으로 재생).
+
+# 재 사냥개 - 빠른 근접. 물어뜯기 = 체술 (예고 없음, 몸 앞 부채꼴 판정).
+CA_Ash_hound:
+  Type: HUSK
+  Display: '&7재 사냥개'
+  Health: 300
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.36
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=ash_hound;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  - skill{s=CHA_MOB_ash_hound_bite} @target ~onTimer:60 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Ash_hound_shiny:
+  Type: HUSK
+  Display: '&f재 사냥개'
+  Health: 300
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.36
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=ash_hound_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  - skill{s=CHA_MOB_ash_hound_bite_shiny} @target ~onTimer:60 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 촛농 짐승 - 탱커 근접. 내려찍기 = 범위 (빨간 원 예고).
+CA_Ash_wax_brute:
+  Type: HUSK
+  Display: '&6촛농 짐승'
+  Health: 750
+  Damage: 16
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 22
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.8
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=wax_brute;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_wax_brute_stomp} @target ~onTimer:100 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Ash_wax_brute_shiny:
+  Type: HUSK
+  Display: '&f촛농 짐승'
+  Health: 750
+  Damage: 16
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 22
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.8
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=wax_brute_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_wax_brute_stomp_shiny} @target ~onTimer:100 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 등불 사슴 - 원거리. 다가오지 않고(근접 AI 없음) 거리를 둔 채 등불 잿불탄을 던짐 (대상 발밑 빨간 원 예고).
+CA_Ash_lantern_stag:
+  Type: HUSK
+  Display: '&e등불 사슴'
+  Health: 350
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 26
+    MovementSpeed: 0.25
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=lantern_stag;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_lantern_stag_bolt} @target ~onTimer:60 0.7
+  AIGoalSelectors:
+  - clear
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Ash_lantern_stag_shiny:
+  Type: HUSK
+  Display: '&f등불 사슴'
+  Health: 350
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 26
+    MovementSpeed: 0.25
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=lantern_stag_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_lantern_stag_bolt_shiny} @target ~onTimer:60 0.7
+  AIGoalSelectors:
+  - clear
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
