@@ -5,8 +5,8 @@ description: 머리 위에 작은 달을 띄워 밀물처럼 주변의 적들을
 icon: ''
 permission: magic.learned.moon_pull
 discovery:
-  description: 검은 나방으로 몬스터 40마리 처치하고, 팬텀 5마리 처치하기.
-research: 밤하늘에서 덮쳐 오는 팬텀을 검은 나방들이 끌어내리는 것을 보았다. 나방이 달을 향해 날아오르듯, 모든 것이 한 점으로 이끌리는 힘이 거기 있었다.
+  description: 밤에 팬텀을 50마리 처치하기.
+research: 잠 안 자고 버티는 사람 머리 위로 내리꽂히는 그 날개 놈들 있잖아. 밤마다 그걸 잡아 떨구던 친구가, 요즘은 손짓 한 번에 죄다 끌어 내린다던데.
 cast:
   command: 마법 moon_pull
   cooldown-seconds: 12

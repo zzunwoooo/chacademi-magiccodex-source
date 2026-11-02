@@ -5,8 +5,8 @@ description: 조준한 땅에서 서리 결정이 자라나며 정원처럼 퍼�
 icon: ''
 permission: magic.learned.rime_garden
 discovery:
-  description: 5서클 달성 후 결빙 파동으로 몬스터 80마리 처치하고, 빙핵의 수호자 3마리 처치하기.
-research: 빙핵의 수호자 셋을 쓰러뜨린 얼음 들판에 결빙 파동의 흔적이 겹겹이 남아 있었다. 다음 날 아침 그 동그라미마다 서리꽃이 피어 있는 것을 보고, 정원을 가꾸는 법을 알았다.
+  description: 차가운 걸음으로 물 위를 누적 1,000블록 걷기.
+research: "수업 노트, 교수님 말씀: \"발에 서리 깃든 신을 신고 물 위를 걸으면 발자국마다 꽃이 핀다. 차갑고 하얀 꽃이지. 오래 걸을수록 정원은 넓어진다.\""
 cast:
   command: 마법 rime_garden
   cooldown-seconds: 20

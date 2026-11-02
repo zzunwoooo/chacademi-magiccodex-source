@@ -5,8 +5,8 @@ description: 눈앞에 빛의 렌즈 두 개를 띄우고 창을 던집니다. �
 icon: ''
 permission: magic.learned.refraction_spear
 discovery:
-  description: 5서클 달성 후 색유리 파편으로 몬스터 80마리 처치하고, 봉인의 기사 5마리 처치하기.
-research: 봉인의 기사가 방패를 세울 때마다 색유리 파편이 그 둘레로 휘어 들어갔다. 빛이 곧게 가지 않아도 된다는 것을 알게 된 순간, 손에 쥔 빛이 창이 되어 렌즈 두 개를 지나 꺾였다.
+  description: 셜커를 30마리 처치하기.
+research: "대상: 보랏빛 껍데기 속에 숨는 것들. 관찰: 껍데기가 열릴 때마다 탄환이 휘어 따라온다. 결론: 그것들을 수없이 쓰러뜨리고 나니, 곧게만 날던 내 빛도 휘는 법을 배웠다."
 cast:
   command: 마법 refraction_spear
   cooldown-seconds: 14

@@ -5,8 +5,8 @@ description: 마력이 깃든 진흙 덩이를 던집니다. 덩이가 터지면
 icon: ''
 permission: magic.learned.mud_bomb
 discovery:
-  description: 점토 덩이로 몬스터 50마리 처치하기.
-research: 점토 덩이를 맞은 몬스터들이 쓰러진 자리마다 진흙 웅덩이가 넓어졌다. 덩이를 더 크게 빚어 세게 던지자, 맞은 순간 사방으로 터지며 주변을 온통 진창으로 만들었다.
+  description: 물병으로 진흙을 128개 만들기.
+research: 흙에 물 붓기 → 철벅. 또 붓기 → 철벅철벅. 병이 바닥날 때까지 했더니 손이 온통 질척질척… 이거 던지면 퍽 하고 터질 것 같음 ㅋㅋ
 cast:
   command: 마법 mud_bomb
   cooldown-seconds: 8

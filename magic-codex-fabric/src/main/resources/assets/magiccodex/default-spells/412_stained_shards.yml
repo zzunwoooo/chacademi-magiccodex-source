@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 색유리 장미창을 만들고 깨뜨려,
 icon: ''
 permission: magic.learned.stained_shards
 discovery:
-  description: 초점 렌즈로 몬스터 50마리 처치하기.
-research: 초점 렌즈로 한 점을 태우던 중, 빛이 너무 모여 렌즈가 색색으로 금이 갔다. 깨진 렌즈 조각이 예배당 장미창처럼 하늘에 걸리더니, 이내 비가 되어 쏟아졌다.
+  description: 16가지 색의 색유리를 모두 만들기.
+research: 빨강, 주황, 노랑… 염료 통을 하나씩 비울 때마다 창문 색이 늘어 갔어. 무지개에도 없는 색까지 다 끼워 넣었을 때, 창이 스스로 깨지면서 파편이 비처럼 쏟아졌지.
 cast:
   command: 마법 stained_shards
   cooldown-seconds: 10

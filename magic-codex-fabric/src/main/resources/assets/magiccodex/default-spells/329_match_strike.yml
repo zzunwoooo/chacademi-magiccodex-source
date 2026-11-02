@@ -5,8 +5,8 @@ description: 발끝으로 바닥에 긴 선을 긋습니다. 1초 뒤 그 선을
 icon: ''
 permission: magic.learned.match_strike
 discovery:
-  description: 촛불에 불을 20번 붙이기.
-research: 창가의 초에 하나씩 불을 붙여 나가던 저녁이었다. 성냥을 그은 자국이 탁자 위에 그을음으로 남았는데, 한 박자 늦게 그 자국에서 작은 불꽃이 피어올랐다.
+  description: 모닥불을 16개 설치하기.
+research: "관찰 4일차: 장작을 쌓아 둔 자리마다 연기가 곧게 올라간다. 땅에 붙어 타는 불은 번지지 않고 얌전히 기다렸다가, 신호를 받은 듯 한 줄로 일어선다."
 cast:
   command: 마법 match_strike
   cooldown-seconds: 5

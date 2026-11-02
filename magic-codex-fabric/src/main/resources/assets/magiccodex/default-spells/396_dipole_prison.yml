@@ -5,8 +5,8 @@ description: 적의 양옆에 자석 기둥 두 개를 세웁니다. 두 기둥 
 icon: ''
 permission: magic.learned.dipole_prison
 discovery:
-  description: 7서클 달성 후 쇳가루 폭풍에 마나 4,000을 쓰고, 고대 골렘 15마리 처치하기.
-research: 고대 골렘의 심장석은 언제나 두 개의 극을 품고 있었다. 쇳가루 폭풍 속에서 쓰러진 골렘의 심장 두 개를 마주 놓자, 그 사이의 쇳가루와 돌 부스러기가 소리 없이 공중에 떠올라 멈췄다.
+  description: 피뢰침에 번개가 10번 내리꽂히게 하기.
+research: 선생님, 폭풍 오는 밤마다 지붕 위 막대를 지켜봤어요. 하늘이 그 끝을 찾아 내리꽂힐 때마다 막대가 달아올랐다 식고, 땅과 하늘 사이의 공기가 떨렸어요. 둘이 서로를 당기는 거라면, 그 사이에 무언가를 가둘 수도 있지 않을까요?
 cast:
   command: 마법 dipole_prison
   cooldown-seconds: 40

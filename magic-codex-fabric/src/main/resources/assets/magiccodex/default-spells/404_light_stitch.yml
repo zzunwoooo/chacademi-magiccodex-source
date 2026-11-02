@@ -5,8 +5,8 @@ description: 실을 단 빛 바늘 세 개를 부채꼴로 던집니다. 맞은 
 icon: ''
 permission: magic.learned.light_stitch
 discovery:
-  description: 햇살 꽂기로 몬스터 30마리 처치하고, 모루에서 도구를 5번 수리하기.
-research: 햇살 꽂기에 쓰러진 몬스터 곁에서, 이가 빠진 칼날을 모루에 올려 두드렸다. 금속이 이어 붙는 소리를 듣다가, 땅에 꽂혀 있던 햇살을 실처럼 뽑아 바늘에 꿰어 보았다.
+  description: 베틀로 현수막 무늬를 10번 짜기.
+research: ♪ 북 치고 실 걸고 한 줄 또 한 줄, 깃발 위에 무늬가 피어나네. 바늘도 없이 꿰맨 하늘, 누가누가 짰을까 ♪ — 마을 아이들이 부르던 노래
 cast:
   command: 마법 light_stitch
   cooldown-seconds: 5

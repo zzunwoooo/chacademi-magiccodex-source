@@ -5,8 +5,8 @@ description: 발밑에 얼음 판을 깔고 앞으로 빠르게 미끄러져 나
 icon: ''
 permission: magic.learned.ice_slide
 discovery:
-  description: 안개 숨으로 몬스터 40마리 처치하고, 얼음 다리를 30번 놓기.
-research: 안개 숨으로 얼린 물 위에 얼음 다리를 놓다가 발이 쭉 미끄러졌다. 넘어지는 대신 그대로 몸을 맡기자, 다리 끝까지 얼음이 나를 실어 날랐다.
+  description: 얼음 위에서 보트로 누적 1,000블록 미끄러지기.
+research: 노를 젓지 않아도 탈것이 저 혼자 한참을 미끄러지는 길이 있다. 지평선이 몇 번이나 바뀌도록 그 길을 달렸더니, 이제는 탈것 없이도 발밑이 미끄러진다.
 cast:
   command: 마법 ice_slide
   cooldown-seconds: 7

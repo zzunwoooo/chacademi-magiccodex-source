@@ -5,8 +5,8 @@ description: 조준한 곳 위 하늘에 봉인을 열어 2초 동안 모래를 
 icon: ''
 permission: magic.learned.sand_fall
 discovery:
-  description: 5서클 달성 후 진흙 폭탄으로 몬스터 80마리 처치하고, 검치호 5마리 처치하기.
-research: 검치호가 바위 위로 뛰어올라 진흙 폭탄을 피했다. 하늘을 올려다보며 다음 폭탄을 노리던 순간, 위에서 떨어뜨리면 피할 곳이 없다는 생각과 함께 머리 위에서 모래가 쏟아지기 시작했다.
+  description: 떨어지는 모래·자갈에 깔려 10번 질식 피해를 받기.
+research: 쪽지. 머리 위 누런 천장은 함부로 파지 마시오. 몇 번이고 깔려 숨이 막혔던 사람이 하는 말이오. …그래도 그 무게가 위에서 쏟아지던 감각은 잊지 마시오. 언젠가 쓸모가 있을 테니.
 cast:
   command: 마법 sand_fall
   cooldown-seconds: 15

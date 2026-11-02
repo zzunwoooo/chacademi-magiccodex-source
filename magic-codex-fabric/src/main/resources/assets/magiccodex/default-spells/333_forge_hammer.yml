@@ -5,8 +5,8 @@ description: 조준한 적의 머리 위에 불타는 망치를 불러 내리찍
 icon: ''
 permission: magic.learned.forge_hammer
 discovery:
-  description: 불티 집게로 몬스터 50마리 처치하고, 모루에서 도구를 10번 수리하기.
-research: 닳은 곡괭이를 모루에 올려 두드리다 보니, 집게로 불티를 다루던 손이 망치를 쥐고 싶어 했다. 내려치는 순간 쇠보다 먼저 불꽃이 울렸다.
+  description: 대장장이 작업대로 갑옷에 장식을 10번 새기기.
+research: — 또 그 판에 문양 찍어? — 응, 이번엔 가슴판에 물결무늬. 근데 이상해, 두드릴 때마다 머리 위에서 누가 같이 내리치는 소리가 나.
 cast:
   command: 마법 forge_hammer
   cooldown-seconds: 9

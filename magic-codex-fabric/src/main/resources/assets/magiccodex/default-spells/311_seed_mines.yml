@@ -5,8 +5,8 @@ description: 앞쪽 땅에 바람 홀씨 여섯 개를 심어 둡니다. 적이 
 icon: ''
 permission: magic.learned.seed_mines
 discovery:
-  description: 민들레 홀씨탄으로 몬스터 50마리 처치하고, 꽃을 누적 64송이 심기.
-research: 꽃밭이 들판 하나를 다 덮을 무렵, 흩뿌린 홀씨 몇 개가 날아가지 않고 흙 위에 웅크렸다. 그것들은 피어날 때가 아니라 밟힐 때를 기다리고 있었다.
+  description: 압력판을 32개 설치하기.
+research: ※ 밟지 마시오 ※ 이 마당 바닥 곳곳에 밟으면 철컥 내려앉는 판을 숨겨 두었음. 어디 있는지는 나도 가끔 잊음. — 덫 좋아하는 견습생
 cast:
   command: 마법 seed_mines
   cooldown-seconds: 12

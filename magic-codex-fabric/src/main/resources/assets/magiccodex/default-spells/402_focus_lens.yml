@@ -5,8 +5,8 @@ description: 눈앞에 빛 렌즈를 만들어 조준한 한 점에 햇빛을 �
 icon: ''
 permission: magic.learned.focus_lens
 discovery:
-  description: 프리즘 탄으로 몬스터 30마리 처치하기.
-research: 프리즘 탄이 몬스터에게 부딪혀 갈라질 때마다 빛이 어디로 휘는지 눈여겨보았다. 갈라진 빛을 거꾸로 되돌려 한 점에 모으자, 손끝 앞에 투명한 렌즈가 맺혔다.
+  description: 유리를 256개 굽기.
+research: "실험 기록 — 재료: 사막에서 퍼 온 것, 쉬지 않고 돌린 화로, 잠 못 잔 밤들. 결과: 꺼낸 것이 너무 맑아서, 그 너머의 햇빛이 한 점으로 모여 손등을 데웠음."
 cast:
   command: 마법 focus_lens
   cooldown-seconds: 6

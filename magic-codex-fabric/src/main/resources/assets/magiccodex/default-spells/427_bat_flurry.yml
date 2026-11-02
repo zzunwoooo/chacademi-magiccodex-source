@@ -5,8 +5,8 @@ description: 작은 박쥐 네 마리를 풀어 대상을 끈질기게 쫓게 �
 icon: ''
 permission: magic.learned.bat_flurry
 discovery:
-  description: 빛이 없는 동굴에서 횃불 없이 120초 머무르고, 그림자 송곳니로 몬스터 20마리 처치하기.
-research: 횃불도 없는 동굴 깊은 곳에서 숨을 죽이고 있자, 그림자 송곳니 소리를 기억하는 박쥐들이 하나둘 다가왔다. 내가 손짓하자 그중 넷이 어둠 속으로 앞장서 날아갔다.
+  description: 박쥐를 30마리 처치하기.
+research: 찍찍 우는 천장 손님, 깜깜한 데 매달린 손님, 하나 잡고 또 잡고 또 잡으면, 어깨 위에 넷이 앉는대요.
 cast:
   command: 마법 bat_flurry
   cooldown-seconds: 5

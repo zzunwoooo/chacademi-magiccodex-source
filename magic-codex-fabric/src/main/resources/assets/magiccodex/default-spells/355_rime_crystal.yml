@@ -5,8 +5,8 @@ description: 회전하는 서리 결정을 쏩니다. 같은 적에게 세 번 �
 icon: ''
 permission: magic.learned.rime_crystal
 discovery:
-  description: 눈덩이를 몬스터에게 누적 100번 맞히기.
-research: 눈덩이를 뭉쳐 던지기를 수없이 되풀이하자 손바닥의 눈이 녹지 않고 단단한 결정으로 굳어 갔다. 마지막으로 던진 것은 눈덩이가 아니라 반짝이며 도는 서리였다.
+  description: 섬세한 손길로 얼음을 64개 캐기.
+research: "스승님 말씀: \"깨뜨리면 물이 되고, 조심스레 떼어 내면 그 모양 그대로 남는다. 손끝이 그 차이를 알 때까지 수없이 해 보거라.\""
 cast:
   command: 마법 rime_crystal
   cooldown-seconds: 2

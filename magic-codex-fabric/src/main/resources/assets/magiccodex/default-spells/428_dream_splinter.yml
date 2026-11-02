@@ -5,8 +5,8 @@ description: 꿈의 수정 조각을 날립니다. 맞은 적은 꿈에 홀려 1
 icon: ''
 permission: magic.learned.dream_splinter
 discovery:
-  description: 단잠의 주문을 50번 사용하기.
-research: 몇 번이고 단잠을 불러 주던 끝에, 잠든 짐승의 꿈 한 귀퉁이가 손끝에 걸려 바스락 깨졌다. 깨진 조각은 꿈속처럼 반짝이며 내 손바닥에 남았다.
+  description: 수상한 스튜를 10번 먹기.
+research: 숲 언저리 노점에서 산 그 스튜, 먹을 때마다 맛이 달랐어. 한 번은 눈앞이 흐려지고, 한 번은 몸이 붕 뜨고… 몇 그릇째 비웠을 무렵, 그릇 바닥에 반짝이는 조각 하나가 남아 있더라.
 cast:
   command: 마법 dream_splinter
   cooldown-seconds: 6

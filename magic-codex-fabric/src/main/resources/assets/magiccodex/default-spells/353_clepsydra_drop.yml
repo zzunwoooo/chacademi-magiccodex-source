@@ -5,8 +5,8 @@ description: 조준한 적의 머리 위에 작은 물시계를 띄웁니다. 2�
 icon: ''
 permission: magic.learned.clepsydra_drop
 discovery:
-  description: 물에 잠긴 채 30초 버티고, 물병 가득을 50번 사용하기.
-research: 숨을 참고 물속에 가라앉아 있으니 심장 소리가 물방울 떨어지는 소리처럼 들렸다. 물병을 채울 때마다 듣던 그 똑똑 소리가, 물 밖으로 나온 뒤에도 머리 위에서 멈추지 않았다.
+  description: 시계를 4개 만들기.
+research: "관찰 메모: 금빛 판 위의 바늘은 해와 달을 가리킨다. 붉은 가루를 섞어 몇 개를 만들어 나란히 놓았더니 모두 같은 박자로 똑, 똑. 시간도 결국 떨어지는 물방울이라는 가설에 확신이 생겼다."
 cast:
   command: 마법 clepsydra_drop
   cooldown-seconds: 5

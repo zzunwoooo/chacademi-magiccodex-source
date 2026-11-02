@@ -5,8 +5,8 @@ description: 조준한 땅에서 화석 송곳니가 솟아올라 그 자리에 
 icon: ''
 permission: magic.learned.fossil_fang
 discovery:
-  description: 다이아몬드 광석을 누적 10개 직접 캐고, 땅의 속삭임을 30번 사용하기.
-research: 땅의 속삭임을 따라 깊은 갱도에서 다이아몬드를 캐던 중, 곡괭이 끝에 보석이 아닌 오래된 이빨이 걸렸다. 그 날카로운 뼈를 쥐자 발밑 어딘가에서 거대한 턱이 천천히 닫히는 소리가 들렸다.
+  description: 솔로 수상한 모래·자갈을 20번 털기.
+research: 살살 털어라, 붓끝으로 털어라 / 세게 파면 와르르 부서진단다 / 바닥 아래 누가 누가 잠들었나 / 하얀 이빨 반짝, 아이고 깜짝이야
 cast:
   command: 마법 fossil_fang
   cooldown-seconds: 4

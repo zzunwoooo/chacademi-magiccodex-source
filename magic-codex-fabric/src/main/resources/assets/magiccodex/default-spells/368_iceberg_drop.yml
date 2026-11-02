@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에서 거대한 빙산을 떨어뜨립니다. 
 icon: ''
 permission: magic.learned.iceberg_drop
 discovery:
-  description: 5서클 달성 후 고드름 처마로 몬스터 80마리 처치하고, 바실리스크 5마리 처치하기.
-research: 바실리스크의 눈빛을 피하려 고드름 처마 아래로 몸을 숨겼다. 고드름 하나로는 그 단단한 비늘을 뚫지 못했고, 나는 처마째로 떨어뜨리고 싶다고 간절히 바랐다. 하늘이 그 바람을 들어주었다.
+  description: 파란 얼음을 128개 모으기.
+research: 북쪽 산 깊은 데서 캐 온 그 푸른 덩어리 말이오, 횃불 옆에 둬도 녹지를 않는다니까. 창고 가득 쌓아 놨더니 밤마다 그 무게가 머리 위에서 느껴져요.
 cast:
   command: 마법 iceberg_drop
   cooldown-seconds: 20

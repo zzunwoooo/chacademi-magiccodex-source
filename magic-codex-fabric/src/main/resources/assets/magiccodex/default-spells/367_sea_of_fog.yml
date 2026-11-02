@@ -5,8 +5,8 @@ description: 주변에 짙은 안개를 8초 동안 펼칩니다. 안개 속에�
 icon: ''
 permission: magic.learned.sea_of_fog
 discovery:
-  description: 5서클 달성 후 얼음 미끄럼으로 몬스터 60마리 처치하고, 투명한 몬스터 10마리 처치하기.
-research: 보이지 않는 몬스터를 쫓느라 얼음 위를 몇 번이고 미끄러지던 밤, 그들이 어떻게 숨는지 마침내 알아챘다. 몸을 감추는 것이 아니라 주위를 흐리게 만드는 것이었다.
+  description: 보물 지도로 묻힌 보물을 5번 찾아내기.
+research: …낡은 종이에 그려진 표시를 따라 바닷가 모래를 파던 밤마다 이상하게 안개가 끼었어. 몇 번째 녹슨 상자를 열었을 때였나, 그 안개가 나를 숨겨 주고 있다는 걸 알았지.
 cast:
   command: 마법 sea_of_fog
   cooldown-seconds: 22

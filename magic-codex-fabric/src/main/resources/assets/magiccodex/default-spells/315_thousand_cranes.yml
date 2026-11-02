@@ -5,8 +5,8 @@ description: 3초 동안 영창해 종이학 떼를 불러냅니다. 영창이 �
 icon: ''
 permission: magic.learned.thousand_cranes
 discovery:
-  description: 5서클 달성 후 종이학을 1,000번 날리기.
-research: 종이학을 날리고 또 날렸다. 손끝이 종이에 베이고 계절이 바뀔 즈음, 어디선가 돌아온 학들이 내 어깨에 하나둘 내려앉기 시작했다.
+  description: 던진 달걀에서 병아리를 30마리 깨어나게 하기.
+research: ♪ 동그란 알 휙 던지면 톡 깨지고 / 가끔은 깨진 자리에서 작은 날개 하나 / 마당 가득 작은 날개들 퍼덕이면 / 종이 날개도 덩달아 날아오르지 ♪
 cast:
   command: 마법 thousand_cranes
   cooldown-seconds: 18

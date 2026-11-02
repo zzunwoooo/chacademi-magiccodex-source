@@ -5,8 +5,8 @@ description: 어깨 위에 빛 바늘 세 개를 만들어 조준한 곳으로 �
 icon: ''
 permission: magic.learned.star_needle
 discovery:
-  description: 나침반을 들고 누적 3,000블록 걷기.
-research: 바늘이 늘 북쪽만 가리키는 나침반을 쥐고 끝없이 걸었다. 발이 무거워진 어느 밤, 하늘에서 별똥이 나침반 바늘처럼 가늘게 떨어지더니, 셋이 내 어깨 곁에 멈춰 섰다.
+  description: 망원경을 50번 들여다보기.
+research: 한쪽 눈을 감고 구리 대롱 너머를 들여다보는 게 버릇이 됐다. 그날 밤도 질리도록 들여다보다가, 아주 먼 별 하나가 바늘처럼 가늘어져 내 쪽으로 떨어지는 걸 보았다.
 cast:
   command: 마법 star_needle
   cooldown-seconds: 4

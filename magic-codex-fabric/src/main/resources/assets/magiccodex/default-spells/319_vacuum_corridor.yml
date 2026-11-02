@@ -5,8 +5,8 @@ description: 앞쪽으로 곧게 뻗은 진공 터널을 엽니다. 양옆의 �
 icon: ''
 permission: magic.learned.vacuum_corridor
 discovery:
-  description: 5서클 달성 후 홀씨 지뢰밭으로 몬스터 60마리 처치하고, 와이번 3마리 처치하기.
-research: 와이번의 숨결이 홀씨 지뢰밭을 통째로 빨아들이는 것을 보았다. 날개 아래 생긴 빈 길로 모든 것이 끌려갔다. 숨 한 번이면 길을 비울 수 있었다.
+  description: 엔더 진주를 200번 던지기.
+research: "연구 메모: 검푸른 구슬을 던질 때마다 몸이 그 자리로 끌려간다. 수백 번쯤 되풀이했을 때, 나와 구슬 사이의 길에 공기가 한 줌도 남아 있지 않았다는 걸 알았다."
 cast:
   command: 마법 vacuum_corridor
   cooldown-seconds: 18

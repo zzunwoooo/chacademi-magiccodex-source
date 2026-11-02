@@ -5,8 +5,8 @@ description: 조준한 곳에서 풍등 여섯 개를 띄워 올립니다. 풍�
 icon: ''
 permission: magic.learned.sky_lantern_raid
 discovery:
-  description: 5서클 달성 후 등롱 사슬로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기.
-research: 밤하늘에서 팬텀이 내리꽂히는 것을 등롱 불빛 사이로 지켜보았다. 하늘에서 떨어지는 것이 저것들뿐일 필요는 없었다. 나는 등을 하늘 높이 띄워 올렸다.
+  description: 가스트를 20마리 처치하기.
+research: — 저기 하늘에 떠 있는 하얀 거, 우는 소리 들려? — 풍등 같은데. — 아니야, 저건 떨어지면 터져. 걔들을 실컷 떨어뜨려 봐야 무슨 말인지 알 거야.
 cast:
   command: 마법 sky_lantern_raid
   cooldown-seconds: 18

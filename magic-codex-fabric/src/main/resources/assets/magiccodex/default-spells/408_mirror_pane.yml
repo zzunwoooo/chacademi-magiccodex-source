@@ -5,8 +5,8 @@ description: 눈앞에 거울판을 6초 동안 세웁니다. 거울판은 날�
 icon: ''
 permission: magic.learned.mirror_pane
 discovery:
-  description: 거울 조각으로 몬스터 50마리 처치하고, 방패로 공격을 50번 막기.
-research: 방패 뒤에 웅크려 날아오는 화살을 수없이 받아 냈다. 방패 표면이 거울 조각처럼 반들거리기 시작하더니, 마침내 화살 하나가 쏜 쪽으로 그대로 되돌아갔다.
+  description: 그림을 16개 걸기.
+research: 선배에게, 기숙사 벽이 너무 허전해서 천에 그린 그림을 하나씩 걸었어요. 벽이 빈틈없이 채워지던 날, 그림들 사이의 빈 공기에서 거울 한 장이 미끄러져 나오더라고요.
 cast:
   command: 마법 mirror_pane
   cooldown-seconds: 12

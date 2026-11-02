@@ -5,8 +5,8 @@ description: 조준한 곳에 풍경 네 개를 걸어 8초 동안 결계를 칩
 icon: ''
 permission: magic.learned.wind_chime_ward
 discovery:
-  description: 7서클 달성 후 칼바람 장막에 마나 4,000을 쓰고, 봉인의 술사 10마리 처치하기.
-research: 봉인의 술사가 결계를 칠 때마다 희미한 종소리가 났다. 칼바람 장막을 수없이 펼쳐 그 결계를 찢어 낸 끝에, 내 장막에도 종을 매달 수 있다는 걸 알았다.
+  description: 마을 습격을 5번 막아 내기.
+research: 이 마을의 종이 울릴 때마다 깃발 든 무리가 몰려왔고, 그때마다 한 사람이 문 앞을 지켰다. 그가 떠난 뒤에도 처마의 풍경은 낯선 발소리에 먼저 운다. — 마을 어귀 돌비석
 cast:
   command: 마법 wind_chime_ward
   cooldown-seconds: 35

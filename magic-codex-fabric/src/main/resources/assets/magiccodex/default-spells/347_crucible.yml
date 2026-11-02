@@ -5,8 +5,8 @@ description: 조준한 적의 머리 위에 거대한 도가니를 불러 기울
 icon: ''
 permission: magic.learned.crucible
 discovery:
-  description: 7서클 달성 후 쇳물 해일에 마나 4,000을 쓰고, 만티코어 10마리 처치하기.
-research: 만티코어 떼를 쇳물 해일로 밀어내고 또 밀어냈지만, 파도는 늘 옆으로 새어 나갔다. 흘러넘친 쇳물을 한데 모아 담을 그릇을 떠올렸을 때, 하늘에 거대한 도가니가 걸렸다.
+  description: 던전 보상 「도가니 붓기 주문서」를 사용하기.
+research: …제련소 지하 깊은 금고에 봉인된 두루마리가 있었다고 들었네. 끈을 푸는 순간 머리 위로 거대한 그릇이 기울더라는군. 자네라면 그 아래까지 내려가 보겠나.
 cast:
   command: 마법 crucible
   cooldown-seconds: 45

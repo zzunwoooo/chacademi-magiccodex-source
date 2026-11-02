@@ -5,8 +5,8 @@ description: 몸을 박쥐 떼로 흩뜨려 앞으로 4블록 날아갑니다. �
 icon: ''
 permission: magic.learned.bat_cloak
 discovery:
-  description: 박쥐 떼로 몬스터 50마리 처치하기.
-research: 박쥐 떼를 따라 사냥을 거듭하던 어느 밤, 나도 모르게 그들의 날갯짓 속으로 녹아들었다. 다시 사람의 모습으로 돌아왔을 때, 스쳐 지나온 것들의 온기가 내 안에 남아 있었다.
+  description: 투명화 물약을 10번 마시기.
+research: 마시면 거울에서 내가 사라짐 → 맛은 비리고 씀 → 그래도 계속 마심 → 어느 날 내 그림자가 날개 치며 흩어짐 (진짜임)
 cast:
   command: 마법 bat_cloak
   cooldown-seconds: 10

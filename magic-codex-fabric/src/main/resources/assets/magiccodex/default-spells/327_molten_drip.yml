@@ -5,8 +5,8 @@ description: 뜨거운 쇳물 한 덩이를 포물선으로 던집니다. 떨어
 icon: ''
 permission: magic.learned.molten_drip
 discovery:
-  description: 용암에 물을 부어 흑요석을 누적 16개 만들고, 파이어 볼로 몬스터 20마리 처치하기.
-research: 용암 위에 물을 붓자 치익 소리와 함께 검은 돌이 굳었다. 그 곁에 남은 붉은 방울 하나를 화염구에 실어 던졌을 때, 불은 돌처럼 무겁게 떨어져 녹은 쇠처럼 고였다.
+  description: 철 주괴를 256개 제련하기.
+research: 아, 그 견습생? 화로 앞에 쭈그려 앉아 희끄무레한 덩어리를 꺼내고 또 꺼내더라고. 상자가 미어터질 무렵엔 손끝에서 쇳물이 똑똑 떨어졌다지 뭐야.
 cast:
   command: 마법 molten_drip
   cooldown-seconds: 5

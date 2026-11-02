@@ -5,8 +5,8 @@ description: 바람으로 된 풍차 날개 세 장을 불러내 6초 동안 내
 icon: ''
 permission: magic.learned.windmill_blades
 discovery:
-  description: 바람개비 던지기로 몬스터 50마리 처치하기.
-research: 던진 바람개비들이 하나둘 돌아오지 않고 발밑에 쌓였다. 날개를 떼어 내 몸에 둘러 보니, 이제는 던질 필요가 없었다. 내가 축이 되면 그만이었다.
+  description: 브리즈를 30마리 처치하기.
+research: 구리빛 방 깊은 곳 / 막대를 두른 채 빙빙 도는 손님들 / 쓰러뜨릴 때마다 / 그 도는 법이 내 곁에 남았다
 cast:
   command: 마법 windmill_blades
   cooldown-seconds: 12

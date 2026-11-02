@@ -5,8 +5,8 @@ description: 몸 주위로 불꽃 꽃잎 여덟 장을 피워 바깥으로 퍼�
 icon: ''
 permission: magic.learned.flame_petals
 discovery:
-  description: 성냥 긋기로 몬스터 40마리 처치하고, 꽃을 누적 30송이 심기.
-research: 정원에 꽃을 심고 돌아서는데, 땅에 그어 두었던 성냥 자국 위로 불꽃이 둥글게 퍼졌다. 흙 위에 핀 것은 꽃잎을 닮은 불이었고, 불은 다시 내게로 돌아왔다.
+  description: 횃불꽃을 10송이 키워 거두기.
+research: 킁킁대는 커다란 짐승이 파낸 씨앗 하나가 피어나기까지 꽤 오래 걸렸어요. 주황빛 꽃잎이 불꽃처럼 벌어지는 걸 여러 번 거두고 나서야, 꽃잎이 둥글게 퍼졌다 돌아오는 법을 알았습니다.
 cast:
   command: 마법 flame_petals
   cooldown-seconds: 8

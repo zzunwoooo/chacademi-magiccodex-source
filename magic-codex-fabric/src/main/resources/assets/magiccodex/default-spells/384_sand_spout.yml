@@ -5,8 +5,8 @@ description: 조준한 적의 발밑에서 모래가 분수처럼 솟구쳐 적�
 icon: ''
 permission: magic.learned.sand_spout
 discovery:
-  description: 흙먼지 발구르기로 몬스터 50마리 처치하기.
-research: 발을 구를 때마다 흙먼지가 조금씩 더 높이 솟았다. 몇 번째인지 모를 발구르기 끝에, 먼지는 내 발밑이 아니라 쓰러진 몬스터의 발밑에서 분수처럼 터져 올랐다.
+  description: 낙타를 타고 누적 2,000블록 이동하기.
+research: 흔들리는 높은 등 위에서 지평선을 몇 번이고 넘었다. 느릿한 발굽이 차올린 먼지가 분수처럼 솟았다 떨어지는 걸, 이제는 눈을 감아도 그릴 수 있다.
 cast:
   command: 마법 sand_spout
   cooldown-seconds: 7

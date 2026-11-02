@@ -5,8 +5,8 @@ description: 초승달 모양의 낫을 휘둘러 앞쪽 부채꼴을 벱니다.
 icon: ''
 permission: magic.learned.crescent_sickle
 discovery:
-  description: 영혼 낫으로 몬스터 30마리 처치하기.
-research: 영혼 낫을 거두어들이던 밤, 낫날 끝에 걸린 달이 조금씩 가늘어지는 것을 보았다. 마지막 한 번을 휘둘렀을 때, 손에 남은 것은 낫이 아니라 초승달이었다.
+  description: 밤에 괭이로 흙을 256칸 갈기.
+research: 달이 떠도 밭일을 멈추지 않았다. 흙을 한 고랑씩 뒤집을 때마다, 손에 쥔 날이 달빛을 받아 조금씩 휘어 보였다.
 cast:
   command: 마법 crescent_sickle
   cooldown-seconds: 4

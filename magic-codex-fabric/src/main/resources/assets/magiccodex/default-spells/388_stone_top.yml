@@ -5,8 +5,8 @@ description: 돌 팽이를 땅에 굴려 보냅니다. 팽이는 4초 동안 적
 icon: ''
 permission: magic.learned.stone_top
 discovery:
-  description: 화석 송곳니로 몬스터 40마리 처치하고, 석재 벽돌을 누적 100개 설치하기.
-research: 석재 벽돌로 성벽을 쌓다 남은 돌 하나를 무심코 손끝으로 돌렸다. 화석 송곳니가 물어뜯은 몬스터들 사이를 돌은 쓰러지지도 않고 빙글빙글 굴러다녔다.
+  description: 장식된 항아리를 5개 만들기.
+research: "스승님 말씀: \"깨진 조각에도 무늬는 남는다. 조각 넷을 맞붙여 하나의 몸을 빚을 줄 알게 되면, 돌도 네 손끝에서 쓰러지지 않고 돌 것이다.\""
 cast:
   command: 마법 stone_top
   cooldown-seconds: 10

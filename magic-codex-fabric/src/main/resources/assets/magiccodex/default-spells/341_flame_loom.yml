@@ -5,8 +5,8 @@ description: 불타는 실로 엮은 그물을 앞으로 던집니다. 그물에
 icon: ''
 permission: magic.learned.flame_loom
 discovery:
-  description: 5서클 달성 후 불꽃 팽이로 몬스터 80마리 처치하고, 키츠네 5마리 처치하기.
-research: 꼬리 아홉 개를 흔드는 키츠네가 불꽃 팽이 사이를 빠져나가며 여우불을 실처럼 늘어뜨렸다. 그 실을 손가락에 감아 엮어 보니, 놓친 적을 붙잡을 그물이 되었다.
+  description: 마그마 큐브를 100마리 처치하기.
+research: "기록 12: 튀어 다니는 덩어리를 쪼개면 작은 덩어리가, 그걸 또 쪼개면 더 작은 것이 나온다. 터질 때마다 끈적한 속살이 실처럼 늘어나는 걸 보고서야 그물을 떠올렸다."
 cast:
   command: 마법 flame_loom
   cooldown-seconds: 15

@@ -5,8 +5,8 @@ description: 하늘에 커다란 캔버스를 펼친 뒤, 약 3초 동안 바라
 icon: ''
 permission: magic.learned.nebula_weave
 discovery:
-  description: 7서클 달성 후 카시오페이아에 마나 4,000을 쓰고, 요정 30마리 처치하기.
-research: 카시오페이아를 수없이 그리던 손이 지쳐 갈 무렵, 숲의 요정들이 날개 가루로 하늘에 낙서를 하며 놀았다. 나도 따라 이름 없는 별자리를 그렸고, 요정의 가루는 성운이 되어 그 모양대로 빛을 내렸다.
+  description: 던전 보상 「성운 직조 주문서」를 사용하기.
+research: 먼 지하의 봉인된 방, 무너진 서가 밑에서 젖은 두루마리를 건졌다. 펼치자 별들 사이를 잇는 바늘땀이 종이 위에서 꿈틀거렸고, 다 읽기도 전에 머리 위 하늘이 화폭이 되어 있었다.
 cast:
   command: 마법 nebula_weave
   cooldown-seconds: 40

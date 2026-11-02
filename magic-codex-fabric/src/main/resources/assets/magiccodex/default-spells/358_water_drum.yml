@@ -5,8 +5,8 @@ description: 조준한 땅에 물로 된 북을 놓습니다. 북이 세 번 울
 icon: ''
 permission: magic.learned.water_drum
 discovery:
-  description: 빗방울 연사로 몬스터 50마리 처치하기.
-research: 빗방울을 연달아 쏘는 손에 박자가 붙기 시작했다. 탁, 탁, 탁. 그 박자를 땅에 대고 두드려 보았더니, 발밑의 물이 북처럼 울리며 대답했다.
+  description: 소리 블록을 200번 울리기.
+research: "\"또 그 나무 상자 두드리니?\" \"응, 칠 때마다 음이 하나씩 올라가.\" \"그럼 물가에 놓고 쳐 봐. 북소리가 물을 타고 퍼질걸.\""
 cast:
   command: 마법 water_drum
   cooldown-seconds: 8

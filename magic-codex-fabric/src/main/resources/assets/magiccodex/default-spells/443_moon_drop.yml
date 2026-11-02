@@ -5,8 +5,8 @@ description: 작은 달을 불러내 조준한 곳에 떨어뜨립니다. 달이
 icon: ''
 permission: magic.learned.moon_drop
 discovery:
-  description: 5서클 달성 후 달빛 표식으로 몬스터 80마리 처치하고, 망각의 해골술사 5마리 처치하기.
-research: 망각의 해골술사가 하늘을 가리키며 무언가를 떠올리려 애썼다. 내가 새긴 달빛 표식들이 그 손끝 위로 모여 하나의 작은 달이 되었고, 나는 그것을 떨어뜨렸다.
+  description: 몬스터의 머리를 5개 모으기.
+research: 수집가 양반, 또 그 진열장 얘기요? 둥근 것들을 선반에 하나씩 올려놓는다며. 듣자 하니 선반이 거의 찼을 무렵, 하늘에서 하나가 더 떨어졌다던데.
 cast:
   command: 마법 moon_drop
   cooldown-seconds: 22

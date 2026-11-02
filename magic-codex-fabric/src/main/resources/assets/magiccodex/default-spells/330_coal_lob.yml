@@ -5,8 +5,8 @@ description: 벌겋게 달군 숯덩이를 던집니다. 숯은 바닥에서 두
 icon: ''
 permission: magic.learned.coal_lob
 discovery:
-  description: 불씨 튕기기로 몬스터 30마리 처치하기.
-research: 튕겨 낸 불씨가 땅에 떨어져서도 꺼지지 않고 한 번 더 튀어 오르는 걸 보았다. 불씨는 작을수록 끈질기다. 그렇다면 숯덩이는 얼마나 오래 버틸까.
+  description: 숯을 128개 굽기.
+research: 선배에게, 요즘 화로에 나뭇가지만 잔뜩 밀어 넣고 있어요. 꺼내 보면 가볍고 새까만 덩이가 되어 있는데, 손바닥에 올려 두면 자꾸 통통 튀어 오르려고 해요.
 cast:
   command: 마법 coal_lob
   cooldown-seconds: 5

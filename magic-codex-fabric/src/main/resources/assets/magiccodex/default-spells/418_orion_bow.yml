@@ -5,8 +5,8 @@ description: 하늘에 별빛으로 된 거대한 활을 그려 시위를 당깁
 icon: ''
 permission: magic.learned.orion_bow
 discovery:
-  description: 5서클 달성 후 별 잇기로 몬스터 80마리 처치하고, 70블록 밖의 적을 화살로 맞히기.
-research: 별 잇기로 긴 선을 그리다가, 그 선을 시위 삼아 화살을 당겨 보았다. 화살은 시야 끝 너머의 과녁에 꽂혔고, 고개를 드니 겨울 사냥꾼의 활이 하늘에 걸려 있었다.
+  description: 물약 화살을 64개 만들기.
+research: 「오래 남는 연기를 화살촉에 묻히는 일을 귀찮아하는 놈은 별을 쏠 수 없다.」 교관님은 그렇게 말하며 남은 병을 몽땅 내 앞에 내려놓았다. 화살통이 묵직해질 무렵, 겨울 하늘의 사냥꾼이 내 등 뒤에서 같이 활을 들었다.
 cast:
   command: 마법 orion_bow
   cooldown-seconds: 20

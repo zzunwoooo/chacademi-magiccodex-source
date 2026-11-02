@@ -5,8 +5,8 @@ description: 적 뒤의 벽에 그 적의 그림자를 비춥니다. 3초 안에
 icon: ''
 permission: magic.learned.shadow_play
 discovery:
-  description: 꼭두각시 당김으로 몬스터 40마리 처치하고, 그림자 걸음을 50번 사용하기.
-research: 그림자 사이를 걸음으로 건너며, 실로 끌어당긴 적들을 쓰러뜨렸다. 등불 아래 벽에 비친 그들의 그림자를 베었을 때, 쓰러진 것은 벽 너머의 본체였다.
+  description: 갑옷 거치대 10개에 장비를 입히기.
+research: 「그 인형들한테 왜 자꾸 옷을 입혀요?」 「입혀 두면 등불 앞에서 사람처럼 그림자가 지거든. 그 그림자를 베면, 진짜도 아파하더라.」
 cast:
   command: 마법 shadow_play
   cooldown-seconds: 9

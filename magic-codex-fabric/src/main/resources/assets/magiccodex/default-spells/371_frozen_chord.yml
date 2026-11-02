@@ -5,8 +5,8 @@ description: 조준한 곳을 둘러싼 세 지점에 화음처럼 울리는 마
 icon: ''
 permission: magic.learned.frozen_chord
 discovery:
-  description: 7서클 달성 후 빙산 낙하에 마나 4,000을 쓰고, 봉인의 궁수 15마리 처치하기.
-research: 봉인의 궁수가 시위를 당기는 소리, 빙산이 땅에 박히는 소리, 그리고 내 숨소리. 세 소리가 한 박자에 겹치자 땅이 세 곳에서 동시에 얼어붙어 솟아올랐다.
+  description: 던전 보상 「결빙 화음 주문서」를 사용하기.
+research: 얼어붙은 지하 회랑 끝, 서리가 앉은 함 속에 접힌 종이 한 장이 있었다. 세 줄로 그려진 악보는 잉크가 아니라 서리로 적혀 있었고, 펼쳐 읽는 순간 세 개의 음이 손끝에서 동시에 얼어붙었다.
 cast:
   command: 마법 frozen_chord
   cooldown-seconds: 40

@@ -5,8 +5,8 @@ description: 돌처럼 단단하게 뭉친 모래 알갱이를 세 발 연달아
 icon: ''
 permission: magic.learned.sand_pellet
 discovery:
-  description: 조약돌 던지기로 몬스터 50마리 처치하기.
-research: 조약돌을 던질 때마다 손안에 남는 모래 부스러기가 거슬렸다. 그 부스러기를 꾹 쥐어 던져 보니, 조약돌보다 작고 조약돌만큼 단단한 알갱이가 몬스터의 이마에 박혔다.
+  description: 자갈에서 부싯돌을 64개 얻기.
+research: "연구 메모: 회색 자잘한 돌무더기를 계속 부수다 보면 가끔 검고 날 선 조각이 굴러 나온다. 그 조각을 모은 주머니가 무거워질수록, 손안에서 굴리던 알갱이도 점점 단단해졌다."
 cast:
   command: 마법 sand_pellet
   cooldown-seconds: 3

@@ -5,8 +5,8 @@ description: 왼쪽과 오른쪽으로 반달 칼날을 한 번씩, 두 번 연�
 icon: ''
 permission: magic.learned.quarter_blades
 discovery:
-  description: 초승달 낫으로 몬스터 50마리 처치하기.
-research: 초승달 낫을 수없이 휘두르자 궤적이 왼쪽에 하나, 돌아오는 길에 또 하나 남았다. 서로 등을 맞댄 두 반달이 칼날이 되어 손에 쥐어졌다.
+  description: 낚시로 보물을 20번 낚기.
+research: 찌가 잠길 때마다 물고기 대신 반짝이는 것이 올라오는 날들이 있었다. 녹슨 날붙이가 연달아 걸려 나온 밤, 물에 비친 달도 둘로 갈라져 있었다.
 cast:
   command: 마법 quarter_blades
   cooldown-seconds: 7

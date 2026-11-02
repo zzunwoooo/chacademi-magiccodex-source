@@ -5,8 +5,8 @@ description: 검은 나방 세 마리가 대상을 천천히 따라갑니다. �
 icon: ''
 permission: magic.learned.black_moth
 discovery:
-  description: 촛불을 30번 끄고, 투명한 몬스터 3마리 처치하기.
-research: 촛불을 하나씩 끌 때마다 연기 속에서 검은 날개가 팔랑였다. 보이지 않는 적을 쓰러뜨린 밤, 그 나방들이 빛 대신 내 그림자 곁으로 모여들었다.
+  description: 거미 눈을 64개 모으기.
+research: "재료: 다리 여럿 달린 것들에게서 떼어 낸 붉은 구슬. 방법: 주머니가 묵직해질 때까지 모은다. 결과: 구슬마다 날개 달린 작은 그림자가 비쳤다."
 cast:
   command: 마법 black_moth
   cooldown-seconds: 6

@@ -5,8 +5,8 @@ description: 앞쪽 허공에 서리 처마를 만들어 고드름 다섯 개를
 icon: ''
 permission: magic.learned.icicle_eaves
 discovery:
-  description: 고드름 투척으로 몬스터 50마리 처치하기.
-research: 고드름을 던지고 또 던지다 문득 고개를 들었다. 하늘 높이 처마가 있다면 굳이 던질 필요도 없겠다는 생각이 들었고, 그 생각만으로 머리 위에 서리 처마가 걸렸다.
+  description: 뾰족한 점적석을 64개 설치하기.
+research: 동굴 천장에서 자란 돌 송곳을 / 하나 또 하나 거꾸로 꽂아 두면 / 바닥은 가시밭, 처마는 겨울 / 떨어질 날만 기다린다
 cast:
   command: 마법 icicle_eaves
   cooldown-seconds: 9

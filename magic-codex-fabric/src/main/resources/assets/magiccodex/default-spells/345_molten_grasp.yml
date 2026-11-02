@@ -5,8 +5,8 @@ description: 적의 발밑에서 거대한 쇳물 손을 솟아오르게 합니�
 icon: ''
 permission: magic.learned.molten_grasp
 discovery:
-  description: 7서클 달성 후 주물 거푸집에 마나 4,000을 쓰고, 고대 골렘 15마리 처치하기.
-research: 거푸집 속에 붓고 또 부은 쇳물이 지쳐 굳기도 전에, 고대 골렘의 돌 주먹이 내 앞을 가로막았다. 그 주먹을 흉내 내 쇳물이 땅에서 손을 뻗어 올렸고, 이번에는 내가 움켜쥘 차례였다.
+  description: 네더라이트 장비를 4개 만들기.
+research: "스승님 말씀: \"빛나는 것 위에 더 어두운 것을 덧씌울 때마다, 땅 밑의 무언가가 손을 뻗는다. 머리부터 발끝까지 다 덧씌웠다면, 이제 그 손을 쥐는 건 네 차례다.\""
 cast:
   command: 마법 molten_grasp
   cooldown-seconds: 40

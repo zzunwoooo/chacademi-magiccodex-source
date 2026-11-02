@@ -5,8 +5,8 @@ description: 휘파람 소리와 함께 짧은 초승달 바람 칼날 두 개�
 icon: ''
 permission: magic.learned.whistle_blade
 discovery:
-  description: 멀리 떨어진 적을 화살로 맞히고, 윈드 커터로 몬스터 30마리 처치하기.
-research: 바람을 읽어 멀리 있는 과녁에 화살을 꽂은 날, 활시위가 휘파람처럼 울었다. 그 소리를 윈드 커터의 날에 실어 보내자 칼날이 두 번 노래했다.
+  description: 염소 뿔피리를 10번 불기.
+research: 바위산 꼭대기에서 들이받던 녀석이 떨군 거 입에 대고 불어 봤음ㅋㅋ 메아리가 칼처럼 되돌아옴. 진짜임. 자꾸 불다 보면 너도 앎.
 cast:
   command: 마법 whistle_blade
   cooldown-seconds: 3

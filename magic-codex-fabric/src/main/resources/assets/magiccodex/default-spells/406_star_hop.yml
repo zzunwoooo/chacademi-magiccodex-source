@@ -5,8 +5,8 @@ description: 작은 별빛이 조준한 적에게 튀어 간 뒤, 가까운 다�
 icon: ''
 permission: magic.learned.star_hop
 discovery:
-  description: 지도 이동의 공개 웨이포인트를 3곳 찾아내고, 달리면서 500번 점프하기.
-research: 지도 위의 이정표를 찾아 들판을 뛰고 또 뛰었다. 숨이 턱에 차 마지막 이정표 앞에서 힘껏 도약했을 때, 발끝에서 떨어진 별빛이 나보다 먼저 저 앞의 바위를 디디고 튀어 올랐다.
+  description: 알레이가 가져다준 아이템을 64개 받기.
+research: 「그 파란 꼬마가 또 뭘 물어 왔어?」 「몰라, 노래만 틀어 주면 계속 갖다줘.」 — 꼬마가 이 손에서 저 손으로 날아다니는 걸 따라, 별빛도 깡충깡충 튀었다.
 cast:
   command: 마법 star_hop
   cooldown-seconds: 5

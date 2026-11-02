@@ -5,8 +5,8 @@ description: 주위에 무대의 막을 내려 안에 갇힌 적들의 시야를
 icon: ''
 permission: magic.learned.curtain_fall
 discovery:
-  description: 7서클 달성 후 꼭두각시 무대에 마나 4,000을 쓰고, 봉인의 궁수 15마리 처치하기.
-research: 꼭두각시 무대 위에서 봉인의 궁수들과 끝없는 공연을 이어 갔다. 마지막 궁수가 시위를 놓친 순간 어디선가 막이 내려왔고, 어둠 속에서 칼날이 한꺼번에 울렸다.
+  description: 던전 보상 「막 내림 주문서」를 사용하기.
+research: …무너진 땅 밑 극장 터에서 이 두루마리를 찾았소. 봉인을 뜯자 어디선가 박수 소리가 들렸고, 무대의 막이 천천히 내려오는 환영이 보였다오. 다음 사람을 위해 적어 두오.
 cast:
   command: 마법 curtain_fall
   cooldown-seconds: 40

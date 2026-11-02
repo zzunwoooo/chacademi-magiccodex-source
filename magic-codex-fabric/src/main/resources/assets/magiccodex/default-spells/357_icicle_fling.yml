@@ -5,8 +5,8 @@ description: 손에 고드름 두 개를 맺어 차례로 포물선을 그리며
 icon: ''
 permission: magic.learned.icicle_fling
 discovery:
-  description: 얼음 조각으로 몬스터 30마리 처치하기.
-research: 얼음 조각을 날릴 때마다 손안에 조금씩 냉기가 남았다. 어느 겨울 아침 그 냉기가 손바닥 위에서 길쭉하게 자라더니, 처마 끝 고드름과 꼭 같은 모양이 되어 있었다.
+  description: 스트레이를 30마리 처치하기.
+research: "경고: 눈 덮인 들판의 밤, 해진 옷을 걸친 뼈들이 쏘는 화살에 맞으면 다리가 무거워진다. 그것들을 쓰러뜨린 뒤 남는 냉기는 버리지 말 것. 모아 두면 던질 만한 모양이 된다."
 cast:
   command: 마법 icicle_fling
   cooldown-seconds: 4

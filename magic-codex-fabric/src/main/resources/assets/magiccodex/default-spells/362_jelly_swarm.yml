@@ -5,8 +5,8 @@ description: 해파리 네 마리를 불러 내 주위를 맴돌게 합니다. �
 icon: ''
 permission: magic.learned.jelly_swarm
 discovery:
-  description: 물 리본으로 몬스터 40마리 처치하고, 낚싯대로 몬스터를 10번 끌어당기기.
-research: 낚싯대로 물속의 몬스터를 끌어당기다 물 리본이 엉켜 버렸다. 엉킨 물이 둥근 갓과 긴 촉수를 가진 모양으로 풀려 나오더니, 해파리처럼 내 곁을 둥실둥실 맴돌았다.
+  description: 발광 오징어를 30마리 처치하기.
+research: "실험 보고: 깊고 어두운 물속에서 스스로 빛나는 생물들을 쫓았다. 결과, 쓰러질 때 남긴 빛 주머니가 물에 풀려 작은 등불이 되었고, 그 등불들이 한동안 내 곁을 떠나지 않았다."
 cast:
   command: 마법 jelly_swarm
   cooldown-seconds: 10

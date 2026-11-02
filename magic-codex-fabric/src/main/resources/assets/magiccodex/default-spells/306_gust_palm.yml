@@ -5,8 +5,8 @@ description: 손바닥에 돌풍을 모아 앞의 적을 강하게 밀쳐 칩니
 icon: ''
 permission: magic.learned.gust_palm
 discovery:
-  description: 윈드 푸쉬를 200번 사용하기.
-research: 수백 번 바람을 밀어내던 손바닥이 어느 순간 무거워졌다. 더 이상 바람을 미는 게 아니었다. 손바닥 자체가 하나의 돌풍이 되어 있었다.
+  description: 돌풍구(윈드 차지)를 50번 던지기.
+research: "실험 기록 — 재료: 구리빛 방에서 얻은 작은 바람 덩어리. 방법: 벽과 바닥, 발밑에 되풀이해 던짐. 결과: 손바닥에 반동이 남음. 덩어리가 없어도 같은 반동이 나기 시작함."
 cast:
   command: 마법 gust_palm
   cooldown-seconds: 5

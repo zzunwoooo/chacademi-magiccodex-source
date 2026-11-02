@@ -5,8 +5,8 @@ description: 2초 동안 앞쪽에 반달 모양의 막을 세워 정면에서 �
 icon: ''
 permission: magic.learned.half_moon_guard
 discovery:
-  description: 달 조각으로 몬스터 40마리 처치하고, 방패로 막은 뒤 반격을 20번 하기.
-research: 방패로 공격을 받아 낸 뒤 되받아치는 법을 몸이 먼저 익혔다. 달 조각이 그 방패 앞에 반쪽짜리 달로 모여들던 날, 막아 낸 무게를 그대로 돌려줄 수 있음을 알았다.
+  description: 검을 다 써서 5자루 부러뜨리기.
+research: 선배에게. 또 칼날이 닳아 손잡이만 남았어요. 버리기 아까워서 부서진 날을 모아 두었는데, 늘어놓고 보니 꼭 반달 모양이더라고요.
 cast:
   command: 마법 half_moon_guard
   cooldown-seconds: 10

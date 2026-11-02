@@ -5,8 +5,8 @@ description: 녹은 쇠로 된 파도를 앞으로 밀어 보냅니다. 파도�
 icon: ''
 permission: magic.learned.molten_wave
 discovery:
-  description: 5서클 달성 후 용암 거품으로 몬스터 80마리 처치하고, 만티코어 3마리 처치하기.
-research: 만티코어가 용암 거품 사이로 몸을 낮춰 덮쳐 왔다. 녹은 땅이 놈의 발목을 감싸며 한쪽으로 쏠리는 것을 본 순간, 거품은 터지는 대신 파도가 되어 밀려갔다.
+  description: 화염 저항 물약을 10번 마시기.
+research: ※ 주황빛 병을 마시고 붉은 물가에 다가가지 말 것. 그 맛에 길든 녀석은 이제 불길을 겁내지 않고, 오히려 불길이 어느 쪽으로 밀려가는지 손끝으로 느낀다고 함. 따라 하지 마시오.
 cast:
   command: 마법 molten_wave
   cooldown-seconds: 16

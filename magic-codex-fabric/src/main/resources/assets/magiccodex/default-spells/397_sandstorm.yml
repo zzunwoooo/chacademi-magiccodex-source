@@ -5,8 +5,8 @@ description: 조준한 곳에 8초 동안 거대한 모래폭풍을 일으킵니
 icon: ''
 permission: magic.learned.sandstorm
 discovery:
-  description: 7서클 달성 후 유사 파도에 마나 4,000을 쓰고, 검치호 15마리 처치하기.
-research: 검치호 무리를 유사 파도로 몰아붙이던 날, 마나가 바닥나도록 파도를 일으키자 모래가 더 이상 땅에 머물지 않았다. 바람을 탄 모래는 누런 벽이 되어 하늘을 덮었고, 그 속에서 무리는 서로를 찾지 못했다.
+  description: 던전 보상 「모래폭풍 주문서」를 사용하기.
+research: 깊은 곳에서 주워 온 누런 두루마리를 펼치자마자 글자들이 바람에 날리는 알갱이처럼 흩어지더래. 눈을 떠 보니 사방이 누런 벽이었고, 그 속에서 길을 아는 건 자기 하나뿐이었다던데.
 cast:
   command: 마법 sandstorm
   cooldown-seconds: 42

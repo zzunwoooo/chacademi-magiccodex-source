@@ -5,8 +5,8 @@ description: 모래 파도를 앞으로 밀어 보냅니다. 파도에 휩쓸린
 icon: ''
 permission: magic.learned.quicksand_tide
 discovery:
-  description: 5서클 달성 후 모래시계 구덩이로 몬스터 80마리 처치하고, 바실리스크 5마리 처치하기.
-research: 바실리스크의 둥지를 찾아 사막 깊이 들어갔을 때, 모래시계 구덩이가 하나로는 모자랐다. 구덩이들이 서로 이어지며 출렁이자 모래는 파도가 되어 바실리스크의 다리를 삼켰다.
+  description: 좀벌레를 100마리 처치하기.
+research: 요새 깊은 돌벽에서 쥐 같은 벌레가 끝도 없이 쏟아져 나온대. 그걸 하나도 안 남기고 밟아 없앤 사람이 있었는데, 돌아오는 길에 발밑 땅이 파도처럼 출렁였다던데.
 cast:
   command: 마법 quicksand_tide
   cooldown-seconds: 15

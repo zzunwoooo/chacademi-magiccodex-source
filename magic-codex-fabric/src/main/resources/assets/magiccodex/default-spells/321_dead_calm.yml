@@ -5,8 +5,8 @@ description: 주변 반경 6블록의 바람을 모두 밀어내 5초 동안 무
 icon: ''
 permission: magic.learned.dead_calm
 discovery:
-  description: 7서클 달성 후 진공 회랑에 마나 4,000을 쓰고, 하늘뱀 5마리 처치하기.
-research: 하늘뱀이 진공 회랑 한가운데서 몸부림치다 멈췄다. 모든 바람을 빨아들인 그 자리에는 소리도 흐름도 남아 있지 않았다. 바람의 끝은 고요였다.
+  description: 던전 보상 「무풍지대 주문서」를 사용하기.
+research: 가장 깊은 방, 무너진 돌상자 밑에서 나온 쪽지 한 장. "이 종이를 펼친 자 둘레로 바람이 숨을 멈추리라. 날아오던 화살마저 그 앞에서 잠들리라." 끝자락은 젖어서 읽을 수 없었다.
 cast:
   command: 마법 dead_calm
   cooldown-seconds: 40

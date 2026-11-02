@@ -5,8 +5,8 @@ description: 조준한 곳에 회전목마 같은 돌풍을 일으킵니다. 안
 icon: ''
 permission: magic.learned.carousel_gale
 discovery:
-  description: 5서클 달성 후 풍차 날개로 몬스터 80마리 처치하고, 페가수스 10마리 처치하기.
-research: 풍차 날개 곁을 맴돌다 쓰러진 페가수스들이 남긴 말굽 자국은 모두 같은 원 위에 찍혀 있었다. 날개를 접고 원 자체를 돌리자, 바람이 회전목마처럼 놀이를 시작했다.
+  description: 바닐라 동물 10마리에게 안장을 얹기.
+research: 스승님이 웃으며 말씀하셨다. "등을 내어 준 짐승마다 걸음이 다르단다. 갈기 달린 녀석, 코를 박고 다니는 녀석, 뜨거운 강을 건너는 녀석… 그 걸음들을 한 원 위에 다 태워 보거라."
 cast:
   command: 마법 carousel_gale
   cooldown-seconds: 20

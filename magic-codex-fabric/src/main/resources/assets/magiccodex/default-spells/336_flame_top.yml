@@ -5,8 +5,8 @@ description: 땅 위에 불꽃 팽이를 돌려 놓습니다. 팽이는 4초 동
 icon: ''
 permission: magic.learned.flame_top
 discovery:
-  description: 숯불 투척으로 몬스터 50마리 처치하기.
-research: 두 번 튀고 터지는 숯이 땅 위에서 빙글빙글 돌다 멈추는 것을 여러 번 보았다. 어느 날 멈추지 말라고 속삭이자, 숯불은 팽이처럼 서서 적을 향해 굴러갔다.
+  description: 블레이즈를 50마리 처치하기.
+research: 요새 높은 데서 둥둥 떠다니며 불덩이 쏘아 대는 놈들 있잖아. 그 쇳소리 섞인 숨소리를 질리도록 듣던 녀석이, 어느 날부터 땅바닥에 불 팽이를 굴리고 다닌다더라.
 cast:
   command: 마법 flame_top
   cooldown-seconds: 10

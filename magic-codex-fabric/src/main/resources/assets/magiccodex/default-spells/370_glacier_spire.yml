@@ -5,8 +5,8 @@ description: 조준한 곳에 높은 빙하 결정탑을 8초 동안 세웁니�
 icon: ''
 permission: magic.learned.glacier_spire
 discovery:
-  description: 7서클 달성 후 서리 정원에 마나 4,000을 쓰고, 빙핵의 수호자 10마리 처치하기.
-research: 서리 정원을 수없이 피워 낸 땅에서 빙핵의 수호자가 또 하나 쓰러졌다. 녹지 않고 남은 결정들이 한 점으로 모여 하늘을 향해 자라기 시작했다. 정원에도 파수꾼이 필요했던 것이다.
+  description: 전달체를 활성화하기.
+research: 기록 제7호. 깊은 바다에서 건진 둥근 심장 하나를 바다빛 돌로 짠 테두리 한가운데 걸었다. 심장이 눈을 뜨자 주변의 물이 모두 내 편이 되었고, 그 고요한 시선을 얼음으로 세워 둘 방법을 찾기 시작했다.
 cast:
   command: 마법 glacier_spire
   cooldown-seconds: 35

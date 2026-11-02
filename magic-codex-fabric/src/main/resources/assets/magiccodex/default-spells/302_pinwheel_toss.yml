@@ -5,8 +5,8 @@ description: 빙글빙글 도는 바람개비를 던집니다. 바람개비는 �
 icon: ''
 permission: magic.learned.pinwheel_toss
 discovery:
-  description: 되돌이 칼날로 몬스터 30마리 처치하기.
-research: 되돌아오는 칼날을 수없이 받아 내다 보니, 손을 떠난 바람이 원을 그리고 싶어 한다는 걸 알게 되었다. 이번에는 돌아오라고 부르지 않았다. 대신 박힌 그 자리에서 계속 돌라고 일렀다.
+  description: 현수막을 16개 설치하기.
+research: 손님, 문양 넣은 천을 장대마다 동네방네 내다 거는 양반 아시죠? 그 천 펄럭이는 걸 하도 오래 들여다보더니, 이젠 천도 없이 바람을 빙글빙글 돌려서 던진답디다.
 cast:
   command: 마법 pinwheel_toss
   cooldown-seconds: 6

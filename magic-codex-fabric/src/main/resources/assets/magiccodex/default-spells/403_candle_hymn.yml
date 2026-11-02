@@ -5,8 +5,8 @@ description: 촛불 세 개를 불러 8초 동안 곁에 띄웁니다. 적이 �
 icon: ''
 permission: magic.learned.candle_hymn
 discovery:
-  description: 촛불에 불을 10번 붙이고, 좀비와 스켈레톤을 합쳐 100마리 처치하기.
-research: 언데드가 들끓던 밤, 지하 통로에 촛불을 하나씩 밝히며 나아갔다. 마지막 촛불이 켜지자 해골들이 움찔 물러섰고, 불꽃들이 성가처럼 일제히 내 쪽으로 기울었다.
+  description: 성직자 주민과 20번 거래하기.
+research: 보랏빛 옷 입은 그 양반 말이야, 남들이 쓸모없다고 버리는 걸 귀하게 쳐 주더라고. 단골이 되고 나니까 그 집 촛불이 전부 나한테 고개를 숙이더라니까!
 cast:
   command: 마법 candle_hymn
   cooldown-seconds: 6

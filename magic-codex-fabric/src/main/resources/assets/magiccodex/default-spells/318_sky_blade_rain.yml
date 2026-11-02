@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 봉인을 열어 3초 동안 바람 칼날�
 icon: ''
 permission: magic.learned.sky_blade_rain
 discovery:
-  description: 5서클 달성 후 회오리 발차기로 몬스터 80마리 처치하고, 팬텀 20마리 처치하기.
-research: 밤하늘에서 팬텀을 차 떨어뜨리던 발차기가 어느 순간 위가 아닌 아래를 향했다. 하늘로 올려 보낸 회오리들이 칼날이 되어 쏟아져 내리고 있었다.
+  description: 뇌우 속에서 몬스터를 100마리 처치하기.
+research: 하늘이 갈라지고 / 번쩍임과 번쩍임 사이마다 / 어둠 속 것들이 쓰러졌다 / 그 밤의 빗줄기는 / 모두 칼날이었다
 cast:
   command: 마법 sky_blade_rain
   cooldown-seconds: 16

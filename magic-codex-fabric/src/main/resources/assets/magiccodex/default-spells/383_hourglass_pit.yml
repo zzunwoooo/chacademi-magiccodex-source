@@ -5,8 +5,8 @@ description: 조준한 곳에 4초 동안 모래 구덩이를 엽니다. 안에 
 icon: ''
 permission: magic.learned.hourglass_pit
 discovery:
-  description: 모래 채찍으로 몬스터 50마리 처치하기.
-research: 모래 채찍으로 쓰러뜨린 몬스터 아래에 채찍 자국이 소용돌이처럼 남아 있었다. 그 위에서 모래가 천천히 가라앉는 것을 지켜보니, 마치 바닥에 모래시계가 묻혀 있는 것 같았다.
+  description: 사막 피라미드의 보물 상자를 3번 열기.
+research: 여기 잠든 왕의 보물에 손대는 자여, 방 한가운데 바닥을 조심하라. 열린 함이 늘어날수록 이 땅의 알갱이는 시간처럼 아래로 흘러내리리라.
 cast:
   command: 마법 hourglass_pit
   cooldown-seconds: 10

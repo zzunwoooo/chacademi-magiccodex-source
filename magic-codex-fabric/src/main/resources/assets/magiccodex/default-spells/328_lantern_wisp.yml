@@ -5,8 +5,8 @@ description: 어깨 위에 작은 등롱을 띄워 6초 동안 곁에 둡니다.
 icon: ''
 permission: magic.learned.lantern_wisp
 discovery:
-  description: 밤에 횃불을 누적 50개 설치하기.
-research: 밤길 내내 벽마다 횃불을 꽂으며 걸었다. 뒤를 돌아보니 늘어선 불빛 하나가 바람도 없는데 저 혼자 고개를 돌려, 어둠 속 무언가를 먼저 노려보고 있었다.
+  description: 불붙은 화살로 몬스터를 50마리 처치하기.
+research: ♪ 시위에 불 한 점 얹어 보내면 / 밤하늘에 붉은 줄이 그어지네 / 쏘고 또 쏘아 어둠이 엷어질 무렵 / 떠도는 불씨가 제 길을 찾네 ♪
 cast:
   command: 마법 lantern_wisp
   cooldown-seconds: 8

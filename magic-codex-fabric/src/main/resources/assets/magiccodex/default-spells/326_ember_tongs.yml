@@ -5,8 +5,8 @@ description: 달군 쇠 집게를 앞으로 내밀어 두 번 연달아 꽉 집�
 icon: ''
 permission: magic.learned.ember_tongs
 discovery:
-  description: 대장간에서 아이템을 5번 제작하기.
-research: 대장간 모루 앞에서 달군 쇠를 몇 번이고 집어 올리다 보니, 어느새 집게가 손의 일부처럼 느껴졌다. 마지막 작품을 꺼내던 순간, 쇠 대신 튀어 오른 불티가 집게 끝에 맞물렸다.
+  description: 부싯돌과 부시로 불을 50번 붙이기.
+research: 쇠와 돌을 맞부딪칠 때마다 손등에 불똥이 튀었다. 손목이 시큰거릴 만큼 긋고 또 긋고 나서야, 튀어 나간 불똥이 집게처럼 다시 내 쪽으로 물려 온다는 걸 알았다.
 cast:
   command: 마법 ember_tongs
   cooldown-seconds: 3

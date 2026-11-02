@@ -5,8 +5,8 @@ description: 풀무처럼 숨을 모았다가 앞쪽으로 뜨거운 바람을 �
 icon: ''
 permission: magic.learned.bellows_blast
 discovery:
-  description: 화로에서 구운 음식을 누적 64개 꺼내고, 작은 불숨을 100번 사용하기.
-research: 화로에서 갓 구운 빵을 꺼내며 습관처럼 작은 불숨을 불어 넣었다. 숨을 끝까지 들이켜 한꺼번에 내뱉자, 열기가 숨결이 아니라 바람이 되어 부엌문을 밀어젖혔다.
+  description: 용광로로 광석을 128개 제련하기.
+research: 스승님은 말씀하셨다. "보통 화로보다 갑절은 빨리 숨 쉬는 화덕이 있다. 그 거친 숨소리를 오래 곁에서 들은 자는, 제 숨으로도 불을 밀어낼 수 있지."
 cast:
   command: 마법 bellows_blast
   cooldown-seconds: 6

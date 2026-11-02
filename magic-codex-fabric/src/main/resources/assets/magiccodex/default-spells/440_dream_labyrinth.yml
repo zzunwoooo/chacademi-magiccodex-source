@@ -5,8 +5,8 @@ description: 적 하나를 꿈속 미로에 3초 동안 가둬 아무것도 못 
 icon: ''
 permission: magic.learned.dream_labyrinth
 discovery:
-  description: 5서클 달성 후 꿈 조각으로 몬스터 80마리 처치하고, 키츠네 10마리 처치하기.
-research: 키츠네는 꼬리마다 다른 꿈을 감추고 있었다. 꿈 조각으로 그 꿈들을 하나씩 깨뜨리다 보니, 깨진 꿈들이 모여 빠져나갈 수 없는 미로가 되었다.
+  description: 고대 도시의 상자를 10번 열기.
+research: 경고. 아주 깊은 곳에 숨소리마저 삼키는 폐허가 있다. 거기 놓인 궤짝을 열 때마다 길이 하나씩 엉켜, 나는 깨어서도 미로를 걷게 되었다. 발소리를 내지 말 것.
 cast:
   command: 마법 dream_labyrinth
   cooldown-seconds: 20

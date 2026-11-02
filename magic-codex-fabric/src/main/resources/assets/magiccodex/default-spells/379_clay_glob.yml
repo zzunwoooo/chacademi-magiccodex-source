@@ -5,8 +5,8 @@ description: 끈적한 점토 덩이를 던져 적에게 철퍽 붙입니다. �
 icon: ''
 permission: magic.learned.clay_glob
 discovery:
-  description: 흙 계열 블록을 누적 300개 설치하기.
-research: 흙을 한 삽씩 떠서 둑을 쌓고 또 쌓았다. 끝없이 흙을 만지다 보니 손바닥에 남은 점토가 떨어지지 않았고, 그 끈적함이 언젠가 쓸모 있으리라는 예감이 들었다.
+  description: 테라코타를 64개 굽기.
+research: 아, 그 붉은 흙덩이요? 화덕에 넣어 두면 돌처럼 단단하게 구워지지요. 손님처럼 그걸 산더미로 구워 가는 사람은 처음 봤는데, 요새 손에서 끈적한 게 안 떨어진다고요? 허허, 그거 병 아닙니다.
 cast:
   command: 마법 clay_glob
   cooldown-seconds: 5

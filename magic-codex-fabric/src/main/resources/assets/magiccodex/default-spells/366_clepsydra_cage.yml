@@ -5,8 +5,8 @@ description: 조준한 적을 커다란 물방울 속에 3초 동안 가둡니�
 icon: ''
 permission: magic.learned.clepsydra_cage
 discovery:
-  description: 5서클 달성 후 물시계 방울로 몬스터 80마리 처치하고, 약초 도둑 10마리 처치하기.
-research: 약초 도둑은 언제나 달아나는 쪽이었다. 물시계 방울이 떨어질 때까지 그가 기다려 주지 않는다면, 물시계 안에 가둬 두면 되는 일이었다.
+  description: 엘더 가디언을 3마리 처치하기.
+research: 뱃사람들은 바다 신전 이야기를 할 때 목소리를 낮춘다. 한쪽 눈으로 신전을 지키는 잿빛 거대어, 그 눈에 비치면 손이 무거워진다고. 그놈들을 여럿 잠재운 사람이 물방울 속에 시간을 가두는 법을 배웠다더군.
 cast:
   command: 마법 clepsydra_cage
   cooldown-seconds: 18

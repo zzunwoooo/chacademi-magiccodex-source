@@ -5,8 +5,8 @@ description: 거대한 물방울을 만들어 앞으로 굴려 보냅니다. 물
 icon: ''
 permission: magic.learned.giant_droplet
 discovery:
-  description: 7서클 달성 후 폭우에 마나 4,000을 쓰고, 바실리스크 15마리 처치하기.
-research: 폭우를 부르고 또 불렀더니 빗방울들이 서로 합쳐지기 시작했다. 바실리스크의 돌 같은 시선도 그 커다란 물방울 속에서는 일그러져 아무것도 굳히지 못했다.
+  description: 파란 아홀로틀을 번식시키기.
+research: ♪ 하늘빛 꼬마 물도마뱀, 아주 아주 드물게 태어나지. 엄마 아빠 사이에서 동그랗게 웃으면 물방울도 따라 굴러가지 ♪
 cast:
   command: 마법 giant_droplet
   cooldown-seconds: 38

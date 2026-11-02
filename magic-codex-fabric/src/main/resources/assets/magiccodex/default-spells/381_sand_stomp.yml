@@ -5,8 +5,8 @@ description: 발을 힘껏 굴러 흙먼지를 일으킵니다. 주변 2블록 �
 icon: ''
 permission: magic.learned.sand_stomp
 discovery:
-  description: 선인장을 누적 200개 수확하기.
-research: 한낮의 선인장밭에서 가시를 피해 줄기를 베어 내다 지쳐 발을 굴렀다. 그 순간 발밑의 모래가 둥글게 튀어 올라, 바닥에 떨어진 선인장 조각들을 공중으로 띄웠다.
+  description: 허스크를 50마리 처치하기.
+research: 사막 야영지 주의. 해가 떠도 타지 않는 누런 놈들이 무리 지어 온다. 놈들을 쓰러뜨리다 보면 발밑 흙먼지도 같이 들썩이니, 그때 발 구르는 법을 익혀 둘 것.
 cast:
   command: 마법 sand_stomp
   cooldown-seconds: 5

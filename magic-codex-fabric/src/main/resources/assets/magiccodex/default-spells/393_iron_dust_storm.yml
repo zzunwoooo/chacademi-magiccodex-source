@@ -5,8 +5,8 @@ description: 쇳가루 폭풍을 일으켜 안에 든 적들을 휘감아 돌립
 icon: ''
 permission: magic.learned.iron_dust_storm
 discovery:
-  description: 5서클 달성 후 자석 손으로 몬스터 80마리 처치하고, 봉인의 기사 5마리 처치하기.
-research: 봉인의 기사가 자석 손에 끌려올 때, 갑옷에서 깎여 나간 쇳가루가 손 주위를 맴돌며 사라지지 않았다. 쇳가루는 점점 불어나 폭풍이 되었고, 그 안에서 기사들은 서로의 갑옷에 부딪혀 쓰러졌다.
+  description: 철 블록을 64개 만들기.
+research: 땡땡 망치 땡땡 / 회색 막대 아홉 개를 꾹꾹 눌러 한 덩이 / 창고 바닥이 꺼지도록 쌓고 또 쌓자 / 손에 묻은 쇳가루는 털어도 털어도 반짝반짝 / 바람이 불면 같이 빙글빙글
 cast:
   command: 마법 iron_dust_storm
   cooldown-seconds: 18

@@ -5,8 +5,8 @@ description: 앞쪽으로 곧게 뻗은 역풍의 길을 5초 동안 만듭니�
 icon: ''
 permission: magic.learned.headwind_lane
 discovery:
-  description: 돌풍 장타로 몬스터 40마리 처치하고, 달리기로 누적 5,000블록 이동하기.
-research: 먼 길을 쉬지 않고 달린 끝에, 등을 떠밀던 바람이 어느새 앞에서 불어오고 있었다. 돌풍을 내지르던 손을 펼쳐 그 맞바람에 길을 내주었다.
+  description: 말을 타고 누적 3,000블록 달리기.
+research: 선배에게, 갈기 휘날리는 녀석 등에 올라 들판을 가로지른 지 몇 주째예요. 매일 정면에서 몰아치는 바람을 들이받다 보니, 이젠 그 바람을 남들 앞에 세워 줄 수 있을 것 같아요.
 cast:
   command: 마법 headwind_lane
   cooldown-seconds: 10

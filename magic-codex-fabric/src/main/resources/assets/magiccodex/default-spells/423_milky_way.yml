@@ -5,8 +5,8 @@ description: 앞쪽으로 길게 빛의 강을 흘려보냅니다. 강 위의 �
 icon: ''
 permission: magic.learned.milky_way
 discovery:
-  description: 7서클 달성 후 북두칠성에 마나 4,000을 쓰고, 망각의 해골술사 15마리 처치하기.
-research: 북두칠성의 국자로 무덤가를 내리찍을 때마다 망각의 해골술사들이 다시 일어났다. 국자를 기울여 하늘의 강물을 땅으로 쏟자, 그들은 이름조차 기억하지 못한 채 강물에 실려 떠내려갔다.
+  description: 네더의 별을 3개 모으기.
+research: 검은 하늘을 찢던 세 갈래 울음이 그칠 때마다, 손바닥만 한 별이 재 속에 남았다. 그것들을 나란히 놓으니 그 사이로 빛이 강처럼 흘렀다.
 cast:
   command: 마법 milky_way
   cooldown-seconds: 35

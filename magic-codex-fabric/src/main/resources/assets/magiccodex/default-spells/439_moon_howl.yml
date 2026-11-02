@@ -5,8 +5,8 @@ description: 달을 향해 길게 울부짖습니다. 주변의 적들은 피해
 icon: ''
 permission: magic.learned.moon_howl
 discovery:
-  description: 5서클 달성 후 달의 인력으로 몬스터 80마리 처치하고, 검치호 10마리 처치하기.
-research: 검치호의 포효를 몇 번이고 맞받아치며 적들을 내 곁으로 끌어당겼다. 마지막 검치호가 쓰러진 고요 속에서, 내 목에서 달을 부르는 울음이 터져 나왔다.
+  description: 늑대를 10마리 길들이기.
+research: "관찰: 무리는 낯선 손을 경계하지만, 무언가를 몇 번 받아먹고 나면 목에 붉은 띠를 두른다. 그런 무리가 커질수록, 달을 보며 내는 그 소리가 내 목에서도 새어 나왔다."
 cast:
   command: 마법 moon_howl
   cooldown-seconds: 18
