@@ -11,7 +11,7 @@ sys.path.insert(0, HERE)
 import arcana_spells as _a
 from nova.common import N, ev, cast  # noqa: F401
 from nova150 import wind, fire, water, earth, light, dark   # noqa: E402
-from nova150.discovery import DISC   # noqa: E402
+from nova150.discovery import DISC, KEYS, SCROLL_RULE   # noqa: E402
 M = wind.M + fire.M + water.M + earth.M + light.M + dark.M
 # discovery text (row field 14) comes from DISC so the codex text and the server condition never drift apart
 M = [r[:14] + (DISC[r[1]][0],) + r[15:] for r in M]
@@ -82,6 +82,20 @@ def write_all():
     _a._upsert(os.path.join(REPO, 'magic-discovery-paper/src/main/resources/discoveries.yml'), [
         (i, (lambda old, i=i, nm=nm, cat=cat: disc_entry(old, i, nm, cat)))
         for (o, i, nm, cat, *_r) in sorted(M)], MARK)
+    # 서버 세션용 카운터 명세 (조건 키는 아직 서버가 안 셈 — 서버 세션이 구현)
+    c = ['# 신규 150종 발견 조건 카운터 명세 (서버 세션 구현용, Claude 2026-11-03)', '',
+         '오너: "조건을 실제로 만들건 없고 서버 세션에다가 말해서 제작할거야 / 궁극들이랑 몇개는 스크롤 사용 / 던전 보상 같은걸로".',
+         '정의는 `magic-discovery-paper/src/main/resources/discoveries.yml` 끝 구간 (tools/nova150/discovery.py 에서 생성). 아래 키를 `MagicDiscovery.signal(uuid, key, amount)` 로 올려 주면 됩니다.',
+         '`state.*` 키는 `MagicDiscovery.state()` 의 허용 목록에 추가 필요 (`state.popularity`). 이동 거리 키는 블록 단위(정수 누적).', '',
+         f'- 주문서: {SCROLL_RULE}', '', '| 키 | 셀 것 | 쓰는 마법 | 목표 |', '|---|---|---|---|']
+    for (o, i, nm, *_r) in sorted(M):
+        for k, v in DISC[i][1].items():
+            if not k.startswith('scroll.'): c.append(f'| `{k}` | {KEYS[k]} | {o} {nm} | {v:g} |')
+    c += ['', '## 주문서 (던전 보상) 24종', '', '| # | id | 주문서 이름 | 키 |', '|---|---|---|---|']
+    for (o, i, nm, *_r) in sorted(M):
+        for k in DISC[i][1]:
+            if k.startswith('scroll.'): c.append(f'| {o} | `{i}` | {nm} 주문서 | `{k}` |')
+    _a._write_if(os.path.join(REPO, 'docs/handoff/NOVA150_DISCOVERY_COUNTERS.md'), '\n'.join(c) + '\n')
     t = ['| # | id | 이름 | 대상 | 마나 / 쿨 | 피해 (base + 마력×) | 구현 | 임시값 | 발견 조건 | VFX 팩 |', '|---|---|---|---|---|---|---|---|---|---|']
     for (o, i, nm, cat, tgt, rng, base, ratio, mana, cd, lines, note, temp, desc, disc, res, bundle, hold, P, en) in sorted(M):
         dmg = f'{base} + {ratio}' if base or ratio else '-'
