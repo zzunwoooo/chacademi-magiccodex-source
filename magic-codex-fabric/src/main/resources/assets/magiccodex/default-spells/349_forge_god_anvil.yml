@@ -5,8 +5,8 @@ description: 하늘을 갈라 대장장이 신의 모루를 떨어뜨리고, 거
 icon: magiccodex:textures/spells/nova150/forge_god_anvil.png
 permission: magic.learned.forge_god_anvil
 discovery:
-  description: 「대장장이 신의 모루」 마법 스크롤 사용하기.
-research: 옛 대장장이들의 무덤 가장 깊은 곳, 녹슨 모루 아래에 그 기록이 깔려 있었다. 누가 남겼는지는 아무도 모른다. 첫 줄을 소리 내어 읽자 하늘에서 망치 소리가 울렸고, 둘째 줄에서 땅이 울었으며, 셋째 줄에서는 내 심장이 울렸다. 종이를 내려놓았을 때, 나는 쇠가 아니라 세상을 두드리는 법을 알고 있었다.
+  description: 마법봉 하나를 한 번도 실패하지 않고 끝까지 강화하기.
+research: 전설의 대장장이는 망치를 열 번 내리쳐 한 번도 빗나가지 않았다고 한다. 그 모루 위에서 태어난 봉은 지금도 불꽃 대신 별을 튀긴다.
 cast:
   command: 마법 forge_god_anvil
   cooldown-seconds: 200

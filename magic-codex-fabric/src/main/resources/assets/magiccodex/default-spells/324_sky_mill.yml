@@ -5,8 +5,8 @@ description: 하늘에서 거대한 바람 풍차를 내려 조준한 곳을 통
 icon: magiccodex:textures/spells/nova150/sky_mill.png
 permission: magic.learned.sky_mill
 discovery:
-  description: 「천공의 방아」 마법 스크롤 사용하기.
-research: 연대기 제7권, 찢긴 장. 아무도 내려가 보지 못한 가장 깊은 곳에서, 한 마법사가 봉인된 두루마리를 들고 올라왔다. 그가 봉인을 뜯자 구름이 내려앉아 맷돌처럼 돌기 시작했다. 하늘의 바퀴는 땅 위의 모든 것을 갈아 바람으로 만들었고, 마지막 한 바퀴가 멈췄을 때 들판에는 고운 먼지만 남았다. 기록은 여기서 끊긴다.
+  description: 큐디치 경기에서 스니치를 3번 잡기.
+research: 스니치는 빛나지도 않고 소리도 없다. 하늘의 바람을 맷돌처럼 갈아 그 흐름이 비는 곳을 찾으면 거기 있다. 세 번을 잡고 나니, 하늘 전체가 내 손안에서 돌아가는 방아처럼 느껴졌다.
 cast:
   command: 마법 sky_mill
   cooldown-seconds: 200

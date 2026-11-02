@@ -5,8 +5,8 @@ description: 왼쪽과 오른쪽으로 반달 칼날을 한 번씩, 두 번 연�
 icon: magiccodex:textures/spells/nova150/quarter_blades.png
 permission: magic.learned.quarter_blades
 discovery:
-  description: 숫돌로 마법 부여를 10번 지우기.
-research: 날에 깃든 빛을 숫돌에 갈아 지울 때마다 경험의 구슬이 몇 알씩 굴러 나왔다. 빛이 벗겨진 맨 칼날은 차오르기 전의 달처럼 가늘고 날카로웠다.
+  description: 마법봉 강화에 10번 실패하기.
+research: 강화에 실패할 때마다 봉에 가는 금이 하나씩 생겼다. 열 번째 금이 생기자 그 금들이 초승달 모양의 칼날이 되어 떨어져 나왔다.
 cast:
   command: 마법 quarter_blades
   cooldown-seconds: 7

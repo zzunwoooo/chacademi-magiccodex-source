@@ -5,8 +5,8 @@ description: 하늘에 황도 12궁의 고리를 펼칩니다. 열두 별자리�
 icon: magiccodex:textures/spells/nova150/zodiac_wheel.png
 permission: magic.learned.zodiac_wheel
 discovery:
-  description: 「황도 12궁」 마법 스크롤 사용하기.
-research: 가장 깊은 층의 문은 열두 개의 봉인으로 닫혀 있었다. 하나를 풀 때마다 계절이 하나씩 지나가는 것 같았고, 마지막 봉인 뒤 돌 받침 위에는 동그랗게 말린 낡은 종이 한 장뿐이었다. 펼친 순간, 종이에 그려진 고리가 천장을 뚫고 하늘로 올라갔다. 열두 별자리가 차례로 불을 켜는 동안, 나는 한 해가 한 바퀴 도는 소리를 들었다.
+  description: 서로 다른 펫을 12종 모으기.
+research: 열두 별자리마다 짐승이 하나씩 산다. 열두 마리가 모두 내 곁에 모인 날, 하늘의 바퀴가 한 바퀴 돌았다.
 cast:
   command: 마법 zodiac_wheel
   cooldown-seconds: 200

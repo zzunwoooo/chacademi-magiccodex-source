@@ -1590,9 +1590,9 @@ spells:
     permission: "magic.learned.headwind_lane"
     icon: magiccodex:textures/spells/nova150/headwind_lane.png
     category: "wind"
-    condition-text: "말을 타고 누적 3,000블록 달리기."
+    condition-text: "큐디치 경기에서 블러저를 20번 쳐 내기."
     requirements:
-      "ride.horse": 3000
+      "quidditch.bludger_hit": 20
     chance: 1.0
     prerequisites: []
   seed_mines:
@@ -1600,9 +1600,9 @@ spells:
     permission: "magic.learned.seed_mines"
     icon: magiccodex:textures/spells/nova150/seed_mines.png
     category: "wind"
-    condition-text: "압력판을 32개 설치하기."
+    condition-text: "야생에서 깨어난 작물 몬스터를 30마리 처치하기."
     requirements:
-      "place.pressure_plate": 32
+      "wild.awakened_crop_kill": 30
     chance: 1.0
     prerequisites: []
   cyclone_kick:
@@ -1700,9 +1700,9 @@ spells:
     permission: "magic.learned.dead_calm"
     icon: magiccodex:textures/spells/nova150/dead_calm.png
     category: "wind"
-    condition-text: "「무풍지대」 마법 스크롤 사용하기."
+    condition-text: "토네이도가 지나갈 때까지 가까이에서 버텨 내기를 3번 하기."
     requirements:
-      "scroll.dead_calm": 1
+      "tornado.survive": 3
     chance: 1.0
     prerequisites: []
   great_pinwheel:
@@ -1720,9 +1720,9 @@ spells:
     permission: "magic.learned.kite_festival"
     icon: magiccodex:textures/spells/nova150/kite_festival.png
     category: "wind"
-    condition-text: "「연날리기 축제」 마법 스크롤 사용하기."
+    condition-text: "큐디치 경기에서 10번 이기기."
     requirements:
-      "scroll.kite_festival": 1
+      "quidditch.win": 10
     chance: 1.0
     prerequisites: []
   sky_mill:
@@ -1730,9 +1730,9 @@ spells:
     permission: "magic.learned.sky_mill"
     icon: magiccodex:textures/spells/nova150/sky_mill.png
     category: "wind"
-    condition-text: "「천공의 방아」 마법 스크롤 사용하기."
+    condition-text: "큐디치 경기에서 스니치를 3번 잡기."
     requirements:
-      "scroll.sky_mill": 1
+      "quidditch.snitch_catch": 3
     chance: 1.0
     prerequisites: []
   sky_sever:
@@ -1790,9 +1790,9 @@ spells:
     permission: "magic.learned.coal_lob"
     icon: magiccodex:textures/spells/nova150/coal_lob.png
     category: "fire"
-    condition-text: "숯을 128개 굽기."
+    condition-text: "연금술 조합에 10번 성공하기."
     requirements:
-      "smelt.charcoal": 128
+      "alchemy.success": 10
     chance: 1.0
     prerequisites: []
   flame_claw:
@@ -1820,9 +1820,9 @@ spells:
     permission: "magic.learned.forge_hammer"
     icon: magiccodex:textures/spells/nova150/forge_hammer.png
     category: "fire"
-    condition-text: "대장장이 작업대로 갑옷에 장식을 10번 새기기."
+    condition-text: "마법봉 강화에 5번 성공하기."
     requirements:
-      "smithing.trim": 10
+      "wand.enhance_success": 5
     chance: 1.0
     prerequisites: []
   molten_plating:
@@ -1950,9 +1950,9 @@ spells:
     permission: "magic.learned.sunspot"
     icon: magiccodex:textures/spells/nova150/sunspot.png
     category: "fire"
-    condition-text: "「태양 흑점」 마법 스크롤 사용하기."
+    condition-text: "처음 보는 연금술 조합법을 10개 찾아내기."
     requirements:
-      "scroll.sunspot": 1
+      "alchemy.recipe_found": 10
     chance: 1.0
     prerequisites: []
   crucible:
@@ -1960,9 +1960,9 @@ spells:
     permission: "magic.learned.crucible"
     icon: magiccodex:textures/spells/nova150/crucible.png
     category: "fire"
-    condition-text: "「도가니 붓기」 마법 스크롤 사용하기."
+    condition-text: "연금술로 마력코어를 5개 만들기."
     requirements:
-      "scroll.crucible": 1
+      "alchemy.mana_core": 5
     chance: 1.0
     prerequisites: []
   ember_butterflies:
@@ -1980,9 +1980,9 @@ spells:
     permission: "magic.learned.forge_god_anvil"
     icon: magiccodex:textures/spells/nova150/forge_god_anvil.png
     category: "fire"
-    condition-text: "「대장장이 신의 모루」 마법 스크롤 사용하기."
+    condition-text: "마법봉 하나를 한 번도 실패하지 않고 끝까지 강화하기."
     requirements:
-      "scroll.forge_god_anvil": 1
+      "wand.enhance_perfect": 1
     chance: 1.0
     prerequisites: []
   furnace_gate:
@@ -2010,9 +2010,9 @@ spells:
     permission: "magic.learned.spray_kick"
     icon: magiccodex:textures/spells/nova150/spray_kick.png
     category: "water"
-    condition-text: "돌고래의 은총을 10번 받기."
+    condition-text: "펫을 데리고 다니며 몬스터를 30마리 처치하기."
     requirements:
-      "effect.dolphins_grace": 10
+      "pet.assist_kill": 30
     chance: 1.0
     prerequisites: []
   clepsydra_drop:
@@ -2070,9 +2070,9 @@ spells:
     permission: "magic.learned.water_drum"
     icon: magiccodex:textures/spells/nova150/water_drum.png
     category: "water"
-    condition-text: "소리 블록을 200번 울리기."
+    condition-text: "내 기숙사 방에 다른 학생을 5명 초대하기."
     requirements:
-      "play.note_block": 200
+      "housing.guest": 5
     chance: 1.0
     prerequisites: []
   icicle_eaves:
@@ -2200,9 +2200,9 @@ spells:
     permission: "magic.learned.frozen_chord"
     icon: magiccodex:textures/spells/nova150/frozen_chord.png
     category: "water"
-    condition-text: "「결빙 화음」 마법 스크롤 사용하기."
+    condition-text: "학교 NPC 한 명과 호감도 30 달성하기."
     requirements:
-      "scroll.frozen_chord": 1
+      "affinity.npc30": 1
     chance: 1.0
     prerequisites: []
   giant_droplet:
@@ -2220,9 +2220,9 @@ spells:
     permission: "magic.learned.deep_tentacles"
     icon: magiccodex:textures/spells/nova150/deep_tentacles.png
     category: "water"
-    condition-text: "「심해 촉수」 마법 스크롤 사용하기."
+    condition-text: "큐디치 경기에서 골을 8번 막아 내기."
     requirements:
-      "scroll.deep_tentacles": 1
+      "quidditch.save": 8
     chance: 1.0
     prerequisites: []
   celestial_clepsydra:
@@ -2230,9 +2230,9 @@ spells:
     permission: "magic.learned.celestial_clepsydra"
     icon: magiccodex:textures/spells/nova150/celestial_clepsydra.png
     category: "water"
-    condition-text: "「천상의 물시계」 마법 스크롤 사용하기."
+    condition-text: "의뢰를 100번 완료하기."
     requirements:
-      "scroll.celestial_clepsydra": 1
+      "quest.daily_done": 100
     chance: 1.0
     prerequisites: []
   glacial_epoch:
@@ -2310,9 +2310,9 @@ spells:
     permission: "magic.learned.gem_splinter"
     icon: magiccodex:textures/spells/nova150/gem_splinter.png
     category: "earth"
-    condition-text: "자수정 조각을 64개 모으기."
+    condition-text: "야생에 사는 차카데미 고유 몬스터를 100마리 처치하기."
     requirements:
-      "obtain.amethyst_shard": 64
+      "kill.ca_wild": 100
     chance: 1.0
     prerequisites: []
   hourglass_pit:
@@ -2370,9 +2370,9 @@ spells:
     permission: "magic.learned.stone_top"
     icon: magiccodex:textures/spells/nova150/stone_top.png
     category: "earth"
-    condition-text: "장식된 항아리를 5개 만들기."
+    condition-text: "기숙사 방에 가구를 50개 놓기."
     requirements:
-      "craft.decorated_pot": 5
+      "housing.furniture": 50
     chance: 1.0
     prerequisites: []
   quicksand_tide:
@@ -2460,9 +2460,9 @@ spells:
     permission: "magic.learned.sandstorm"
     icon: magiccodex:textures/spells/nova150/sandstorm.png
     category: "earth"
-    condition-text: "「모래폭풍」 마법 스크롤 사용하기."
+    condition-text: "토네이도에 휩쓸려 날아오르고도 살아남기를 5번 하기."
     requirements:
-      "scroll.sandstorm": 1
+      "tornado.flung": 5
     chance: 1.0
     prerequisites: []
   desertify:
@@ -2470,9 +2470,9 @@ spells:
     permission: "magic.learned.desertify"
     icon: magiccodex:textures/spells/nova150/desertify.png
     category: "earth"
-    condition-text: "「사막화」 마법 스크롤 사용하기."
+    condition-text: "칭호를 15개 모으기."
     requirements:
-      "scroll.desertify": 1
+      "title.owned": 15
     chance: 1.0
     prerequisites: []
   great_hourglass:
@@ -2480,9 +2480,9 @@ spells:
     permission: "magic.learned.great_hourglass"
     icon: magiccodex:textures/spells/nova150/great_hourglass.png
     category: "earth"
-    condition-text: "「대사막의 모래시계」 마법 스크롤 사용하기."
+    condition-text: "의뢰를 14일 연속으로 완료하기."
     requirements:
-      "scroll.great_hourglass": 1
+      "quest.daily_streak": 14
     chance: 1.0
     prerequisites: []
   core_magnetosphere:
@@ -2520,9 +2520,9 @@ spells:
     permission: "magic.learned.candle_hymn"
     icon: magiccodex:textures/spells/nova150/candle_hymn.png
     category: "light"
-    condition-text: "성직자 주민과 20번 거래하기."
+    condition-text: "학교 NPC와 대화를 30번 나누기."
     requirements:
-      "trade.cleric": 20
+      "npc.talk": 30
     chance: 1.0
     prerequisites: []
   light_stitch:
@@ -2600,9 +2600,9 @@ spells:
     permission: "magic.learned.southern_cross"
     icon: magiccodex:textures/spells/nova150/southern_cross.png
     category: "light"
-    condition-text: "지도 제작대로 지도를 10번 넓히기."
+    condition-text: "1장 이야기를 끝까지 마치기."
     requirements:
-      "use.cartography": 10
+      "story.chapter1": 1
     chance: 1.0
     prerequisites: []
   stained_shards:
@@ -2690,9 +2690,9 @@ spells:
     permission: "magic.learned.nebula_weave"
     icon: magiccodex:textures/spells/nova150/nebula_weave.png
     category: "light"
-    condition-text: "「성운 직조」 마법 스크롤 사용하기."
+    condition-text: "학교 NPC 5명과 호감도를 20 이상 쌓기."
     requirements:
-      "scroll.nebula_weave": 1
+      "affinity.npc20": 5
     chance: 1.0
     prerequisites: []
   mirror_realm:
@@ -2710,9 +2710,9 @@ spells:
     permission: "magic.learned.celestial_scope"
     icon: magiccodex:textures/spells/nova150/celestial_scope.png
     category: "light"
-    condition-text: "「천체 망원경」 마법 스크롤 사용하기."
+    condition-text: "파티를 맺은 채로 의뢰를 30번 완료하기."
     requirements:
-      "scroll.celestial_scope": 1
+      "party.quest_done": 30
     chance: 1.0
     prerequisites: []
   milky_way:
@@ -2730,9 +2730,9 @@ spells:
     permission: "magic.learned.zodiac_wheel"
     icon: magiccodex:textures/spells/nova150/zodiac_wheel.png
     category: "light"
-    condition-text: "「황도 12궁」 마법 스크롤 사용하기."
+    condition-text: "서로 다른 펫을 12종 모으기."
     requirements:
-      "scroll.zodiac_wheel": 1
+      "pet.collected": 12
     chance: 1.0
     prerequisites: []
   supernova:
@@ -2770,9 +2770,9 @@ spells:
     permission: "magic.learned.dream_splinter"
     icon: magiccodex:textures/spells/nova150/dream_splinter.png
     category: "dark"
-    condition-text: "수상한 스튜를 10번 먹기."
+    condition-text: "연금술 조합에 10번 실패하기."
     requirements:
-      "eat.suspicious_stew": 10
+      "alchemy.fail": 10
     chance: 1.0
     prerequisites: []
   marionette_tug:
@@ -2860,9 +2860,9 @@ spells:
     permission: "magic.learned.quarter_blades"
     icon: magiccodex:textures/spells/nova150/quarter_blades.png
     category: "dark"
-    condition-text: "숫돌로 마법 부여를 10번 지우기."
+    condition-text: "마법봉 강화에 10번 실패하기."
     requirements:
-      "use.grindstone": 10
+      "wand.enhance_fail": 10
     chance: 1.0
     prerequisites: []
   moon_pull:
@@ -2950,9 +2950,9 @@ spells:
     permission: "magic.learned.curtain_fall"
     icon: magiccodex:textures/spells/nova150/curtain_fall.png
     category: "dark"
-    condition-text: "「막 내림」 마법 스크롤 사용하기."
+    condition-text: "밤에 야생의 차카데미 고유 몬스터를 300마리 처치하기."
     requirements:
-      "scroll.curtain_fall": 1
+      "kill.ca_wild_night": 300
     chance: 1.0
     prerequisites: []
   new_moon_veil:
@@ -2970,9 +2970,9 @@ spells:
     permission: "magic.learned.shadow_doppel"
     icon: magiccodex:textures/spells/nova150/shadow_doppel.png
     category: "dark"
-    condition-text: "「그림자 도플갱어」 마법 스크롤 사용하기."
+    condition-text: "다른 학생의 기숙사 방 10곳을 구경하기."
     requirements:
-      "scroll.shadow_doppel": 1
+      "housing.visit_other": 10
     chance: 1.0
     prerequisites: []
   full_moon_descent:
@@ -2980,9 +2980,9 @@ spells:
     permission: "magic.learned.full_moon_descent"
     icon: magiccodex:textures/spells/nova150/full_moon_descent.png
     category: "dark"
-    condition-text: "「만월 강림」 마법 스크롤 사용하기."
+    condition-text: "보름달 밤에 야생에서 깨어난 작물 몬스터를 100마리 처치하기."
     requirements:
-      "scroll.full_moon_descent": 1
+      "wild.awakened_crop_fullmoon": 100
     chance: 1.0
     prerequisites: []
   moonlit_masquerade:

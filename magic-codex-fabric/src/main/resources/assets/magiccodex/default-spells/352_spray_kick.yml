@@ -5,8 +5,8 @@ description: 물보라를 두른 발로 앞쪽을 세 번 연달아 걷어찹니
 icon: magiccodex:textures/spells/nova150/spray_kick.png
 permission: magic.learned.spray_kick
 discovery:
-  description: 돌고래의 은총을 10번 받기.
-research: ♪ 매끈한 등에 휘파람 부는 친구야, 네 옆에서 헤엄치면 내 발도 빨라지지. 따라 놀고 또 따라 놀았더니 발끝마다 물보라가 피었네 ♪
+  description: 펫을 데리고 다니며 몬스터를 30마리 처치하기.
+research: 물가에서 펫과 함께 뛰어놀다 보면 물보라가 발끝을 따라온다. 서른 번을 함께 싸우고 나니, 내가 차올린 물보라를 펫이 먼저 알아채고 피했다.
 cast:
   command: 마법 spray_kick
   cooldown-seconds: 4

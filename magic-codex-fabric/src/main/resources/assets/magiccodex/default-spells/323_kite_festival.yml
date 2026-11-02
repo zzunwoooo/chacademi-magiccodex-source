@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 바람 연 다섯 개를 띄웁니다. 연�
 icon: magiccodex:textures/spells/nova150/kite_festival.png
 permission: magic.learned.kite_festival
 discovery:
-  description: 「연날리기 축제」 마법 스크롤 사용하기.
-research: 선배, 그 무너진 성채 맨 아래층에서 색실로 묶인 두루마리를 찾았어요. 펼치는 순간 천장 너머로 연들이 떠올라 저마다 내려앉을 곳을 고르더라고요. 누가 왜 거기 묻어 두었는지는 끝내 모르겠어요.
+  description: 큐디치 경기에서 10번 이기기.
+research: ♪ 이긴 날엔 하늘에 연을 올려라 / 빨강 연, 파랑 연, 줄줄이 올려라 / 열 번 이긴 팀 하늘은 연으로 꽉 찬다 ♪ (큐디치 응원가)
 cast:
   command: 마법 kite_festival
   cooldown-seconds: 40

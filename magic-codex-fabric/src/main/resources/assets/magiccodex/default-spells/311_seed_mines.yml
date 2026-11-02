@@ -5,8 +5,8 @@ description: 앞쪽 땅에 바람 홀씨 여섯 개를 심어 둡니다. 적이 
 icon: magiccodex:textures/spells/nova150/seed_mines.png
 permission: magic.learned.seed_mines
 discovery:
-  description: 압력판을 32개 설치하기.
-research: ※ 밟지 마시오 ※ 이 마당 바닥 곳곳에 밟으면 철컥 내려앉는 판을 숨겨 두었음. 어디 있는지는 나도 가끔 잊음. — 덫 좋아하는 견습생
+  description: 야생에서 깨어난 작물 몬스터를 30마리 처치하기.
+research: "관찰 4일차: 밭고랑 사이에 묻어 둔 씨앗이 밤새 눈을 떠 걸어 나왔다. 쓰러뜨린 자리마다 홀씨가 터져 바람에 실려 갔다. 홀씨는 땅에 닿기 전까지 숨죽인 덫처럼 떠 있었다."
 cast:
   command: 마법 seed_mines
   cooldown-seconds: 12

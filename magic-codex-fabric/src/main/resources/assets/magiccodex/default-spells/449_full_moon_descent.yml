@@ -5,8 +5,8 @@ description: 밤하늘을 열어 거대한 보름달을 불러 내립니다. 달
 icon: magiccodex:textures/spells/nova150/full_moon_descent.png
 permission: magic.learned.full_moon_descent
 discovery:
-  description: 「만월 강림」 마법 스크롤 사용하기.
-research: 이 봉인을 읽는 이에게. 달빛이 한 번도 닿지 않던 땅속 가장 깊은 방에서, 나는 이 두루마리를 품고 잠들었다. 펼치면 하늘이 열리고, 흰 달이 너의 손을 향해 내려올 것이다. 그 무게를 감당할 수 없다면 다시 말아 두라. 감당할 수 있다면, 이제 달은 너의 것이다.
+  description: 보름달 밤에 야생에서 깨어난 작물 몬스터를 100마리 처치하기.
+research: 보름달이 뜨면 밭의 작물이 모두 눈을 뜬다는 옛말이 있다. 그 밤 백 마리를 거둔 사람 머리 위로, 달이 손 닿을 만큼 내려온다.
 cast:
   command: 마법 full_moon_descent
   cooldown-seconds: 210

@@ -5,8 +5,8 @@ description: 앞쪽으로 곧게 뻗은 역풍의 길을 5초 동안 만듭니�
 icon: magiccodex:textures/spells/nova150/headwind_lane.png
 permission: magic.learned.headwind_lane
 discovery:
-  description: 말을 타고 누적 3,000블록 달리기.
-research: 선배에게, 갈기 휘날리는 녀석 등에 올라 들판을 가로지른 지 몇 주째예요. 매일 정면에서 몰아치는 바람을 들이받다 보니, 이젠 그 바람을 남들 앞에 세워 줄 수 있을 것 같아요.
+  description: 큐디치 경기에서 블러저를 20번 쳐 내기.
+research: "\"맞바람 속에서 블러저를 받아치는 법? 피하지 말고 바람 쪽으로 몸을 기울여. 공이 아니라 바람을 쳐 낸다고 생각해야 돼.\" — 큐디치 2학년 몰이꾼의 조언"
 cast:
   command: 마법 headwind_lane
   cooldown-seconds: 10

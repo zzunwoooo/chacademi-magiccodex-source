@@ -5,8 +5,8 @@ description: 조준한 적의 머리 위에 거대한 도가니를 불러 기울
 icon: magiccodex:textures/spells/nova150/crucible.png
 permission: magic.learned.crucible
 discovery:
-  description: 「도가니 붓기」 마법 스크롤 사용하기.
-research: …제련소 지하 깊은 금고에 봉인된 두루마리가 있었다고 들었네. 끈을 푸는 순간 머리 위로 거대한 그릇이 기울더라는군. 자네라면 그 아래까지 내려가 보겠나.
+  description: 연금술로 마력코어를 5개 만들기.
+research: 도가니가 끓어 넘치기 직전, 마력이 한 점으로 굳어 코어가 된다. 다섯 개를 빚어 낸 손은 도가니째 기울여 녹은 마력을 쏟아붓는 법을 안다.
 cast:
   command: 마법 crucible
   cooldown-seconds: 45

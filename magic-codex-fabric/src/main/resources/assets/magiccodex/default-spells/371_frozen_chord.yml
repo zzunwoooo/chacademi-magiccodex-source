@@ -5,8 +5,8 @@ description: 조준한 곳을 둘러싼 세 지점에 화음처럼 울리는 마
 icon: magiccodex:textures/spells/nova150/frozen_chord.png
 permission: magic.learned.frozen_chord
 discovery:
-  description: 「결빙 화음」 마법 스크롤 사용하기.
-research: 얼어붙은 지하 회랑 끝, 서리가 앉은 함 속에 접힌 종이 한 장이 있었다. 세 줄로 그려진 악보는 잉크가 아니라 서리로 적혀 있었고, 펼쳐 읽는 순간 세 개의 음이 손끝에서 동시에 얼어붙었다.
+  description: 학교 NPC 한 명과 호감도 30 달성하기.
+research: 마음이 맞는 사람과 나란히 서면 숨소리마저 화음이 된다. 그 화음은 차갑게 맑아서, 공기 중의 물마저 얼려 버린다.
 cast:
   command: 마법 frozen_chord
   cooldown-seconds: 40

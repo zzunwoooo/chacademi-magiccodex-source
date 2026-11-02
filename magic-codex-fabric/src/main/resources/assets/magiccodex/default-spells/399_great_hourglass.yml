@@ -5,8 +5,8 @@ description: 하늘 높이 거대한 모래시계를 불러내 뒤집습니다. 
 icon: magiccodex:textures/spells/nova150/great_hourglass.png
 permission: magic.learned.great_hourglass
 discovery:
-  description: 「대사막의 모래시계」 마법 스크롤 사용하기.
-research: 봉인된 통은 가장 깊은 방, 쓰러진 문지기 뒤에 놓여 있었다. 끈을 풀자 종이 대신 마른 알갱이가 쏟아졌고, 그 소리는 오래된 시계의 초침 같았다. 고개를 들자 하늘만 한 유리 그릇이 천천히 뒤집히고 있었다. 마지막 한 알이 떨어지는 순간 대지가 꺼지며 모든 것을 삼켰고, 그제야 알았다. 시간은 흐르는 것이 아니라 쌓이는 것이며, 쌓인 것은 언젠가 반드시 무너진다는 것을.
+  description: 의뢰를 14일 연속으로 완료하기.
+research: 모래시계를 열네 번 뒤집는 동안 하루도 거르지 않았다. 마지막 모래알이 떨어질 때, 사막 전체가 나를 따라 숨을 멈췄다.
 cast:
   command: 마법 great_hourglass
   cooldown-seconds: 200

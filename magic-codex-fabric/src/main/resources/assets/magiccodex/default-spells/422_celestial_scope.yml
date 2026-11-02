@@ -5,8 +5,8 @@ description: 10초 동안 천체 망원경을 눈앞에 펼칩니다. 그동안 
 icon: magiccodex:textures/spells/nova150/celestial_scope.png
 permission: magic.learned.celestial_scope
 discovery:
-  description: 「천체 망원경」 마법 스크롤 사용하기.
-research: 「이 종이, 어디서 났어?」 「제일 깊은 데서. 지키던 놈이 쓰러지니까 상자 맨 밑에 렌즈 그림이 그려진 채로 있더라.」 「…읽었어? 그럼 이제 네 눈은 별까지 닿겠네.」
+  description: 파티를 맺은 채로 의뢰를 30번 완료하기.
+research: 혼자 보는 하늘은 좁다. 친구들과 망원경을 나눠 들고 서른 번의 밤을 지새우자, 하늘 끝까지 보였다.
 cast:
   command: 마법 celestial_scope
   cooldown-seconds: 45

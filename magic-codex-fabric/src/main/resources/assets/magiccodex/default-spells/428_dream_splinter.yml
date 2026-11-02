@@ -5,8 +5,8 @@ description: 꿈의 수정 조각을 날립니다. 맞은 적은 꿈에 홀려 1
 icon: magiccodex:textures/spells/nova150/dream_splinter.png
 permission: magic.learned.dream_splinter
 discovery:
-  description: 수상한 스튜를 10번 먹기.
-research: 숲 언저리 노점에서 산 그 스튜, 먹을 때마다 맛이 달랐어. 한 번은 눈앞이 흐려지고, 한 번은 몸이 붕 뜨고… 몇 그릇째 비웠을 무렵, 그릇 바닥에 반짝이는 조각 하나가 남아 있더라.
+  description: 연금술 조합에 10번 실패하기.
+research: 실패한 조합에서는 이상한 꿈 냄새가 난다. 열 번을 망치고 나니, 그 냄새가 조각조각 손에 쥐어졌다.
 cast:
   command: 마법 dream_splinter
   cooldown-seconds: 6
