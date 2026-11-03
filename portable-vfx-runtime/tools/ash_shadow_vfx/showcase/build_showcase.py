@@ -9,7 +9,7 @@ MODELS = '/home/claude/boss/magic-mythic-paper/models/ash_shadow'
 OUT = os.path.join(HERE, 'merged'); shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT + '/textures'); os.makedirs(OUT + '/models')
 
 # ------------------------------------------------------------------ 1. 팩 합치기
-packs = sorted(p for p in os.listdir(ASSETS) if p.startswith(('AS_', 'AM_'))) + ['TG']
+packs = sorted(p for p in os.listdir(ASSETS) if p.startswith(('AS_', 'AM_'))) 
 merged = None
 for p in packs:
     src = os.path.join(HERE, 'tg/out/TG') if p == 'TG' else os.path.join(ASSETS, p)
@@ -33,7 +33,7 @@ for p in packs:
 merged['features']['byLayer'] = {}
 SYS = {s['id'] for s in merged['systems']}
 def sid(x):
-    assert x in SYS, x; return x
+    assert x in SYS or x.startswith('tg__'), x; return x
 
 # ------------------------------------------------------------------ 2. 모델 glb
 M = [bb2glb.Model(os.path.join(MODELS, f)) for f in ('ash_shadow.bbmodel', 'ash_shadow_enraged.bbmodel')]
@@ -201,8 +201,9 @@ for shiny in (False, True):
            ev(0.75, 'am_staglantern__bolt' + sfx, **{"from": [0, 2.2, 1.0], "to": [0, 0.3, 10], "flight": 0.75, "normal": [0, 1, 0]}),
            ev(1.5, 'am_staglantern__hit' + sfx, 1)], camera=cam([0, 1.5, 5], 16, -60, 25))
 
+for S in SC.values(): S['events'] = [e for e in S['events'] if not e['system'].startswith('tg__')]
 bb2glb.build(M, CLIPS, os.path.join(OUT, 'models/ash_showcase.glb'))
-merged['demo'] = {"note": "미리보기 전용 장면 (빨간 예고는 실제 게임에서 모드가 그림)", "interval": 3, "bg": [0.07, 0.06, 0.08], "floor": [0.08, 0.07, 0.085], "grid": [0.06, 0.05, 0.07],
+merged['demo'] = {"note": "예고 장판은 기존 시스템(chatelegraph)이 그림 - 여기선 VFX·모션만", "interval": 3, "bg": [0.07, 0.06, 0.08], "floor": [0.08, 0.07, 0.085], "grid": [0.06, 0.05, 0.07],
                   "dummy": {"height": 1.8}, "character": {"file": "models/ash_showcase.glb", "clip": "c_idle", "start": 0, "shading": {"mode": "lambert", "ambient": 0.75, "diffuse": 0.55}},
                   "scenarios": SC}
 json.dump(merged, open(os.path.join(OUT, 'vfx.json'), 'w'), ensure_ascii=False)
