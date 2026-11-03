@@ -15,6 +15,7 @@
 | `magic-mythic-paper/models/time_wraith/*.bbmodel` (새) | 보스 `time_wraith` (애니 21) + `_shiny` (지금 미몹에서 안 씀). ModelEngine blueprints 로 (파일 이름 = 모델 id) |
 | `magic-mythic-paper/models/time_wraith/props/*.bbmodel` (새) | `time_prison`, `time_floor_clock`, `time_hand_hour/minute/second`, `time_player_echo`, (`time_bullet` = 예비, 지금은 VFX 탄을 씀) |
 | `magic-mythic-paper/models/time_wraith/source/` | 모델 생성 원본 (gen.py·models.py·props.py·render.py) |
+| `magic-mythic-paper/models/time_wraith/time_wraith_preview_all.html` | 미리보기 한 파일 (모델 3D + VFX 9팩, 브라우저로 열기) |
 | `portable-vfx-runtime/assets/TW_*/` (새, 9팩) | **VFX 완성 팩** (vfx.json + textures + NOTES.md). 예고 없음. 팩당 고유 RGBA 1.9~3.4 MiB |
 | `portable-vfx-runtime/tools/time_wraith_vfx/` (새) | VFX 원본 (gen_time.py · timelib.js · packs/*.js · build_t.sh) + `CONTRACT.md` (팩·시스템 id·크기·길이 = 서버 연동 표) |
 
