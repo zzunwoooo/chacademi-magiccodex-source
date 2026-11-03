@@ -5,8 +5,8 @@ description: 제자리에서 몸을 한 바퀴 돌려 주위를 바람 칼날로
 icon: magiccodex:textures/spells/nova150/whirl_cut.png
 permission: magic.learned.whirl_cut
 discovery:
-  description: 검의 휩쓸기 공격으로 몬스터 여러 마리를 한 번에 50번 맞히기.
-research: "스승님 말씀: \"날을 한 번 휘둘러 여럿을 함께 스치게 하거라. 그 호가 저절로 원이 될 때까지.\""
+  description: 상자를 570번 열기.
+research: 상자를 열고 닫을 때마다 안에 갇혀 있던 바람이 휙 빠져나간다. 수백 번을 열다 보니 그 바람을 손목으로 받아 휘돌리는 법을 알게 되었다.
 cast:
   command: 마법 whirl_cut
   cooldown-seconds: 3

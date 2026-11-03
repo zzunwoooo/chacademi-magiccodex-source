@@ -5,8 +5,8 @@ description: 모래 파도를 앞으로 밀어 보냅니다. 파도에 휩쓸린
 icon: magiccodex:textures/spells/nova150/quicksand_tide.png
 permission: magic.learned.quicksand_tide
 discovery:
-  description: 좀벌레를 100마리 처치하기.
-research: 요새 깊은 돌벽에서 쥐 같은 벌레가 끝도 없이 쏟아져 나온대. 그걸 하나도 안 남기고 밟아 없앤 사람이 있었는데, 돌아오는 길에 발밑 땅이 파도처럼 출렁였다던데.
+  description: 모래를 700개 캐기.
+research: 사막의 모래를 칠백 번 퍼내자 모래가 물처럼 출렁이기 시작했다.
 cast:
   command: 마법 quicksand_tide
   cooldown-seconds: 15

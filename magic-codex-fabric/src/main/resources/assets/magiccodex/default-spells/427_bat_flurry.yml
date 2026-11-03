@@ -5,8 +5,8 @@ description: 작은 박쥐 네 마리를 풀어 대상을 끈질기게 쫓게 �
 icon: magiccodex:textures/spells/nova150/bat_flurry.png
 permission: magic.learned.bat_flurry
 discovery:
-  description: 박쥐를 30마리 처치하기.
-research: 찍찍 우는 천장 손님, 깜깜한 데 매달린 손님, 하나 잡고 또 잡고 또 잡으면, 어깨 위에 넷이 앉는대요.
+  description: 화약을 4개 모으기.
+research: 크리퍼가 터진 자리의 화약 냄새를 박쥐들은 좋아한다. 네 줌을 모으자 박쥐 떼가 나를 따랐다.
 cast:
   command: 마법 bat_flurry
   cooldown-seconds: 5

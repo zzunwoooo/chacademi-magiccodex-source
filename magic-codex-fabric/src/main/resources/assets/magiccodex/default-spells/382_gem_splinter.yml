@@ -5,8 +5,8 @@ description: 세 빛깔 보석 파편을 부채꼴로 한꺼번에 쏩니다. �
 icon: magiccodex:textures/spells/nova150/gem_splinter.png
 permission: magic.learned.gem_splinter
 discovery:
-  description: 야생에 사는 차카데미 고유 몬스터를 100마리 처치하기.
-research: 이 땅에만 사는 짐승들은 몸 어딘가에 보석 조각이 박혀 있다. 백 마리를 쓰러뜨리고 모은 조각들은 손바닥 위에서 서로를 끌어당겼다.
+  description: 청금석 광석을 8개 캐기.
+research: 청금석 광석을 깨면 푸른 파편이 튄다. 여덟 번째 광석에서 튄 파편이 공중에 멈춰 섰다.
 cast:
   command: 마법 gem_splinter
   cooldown-seconds: 4

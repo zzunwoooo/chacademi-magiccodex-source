@@ -5,8 +5,8 @@ description: 조준한 땅에 깊은 바다로 통하는 웅덩이를 열어 물
 icon: magiccodex:textures/spells/nova150/deep_tentacles.png
 permission: magic.learned.deep_tentacles
 discovery:
-  description: 큐디치 경기에서 골을 8번 막아 내기.
-research: 골대 앞의 수비수는 손이 여덟 개라는 소문이 있다. 실은 손이 아니라, 깊은 물 밑에서 뻗어 오는 촉수 같은 감각이라고 한다.
+  description: 먹물 주머니를 33개 모으기.
+research: 먹물 주머니를 서른세 개 모아 깊은 바다에 풀었다. 어둠 속에서 무언가가 촉수를 뻗어 내 손을 잡았다.
 cast:
   command: 마법 deep_tentacles
   cooldown-seconds: 40

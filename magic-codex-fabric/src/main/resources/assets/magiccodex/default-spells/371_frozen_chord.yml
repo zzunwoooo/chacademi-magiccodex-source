@@ -5,8 +5,8 @@ description: 조준한 곳을 둘러싼 세 지점에 화음처럼 울리는 마
 icon: magiccodex:textures/spells/nova150/frozen_chord.png
 permission: magic.learned.frozen_chord
 discovery:
-  description: 학교 NPC 한 명과 호감도 30 달성하기.
-research: 마음이 맞는 사람과 나란히 서면 숨소리마저 화음이 된다. 그 화음은 차갑게 맑아서, 공기 중의 물마저 얼려 버린다.
+  description: 눈을 190개 캐기.
+research: 눈을 백구십 덩이 퍼 나르는 동안 바람이 같은 음을 계속 불렀다. 마지막 덩이를 내려놓자 그 음이 얼어붙었다.
 cast:
   command: 마법 frozen_chord
   cooldown-seconds: 40

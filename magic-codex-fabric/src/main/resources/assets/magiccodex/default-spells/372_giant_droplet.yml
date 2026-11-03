@@ -5,8 +5,8 @@ description: 거대한 물방울을 만들어 앞으로 굴려 보냅니다. 물
 icon: magiccodex:textures/spells/nova150/giant_droplet.png
 permission: magic.learned.giant_droplet
 discovery:
-  description: 파란 아홀로틀을 번식시키기.
-research: ♪ 하늘빛 꼬마 물도마뱀, 아주 아주 드물게 태어나지. 엄마 아빠 사이에서 동그랗게 웃으면 물방울도 따라 굴러가지 ♪
+  description: 가디언을 10마리 처치하기.
+research: 바다의 수호자 열을 물리치자 신전의 물이 한 방울로 모여 하늘에 떠올랐다.
 cast:
   command: 마법 giant_droplet
   cooldown-seconds: 38

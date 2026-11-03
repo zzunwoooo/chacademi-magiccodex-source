@@ -5,8 +5,8 @@ description: 손바닥으로 가까운 적을 쳐 3초 동안 돌로 굳혀 기�
 icon: magiccodex:textures/spells/nova150/petrify_touch.png
 permission: magic.learned.petrify_touch
 discovery:
-  description: 흑요석을 128개 캐기.
-research: 물과 불이 만나 굳어 버린 검은 돌은 곡괭이를 몇 번이고 튕겨 냈다. 손목이 저리도록 그 고집을 깨부순 끝에, 굳어 버리는 힘이 거꾸로 내 손바닥에 옮겨 붙었다.
+  description: 흑요석을 8개 캐기.
+research: 흑요석을 여덟 개 캐는 동안 손이 점점 무거워졌다. 이제 내가 만지는 것은 돌처럼 굳는다.
 cast:
   command: 마법 petrify_touch
   cooldown-seconds: 18

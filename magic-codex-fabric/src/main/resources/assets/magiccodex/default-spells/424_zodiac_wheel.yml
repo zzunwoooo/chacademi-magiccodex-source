@@ -5,8 +5,8 @@ description: 하늘에 황도 12궁의 고리를 펼칩니다. 열두 별자리�
 icon: magiccodex:textures/spells/nova150/zodiac_wheel.png
 permission: magic.learned.zodiac_wheel
 discovery:
-  description: 서로 다른 펫을 12종 모으기.
-research: 열두 별자리마다 짐승이 하나씩 산다. 열두 마리가 모두 내 곁에 모인 날, 하늘의 바퀴가 한 바퀴 돌았다.
+  description: 마법 힌트권을 13장 쓰기.
+research: 마법 힌트권 열세 장을 원형으로 늘어놓자 열두 별자리와 하나의 빈자리가 돌기 시작했다.
 cast:
   command: 마법 zodiac_wheel
   cooldown-seconds: 200

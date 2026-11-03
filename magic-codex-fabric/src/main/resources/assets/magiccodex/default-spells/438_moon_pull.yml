@@ -5,8 +5,8 @@ description: 머리 위에 작은 달을 띄워 밀물처럼 주변의 적들을
 icon: magiccodex:textures/spells/nova150/moon_pull.png
 permission: magic.learned.moon_pull
 discovery:
-  description: 슬라임을 50마리 처치하기.
-research: 늪 사람들 말로는 둥근 달이 뜬 밤일수록 늪에서 통통 튀는 초록 덩이가 많이 올라온다더라. 달이 끌어올리는 거래. 그걸 실컷 잡아 본 사람은 달이 무얼 어떻게 끌어당기는지 손으로 알게 된다나.
+  description: 거미를 14마리 처치하기 (동굴 거미 포함).
+research: 거미 열네 마리를 쓰러뜨리고 그 줄을 당기자 달이 조금 끌려왔다.
 cast:
   command: 마법 moon_pull
   cooldown-seconds: 12

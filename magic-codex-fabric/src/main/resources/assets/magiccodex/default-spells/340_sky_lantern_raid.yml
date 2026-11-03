@@ -5,8 +5,8 @@ description: 조준한 곳에서 풍등 여섯 개를 띄워 올립니다. 풍�
 icon: magiccodex:textures/spells/nova150/sky_lantern_raid.png
 permission: magic.learned.sky_lantern_raid
 discovery:
-  description: 가스트를 20마리 처치하기.
-research: — 저기 하늘에 떠 있는 하얀 거, 우는 소리 들려? — 풍등 같은데. — 아니야, 저건 떨어지면 터져. 걔들을 실컷 떨어뜨려 봐야 무슨 말인지 알 거야.
+  description: 랜턴을 100개 만들기.
+research: 랜턴을 백 개나 만들어 밤하늘에 띄웠다. 하늘 위의 불빛들이 내 손짓을 따라 아래로 쏟아졌다.
 cast:
   command: 마법 sky_lantern_raid
   cooldown-seconds: 18

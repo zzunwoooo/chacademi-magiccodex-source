@@ -5,8 +5,8 @@ description: 회오리를 감은 올려차기로 앞의 적들을 한꺼번에 �
 icon: magiccodex:textures/spells/nova150/cyclone_kick.png
 permission: magic.learned.cyclone_kick
 discovery:
-  description: 시련의 금고를 5번 열기.
-research: 구리빛 방 맨 끝에 열쇠를 꽂아야만 열리는 상자가 있다던데. 그걸 여러 번 열어 본 녀석은 발끝으로 회오리를 차올린다더라.
+  description: 북극곰을 5마리 처치하기.
+research: 눈밭의 하얀 곰은 앞발로 바람을 일으킨다. 다섯 마리와 맞붙고 나서야 그 회오리를 발끝으로 차 낼 수 있었다.
 cast:
   command: 마법 cyclone_kick
   cooldown-seconds: 8

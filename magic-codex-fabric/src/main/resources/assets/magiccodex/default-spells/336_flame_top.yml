@@ -5,8 +5,8 @@ description: 땅 위에 불꽃 팽이를 돌려 놓습니다. 팽이는 4초 동
 icon: magiccodex:textures/spells/nova150/flame_top.png
 permission: magic.learned.flame_top
 discovery:
-  description: 블레이즈를 50마리 처치하기.
-research: 요새 높은 데서 둥둥 떠다니며 불덩이 쏘아 대는 놈들 있잖아. 그 쇳소리 섞인 숨소리를 질리도록 듣던 녀석이, 어느 날부터 땅바닥에 불 팽이를 굴리고 다닌다더라.
+  description: 금 주괴를 10개 만들기.
+research: 금 주괴를 굽다 보면 녹은 금이 팽이처럼 돈다. 열 개째에서 그 회전이 불꽃으로 바뀌었다.
 cast:
   command: 마법 flame_top
   cooldown-seconds: 10

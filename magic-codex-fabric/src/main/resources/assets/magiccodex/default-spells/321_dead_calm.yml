@@ -5,8 +5,8 @@ description: 주변 반경 6블록의 바람을 모두 밀어내 5초 동안 무
 icon: magiccodex:textures/spells/nova150/dead_calm.png
 permission: magic.learned.dead_calm
 discovery:
-  description: 토네이도가 지나갈 때까지 가까이에서 버텨 내기를 3번 하기.
-research: 회오리 한가운데는 고요하다고들 한다. 세 번째로 버텨 낸 날, 그 말이 사실이라는 걸 알았다. 사방이 찢어지는 소리 속에서 내 발밑만은 바람 한 점 없었다.
+  description: 야생의 우두머리를 서로 다른 3종 처치하기.
+research: 야생의 우두머리들은 저마다 폭풍을 몰고 다닌다. 서로 다른 셋을 꺾자, 그들이 남긴 바람이 한꺼번에 잦아들었다.
 cast:
   command: 마법 dead_calm
   cooldown-seconds: 40

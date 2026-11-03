@@ -5,8 +5,8 @@ description: 10초 동안 천체 망원경을 눈앞에 펼칩니다. 그동안 
 icon: magiccodex:textures/spells/nova150/celestial_scope.png
 permission: magic.learned.celestial_scope
 discovery:
-  description: 파티를 맺은 채로 의뢰를 30번 완료하기.
-research: 혼자 보는 하늘은 좁다. 친구들과 망원경을 나눠 들고 서른 번의 밤을 지새우자, 하늘 끝까지 보였다.
+  description: 마법 부여대로 60번 마법 부여하기.
+research: 마법 부여를 예순 번 하고 나니 마법 부여대의 책이 망원경처럼 하늘을 비췄다.
 cast:
   command: 마법 celestial_scope
   cooldown-seconds: 45

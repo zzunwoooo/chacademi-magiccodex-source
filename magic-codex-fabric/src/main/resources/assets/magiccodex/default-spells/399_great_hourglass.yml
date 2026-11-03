@@ -5,8 +5,8 @@ description: 하늘 높이 거대한 모래시계를 불러내 뒤집습니다. 
 icon: magiccodex:textures/spells/nova150/great_hourglass.png
 permission: magic.learned.great_hourglass
 discovery:
-  description: 의뢰를 14일 연속으로 완료하기.
-research: 모래시계를 열네 번 뒤집는 동안 하루도 거르지 않았다. 마지막 모래알이 떨어질 때, 사막 전체가 나를 따라 숨을 멈췄다.
+  description: 모래를 8,000개 캐기.
+research: 팔천 번 모래를 퍼 올린 손으로 거대한 모래시계를 세웠다. 그 모래가 다 떨어지기 전까지, 땅은 내 말을 듣는다.
 cast:
   command: 마법 great_hourglass
   cooldown-seconds: 200

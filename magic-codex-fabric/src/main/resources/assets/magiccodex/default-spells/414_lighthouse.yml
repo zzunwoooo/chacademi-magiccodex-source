@@ -5,8 +5,8 @@ description: 조준한 곳에 등대를 6초 동안 세웁니다. 회전하는 �
 icon: magiccodex:textures/spells/nova150/lighthouse.png
 permission: magic.learned.lighthouse
 discovery:
-  description: 4단계 신호기를 완성하기.
-research: 여기 쌓은 자가 잠들다. 금과 쇠와 보석으로 계단을 올리고 또 올려, 마침내 하늘에 한 줄기 빛을 꽂았노라. 그 빛은 지금도 돌며 길 잃은 배를 부른다.
+  description: 횃불을 250개 만들기.
+research: 횃불을 이백오십 개 만들어 언덕 위에 꽂았다. 멀리서도 보이는 등대가 되었다.
 cast:
   command: 마법 lighthouse
   cooldown-seconds: 20

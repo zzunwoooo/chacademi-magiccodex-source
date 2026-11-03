@@ -5,8 +5,8 @@ description: 꿈의 수정 조각을 날립니다. 맞은 적은 꿈에 홀려 1
 icon: magiccodex:textures/spells/nova150/dream_splinter.png
 permission: magic.learned.dream_splinter
 discovery:
-  description: 연금술 조합에 10번 실패하기.
-research: 실패한 조합에서는 이상한 꿈 냄새가 난다. 열 번을 망치고 나니, 그 냄새가 조각조각 손에 쥐어졌다.
+  description: 누적 16번 쓰러지기.
+research: 열여섯 번 쓰러지고 깨어나는 사이, 꿈의 조각이 하나씩 손에 남았다.
 cast:
   command: 마법 dream_splinter
   cooldown-seconds: 6

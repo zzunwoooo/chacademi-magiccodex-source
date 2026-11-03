@@ -5,8 +5,8 @@ description: 발밑에 해시계를 그립니다. 빛의 바늘이 한 바퀴 �
 icon: magiccodex:textures/spells/nova150/sundial_sweep.png
 permission: magic.learned.sundial_sweep
 discovery:
-  description: 햇빛 감지기를 16개 설치하기.
-research: "관찰 2일차: 지붕에 깐 얇은 판들이 해를 따라 신호를 바꾼다. 관찰 마지막 날: 판을 늘릴수록 정원에 드리운 그림자 바늘이 점점 또렷해졌다."
+  description: 주민과 2번 이야기하기.
+research: 주민들은 해시계를 보며 하루를 나눈다. 두 번 이야기를 나누고 나서 그림자 바늘을 움직이는 법을 배웠다.
 cast:
   command: 마법 sundial_sweep
   cooldown-seconds: 11

@@ -5,8 +5,8 @@ description: 실을 단 빛 바늘 세 개를 부채꼴로 던집니다. 맞은 
 icon: magiccodex:textures/spells/nova150/light_stitch.png
 permission: magic.learned.light_stitch
 discovery:
-  description: 베틀로 현수막 무늬를 10번 짜기.
-research: ♪ 북 치고 실 걸고 한 줄 또 한 줄, 깃발 위에 무늬가 피어나네. 바늘도 없이 꿰맨 하늘, 누가누가 짰을까 ♪ — 마을 아이들이 부르던 노래
+  description: 발광 열매를 2개 따기.
+research: 동굴 천장의 발광 열매를 따면 빛이 실처럼 늘어진다. 두 알을 따서 그 실로 상처를 꿰맸다.
 cast:
   command: 마법 light_stitch
   cooldown-seconds: 5

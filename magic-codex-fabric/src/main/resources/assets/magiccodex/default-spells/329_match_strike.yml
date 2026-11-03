@@ -5,8 +5,8 @@ description: 발끝으로 바닥에 긴 선을 긋습니다. 1초 뒤 그 선을
 icon: magiccodex:textures/spells/nova150/match_strike.png
 permission: magic.learned.match_strike
 discovery:
-  description: 네더 차원문에 불을 붙여 3번 열기.
-research: "관찰 7일차: 검은 돌로 쌓은 빈 문틀 안쪽에 불꽃 한 점을 그었더니, 틀 안이 보랏빛으로 일렁이며 다른 곳의 뜨거운 바람이 새어 나왔다. 세 번째 문을 열던 날, 내가 바닥에 그은 선을 따라 불이 한 줄로 일어섰다."
+  description: 부싯돌을 4개 모으기.
+research: "관찰 7일차: 자갈에서 부싯돌이 나올 때마다 손으로 그어 보았다. 네 번째 돌에서, 바닥에 그은 선을 따라 불이 한 줄로 일어섰다."
 cast:
   command: 마법 match_strike
   cooldown-seconds: 5

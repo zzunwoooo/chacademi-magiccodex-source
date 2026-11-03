@@ -5,8 +5,8 @@ description: 회전하는 바람 원반을 천천히 앞으로 밀어 보냅니�
 icon: magiccodex:textures/spells/nova150/air_saw.png
 permission: magic.learned.air_saw
 discovery:
-  description: 석재 절단기로 블록을 256개 깎기.
-research: 하루 종일 돌을 받치고 도는 톱날 앞에 앉아 있었습니다. 계단, 반쪽, 담장… 깎여 나간 가루가 원을 그리며 날리는 걸 보다가, 바람에도 날을 세울 수 있다는 걸 알았지요.
+  description: 응회암을 100개 캐기.
+research: 응회암은 무르지만 결이 촘촘하다. 백 개를 캐는 동안 곡괭이 대신 바람으로 결을 따라 써는 감각을 익혔다.
 cast:
   command: 마법 air_saw
   cooldown-seconds: 9

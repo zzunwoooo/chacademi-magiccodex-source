@@ -5,8 +5,8 @@ description: 손에 고드름 두 개를 맺어 차례로 포물선을 그리며
 icon: magiccodex:textures/spells/nova150/icicle_fling.png
 permission: magic.learned.icicle_fling
 discovery:
-  description: 얼음 가시 바이옴에서 누적 10분 머무르기.
-research: "경고: 땅에서 하늘로 솟은 얼음 기둥들 사이에 오래 머물지 말 것. 바람이 기둥 끝을 스칠 때마다 냉기가 떨어져 나오는데, 오래 서 있다 보면 그 냉기가 손에 쥐어질 만한 모양이 된다."
+  description: 사탕수수를 2개 캐기.
+research: 사탕수수 줄기 끝에는 아침마다 고드름 같은 이슬이 맺힌다. 두 줄기를 꺾자 그 이슬이 손가락 사이에서 얼었다.
 cast:
   command: 마법 icicle_fling
   cooldown-seconds: 4

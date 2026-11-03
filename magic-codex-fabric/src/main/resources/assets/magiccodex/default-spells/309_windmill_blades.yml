@@ -5,8 +5,8 @@ description: 바람으로 된 풍차 날개 세 장을 불러내 6초 동안 내
 icon: magiccodex:textures/spells/nova150/windmill_blades.png
 permission: magic.learned.windmill_blades
 discovery:
-  description: 브리즈를 30마리 처치하기.
-research: 구리빛 방 깊은 곳 / 막대를 두른 채 빙빙 도는 손님들 / 쓰러뜨릴 때마다 / 그 도는 법이 내 곁에 남았다
+  description: 원목을 350개 캐기.
+research: 나무를 베어 풍차 날개를 깎았다. 원목이 수백 개 쌓였을 때, 날개 없이도 바람이 돌기 시작했다.
 cast:
   command: 마법 windmill_blades
   cooldown-seconds: 12

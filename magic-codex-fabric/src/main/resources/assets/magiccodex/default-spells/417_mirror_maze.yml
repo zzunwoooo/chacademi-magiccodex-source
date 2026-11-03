@@ -5,8 +5,8 @@ description: 조준한 적 주위에 거울 네 장을 세워 안에 있던 적�
 icon: magiccodex:textures/spells/nova150/mirror_maze.png
 permission: magic.learned.mirror_maze
 discovery:
-  description: 삼림 대저택에서 소환사를 5마리 처치하기.
-research: 어머니께, 짙은 숲 속 큰 집에서 회색 옷 입은 이들을 몇 번이고 상대했어요. 그들이 쓰러질 때마다 그 집의 긴 복도가 조금씩 거울로 변해 가는 것 같았어요.
+  description: 위더 스켈레톤을 4마리 처치하기.
+research: 네더 요새의 검은 해골들은 거울 속처럼 같은 길을 돈다. 넷을 쓰러뜨린 뒤 그 미궁을 빛으로 그릴 수 있었다.
 cast:
   command: 마법 mirror_maze
   cooldown-seconds: 18

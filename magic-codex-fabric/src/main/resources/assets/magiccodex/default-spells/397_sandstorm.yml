@@ -5,8 +5,8 @@ description: 조준한 곳에 8초 동안 거대한 모래폭풍을 일으킵니
 icon: magiccodex:textures/spells/nova150/sandstorm.png
 permission: magic.learned.sandstorm
 discovery:
-  description: 토네이도에 휩쓸려 날아오르고도 살아남기를 5번 하기.
-research: 모래바람에 다섯 번을 날아올라 보고 알았다. 휩쓸리는 쪽이 아니라 휩쓰는 쪽에 서는 법을.
+  description: 야생에서 청크를 7칸 점유하기.
+research: 야생의 땅을 일곱 칸 점유하자 그 땅의 모래가 내 편이 되었다. 바람이 불면 모래폭풍이 내 땅을 지킨다.
 cast:
   command: 마법 sandstorm
   cooldown-seconds: 42

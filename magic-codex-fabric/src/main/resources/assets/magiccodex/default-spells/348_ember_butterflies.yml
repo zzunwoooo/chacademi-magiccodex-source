@@ -5,8 +5,8 @@ description: 등 뒤로 불꽃 날개를 펼쳐 불나비 열두 마리를 날�
 icon: magiccodex:textures/spells/nova150/ember_butterflies.png
 permission: magic.learned.ember_butterflies
 discovery:
-  description: 불사의 토템을 5개 모으기.
-research: 죽어야 할 순간을 / 한 번씩 미뤄 주는 / 작은 황금 얼굴들 // 하나씩 품을 때마다 / 가슴의 불이 날개를 단다 // 마지막 날개가 돋던 밤 / 불은 나비가 되어 흩어졌다
+  description: 발광석을 40개 캐기.
+research: 발광석을 깨면 나비 같은 불티가 날아오른다. 마흔 개를 깨고 나니 불나비들이 나를 따라다녔다.
 cast:
   command: 마법 ember_butterflies
   cooldown-seconds: 35

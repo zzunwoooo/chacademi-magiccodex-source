@@ -4,6 +4,8 @@
 오너 2026-11-03: "발견 조건 겹치는거 빼고 / 스크롤로 된건 우리 스크롤 시스템 할로윈에 했던거" → 운영 중 조건과 겹치던 19종 교체, 주문서 → 할로윈 마법 스크롤.
 
 오너 2026-11-03 2차: "너무 바닐라 위주 / 커스텀 시스템과 연동 / 스크롤은 각 원소별 궁극 2개 중 1개만" → 원소마다 5종(30종)을 큐디치·연금술·마법봉 강화·의뢰·기숙사·펫·NPC 호감도·토네이도·작물 각성·고유 몬스터·칭호·파티·스토리 조건으로 교체, 스크롤은 원소별 궁극 1종(6종)만.
+
+오너 2026-11-03 3차: "큐디치·기숙사·계절·연속 의뢰 빼고 / 현재 유저 진행 단계에 맞춰 설계" → 150종 전부 데이터 기준으로 다시 (야생 282명 통계·로그 301명; 1주 안에 채우는 유저 비율 초급≈35% 중급≈25% 고급≈10% 비전≈4% 궁극≈1~2%). 시스템 연동: 연금술 새 조합법·몬스터 전리품 상자·낚시 상자·청크 점유·마법 힌트권·마법 스크롤·야생 우두머리 종류·마법봉 강화.
 정의는 `magic-discovery-paper/src/main/resources/discoveries.yml` 끝 구간 (tools/nova150/discovery.py 에서 생성). 아래 키를 `MagicDiscovery.signal(uuid, key, amount)` 로 올려 주면 됩니다.
 `state.*` 키는 `MagicDiscovery.state()` 의 허용 목록에 추가 필요 (`state.popularity`). 이동 거리 키는 블록 단위(정수 누적).
 
@@ -11,150 +13,150 @@
 
 | 키 | 셀 것 | 쓰는 마법 | 목표 |
 |---|---|---|---|
-| `break.dandelion` | 민들레 블록을 부숨 (누적) | 301 민들레 홀씨탄 | 64 |
-| `place.banner` | 현수막 설치 | 302 바람개비 던지기 | 16 |
-| `craft.paper` | 종이 제작 개수 | 303 종이학 | 128 |
-| `hit.sweep_multi` | 검 휩쓸기 공격 한 번에 몬스터 2마리 이상 피해 (횟수) | 304 회전 베기 | 50 |
-| `use.goat_horn` | 염소 뿔피리 사용 | 305 휘파람 칼날 | 10 |
-| `throw.wind_charge` | 돌풍구 던지기 | 306 돌풍 장타 | 50 |
-| `obtain.phantom_membrane` | 팬텀 막을 인벤토리에 처음 얻은 개수 (줍기·제작 포함, 누적) | 307 공기 풍선 | 8 |
-| `craft.lead` | 끈(목줄) 제작 개수 | 308 연줄 | 8 |
-| `kill.breeze` | 브리즈 처치 | 309 풍차 날개 | 30 |
-| `quidditch.bludger_hit` | 큐디치(kyudichi) 경기 중 블러저 쳐내기 성공 (누적) | 310 역풍로 | 20 |
-| `wild.awakened_crop_kill` | 야생 작물 각성 몬스터(ChAcademiaWildlife awakening) 처치 | 311 홀씨 지뢰밭 | 30 |
-| `open.vault` | 시련의 금고(일반·불길한) 열기 | 312 회오리 발차기 | 5 |
-| `use.stonecutter` | 석재 절단기에서 꺼낸 결과물 개수 | 313 바람 톱 | 256 |
-| `shear.cobweb` | 가위로 거미줄 캐기 | 314 칼바람 장막 | 32 |
-| `hatch.chicken_egg` | 던진 달걀에서 병아리 태어남 | 315 천 마리 종이학 | 30 |
-| `fly.elytra` | 겉날개 활공 이동 블록 | 316 바람 낙하산 | 10000 |
-| `equip.saddle` | 서로 다른 바닐라 동물(말·돼지·스트라이더·낙타·당나귀·노새 등)에게 안장 장착 (같은 개체 중복 X) | 317 회전목마 돌풍 | 10 |
-| `kill.arrow_from_above` | 화살로 몬스터 처치, 쏜 사람이 대상보다 10블록 넘게 높음 | 318 칼날비 | 30 |
-| `ride.minecart` | 광산 수레를 타고 이동한 블록 | 319 진공 회랑 | 2000 |
-| `raid.won` | 습격 승리 (영웅 효과 받기) | 320 풍경 결계 | 5 |
-| `tornado.survive` | 토네이도 이벤트 동안 토네이도 반경 안에 들어갔다가 이벤트가 끝날 때 살아 있음 (이벤트당 1회) | 321 무풍지대 | 3 |
-| `obtain.elytra` | 겉날개 얻기 (엔드 함선 액자에서 꺼내기) | 322 거대 바람개비 | 3 |
-| `quidditch.win` | 큐디치 경기 승리 (승리 팀 전원) | 323 연날리기 축제 | 10 |
-| `quidditch.snitch_catch` | 큐디치 경기 중 스니치 잡기 | 324 천공의 방아 | 3 |
-| `harvest.honeycomb_smoked` | 아래에 모닥불이 있는 벌집·벌통에서 가위로 벌집 조각 수확 | 326 불티 집게 | 10 |
-| `cauldron.lava_drip` | 뾰족한 점적석 아래 가마솥이 용암으로 가득 참 (CauldronLevelChangeEvent NATURAL_FILL, 16블록 안 가장 가까운 플레이어) | 327 쇳물 방울 | 3 |
-| `place.lantern` | 랜턴(영혼 랜턴 포함) 설치 | 328 등롱 불씨 | 32 |
-| `light.nether_portal` | 불로 네더 차원문을 열기 (PortalCreateEvent reason FIRE, 불 붙인 플레이어) | 329 성냥 긋기 | 3 |
-| `alchemy.success` | 연금술 조합 성공 | 330 숯불 투척 | 10 |
-| `fill.lava_bucket` | 양동이로 용암 뜨기 | 331 불꽃 손톱 | 10 |
-| `craft.fire_charge` | 화염구 제작 개수 | 332 풀무질 | 32 |
-| `wand.enhance_success` | 마법봉 강화 성공 | 333 단조 망치 | 5 |
-| `craft.iron_armor` | 철 갑옷 부위 제작 | 334 쇳물 갑주 | 20 |
-| `place.chain` | 사슬 설치 | 335 등롱 사슬 | 64 |
-| `kill.blaze` | 블레이즈 처치 | 336 불꽃 팽이 | 50 |
-| `harvest.torchflower` | 다 자란 횃불꽃 수확 | 337 화염 꽃잎 | 10 |
-| `ride.strider` | 스트라이더 타고 용암 위 이동 블록 | 338 용암 거품 | 500 |
-| `mine.ancient_debris` | 고대 잔해 캐기 | 339 주물 거푸집 | 8 |
-| `kill.ghast` | 가스트 처치 | 340 풍등 폭격 | 20 |
-| `kill.magma_cube` | 마그마 큐브 처치 | 341 불실 그물 | 100 |
-| `barter.piglin` | 피글린 물물교환 (금 주괴 건넨 횟수) | 342 화로 돔 | 64 |
-| `drink.fire_resistance` | 화염 저항 물약 마시기 | 343 쇳물 해일 | 10 |
-| `grow.nether_fungus` | 뼛가루로 진홍·뒤틀린 균류를 거대 균류로 키움 | 344 불꽃 연꽃 | 30 |
-| `smithing.netherite` | 네더라이트 업그레이드 | 345 쇳물 손 | 4 |
-| `alchemy.recipe_found` | 처음 성공한 서로 다른 연금술 조합법 수 | 346 태양 흑점 | 10 |
-| `alchemy.mana_core` | 연금술로 마력코어 제작 | 347 도가니 붓기 | 5 |
-| `obtain.totem` | 불사의 토템 얻기 | 348 불나비 떼 | 5 |
-| `wand.enhance_perfect` | 마법봉 하나의 강화 기회(maximum-attempts, 지금 10번)를 실패 없이 모두 성공 | 349 대장장이 신의 모루 | 1 |
-| `weather.rain_minutes` | 비 오는 바이옴에서 하늘이 보이는 곳에 있던 분 | 351 빗방울 연사 | 30 |
-| `pet.assist_kill` | 펫을 소환해 데리고 있는 동안 플레이어가 몬스터 처치 | 352 물보라 발차기 | 30 |
-| `craft.clock` | 시계 제작 | 353 물시계 방울 | 4 |
-| `harvest.kelp` | 켈프 캐기 | 354 물 리본 | 256 |
-| `mine.ice_silk` | 섬세한 손길로 얼음류 캐기 | 355 서리 결정 | 64 |
-| `hatch.turtle` | 근처(16블록)에서 거북 알 부화 | 356 안개 숨 | 5 |
-| `visit.ice_spikes_seconds` | 얼음 가시 바이옴에 있던 초 | 357 고드름 투척 | 600 |
-| `housing.guest` | 내 기숙사 방에 들어온 서로 다른 학생 수 | 358 물장구 | 5 |
-| `place.pointed_dripstone` | 뾰족한 점적석 설치 | 359 고드름 처마 | 64 |
-| `freeze.powder_snow` | 가루눈에 빠져 완전히 얼어붙음 (얼음 피해 시작) | 360 결빙 파동 | 3 |
-| `obtain.trident` | 삼지창 얻기 | 361 소용돌이 원반 | 1 |
-| `kill.glow_squid` | 발광 오징어 처치 | 362 해파리 떼 | 30 |
-| `boat.ice` | 얼음류 위 보트 이동 블록 | 363 얼음 미끄럼 | 1000 |
-| `channeling.lightning` | 집전 삼지창으로 번개 소환 | 364 폭우 | 5 |
-| `build.snow_golem` | 눈 블록·조각된 호박으로 눈 골렘 만들기 | 365 서리 정원 | 5 |
-| `kill.elder_guardian` | 엘더 가디언 처치 | 366 물시계 감옥 | 3 |
-| `treasure.buried` | 묻힌 보물 상자 열기 | 367 안개 바다 | 5 |
-| `obtain.blue_ice` | 파란 얼음 얻기 | 368 빙산 낙하 | 128 |
-| `kill.guardian` | 가디언 처치 | 369 이안류 | 100 |
-| `activate.conduit` | 전달체 활성화 (근처에 있을 때) | 370 빙하 결정탑 | 1 |
-| `affinity.npc30` | 호감도 30 이상이 된 학교 NPC 수 | 371 결빙 화음 | 1 |
-| `breed.axolotl_blue` | 파란 아홀로틀 새끼 태어남 (부모를 먹인 플레이어) | 372 거대 물방울 | 1 |
-| `quidditch.save` | 큐디치 경기 중 골 선방 (config scoring.save-goal) | 373 심해 촉수 | 8 |
-| `quest.daily_done` | 의뢰 완료 (누적) | 374 천상의 물시계 | 100 |
-| `mine.sand` | 모래·붉은 모래 캐기 | 376 모래 채찍 | 512 |
-| `obtain.flint` | 자갈에서 부싯돌 떨어짐 | 377 모래 알갱이 | 64 |
-| `brush.suspicious` | 솔로 수상한 모래·자갈 털기 완료 | 378 화석 송곳니 | 20 |
-| `obtain.clay_ball` | 점토 덩이 얻기 (줍기, 누적) | 379 점토 덩이 | 128 |
-| `link.lodestone` | 자석석에 나침반 연결 | 380 자철 조각 | 3 |
-| `kill.ravager` | 파괴수 처치 | 381 흙먼지 발구르기 | 5 |
-| `kill.ca_wild` | 야생 차카데미 고유 몬스터(CA_Wild_*) 처치 | 382 보석 파편 | 100 |
-| `loot.desert_pyramid` | 사막 피라미드 상자 처음 열기 | 383 모래시계 구덩이 | 3 |
-| `ride.camel` | 낙타 타고 이동 블록 | 384 모래 분수 | 2000 |
-| `place.lightning_rod` | 피뢰침 설치 | 385 자석 손 | 16 |
-| `obtain.armadillo_scute` | 아르마딜로 인갑 얻기 | 386 모래 두더지 | 32 |
-| `make.mud` | 물병으로 흙을 진흙으로 | 387 진흙 폭탄 | 128 |
-| `housing.furniture` | 내 기숙사 방에 놓은 가구 수 (현재 값) | 388 바위 팽이 | 50 |
-| `kill.silverfish` | 좀벌레 처치 | 389 유사 파도 | 100 |
-| `hatch.sniffer` | 근처(16블록)에서 스니퍼 알 부화 | 390 화석 뱀뼈 | 1 |
-| `mine.obsidian` | 흑요석(우는 흑요석 포함) 캐기 | 391 석화의 손 | 128 |
-| `cure.zombie_villager` | 좀비 주민 치료 완료 | 392 모래관 | 3 |
-| `craft.iron_block` | 철 블록 제작 | 393 쇳가루 폭풍 | 64 |
-| `damage.falling_block_suffocate` | 떨어진 모래·자갈 블록 안에서 질식 피해 | 394 모래 폭포 | 10 |
-| `find.geode` | 자수정 정동 발견 (싹트는 자수정 블록 처음 바라본 서로 다른 정동) | 395 정동 개화 | 10 |
-| `lightning.rod_struck` | 자기가 설치한 피뢰침에 번개 맞음 | 396 쌍극 감옥 | 10 |
-| `tornado.flung` | 토네이도에 띄워진 뒤 죽지 않고 착지 (이벤트 중) | 397 모래폭풍 | 5 |
-| `title.owned` | 가진 칭호 수 (현재 값) | 398 사막화 | 15 |
-| `quest.daily_streak` | 의뢰를 하루 1번 이상 완료한 연속 일수 (0시 초기화 기준) | 399 대사막의 모래시계 | 14 |
-| `craft.firework_star` | 불꽃 별(폭죽 탄약) 제작 개수 | 401 별똥 바늘 | 32 |
-| `craft.spyglass` | 망원경 제작 개수 | 402 초점 렌즈 | 3 |
-| `npc.talk` | AI NPC(ChacaNPC)와 대화한 횟수 | 403 촛불 성가 | 30 |
-| `use.loom` | 베틀 무늬 결과물 꺼내기 | 404 빛 바늘땀 | 10 |
-| `harvest.glow_berries` | 발광 열매 따기 | 405 거울 조각 | 64 |
-| `allay.collect` | 알레이가 가져다준 아이템 개수 | 406 별빛 뛰기 | 64 |
-| `mine.glowstone` | 발광석 캐기 | 407 빛 부채 | 64 |
-| `place.painting` | 그림 걸기 | 408 거울판 | 16 |
-| `enchant.level30` | 30레벨 마법 부여 | 409 삼각 별자리 | 10 |
-| `place.daylight_detector` | 햇빛 감지기 설치 | 410 해시계 바늘 | 16 |
-| `story.chapter1` | 스토리 1장 완료 | 411 남십자성 | 1 |
-| `craft.stained_glass_colors` | 만든 색유리 색 종류 수 (최대 16) | 412 색유리 파편 | 16 |
-| `place.ender_eye_frame` | 엔드 차원문 틀에 엔더의 눈 끼우기 | 413 별 잇기 | 12 |
-| `beacon.tier4` | 4단계 피라미드 신호기 활성화 | 414 등대 | 1 |
-| `kill.shulker` | 셜커 처치 | 415 굴절 창 | 30 |
-| `craft.shulker_box` | 셜커 상자 제작 | 416 북두칠성 | 7 |
-| `kill.evoker` | 소환사 처치 | 417 거울 미궁 | 5 |
-| `craft.tipped_arrow` | 물약 화살 제작 | 418 오리온의 활 | 64 |
-| `state.popularity` | 현재 인기도 (스탯 화면 값, 상태값) | 419 카시오페이아 | 300 |
-| `affinity.npc20` | 호감도 20 이상이 된 학교 NPC 수 | 420 성운 직조 | 5 |
-| `use.end_gateway` | 엔드 관문 순간이동 | 421 거울 세계 | 10 |
-| `party.quest_done` | 파티에 들어가 있는 동안 의뢰 완료 | 422 천체 망원경 | 30 |
-| `obtain.nether_star` | 네더의 별 얻기 | 423 은하수 | 3 |
-| `pet.collected` | 가진 서로 다른 펫 종류 수 (MCPets·차카데미 펫 모두) | 424 황도 12궁 | 12 |
-| `till.night` | 밤에 괭이로 흙 갈기 | 426 초승달 낫 | 256 |
-| `kill.bat` | 박쥐 처치 | 427 박쥐 떼 | 30 |
-| `alchemy.fail` | 연금술 조합 실패 | 428 꿈 조각 | 10 |
-| `obtain.string` | 실 얻기 | 429 꼭두각시 당김 | 128 |
-| `kill.crossbow` | 쇠뇌로 쏜 화살·폭죽으로 몬스터 처치 | 430 달빛 화살 | 50 |
-| `eat.chorus_fruit` | 후렴과 먹기 | 431 달 조각 | 20 |
-| `obtain.spider_eye` | 거미 눈 얻기 | 432 검은 나방 | 64 |
-| `moon.phases` | 밤에 접속해 본 서로 다른 달 모양 수 (최대 8) | 433 달빛 표식 | 8 |
-| `armor_stand.equip` | 서로 다른 갑옷 거치대에 장비 입히기 | 434 그림자극 | 10 |
-| `drink.invisibility` | 투명화 물약 마시기 | 435 박쥐 망토 | 10 |
-| `break.sword` | 내구도가 다해 부러진 검 | 436 반달 방패 | 5 |
-| `wand.enhance_fail` | 마법봉 강화 실패 | 437 상현·하현 칼 | 10 |
-| `kill.slime` | 슬라임 처치 (마그마 큐브 제외) | 438 달의 인력 | 50 |
-| `tame.wolf` | 늑대 길들이기 | 439 달의 울음 | 10 |
-| `loot.ancient_city` | 고대 도시 상자 처음 열기 | 440 꿈의 미로 | 10 |
+| `break.flower` | 꽃 블록(민들레·양귀비·튤립 등 1칸·2칸 꽃) 부수기 | 301 민들레 홀씨탄 | 12 |
+| `obtain.wool` | 양털(색 무관) 줍기 | 302 바람개비 던지기 | 16 |
+| `obtain.feather` | 깃털 줍기 | 303 종이학 | 6 |
+| `open.chest` | 상자(덫 상자 포함) 열기 | 304 회전 베기 | 570 |
+| `pickup.arrow` | 바닥에 꽂히거나 떨어진 화살 줍기 | 305 휘파람 칼날 | 12 |
+| `kill.creeper` | 크리퍼 처치 | 306 돌풍 장타 | 4 |
+| `climb.blocks` | 사다리·덩굴·비계 등을 타고 오른 블록 | 307 공기 풍선 | 60 |
+| `obtain.string` | 실 줍기 | 308 연줄 | 20 |
+| `mine.log` | 원목(나무 종류 무관) 캐기 | 309 풍차 날개 | 350 |
+| `boat.distance` | 보트를 타고 이동한 블록 | 310 역풍로 | 4500 |
+| `obtain.gunpowder` | 화약 줍기 | 311 홀씨 지뢰밭 | 8 |
+| `kill.polar_bear` | 북극곰 처치 | 312 회오리 발차기 | 5 |
+| `mine.tuff` | 응회암 캐기 | 313 바람 톱 | 100 |
+| `mine.cobweb` | 거미줄 캐기(도구 무관) | 314 칼바람 장막 | 25 |
+| `break.leaves` | 나뭇잎 블록 부수기 | 315 천 마리 종이학 | 450 |
+| `fall.distance` | 떨어진 높이 합계(블록) | 316 바람 낙하산 | 14000 |
+| `kill.livestock` | 닭·돼지·소·양 처치 | 317 회전목마 돌풍 | 170 |
+| `shoot.bow` | 활 쏘기(시위를 당겨 놓은 횟수) | 318 칼날비 | 60 |
+| `open.chest` | 상자(덫 상자 포함) 열기 | 319 진공 회랑 | 2400 |
+| `kill.illager` | 약탈자·변명자·소환사·파괴수·마녀 처치 | 320 풍경 결계 | 25 |
+| `kill.boss_kinds` | 처치한 서로 다른 야생 우두머리(kill.mob.* 고유 몹) 종류 수 | 321 무풍지대 | 3 |
+| `obtain.ghast_tear` | 가스트 눈물 줍기 | 322 거대 바람개비 | 4 |
+| `obtain.rabbit` | 토끼 가죽·토끼 발 줍기 | 323 연날리기 축제 | 9 |
+| `open.monster_loot` | 몬스터 전리품 상자(monster_loot_ticket) 열기 | 324 천공의 방아 | 33 |
+| `obtain.raw_gold` | 금 원석 줍기 | 326 불티 집게 | 14 |
+| `obtain.raw_copper` | 구리 원석 줍기 | 327 쇳물 방울 | 32 |
+| `craft.torch` | 횃불 제작 개수 | 328 등롱 불씨 | 32 |
+| `obtain.flint` | 부싯돌 줍기 | 329 성냥 긋기 | 4 |
+| `mine.blackstone` | 흑암 캐기 | 330 숯불 투척 | 64 |
+| `obtain.leather` | 가죽 줍기 | 331 불꽃 손톱 | 10 |
+| `obtain.redstone` | 레드스톤 가루 줍기 | 332 풀무질 | 50 |
+| `craft.diamond_tool` | 다이아몬드 곡괭이·도끼·삽·괭이·검 제작 | 333 단조 망치 | 9 |
+| `craft.diamond_armor` | 다이아몬드 투구·흉갑·각반·부츠 제작 | 334 쇳물 갑주 | 8 |
+| `place.lantern` | 랜턴(영혼 랜턴 포함) 설치 | 335 등롱 사슬 | 8 |
+| `craft.gold_ingot` | 금 주괴 제작(굽기·조합) | 336 불꽃 팽이 | 10 |
+| `mine.blackstone` | 흑암 캐기 | 337 화염 꽃잎 | 260 |
+| `place.lava` | 용암 양동이 붓기 | 338 용암 거품 | 4 |
+| `craft.iron_block` | 철 블록 제작 | 339 주물 거푸집 | 8 |
+| `craft.lantern` | 랜턴(영혼 랜턴 포함) 제작 | 340 풍등 폭격 | 100 |
+| `kill.nether_mob` | 피글린·좀비 피글린·가스트·블레이즈·마그마 큐브·호글린·피글린 야수 처치 | 341 불실 그물 | 34 |
+| `obtain.quartz` | 네더 석영 줍기 | 342 화로 돔 | 1700 |
+| `obtain.gold_nugget` | 금 조각 줍기 | 343 쇳물 해일 | 220 |
+| `obtain.blaze_rod` | 블레이즈 막대 줍기 | 344 불꽃 연꽃 | 4 |
+| `mine.ancient_debris` | 고대 잔해 캐기 | 345 쇳물 손 | 100 |
+| `alchemy.recipe_found` | 처음 성공한 서로 다른 연금술 조합법 수 (ALCHEMY CRAFT … new) | 346 태양 흑점 | 4 |
+| `craft.coal_block` | 석탄 블록 제작 | 347 도가니 붓기 | 13 |
+| `mine.glowstone` | 발광석 캐기 | 348 불나비 떼 | 40 |
+| `wand.enhance_perfect` | 마법봉 하나의 강화 기회(maximum-attempts)를 실패 없이 모두 성공 (강화 기록이 로그에 없어 비율 미확인) | 349 대장장이 신의 모루 | 1 |
+| `kill.cod` | 대구 처치(검·마법 등으로) | 351 빗방울 연사 | 3 |
+| `kill.drowned` | 드라운드 처치 | 352 물보라 발차기 | 2 |
+| `mine.clay` | 점토 블록 캐기 | 353 물시계 방울 | 4 |
+| `walk.underwater` | 물속에서 걸어 이동한 블록 | 354 물 리본 | 1200 |
+| `mine.ice` | 얼음·꽁꽁 언 얼음·파란 얼음 캐기 | 355 서리 결정 | 8 |
+| `obtain.ink` | 먹물 주머니·발광 먹물 주머니 줍기 | 356 안개 숨 | 2 |
+| `mine.sugarcane` | 사탕수수 캐기 | 357 고드름 투척 | 2 |
+| `kill.squid` | 오징어·발광 오징어 처치 | 358 물장구 | 2 |
+| `obtain.amethyst` | 자수정 조각 줍기 | 359 고드름 처마 | 25 |
+| `eat.melon` | 수박 조각 먹기 | 360 결빙 파동 | 4 |
+| `mine.kelp` | 켈프 캐기 | 361 소용돌이 원반 | 4 |
+| `open.fishing_box` | 낚시 상자(fishing_ticket) 열기 | 362 해파리 떼 | 2 |
+| `open.barrel` | 통 열기 | 363 얼음 미끄럼 | 28 |
+| `kill.guardian` | 가디언·엘더 가디언 처치 | 364 폭우 | 3 |
+| `mine.snow` | 눈·눈 블록 캐기 | 365 서리 정원 | 20 |
+| `obtain.prismarine` | 프리즈머린 조각·프리즈머린 수정 줍기 | 366 물시계 감옥 | 16 |
+| `kill.drowned` | 드라운드 처치 | 367 안개 바다 | 12 |
+| `mine.ice` | 얼음·꽁꽁 언 얼음·파란 얼음 캐기 | 368 빙산 낙하 | 120 |
+| `kill.squid` | 오징어·발광 오징어 처치 | 369 이안류 | 8 |
+| `mine.ice` | 얼음·꽁꽁 언 얼음·파란 얼음 캐기 | 370 빙하 결정탑 | 320 |
+| `mine.snow` | 눈·눈 블록 캐기 | 371 결빙 화음 | 190 |
+| `kill.guardian` | 가디언·엘더 가디언 처치 | 372 거대 물방울 | 10 |
+| `obtain.ink` | 먹물 주머니·발광 먹물 주머니 줍기 | 373 심해 촉수 | 33 |
+| `obtain.prismarine` | 프리즈머린 조각·프리즈머린 수정 줍기 | 374 천상의 물시계 | 170 |
+| `mine.sand` | 모래·붉은 모래 캐기 | 376 모래 채찍 | 20 |
+| `mine.gravel` | 자갈 캐기 | 377 모래 알갱이 | 28 |
+| `obtain.bone` | 뼈 줍기 | 378 화석 송곳니 | 14 |
+| `obtain.clay_ball` | 점토 덩이 줍기 | 379 점토 덩이 | 8 |
+| `mine.copper_ore` | 구리 광석(심층암 포함) 캐기 | 380 자철 조각 | 10 |
+| `mine.gold_ore` | 금 광석(심층암 포함) 캐기 | 381 흙먼지 발구르기 | 12 |
+| `mine.lapis_ore` | 청금석 광석(심층암 포함) 캐기 | 382 보석 파편 | 8 |
+| `mine.sand` | 모래·붉은 모래 캐기 | 383 모래시계 구덩이 | 90 |
+| `mine.redstone_ore` | 레드스톤 광석(심층암 포함) 캐기 | 384 모래 분수 | 28 |
+| `craft.copper_ingot` | 구리 주괴 제작(굽기·조합) | 385 자석 손 | 4 |
+| `mine.moss` | 이끼 블록 캐기 | 386 모래 두더지 | 13 |
+| `craft.bone_meal` | 뼛가루 제작 | 387 진흙 폭탄 | 24 |
+| `craft.chest` | 상자 제작 | 388 바위 팽이 | 18 |
+| `mine.sand` | 모래·붉은 모래 캐기 | 389 유사 파도 | 700 |
+| `obtain.bone` | 뼈 줍기 | 390 화석 뱀뼈 | 78 |
+| `mine.obsidian` | 흑요석(우는 흑요석 포함) 캐기 | 391 석화의 손 | 8 |
+| `obtain.emerald` | 에메랄드 줍기 | 392 모래관 | 30 |
+| `mine.lapis_ore` | 청금석 광석(심층암 포함) 캐기 | 393 쇳가루 폭풍 | 50 |
+| `mine.gravel` | 자갈 캐기 | 394 모래 폭포 | 200 |
+| `mine.amethyst_cluster` | 다 자란 자수정 군집 캐기 | 395 정동 개화 | 22 |
+| `mine.emerald_ore` | 에메랄드 광석(심층암 포함) 캐기 | 396 쌍극 감옥 | 14 |
+| `land.claim` | 청크 점유 횟수 (MagicCodexBridge 청크 점유) | 397 모래폭풍 | 7 |
+| `mine.sculk` | 스컬크 계열 블록 캐기 | 398 사막화 | 15000 |
+| `mine.sand` | 모래·붉은 모래 캐기 | 399 대사막의 모래시계 | 8000 |
+| `eat.apple` | 사과 먹기 | 401 별똥 바늘 | 60 |
+| `use.cartography` | 지도 제작대 열기 | 402 초점 렌즈 | 2 |
+| `eat.bread` | 빵 먹기 | 403 촛불 성가 | 6 |
+| `obtain.glow_berries` | 발광 열매 줍기 | 404 빛 바늘땀 | 2 |
+| `use.hint_ticket` | 마법 힌트권 사용 (MagicCodexBridge 마법 힌트권 사용) | 405 거울 조각 | 3 |
+| `open.monster_loot` | 몬스터 전리품 상자(monster_loot_ticket) 열기 | 406 별빛 뛰기 | 10 |
+| `obtain.rotten_flesh` | 썩은 살점 줍기 | 407 빛 부채 | 18 |
+| `enchant.item` | 마법 부여대로 마법 부여 | 408 거울판 | 3 |
+| `use.scroll` | 마법 스크롤 사용 (아무 마법) | 409 삼각 별자리 | 1 |
+| `talk.villager` | 주민 거래 화면 열기 | 410 해시계 바늘 | 2 |
+| `obtain.emerald` | 에메랄드 줍기 | 411 남십자성 | 2 |
+| `craft.glass` | 유리 제작(모래 굽기) | 412 색유리 파편 | 30 |
+| `craft.shulker_box` | 셜커 상자 제작 | 413 별 잇기 | 2 |
+| `craft.torch` | 횃불 제작 개수 | 414 등대 | 250 |
+| `kill.shulker` | 셜커 처치 | 415 굴절 창 | 16 |
+| `craft.shulker_box` | 셜커 상자 제작 | 416 북두칠성 | 10 |
+| `kill.wither_skeleton` | 위더 스켈레톤 처치 | 417 거울 미궁 | 4 |
+| `pickup.arrow` | 바닥에 꽂히거나 떨어진 화살 줍기 | 418 오리온의 활 | 94 |
+| `obtain.lapis` | 청금석 줍기 | 419 카시오페이아 | 430 |
+| `use.scroll` | 마법 스크롤 사용 (아무 마법) | 420 성운 직조 | 12 |
+| `open.shulker` | 셜커 상자 열기 | 421 거울 세계 | 600 |
+| `enchant.item` | 마법 부여대로 마법 부여 | 422 천체 망원경 | 60 |
+| `obtain.glow_berries` | 발광 열매 줍기 | 423 은하수 | 128 |
+| `use.hint_ticket` | 마법 힌트권 사용 (MagicCodexBridge 마법 힌트권 사용) | 424 황도 12궁 | 13 |
+| `kill.wolf` | 늑대 처치 | 426 초승달 낫 | 2 |
+| `obtain.gunpowder` | 화약 줍기 | 427 박쥐 떼 | 4 |
+| `death.count` | 사망 횟수 | 428 꿈 조각 | 16 |
+| `obtain.string` | 실 줍기 | 429 꼭두각시 당김 | 10 |
+| `kill.spider` | 거미·동굴 거미 처치 | 430 달빛 화살 | 8 |
+| `open.shulker` | 셜커 상자 열기 | 431 달 조각 | 13 |
+| `obtain.spider_eye` | 거미 눈 줍기 | 432 검은 나방 | 2 |
+| `kill.creeper` | 크리퍼 처치 | 433 달빛 표식 | 8 |
+| `open.shulker` | 셜커 상자 열기 | 434 그림자극 | 48 |
+| `obtain.ender_pearl` | 엔더 진주 줍기 | 435 박쥐 망토 | 2 |
+| `craft.shield` | 방패 제작 | 436 반달 방패 | 2 |
+| `use.grindstone` | 숫돌 열기 | 437 상현·하현 칼 | 2 |
+| `kill.spider` | 거미·동굴 거미 처치 | 438 달의 인력 | 14 |
+| `kill.wolf` | 늑대 처치 | 439 달의 울음 | 13 |
+| `open.barrel` | 통 열기 | 440 꿈의 미로 | 76 |
 | `break.spawner` | 몬스터 생성기 부수기 | 441 박쥐 군주 | 3 |
-| `kill.charged_creeper` | 충전된 크리퍼 처치 | 442 꼭두각시 무대 | 3 |
-| `obtain.mob_head` | 몬스터 머리(좀비·스켈레톤·크리퍼·위더 스켈레톤·피글린 등) 얻기 | 443 달 떨구기 | 5 |
-| `obtain.dragon_breath` | 드래곤의 숨결 병 얻기 | 444 달빛 기둥 | 32 |
-| `kill.wither` | 위더 처치 | 445 월광 회전륜 | 1 |
-| `kill.ca_wild_night` | 밤(13000~23000틱)에 야생 차카데미 고유 몬스터(CA_Wild_*) 처치 | 446 막 내림 | 300 |
-| `effect.darkness` | 어둠 효과(워든·스컬크 비명기) 받고 끝날 때 살아 있음 | 447 그믐 장막 | 10 |
-| `housing.visit_other` | 들어가 본 서로 다른 남의 기숙사 방 수 | 448 그림자 도플갱어 | 10 |
-| `wild.awakened_crop_fullmoon` | 보름달(달 모양 0) 밤에 작물 각성 몬스터 처치 | 449 만월 강림 | 100 |
+| `kill.creeper` | 크리퍼 처치 | 442 꼭두각시 무대 | 38 |
+| `death.count` | 사망 횟수 | 443 달 떨구기 | 53 |
+| `obtain.ender_pearl` | 엔더 진주 줍기 | 444 달빛 기둥 | 130 |
+| `kill.wither_skeleton` | 위더 스켈레톤 처치 | 445 월광 회전륜 | 9 |
+| `kill.stray` | 스트레이 처치 | 446 막 내림 | 20 |
+| `kill.bat` | 박쥐 처치 | 447 그믐 장막 | 6 |
+| `obtain.gunpowder` | 화약 줍기 | 448 그림자 도플갱어 | 72 |
+| `kill.boss_kinds` | 처치한 서로 다른 야생 우두머리(kill.mob.* 고유 몹) 종류 수 | 449 만월 강림 | 6 |
 
 ## 마법 스크롤 6종 (할로윈 때 만든 스크롤 그대로 — 서버에 새로 만들 것 없음, 던전 보상 등으로 나눠 주기만)
 

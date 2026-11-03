@@ -5,8 +5,8 @@ description: 등불 세 개를 앞쪽에 일렬로 던져 불줄로 잇습니다
 icon: magiccodex:textures/spells/nova150/lantern_chain.png
 permission: magic.learned.lantern_chain
 discovery:
-  description: 사슬을 64개 설치하기.
-research: 고리에 고리를 걸고 / 천장에서 바닥까지 늘어뜨린다 / 마지막 고리가 달그락 울릴 때 / 불은 그 줄을 타고 건너간다
+  description: 랜턴을 8개 설치하기.
+research: 랜턴을 여덟 개 걸어 사슬처럼 이었다. 불빛이 하나에서 다음 하나로 건너뛰며 길을 냈다.
 cast:
   command: 마법 lantern_chain
   cooldown-seconds: 10

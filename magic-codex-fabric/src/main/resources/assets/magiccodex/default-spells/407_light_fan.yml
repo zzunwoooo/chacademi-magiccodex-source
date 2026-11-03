@@ -5,8 +5,8 @@ description: 앞쪽 넓은 부채꼴을 빛으로 한 번 벱니다.
 icon: magiccodex:textures/spells/nova150/light_fan.png
 permission: magic.learned.light_fan
 discovery:
-  description: 발광석을 64개 캐기.
-research: 경고 — 붉은 땅 천장에 매달린 누런 덩어리는 깨면 가루로 흩어진다. 그래도 계속 쪼아 대는 학생은 손끝에서 빛이 부채처럼 퍼지는 것을 각오할 것. — 기숙사 사감
+  description: 썩은 살점을 18개 줍기.
+research: 언데드가 남긴 썩은 살점을 열여덟 개 주워 햇빛에 말렸다. 빛이 부채처럼 펼쳐지며 그것들을 정화했다.
 cast:
   command: 마법 light_fan
   cooldown-seconds: 3

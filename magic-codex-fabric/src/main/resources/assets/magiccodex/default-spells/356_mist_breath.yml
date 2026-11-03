@@ -5,8 +5,8 @@ description: 차가운 안개를 앞쪽으로 길게 내뿜습니다. 안개에 
 icon: magiccodex:textures/spells/nova150/mist_breath.png
 permission: magic.learned.mist_breath
 discovery:
-  description: 거북 알을 5개 부화시키기.
-research: 선배에게, 바닷가 모래에 묻혀 있던 하얀 알들이 밤마다 조금씩 금이 가더니 오늘 새벽 작은 것들이 파도를 향해 기어갔어요. 걔들이 처음 내쉰 숨이 바닷바람보다 차갑더라고요.
+  description: 먹물 주머니를 2개 모으기.
+research: 오징어가 뿜은 먹물은 물안개처럼 퍼진다. 두 주머니를 모아 숨에 섞자 내 입김도 안개가 되었다.
 cast:
   command: 마법 mist_breath
   cooldown-seconds: 5

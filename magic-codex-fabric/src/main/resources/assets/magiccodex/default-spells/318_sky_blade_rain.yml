@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 봉인을 열어 3초 동안 바람 칼날�
 icon: magiccodex:textures/spells/nova150/sky_blade_rain.png
 permission: magic.learned.sky_blade_rain
 discovery:
-  description: 10블록 넘게 높은 곳에서 화살로 몬스터를 30마리 처치하기.
-research: 높은 곳에서 / 시위를 놓을 때마다 / 아래의 것들이 쓰러졌다 / 떨어지는 화살은 / 모두 칼날비였다
+  description: 활을 60번 쏘기.
+research: 시위를 놓을 때마다 화살이 바람을 가른다. 예순 번째 화살이 하늘로 오르자 칼날 같은 바람이 비처럼 쏟아졌다.
 cast:
   command: 마법 sky_blade_rain
   cooldown-seconds: 16

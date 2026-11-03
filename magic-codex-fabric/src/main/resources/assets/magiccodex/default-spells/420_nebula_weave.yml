@@ -5,8 +5,8 @@ description: 하늘에 커다란 캔버스를 펼친 뒤, 약 3초 동안 바라
 icon: magiccodex:textures/spells/nova150/nebula_weave.png
 permission: magic.learned.nebula_weave
 discovery:
-  description: 학교 NPC 5명과 호감도를 20 이상 쌓기.
-research: 사람 사이의 인연은 별과 별 사이의 실과 같다. 다섯 가닥을 엮고 나니, 그 실들이 성운처럼 빛나기 시작했다.
+  description: 마법 스크롤을 12장 쓰기.
+research: 마법 스크롤을 열두 장 펼치는 동안 글자들이 실처럼 풀려 성운을 짰다.
 cast:
   command: 마법 nebula_weave
   cooldown-seconds: 40

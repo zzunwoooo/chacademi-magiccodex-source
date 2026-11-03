@@ -5,8 +5,8 @@ description: 작은 물방울 세 발을 빠르게 연달아 쏩니다. 물방�
 icon: magiccodex:textures/spells/nova150/rain_patter.png
 permission: magic.learned.rain_patter
 discovery:
-  description: 비 오는 날 하늘 아래에서 누적 30분 보내기.
-research: 우산을 접고 처마 밖으로 나섰다. 젖은 머리칼에서 떨어지는 물방울 박자를 한참이나 세다 보니, 어느새 손끝도 같은 박자로 튕기고 있었다.
+  description: 대구를 3마리 잡기.
+research: 강가에서 대구를 잡을 때마다 빗방울 같은 물방울이 튀어 올랐다. 세 마리째, 그 물방울이 내 손끝에서 떨어지지 않았다.
 cast:
   command: 마법 rain_patter
   cooldown-seconds: 3

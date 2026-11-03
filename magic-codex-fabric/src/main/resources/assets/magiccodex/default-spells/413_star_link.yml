@@ -5,8 +5,8 @@ description: 앞쪽과 조준한 곳에 별을 하나씩 세우고 빛의 선으
 icon: magiccodex:textures/spells/nova150/star_link.png
 permission: magic.learned.star_link
 discovery:
-  description: 엔드 차원문 틀에 엔더의 눈을 12개 끼우기.
-research: 빈 자리마다 눈을 하나씩 박아 넣었다. 마지막 자리가 차자 눈과 눈 사이로 별빛 선이 이어지며, 발밑이 밤하늘처럼 열렸다.
+  description: 셜커 상자를 2개 만들기.
+research: 셜커 상자 두 개를 나란히 두자 그 사이를 별빛이 이었다. 상자 속은 별자리처럼 서로 통해 있었다.
 cast:
   command: 마법 star_link
   cooldown-seconds: 8

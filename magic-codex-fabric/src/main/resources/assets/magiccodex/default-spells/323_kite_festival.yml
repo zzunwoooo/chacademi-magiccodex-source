@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 바람 연 다섯 개를 띄웁니다. 연�
 icon: magiccodex:textures/spells/nova150/kite_festival.png
 permission: magic.learned.kite_festival
 discovery:
-  description: 큐디치 경기에서 10번 이기기.
-research: ♪ 이긴 날엔 하늘에 연을 올려라 / 빨강 연, 파랑 연, 줄줄이 올려라 / 열 번 이긴 팀 하늘은 연으로 꽉 찬다 ♪ (큐디치 응원가)
+  description: 토끼 가죽이나 토끼 발을 9개 모으기.
+research: "\"토끼 발을 매단 연은 줄이 끊기지 않는대.\" 축제 날 아이들 말을 믿고 아홉 개를 모았다. 연은 정말로 하늘에서 내려오지 않았다."
 cast:
   command: 마법 kite_festival
   cooldown-seconds: 40

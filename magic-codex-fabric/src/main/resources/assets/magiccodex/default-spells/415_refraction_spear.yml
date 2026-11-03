@@ -5,8 +5,8 @@ description: 눈앞에 빛의 렌즈 두 개를 띄우고 창을 던집니다. �
 icon: magiccodex:textures/spells/nova150/refraction_spear.png
 permission: magic.learned.refraction_spear
 discovery:
-  description: 셜커를 30마리 처치하기.
-research: "대상: 보랏빛 껍데기 속에 숨는 것들. 관찰: 껍데기가 열릴 때마다 탄환이 휘어 따라온다. 결론: 그것들을 수없이 쓰러뜨리고 나니, 곧게만 날던 내 빛도 휘는 법을 배웠다."
+  description: 셜커를 16마리 처치하기.
+research: 끝의 도시의 셜커는 빛을 꺾는 껍데기 속에 숨는다. 열여섯을 쓰러뜨리자 그 꺾인 빛이 창이 되었다.
 cast:
   command: 마법 refraction_spear
   cooldown-seconds: 14

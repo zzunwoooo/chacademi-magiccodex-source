@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 작은 태양을 띄웁니다. 태양은 6�
 icon: magiccodex:textures/spells/nova150/sunspot.png
 permission: magic.learned.sunspot
 discovery:
-  description: 처음 보는 연금술 조합법을 10개 찾아내기.
-research: "연구 메모: 태양에도 얼룩이 있다. 아무도 섞어 보지 않은 재료를 하나씩 맞춰 볼 때마다, 그 얼룩 같은 빈칸이 하나씩 채워졌다. 열 칸째에서 손끝이 검게 타올랐다."
+  description: 처음 보는 연금술 조합법을 4개 찾아내기.
+research: "연구 메모: 아무도 섞어 보지 않은 재료를 네 번 맞춰 보았다. 그때마다 연금솥 위에 태양의 얼룩 같은 검은 점이 떠올랐다."
 cast:
   command: 마법 sunspot
   cooldown-seconds: 40

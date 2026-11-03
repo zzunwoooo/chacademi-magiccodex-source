@@ -5,8 +5,8 @@ description: 조준한 곳을 덮는 거대한 화로 돔을 세웁니다. 돔 �
 icon: magiccodex:textures/spells/nova150/furnace_dome.png
 permission: magic.learned.furnace_dome
 discovery:
-  description: 피글린과 금 주괴로 64번 물물교환하기.
-research: 금붙이 하나 던져 주면 뭐든 하나 툭 던져 주는 이들이 있소. 귀한 걸 바라고 주머니를 털고 또 털었더니, 그 붉은 땅의 뜨거운 공기가 내 주위를 둥글게 덮더이다.
+  description: 네더 석영을 1,700개 모으기.
+research: 네더 석영을 천칠백 개 모아 화로 지붕을 덮었다. 그 안의 열기는 한 번도 식지 않았다.
 cast:
   command: 마법 furnace_dome
   cooldown-seconds: 22

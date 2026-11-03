@@ -5,8 +5,8 @@ description: 뜨거운 쇳물 한 덩이를 포물선으로 던집니다. 떨어
 icon: magiccodex:textures/spells/nova150/molten_drip.png
 permission: magic.learned.molten_drip
 discovery:
-  description: 점적석에서 떨어진 용암으로 가마솥을 3번 채우기.
-research: 아, 그 견습생? 뾰족한 돌고드름 밑에 빈 솥을 받쳐 두고 며칠이고 기다리더라고. 위쪽엔 붉은 것이 고여 있었지. 솥이 가득 찰 때마다 그 애 손끝에서도 쇳물이 똑똑 떨어졌다지 뭐야.
+  description: 구리 원석을 32개 모으기.
+research: 구리 원석을 녹이면 붉은 물방울이 맺힌다. 서른두 개를 모아 녹이고 나서, 그 방울을 떨어뜨리는 법을 알았다.
 cast:
   command: 마법 molten_drip
   cooldown-seconds: 5

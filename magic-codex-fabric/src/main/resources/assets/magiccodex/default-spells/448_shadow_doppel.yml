@@ -5,8 +5,8 @@ description: 적의 등 뒤에 나의 그림자를 세웁니다. 3초 동안 내
 icon: magiccodex:textures/spells/nova150/shadow_doppel.png
 permission: magic.learned.shadow_doppel
 discovery:
-  description: 다른 학생의 기숙사 방 10곳을 구경하기.
-research: 남의 방에 들어설 때마다 그 방 주인의 그림자가 내 뒤를 따라왔다. 열 개의 그림자가 모이자, 그중 하나가 나를 꼭 닮아 있었다.
+  description: 화약을 72개 모으기.
+research: 화약 일흔두 줌을 태운 연기 속에서 나와 똑같은 그림자가 걸어 나왔다.
 cast:
   command: 마법 shadow_doppel
   cooldown-seconds: 35

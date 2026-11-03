@@ -5,8 +5,8 @@ description: 조준한 곳에 거대한 바람개비를 세워 6초 동안 돌�
 icon: magiccodex:textures/spells/nova150/great_pinwheel.png
 permission: magic.learned.great_pinwheel
 discovery:
-  description: 엔드 함선에서 겉날개를 3개 얻기.
-research: 세상 끝 허공 위에 떠 있는 보랏빛 배 말이야, 뱃머리에 걸린 날개를 몇 번이고 떼어 온 사람이 있다던데. 그 사람 마당엔 지금 집채만 한 바람개비가 돈대.
+  description: 가스트 눈물을 4개 모으기.
+research: 가스트가 흘린 눈물을 모아 바람개비 축에 발랐다. 네 방울째, 거대한 날개가 저절로 돌기 시작했다.
 cast:
   command: 마법 great_pinwheel
   cooldown-seconds: 40

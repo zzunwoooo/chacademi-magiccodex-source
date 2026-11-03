@@ -5,8 +5,8 @@ description: 앞쪽 허공에 서리 처마를 만들어 고드름 다섯 개를
 icon: magiccodex:textures/spells/nova150/icicle_eaves.png
 permission: magic.learned.icicle_eaves
 discovery:
-  description: 뾰족한 점적석을 64개 설치하기.
-research: 동굴 천장에서 자란 돌 송곳을 / 하나 또 하나 거꾸로 꽂아 두면 / 바닥은 가시밭, 처마는 겨울 / 떨어질 날만 기다린다
+  description: 자수정 조각을 25개 모으기.
+research: 자수정 조각을 처마 끝에 매달아 두었더니 밤사이 고드름이 함께 자랐다.
 cast:
   command: 마법 icicle_eaves
   cooldown-seconds: 9

@@ -5,8 +5,8 @@ description: 돌 팽이를 땅에 굴려 보냅니다. 팽이는 4초 동안 적
 icon: magiccodex:textures/spells/nova150/stone_top.png
 permission: magic.learned.stone_top
 discovery:
-  description: 기숙사 방에 가구를 50개 놓기.
-research: 쉰 번째 가구를 들여놓자 방바닥이 팽이 축처럼 단단해졌다. 돌도 집이 무거워야 제자리를 지킨다.
+  description: 상자를 18개 만들기.
+research: 상자를 열여덟 개 만들어 쌓았다가 무너뜨렸다. 굴러간 상자 하나가 팽이처럼 오래 돌았다.
 cast:
   command: 마법 stone_top
   cooldown-seconds: 10

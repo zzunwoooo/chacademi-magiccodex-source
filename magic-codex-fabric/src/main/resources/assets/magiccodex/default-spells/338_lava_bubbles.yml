@@ -5,8 +5,8 @@ description: 조준한 땅을 녹여 용암 웅덩이를 만듭니다. 웅덩이
 icon: magiccodex:textures/spells/nova150/lava_bubbles.png
 permission: magic.learned.lava_bubbles
 discovery:
-  description: 스트라이더를 타고 용암 위를 누적 500블록 건너기.
-research: 발 시린 녀석 등에 올라타 붉은 바다를 건넘. 몇 번 왕복했는지 모름. 녀석이 한 발 디딜 때마다 발밑에서 거품이 퐁, 퐁. (끝)
+  description: 용암 양동이를 4번 붓기.
+research: 용암을 양동이째 쏟을 때 터지는 거품이 좋았다. 네 번 쏟고 나서 그 거품을 공중에 띄울 수 있었다.
 cast:
   command: 마법 lava_bubbles
   cooldown-seconds: 9

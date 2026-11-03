@@ -5,8 +5,8 @@ description: 종이학 한 마리를 날려 보냅니다. 종이학은 조준한
 icon: magiccodex:textures/spells/nova150/paper_crane.png
 permission: magic.learned.paper_crane
 discovery:
-  description: 종이를 128장 만들기.
-research: "관찰 2일차: 물가의 마디진 풀을 베어 와 나란히 엮었다. 하얗게 쌓인 장들이 창바람에 들썩이더니, 맨 위의 한 장이 스스로 접혀 날개를 폈다."
+  description: 깃털을 6개 모으기.
+research: "관찰 2일차: 주운 깃털을 접은 종이에 꽂아 두었더니, 창바람에 들썩이던 종이가 스스로 날개를 폈다."
 cast:
   command: 마법 paper_crane
   cooldown-seconds: 6

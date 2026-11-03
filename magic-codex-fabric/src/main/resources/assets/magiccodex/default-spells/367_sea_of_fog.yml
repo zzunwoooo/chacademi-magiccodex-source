@@ -5,8 +5,8 @@ description: 주변에 짙은 안개를 8초 동안 펼칩니다. 안개 속에�
 icon: magiccodex:textures/spells/nova150/sea_of_fog.png
 permission: magic.learned.sea_of_fog
 discovery:
-  description: 보물 지도로 묻힌 보물을 5번 찾아내기.
-research: …낡은 종이에 그려진 표시를 따라 바닷가 모래를 파던 밤마다 이상하게 안개가 끼었어. 몇 번째 녹슨 상자를 열었을 때였나, 그 안개가 나를 숨겨 주고 있다는 걸 알았지.
+  description: 드라운드를 12마리 처치하기.
+research: 물에 빠진 자들을 쫓아 깊이 들어갈수록 안개가 짙어졌다. 열두 번째를 쓰러뜨렸을 때, 안개는 바다가 되어 있었다.
 cast:
   command: 마법 sea_of_fog
   cooldown-seconds: 22

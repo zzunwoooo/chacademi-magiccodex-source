@@ -5,8 +5,8 @@ description: 모래를 채찍처럼 엮어 앞쪽을 두 번 연달아 휘두릅
 icon: magiccodex:textures/spells/nova150/sand_lash.png
 permission: magic.learned.sand_lash
 discovery:
-  description: 모래를 512개 캐기.
-research: 삽날이 닳도록 해변과 사막의 누런 바닥을 퍼 담았다. 상자가 꽉 찰 무렵, 손바닥에 붙은 알갱이들이 털어도 떨어지지 않고 줄처럼 길게 늘어졌다.
+  description: 모래를 20개 캐기.
+research: 모래를 스무 번 퍼 올리자 모래알들이 줄을 지어 손목에 감겼다. 휘두르니 채찍이 되었다.
 cast:
   command: 마법 sand_lash
   cooldown-seconds: 3

@@ -5,8 +5,8 @@ description: 앞쪽 일직선으로 달빛 기둥 세 개를 차례로 솟구치
 icon: magiccodex:textures/spells/nova150/moon_pillar.png
 permission: magic.learned.moon_pillar
 discovery:
-  description: 드래곤의 숨결을 32병 모으기.
-research: "시료: 가장 먼 땅에서 거대한 날개가 남긴 보랏빛 연기, 유리병에 봉함. 결과: 병을 줄지어 세워 두자 빛이 흩어지지 않고 위로만 곧게 섰다."
+  description: 엔더 진주를 130개 줍기.
+research: 엔더 진주 백서른 알을 쌓아 탑을 세웠다. 그 꼭대기에 달빛 기둥이 내려앉았다.
 cast:
   command: 마법 moon_pillar
   cooldown-seconds: 15

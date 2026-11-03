@@ -5,8 +5,8 @@ description: 어깨 위에 빛 바늘 세 개를 만들어 조준한 곳으로 �
 icon: magiccodex:textures/spells/nova150/star_needle.png
 permission: magic.learned.star_needle
 discovery:
-  description: 불꽃 별을 32개 만들기.
-research: 화약 한 줌에 염료를 섞어 작은 별을 빚었다. 하늘에 띄우기도 전에 탁자 위에 쌓인 별들이 바늘처럼 반짝였다. 그날 밤, 아주 먼 별 하나가 가늘어져 내 쪽으로 떨어졌다.
+  description: 사과를 60개 먹기.
+research: 햇볕에 잘 익은 사과는 속에 빛을 품고 있다. 예순 개를 먹고 나니 손끝에서 별빛이 바늘처럼 돋았다.
 cast:
   command: 마법 star_needle
   cooldown-seconds: 4

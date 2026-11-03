@@ -5,8 +5,8 @@ description: 어깨 위에 작은 등롱을 띄워 6초 동안 곁에 둡니다.
 icon: magiccodex:textures/spells/nova150/lantern_wisp.png
 permission: magic.learned.lantern_wisp
 discovery:
-  description: 랜턴을 32개 설치하기.
-research: ♪ 쇠 바구니에 불 한 점 담아 / 처마마다 하나씩 걸어 두면 / 걸고 또 걸어 골목이 환해질 무렵 / 떠도는 불씨가 제 길을 찾네 ♪
+  description: 횃불을 32개 만들기.
+research: 횃불을 서른두 개 만들고 나니 불씨 하나가 내 곁을 떠나지 않았다. 등롱 속에 넣어 주자 그 불씨가 춤을 췄다.
 cast:
   command: 마법 lantern_wisp
   cooldown-seconds: 8

@@ -5,8 +5,8 @@ description: 적에게 보이지 않는 실을 걸어 내 바로 앞까지 한 �
 icon: magiccodex:textures/spells/nova150/marionette_tug.png
 permission: magic.learned.marionette_tug
 discovery:
-  description: 실을 128개 모으기.
-research: 요즘 자네, 동굴 구석의 끈적한 것들을 죄다 걷어 가더구먼. 실타래가 손목만큼 굵어졌던데… 어이, 방금 그 줄에 저 닭이 끌려온 거 봤나?
+  description: 실을 10개 모으기.
+research: 실 열 가닥을 손가락에 걸고 당기자 그림자들이 꼭두각시처럼 따라 움직였다.
 cast:
   command: 마법 marionette_tug
   cooldown-seconds: 6

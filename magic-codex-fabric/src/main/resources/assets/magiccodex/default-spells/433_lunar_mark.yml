@@ -5,8 +5,8 @@ description: 적에게 달빛 표식을 새깁니다. 4초 뒤 하늘에서 달�
 icon: magiccodex:textures/spells/nova150/lunar_mark.png
 permission: magic.learned.lunar_mark
 discovery:
-  description: 달의 모양 8가지를 모두 보기.
-research: 스승님은 「하늘이 제 얼굴을 한 바퀴 다 보여 줄 때까지 고개를 들고 있어라」고만 하셨다. 마지막 얼굴을 본 밤, 손등에 차오르는 무늬 하나가 남았다.
+  description: 크리퍼를 8마리 처치하기.
+research: 크리퍼 여덟을 쓰러뜨린 자리마다 달빛 표식이 땅에 새겨졌다.
 cast:
   command: 마법 lunar_mark
   cooldown-seconds: 8

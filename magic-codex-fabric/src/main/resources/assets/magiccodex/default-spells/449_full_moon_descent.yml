@@ -5,8 +5,8 @@ description: 밤하늘을 열어 거대한 보름달을 불러 내립니다. 달
 icon: magiccodex:textures/spells/nova150/full_moon_descent.png
 permission: magic.learned.full_moon_descent
 discovery:
-  description: 보름달 밤에 야생에서 깨어난 작물 몬스터를 100마리 처치하기.
-research: 보름달이 뜨면 밭의 작물이 모두 눈을 뜬다는 옛말이 있다. 그 밤 백 마리를 거둔 사람 머리 위로, 달이 손 닿을 만큼 내려온다.
+  description: 야생의 우두머리를 서로 다른 6종 처치하기.
+research: 서로 다른 야생의 우두머리 여섯을 꺾었다. 그날 밤 보름달이 손 닿을 만큼 내려왔다.
 cast:
   command: 마법 full_moon_descent
   cooldown-seconds: 210

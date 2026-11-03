@@ -5,8 +5,8 @@ description: 자철 파편을 던져 적에게 박습니다. 잠시 뒤 파편�
 icon: magiccodex:textures/spells/nova150/lodestone_shard.png
 permission: magic.learned.lodestone_shard
 discovery:
-  description: 자석석 나침반을 3개 만들기.
-research: 선배에게. 바늘이 더는 북쪽을 보지 않아요. 제가 정해 준 바위만 가리키네요. 그렇게 묶어 둔 바늘이 늘어날수록, 던진 쇳조각이 자꾸 제 손으로 되돌아옵니다.
+  description: 구리 광석을 10개 캐기.
+research: 구리 광석은 서로를 살짝 끌어당긴다. 열 개를 캐고 나니 그 당김이 손끝에 남았다.
 cast:
   command: 마법 lodestone_shard
   cooldown-seconds: 5

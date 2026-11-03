@@ -5,8 +5,8 @@ description: 하늘에 별빛으로 된 거대한 활을 그려 시위를 당깁
 icon: magiccodex:textures/spells/nova150/orion_bow.png
 permission: magic.learned.orion_bow
 discovery:
-  description: 물약 화살을 64개 만들기.
-research: 「오래 남는 연기를 화살촉에 묻히는 일을 귀찮아하는 놈은 별을 쏠 수 없다.」 교관님은 그렇게 말하며 남은 병을 몽땅 내 앞에 내려놓았다. 화살통이 묵직해질 무렵, 겨울 하늘의 사냥꾼이 내 등 뒤에서 같이 활을 들었다.
+  description: 화살을 94개 줍기.
+research: 화살을 아흔네 개 주워 한 묶음으로 엮었다. 하늘의 사냥꾼이 그 묶음을 활시위에 걸었다.
 cast:
   command: 마법 orion_bow
   cooldown-seconds: 20

@@ -5,8 +5,8 @@ description: 적을 쇠 거푸집 안에 가두고 쇳물을 부은 뒤, 거푸�
 icon: magiccodex:textures/spells/nova150/casting_mold.png
 permission: magic.learned.casting_mold
 discovery:
-  description: 고대 잔해를 8개 캐기.
-research: 여기 잠든 광부, 붉은 바다 아래 가장 단단한 돌을 찾아 폭음 속을 헤매었노라. 그가 캐낸 것은 불에도 녹지 않았고, 그는 그 틀 안에 불을 가두는 법을 남겼다.
+  description: 철 블록을 8개 만들기.
+research: 철 블록을 여덟 개 찍어 내고 나서야 거푸집의 모양이 손에 익었다. 이제는 불 위에 손만 대도 틀이 생긴다.
 cast:
   command: 마법 casting_mold
   cooldown-seconds: 18

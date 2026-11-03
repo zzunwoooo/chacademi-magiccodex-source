@@ -5,8 +5,8 @@ description: 발을 힘껏 굴러 흙먼지를 일으킵니다. 주변 2블록 �
 icon: magiccodex:textures/spells/nova150/sand_stomp.png
 permission: magic.learned.sand_stomp
 discovery:
-  description: 파괴수를 5마리 처치하기.
-research: 습격 기록. 마을을 치러 온 무리 가운데 뿔 달린 거대한 짐승이 섞여 있었다. 그놈이 발을 구를 때마다 땅이 들썩였다. 몇 마리를 쓰러뜨리고 나니, 내 발바닥에도 그 울림이 남았다.
+  description: 금 광석을 12개 캐기.
+research: 금 광석을 열두 번 캐내는 동안 발밑이 계속 울렸다. 마지막엔 발을 구르기만 해도 흙먼지가 일었다.
 cast:
   command: 마법 sand_stomp
   cooldown-seconds: 5

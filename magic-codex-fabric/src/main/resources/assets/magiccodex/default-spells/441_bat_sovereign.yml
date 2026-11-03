@@ -6,7 +6,7 @@ icon: magiccodex:textures/spells/nova150/bat_sovereign.png
 permission: magic.learned.bat_sovereign
 discovery:
   description: 몬스터 생성기를 3개 부수기.
-research: 여기 잠든 이는 끝없이 무언가를 토해 내던 철창들을 차례로 부수었다. 그 뒤로 날개 달린 것들이 그를 왕이라 불렀다.
+research: 몬스터 생성기 셋을 부수자 그 안에 갇혀 있던 박쥐들이 나를 왕으로 따랐다.
 cast:
   command: 마법 bat_sovereign
   cooldown-seconds: 22

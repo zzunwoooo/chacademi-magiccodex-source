@@ -5,8 +5,8 @@ description: 끈적한 점토 덩이를 던져 적에게 철퍽 붙입니다. �
 icon: magiccodex:textures/spells/nova150/clay_glob.png
 permission: magic.learned.clay_glob
 discovery:
-  description: 점토 덩이를 128개 모으기.
-research: 아, 그 회색 흙덩이요? 물가 바닥을 파면 말랑한 게 나오지요. 손님처럼 그걸 자루째 퍼 가는 사람은 처음 봤는데, 요새 손에서 끈적한 게 안 떨어진다고요? 허허, 그거 병 아닙니다.
+  description: 점토 덩이를 8개 모으기.
+research: 강가의 점토 덩이를 여덟 개 뭉쳤다. 손바닥 안에서 덩이가 저절로 둥글게 굴렀다.
 cast:
   command: 마법 clay_glob
   cooldown-seconds: 5

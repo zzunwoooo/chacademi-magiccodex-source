@@ -5,8 +5,8 @@ description: 벌겋게 달군 숯덩이를 던집니다. 숯은 바닥에서 두
 icon: magiccodex:textures/spells/nova150/coal_lob.png
 permission: magic.learned.coal_lob
 discovery:
-  description: 연금술 조합에 10번 성공하기.
-research: 연금 솥 아래 숯불을 몇 번이고 다시 지폈다. 열 번째 조합이 맑게 끓어오르던 날, 나는 숯 한 덩이를 손에 쥐고도 그 열기를 던질 수 있게 되었다.
+  description: 흑암을 64개 캐기.
+research: 흑암은 숯처럼 검고 뜨겁다. 예순네 개를 캐서 던져 보니 떨어진 자리마다 불씨가 피었다.
 cast:
   command: 마법 coal_lob
   cooldown-seconds: 5

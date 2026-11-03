@@ -5,8 +5,8 @@ description: 조준한 적의 머리 위에 작은 물시계를 띄웁니다. 2�
 icon: magiccodex:textures/spells/nova150/clepsydra_drop.png
 permission: magic.learned.clepsydra_drop
 discovery:
-  description: 시계를 4개 만들기.
-research: "관찰 메모: 금빛 판 위의 바늘은 해와 달을 가리킨다. 붉은 가루를 섞어 몇 개를 만들어 나란히 놓았더니 모두 같은 박자로 똑, 똑. 시간도 결국 떨어지는 물방울이라는 가설에 확신이 생겼다."
+  description: 점토 블록을 4개 캐기.
+research: "\"물시계는 점토로 빚어야 물이 새지 않지.\" 강바닥의 점토 블록을 캐어 작은 물시계를 만들었다."
 cast:
   command: 마법 clepsydra_drop
   cooldown-seconds: 5

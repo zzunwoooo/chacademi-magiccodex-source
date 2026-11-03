@@ -5,8 +5,8 @@ description: 손끝에 불꽃 손톱 세 갈래를 세워 앞을 크게 할큅�
 icon: magiccodex:textures/spells/nova150/flame_claw.png
 permission: magic.learned.flame_claw
 discovery:
-  description: 용암을 양동이로 10번 뜨기.
-research: ※ 붉게 끓는 웅덩이에 빈 통을 담그지 말 것. 그 짓을 되풀이한 자는 손톱 밑까지 데었고, 이후 손끝에서 불이 세 갈래로 갈라져 나왔다 함. — 공방 관리인
+  description: 가죽을 10개 모으기.
+research: 사냥으로 얻은 가죽을 불에 그을려 손톱 모양 장갑을 만들었다. 열 장째에서 장갑 없이도 손톱에 불이 붙었다.
 cast:
   command: 마법 flame_claw
   cooldown-seconds: 4

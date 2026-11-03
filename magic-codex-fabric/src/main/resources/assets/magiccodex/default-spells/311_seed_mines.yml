@@ -5,8 +5,8 @@ description: 앞쪽 땅에 바람 홀씨 여섯 개를 심어 둡니다. 적이 
 icon: magiccodex:textures/spells/nova150/seed_mines.png
 permission: magic.learned.seed_mines
 discovery:
-  description: 야생에서 깨어난 작물 몬스터를 30마리 처치하기.
-research: "관찰 4일차: 밭고랑 사이에 묻어 둔 씨앗이 밤새 눈을 떠 걸어 나왔다. 쓰러뜨린 자리마다 홀씨가 터져 바람에 실려 갔다. 홀씨는 땅에 닿기 전까지 숨죽인 덫처럼 떠 있었다."
+  description: 화약을 8개 모으기.
+research: "\"화약 한 줌이면 씨앗도 지뢰가 되지.\" 정원사 할아버지가 웃으며 말씀하셨다. 바람에 실어 뿌리는 건 내 몫이었다."
 cast:
   command: 마법 seed_mines
   cooldown-seconds: 12

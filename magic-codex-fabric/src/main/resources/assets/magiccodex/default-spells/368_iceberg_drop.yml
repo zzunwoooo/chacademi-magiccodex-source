@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에서 거대한 빙산을 떨어뜨립니다. 
 icon: magiccodex:textures/spells/nova150/iceberg_drop.png
 permission: magic.learned.iceberg_drop
 discovery:
-  description: 파란 얼음을 128개 모으기.
-research: 북쪽 산 깊은 데서 캐 온 그 푸른 덩어리 말이오, 횃불 옆에 둬도 녹지를 않는다니까. 창고 가득 쌓아 놨더니 밤마다 그 무게가 머리 위에서 느껴져요.
+  description: 얼음을 120개 캐기.
+research: 얼음을 백이십 덩이 캐서 쌓아 올렸다. 그 무게가 한꺼번에 떨어지는 소리를 나는 아직 기억한다.
 cast:
   command: 마법 iceberg_drop
   cooldown-seconds: 20

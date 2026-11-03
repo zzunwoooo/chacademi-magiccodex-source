@@ -5,8 +5,8 @@ description: 조준한 땅에서 화석 송곳니가 솟아올라 그 자리에 
 icon: magiccodex:textures/spells/nova150/fossil_fang.png
 permission: magic.learned.fossil_fang
 discovery:
-  description: 솔로 수상한 모래·자갈을 20번 털기.
-research: 살살 털어라, 붓끝으로 털어라 / 세게 파면 와르르 부서진단다 / 바닥 아래 누가 누가 잠들었나 / 하얀 이빨 반짝, 아이고 깜짝이야
+  description: 뼈를 14개 모으기.
+research: 뼈를 열네 개 주워 늘어놓았더니 송곳니 모양이 되었다. 화석이 된 짐승이 다시 입을 벌렸다.
 cast:
   command: 마법 fossil_fang
   cooldown-seconds: 4

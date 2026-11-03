@@ -5,8 +5,8 @@ description: 회전하는 거울 조각을 쏩니다. 조각은 벽에 한 번 �
 icon: magiccodex:textures/spells/nova150/mirror_shard.png
 permission: magic.learned.mirror_shard
 discovery:
-  description: 발광 열매를 64개 따기.
-research: (동굴 벽 낙서) 덩굴 끝에 매달린 노란 등불, 따 먹을 때마다 한 칸씩 어두워짐. 마지막 걸 땄을 때 이 벽이 거울처럼 내 얼굴을 비췄음. 진짜임.
+  description: 마법 힌트권을 3장 쓰기.
+research: 마법 힌트권 속 글자를 세 번 읽고 나니 머릿속에 거울 조각 같은 깨달음이 박혔다.
 cast:
   command: 마법 mirror_shard
   cooldown-seconds: 3

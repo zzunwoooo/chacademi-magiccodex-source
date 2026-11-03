@@ -5,8 +5,8 @@ description: 조준한 땅에 거대한 정동을 피워 올립니다. 잠시 �
 icon: magiccodex:textures/spells/nova150/geode_bloom.png
 permission: magic.learned.geode_bloom
 discovery:
-  description: 자수정 정동을 10곳 찾아내기.
-research: 회색 껍질 아래 하얀 띠, 그 안에 보랏빛 방. / 땅은 같은 꽃을 곳곳에 숨겨 두었고 / 나는 그 방을 하나씩 찾아낼 때마다 / 돌이 피어나는 소리를 들었다.
+  description: 자수정 군집을 22개 캐기.
+research: 정동 속 자수정 군집을 스물두 개 거두었다. 남은 빈 껍데기에서 새 결정이 꽃처럼 피어났다.
 cast:
   command: 마법 geode_bloom
   cooldown-seconds: 36

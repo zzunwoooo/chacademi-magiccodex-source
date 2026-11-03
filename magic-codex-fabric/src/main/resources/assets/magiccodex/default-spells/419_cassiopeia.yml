@@ -5,8 +5,8 @@ description: 하늘에 카시오페이아 별자리를 그리고, 빛을 W자로
 icon: magiccodex:textures/spells/nova150/cassiopeia.png
 permission: magic.learned.cassiopeia
 discovery:
-  description: 인기도 300 달성하기.
-research: 「언니, 사람들이 왜 다 언니를 알아봐요?」 「글쎄다.」 — 광장을 지날 때마다 이름을 불러 주는 목소리가 늘어나더니, 그 목소리들이 밤하늘에 W자를 그렸다.
+  description: 청금석을 430개 모으기.
+research: 청금석 사백삼십 개를 밤하늘에 흩뿌렸다. 푸른 가루가 W 자로 모여 반짝였다.
 cast:
   command: 마법 cassiopeia
   cooldown-seconds: 15

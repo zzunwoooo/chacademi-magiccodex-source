@@ -5,8 +5,8 @@ description: 조준한 적의 발밑에서 모래가 분수처럼 솟구쳐 적�
 icon: magiccodex:textures/spells/nova150/sand_spout.png
 permission: magic.learned.sand_spout
 discovery:
-  description: 낙타를 타고 누적 2,000블록 이동하기.
-research: 흔들리는 높은 등 위에서 지평선을 몇 번이고 넘었다. 느릿한 발굽이 차올린 먼지가 분수처럼 솟았다 떨어지는 걸, 이제는 눈을 감아도 그릴 수 있다.
+  description: 레드스톤 광석을 28개 캐기.
+research: 붉게 빛나는 광석을 스물여덟 번 캐자 땅속에서 모래가 분수처럼 솟았다.
 cast:
   command: 마법 sand_spout
   cooldown-seconds: 7

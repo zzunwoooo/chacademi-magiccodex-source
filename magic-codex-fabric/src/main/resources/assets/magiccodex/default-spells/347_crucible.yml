@@ -5,8 +5,8 @@ description: 조준한 적의 머리 위에 거대한 도가니를 불러 기울
 icon: magiccodex:textures/spells/nova150/crucible.png
 permission: magic.learned.crucible
 discovery:
-  description: 연금술로 마력코어를 5개 만들기.
-research: 도가니가 끓어 넘치기 직전, 마력이 한 점으로 굳어 코어가 된다. 다섯 개를 빚어 낸 손은 도가니째 기울여 녹은 마력을 쏟아붓는 법을 안다.
+  description: 석탄 블록을 13개 만들기.
+research: 석탄 블록 열세 개를 도가니 밑에 깔고 불을 지폈다. 도가니가 넘쳐 흐르는 법을 그날 배웠다.
 cast:
   command: 마법 crucible
   cooldown-seconds: 45

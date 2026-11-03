@@ -5,8 +5,8 @@ description: 몸 주위로 불꽃 꽃잎 여덟 장을 피워 바깥으로 퍼�
 icon: magiccodex:textures/spells/nova150/flame_petals.png
 permission: magic.learned.flame_petals
 discovery:
-  description: 횃불꽃을 10송이 키워 거두기.
-research: 킁킁대는 커다란 짐승이 파낸 씨앗 하나가 피어나기까지 꽤 오래 걸렸어요. 주황빛 꽃잎이 불꽃처럼 벌어지는 걸 여러 번 거두고 나서야, 꽃잎이 둥글게 퍼졌다 돌아오는 법을 알았습니다.
+  description: 흑암을 260개 캐기.
+research: 흑암 사이에 핀 불꽃은 꽃잎처럼 겹겹이 진다. 이백예순 개를 캐내고 나니 손바닥에서 꽃잎이 흩날렸다.
 cast:
   command: 마법 flame_petals
   cooldown-seconds: 8

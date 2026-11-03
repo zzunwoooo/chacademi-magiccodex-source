@@ -5,8 +5,8 @@ description: 손바닥 위에 작은 달을 만들어 깨뜨린 뒤, 그 조각 
 icon: magiccodex:textures/spells/nova150/moon_shard.png
 permission: magic.learned.moon_shard
 discovery:
-  description: 후렴과를 20번 먹기.
-research: 끝의 섬 바깥, 보랏빛 가지에 맺힌 열매를 베어 물면 몸이 제멋대로 자리를 옮긴다. 몇 번이고 베어 물고 나니, 몸이 조각나 흩어졌다 다시 모이는 그 감각이 달이 이지러지는 모양과 꼭 닮아 있었다.
+  description: 셜커 상자를 13번 열기.
+research: 셜커 상자를 열세 번 여닫는 사이 상자 안의 어둠이 달 조각처럼 이지러졌다.
 cast:
   command: 마법 moon_shard
   cooldown-seconds: 4

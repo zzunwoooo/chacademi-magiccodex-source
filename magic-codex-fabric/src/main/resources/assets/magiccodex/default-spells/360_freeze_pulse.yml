@@ -5,8 +5,8 @@ description: 발밑에서 냉기 파동을 세 번 내보냅니다. 파동은 �
 icon: magiccodex:textures/spells/nova150/freeze_pulse.png
 permission: magic.learned.freeze_pulse
 discovery:
-  description: 가루눈에 빠져 3번 얼어붙기.
-research: "낙서: 발이 푹 빠지는 하얀 가루 속에서 온몸이 서서히 굳었다. 몇 번을 그렇게 굳고 나서야 앎. 추위는 한 번에 오지 않고 물결처럼 밀려온다."
+  description: 수박 조각을 4개 먹기.
+research: 한여름에 수박을 베어 물면 몸 안이 서늘하게 울린다. 네 조각을 먹고 나니 그 울림을 밖으로 내보낼 수 있었다.
 cast:
   command: 마법 freeze_pulse
   cooldown-seconds: 10

@@ -5,8 +5,8 @@ description: 풀무처럼 숨을 모았다가 앞쪽으로 뜨거운 바람을 �
 icon: magiccodex:textures/spells/nova150/bellows_blast.png
 permission: magic.learned.bellows_blast
 discovery:
-  description: 화염구를 32개 만들기.
-research: 스승님은 말씀하셨다. "불꽃 막대 가루에 숯과 화약을 버무려 뭉치면 던져도 꺼지지 않는 불덩이가 된다. 그걸 수없이 빚어 본 손은 숨만 불어도 불을 밀어낼 수 있지."
+  description: 레드스톤 가루를 50개 모으기.
+research: 붉은 가루를 풀무에 넣고 바람을 불면 불꽃이 두 배로 튄다. 쉰 줌을 날려 보낸 뒤로 내 숨이 곧 풀무가 되었다.
 cast:
   command: 마법 bellows_blast
   cooldown-seconds: 6

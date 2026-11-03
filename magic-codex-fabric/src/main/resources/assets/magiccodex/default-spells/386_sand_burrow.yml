@@ -5,8 +5,8 @@ description: 땅속으로 모래 줄기를 보내 적의 발밑까지 파고들�
 icon: magiccodex:textures/spells/nova150/sand_burrow.png
 permission: magic.learned.sand_burrow
 discovery:
-  description: 아르마딜로 인갑을 32개 모으기.
-research: 몸을 말아 굴러가는 작은 갑옷 / 솔로 쓸면 떨어지는 비늘 한 장 / 그 비늘을 한 줌 모은 날 / 내 모래도 땅속으로 몸을 말고 파고들었다
+  description: 이끼 블록을 13개 캐기.
+research: 이끼 블록 밑은 늘 축축하고 부드럽다. 열세 개를 걷어 내고 나니 땅속으로 파고드는 길이 보였다.
 cast:
   command: 마법 sand_burrow
   cooldown-seconds: 8

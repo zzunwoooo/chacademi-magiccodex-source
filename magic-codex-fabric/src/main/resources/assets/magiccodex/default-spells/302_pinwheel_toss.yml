@@ -5,8 +5,8 @@ description: 빙글빙글 도는 바람개비를 던집니다. 바람개비는 �
 icon: magiccodex:textures/spells/nova150/pinwheel_toss.png
 permission: magic.learned.pinwheel_toss
 discovery:
-  description: 현수막을 16개 설치하기.
-research: 손님, 문양 넣은 천을 장대마다 동네방네 내다 거는 양반 아시죠? 그 천 펄럭이는 걸 하도 오래 들여다보더니, 이젠 천도 없이 바람을 빙글빙글 돌려서 던진답디다.
+  description: 양털을 16개 모으기.
+research: "\"양털을 촘촘히 감아 날개를 만들면, 바람이 걸려서 저 혼자 돈단다.\" 할머니가 깎아 주신 양털 뭉치로 바람개비를 만들었다."
 cast:
   command: 마법 pinwheel_toss
   cooldown-seconds: 6

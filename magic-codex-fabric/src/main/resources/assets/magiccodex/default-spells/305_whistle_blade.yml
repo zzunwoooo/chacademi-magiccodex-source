@@ -5,8 +5,8 @@ description: 휘파람 소리와 함께 짧은 초승달 바람 칼날 두 개�
 icon: magiccodex:textures/spells/nova150/whistle_blade.png
 permission: magic.learned.whistle_blade
 discovery:
-  description: 염소 뿔피리를 10번 불기.
-research: 바위산 꼭대기에서 들이받던 녀석이 떨군 거 입에 대고 불어 봤음ㅋㅋ 메아리가 칼처럼 되돌아옴. 진짜임. 자꾸 불다 보면 너도 앎.
+  description: 화살을 12개 줍기.
+research: 땅에 꽂힌 화살을 뽑을 때 짧게 우는 소리가 난다. 열두 개를 줍는 동안 그 소리를 칼날처럼 세우는 법을 배웠다.
 cast:
   command: 마법 whistle_blade
   cooldown-seconds: 3

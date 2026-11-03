@@ -5,8 +5,8 @@ description: 조준한 곳에 회전목마 같은 돌풍을 일으킵니다. 안
 icon: magiccodex:textures/spells/nova150/carousel_gale.png
 permission: magic.learned.carousel_gale
 discovery:
-  description: 바닐라 동물 10마리에게 안장을 얹기.
-research: 스승님이 웃으며 말씀하셨다. "등을 내어 준 짐승마다 걸음이 다르단다. 갈기 달린 녀석, 코를 박고 다니는 녀석, 뜨거운 강을 건너는 녀석… 그 걸음들을 한 원 위에 다 태워 보거라."
+  description: 닭·돼지·소·양을 합쳐 170마리 사냥하기.
+research: 목장 울타리를 수없이 돌며 사냥을 했다. 돌고 또 도는 사이, 바람도 나를 따라 원을 그리며 돌았다.
 cast:
   command: 마법 carousel_gale
   cooldown-seconds: 20

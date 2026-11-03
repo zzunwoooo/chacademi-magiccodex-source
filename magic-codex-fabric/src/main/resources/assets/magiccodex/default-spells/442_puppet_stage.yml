@@ -5,8 +5,8 @@ description: 바닥에 꼭두각시 무대를 펼칩니다. 무대 위의 적들
 icon: magiccodex:textures/spells/nova150/puppet_stage.png
 permission: magic.learned.puppet_stage
 discovery:
-  description: 충전된 크리퍼를 3마리 처치하기.
-research: 「번개 치는 날, 몸에 하늘빛이 감긴 놈을 일부러 기다렸다고?」 「응. 꼭 하늘에서 줄이 매달린 것 같았거든. 그 줄을 끊을 때마다 내 무대가 하나씩 생겼어.」
+  description: 크리퍼를 38마리 처치하기.
+research: 크리퍼 서른여덟을 쓰러뜨린 무대 위에서, 남은 그림자들이 꼭두각시처럼 인사했다.
 cast:
   command: 마법 puppet_stage
   cooldown-seconds: 20

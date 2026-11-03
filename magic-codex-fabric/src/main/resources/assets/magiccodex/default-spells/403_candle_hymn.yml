@@ -5,8 +5,8 @@ description: 촛불 세 개를 불러 8초 동안 곁에 띄웁니다. 적이 �
 icon: magiccodex:textures/spells/nova150/candle_hymn.png
 permission: magic.learned.candle_hymn
 discovery:
-  description: 학교 NPC와 대화를 30번 나누기.
-research: "\"말을 건넬 때마다 촛불이 하나씩 켜진단다.\" 서른 번째 대화를 마치고 돌아보니, 복도가 촛불로 환했다."
+  description: 빵을 6개 먹기.
+research: 빵을 나누어 먹는 저녁마다 촛불 앞에서 노래를 불렀다. 여섯 번째 저녁, 노래가 빛이 되어 번졌다.
 cast:
   command: 마법 candle_hymn
   cooldown-seconds: 6

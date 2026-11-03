@@ -5,8 +5,8 @@ description: 조준한 땅에 불꽃 연꽃을 피웁니다. 꽃이 활짝 피�
 icon: magiccodex:textures/spells/nova150/fire_lotus.png
 permission: magic.learned.fire_lotus
 discovery:
-  description: 뼛가루로 네더의 균류를 30번 거대하게 키우기.
-research: ♪ 붉은 숲 바닥에 하얀 가루 한 줌 / 꼬물꼬물 버섯이 하늘까지 솟네 / 숲이 빽빽해지는 날엔 / 메마른 땅에도 꽃이 피네 ♪
+  description: 블레이즈 막대를 4개 모으기.
+research: 블레이즈 막대 네 개를 꽂아 두자 그 사이에 불꽃 연꽃이 피었다.
 cast:
   command: 마법 fire_lotus
   cooldown-seconds: 18

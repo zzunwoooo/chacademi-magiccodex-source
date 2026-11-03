@@ -5,8 +5,8 @@ description: 3초 동안 영창해 종이학 떼를 불러냅니다. 영창이 �
 icon: magiccodex:textures/spells/nova150/thousand_cranes.png
 permission: magic.learned.thousand_cranes
 discovery:
-  description: 던진 달걀에서 병아리를 30마리 깨어나게 하기.
-research: ♪ 동그란 알 휙 던지면 톡 깨지고 / 가끔은 깨진 자리에서 작은 날개 하나 / 마당 가득 작은 날개들 퍼덕이면 / 종이 날개도 덩달아 날아오르지 ♪
+  description: 나뭇잎 블록을 450개 부수기.
+research: 나뭇잎을 수백 장 털어 내자 잎들이 학처럼 접혀 하늘로 올라갔다. 그중 몇 마리는 아직도 돌아오지 않았다.
 cast:
   command: 마법 thousand_cranes
   cooldown-seconds: 18

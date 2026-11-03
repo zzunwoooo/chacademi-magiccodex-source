@@ -5,8 +5,8 @@ description: 손바닥에 자기장을 모아 앞쪽의 적들을 내 쪽으로 
 icon: magiccodex:textures/spells/nova150/magnet_palm.png
 permission: magic.learned.magnet_palm
 discovery:
-  description: 피뢰침을 16개 설치하기.
-research: "실험 기록. 지붕마다 구릿빛 막대를 세웠다. 결과: 하늘의 힘이 한 점으로 모이도록 길을 내 주자, 내 손바닥도 주변의 무언가를 끌어당기기 시작함. 원인 미상."
+  description: 구리 주괴를 4개 만들기.
+research: 구리 주괴를 네 개 녹여 손바닥에 문지르자, 쇠붙이들이 손을 따라오기 시작했다.
 cast:
   command: 마법 magnet_palm
   cooldown-seconds: 8

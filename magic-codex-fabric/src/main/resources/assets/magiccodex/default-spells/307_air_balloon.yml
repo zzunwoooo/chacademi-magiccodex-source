@@ -5,8 +5,8 @@ description: 공기를 가득 채운 풍선을 던집니다. 풍선이 터지면
 icon: magiccodex:textures/spells/nova150/air_balloon.png
 permission: magic.learned.air_balloon
 discovery:
-  description: 팬텀 막을 8개 모으기.
-research: 며칠째 잠을 미뤘다. 밤하늘에서 내리꽂는 녀석들을 떨어뜨려 얇은 날개를 모았는데, 빛에 비춰 보니 그것은 공기를 붙잡아 두는 막이었다.
+  description: 사다리·덩굴을 타고 누적 60블록 오르기.
+research: 사다리를 오를수록 발밑의 공기가 가벼워진다. 육십 칸을 올라선 날, 몸이 잠깐 공기 위에 떠 있었다.
 cast:
   command: 마법 air_balloon
   cooldown-seconds: 5

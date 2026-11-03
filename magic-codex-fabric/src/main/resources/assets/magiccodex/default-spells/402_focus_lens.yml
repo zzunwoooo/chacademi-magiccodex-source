@@ -5,8 +5,8 @@ description: 눈앞에 빛 렌즈를 만들어 조준한 한 점에 햇빛을 �
 icon: magiccodex:textures/spells/nova150/focus_lens.png
 permission: magic.learned.focus_lens
 discovery:
-  description: 망원경을 3개 만들기.
-research: "실험 기록 — 재료: 구리 대롱, 보랏빛 결정 조각. 결과: 대롱 끝에 결정을 물린 세 번째 것을 들어 올렸을 때, 그 너머의 햇빛이 한 점으로 모여 손등을 데웠음."
+  description: 지도 제작대를 2번 쓰기.
+research: 지도 제작대의 렌즈를 들여다보면 먼 곳이 한 점으로 모인다. 두 번 써 보고 그 초점을 손으로 옮길 수 있었다.
 cast:
   command: 마법 focus_lens
   cooldown-seconds: 6

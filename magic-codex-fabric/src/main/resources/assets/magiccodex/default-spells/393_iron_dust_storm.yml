@@ -5,8 +5,8 @@ description: 쇳가루 폭풍을 일으켜 안에 든 적들을 휘감아 돌립
 icon: magiccodex:textures/spells/nova150/iron_dust_storm.png
 permission: magic.learned.iron_dust_storm
 discovery:
-  description: 철 블록을 64개 만들기.
-research: 땡땡 망치 땡땡 / 회색 막대 아홉 개를 꾹꾹 눌러 한 덩이 / 창고 바닥이 꺼지도록 쌓고 또 쌓자 / 손에 묻은 쇳가루는 털어도 털어도 반짝반짝 / 바람이 불면 같이 빙글빙글
+  description: 청금석 광석을 50개 캐기.
+research: 청금석 광석을 쉰 개나 캐다 보니 공기에 쇳가루가 가득했다. 숨을 내쉬자 그 가루가 폭풍이 되었다.
 cast:
   command: 마법 iron_dust_storm
   cooldown-seconds: 18

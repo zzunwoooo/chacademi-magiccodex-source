@@ -5,8 +5,8 @@ description: 조준한 곳 위에 먹구름을 불러 6초 동안 굵은 빗줄�
 icon: magiccodex:textures/spells/nova150/rain_barrage.png
 permission: magic.learned.rain_barrage
 discovery:
-  description: 뇌우 속에서 삼지창으로 번개를 5번 불러내기.
-research: 여기 잠든 이, 먹구름 아래에서 창을 하늘로 들어 올려 하늘의 불을 거듭 불러 내렸노라. 그가 떠난 뒤에도 이 무덤 위에는 비가 그치지 않는다.
+  description: 가디언을 3마리 처치하기.
+research: 바다 신전의 수호자들은 물을 쏘아 댄다. 셋을 쓰러뜨리고 나니 그 물줄기가 내 것이 되었다.
 cast:
   command: 마법 rain_barrage
   cooldown-seconds: 18

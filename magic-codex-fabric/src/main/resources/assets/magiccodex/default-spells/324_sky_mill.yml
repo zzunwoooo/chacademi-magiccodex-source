@@ -5,8 +5,8 @@ description: 하늘에서 거대한 바람 풍차를 내려 조준한 곳을 통
 icon: magiccodex:textures/spells/nova150/sky_mill.png
 permission: magic.learned.sky_mill
 discovery:
-  description: 큐디치 경기에서 스니치를 3번 잡기.
-research: 스니치는 빛나지도 않고 소리도 없다. 하늘의 바람을 맷돌처럼 갈아 그 흐름이 비는 곳을 찾으면 거기 있다. 세 번을 잡고 나니, 하늘 전체가 내 손안에서 돌아가는 방아처럼 느껴졌다.
+  description: 몬스터 전리품 상자를 33개 열기.
+research: 몬스터가 남긴 전리품 상자를 서른세 번 열었다. 쏟아진 것들을 바람에 갈아 보니 하늘에 방아 하나가 돌고 있었다.
 cast:
   command: 마법 sky_mill
   cooldown-seconds: 200

@@ -5,8 +5,8 @@ description: 4초 동안 녹은 쇠로 몸을 감쌉니다. 그동안 나를 가
 icon: magiccodex:textures/spells/nova150/molten_plating.png
 permission: magic.learned.molten_plating
 discovery:
-  description: 철 갑옷 부위를 20개 만들기.
-research: "결과: 쇠 판을 몸 모양대로 구부려 맞추는 작업을 반복할수록, 실험자의 피부 위에 쇠의 형상이 희미하게 남기 시작함. 열을 가하면 녹아 흐름. 추가 관찰 필요."
+  description: 다이아몬드 갑옷 부위를 8개 만들기.
+research: 다이아몬드 갑옷을 여덟 벌째 맞추던 밤, 갑옷 위로 쇳물이 흘러 굳는 꿈을 꾸었다. 깨어 보니 손에 쇳물이 고여 있었다.
 cast:
   command: 마법 molten_plating
   cooldown-seconds: 10

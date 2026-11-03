@@ -5,8 +5,8 @@ description: 조준한 곳에 풍경 네 개를 걸어 8초 동안 결계를 칩
 icon: magiccodex:textures/spells/nova150/wind_chime_ward.png
 permission: magic.learned.wind_chime_ward
 discovery:
-  description: 마을 습격을 5번 막아 내기.
-research: 이 마을의 종이 울릴 때마다 깃발 든 무리가 몰려왔고, 그때마다 한 사람이 문 앞을 지켰다. 그가 떠난 뒤에도 처마의 풍경은 낯선 발소리에 먼저 운다. — 마을 어귀 돌비석
+  description: 약탈자 무리(약탈자·변명자·소환사·파괴수·마녀)를 25마리 처치하기.
+research: 마을 처마의 풍경이 울릴 때면 약탈자들이 찾아왔다. 스물다섯을 물리친 뒤로, 풍경 소리가 마을을 감싸는 결계가 되었다.
 cast:
   command: 마법 wind_chime_ward
   cooldown-seconds: 35

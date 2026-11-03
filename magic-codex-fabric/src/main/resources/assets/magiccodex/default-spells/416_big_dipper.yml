@@ -5,8 +5,8 @@ description: 조준한 곳에 북두칠성의 별 일곱 개를 차례로 떨어
 icon: magiccodex:textures/spells/nova150/big_dipper.png
 permission: magic.learned.big_dipper
 discovery:
-  description: 셜커 상자를 7개 만들기.
-research: 짐 정리 메모 — 단단한 껍데기로 짠 상자, 국자 모양으로 늘어놓으려면 몇 개 더 필요함. 다 만들고 늘어놨더니 진짜 하늘에서 국자가 내려옴. 짐 다 쏟아짐 ㅠ
+  description: 셜커 상자를 10개 만들기.
+research: 셜커 상자 열 개를 북두칠성 모양으로 늘어놓고 셋은 남겨 두었다. 남은 상자에서 별빛이 흘러넘쳤다.
 cast:
   command: 마법 big_dipper
   cooldown-seconds: 18

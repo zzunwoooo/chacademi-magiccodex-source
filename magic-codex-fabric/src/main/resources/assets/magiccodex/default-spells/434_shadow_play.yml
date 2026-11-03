@@ -5,8 +5,8 @@ description: 적 뒤의 벽에 그 적의 그림자를 비춥니다. 3초 안에
 icon: magiccodex:textures/spells/nova150/shadow_play.png
 permission: magic.learned.shadow_play
 discovery:
-  description: 갑옷 거치대 10개에 장비를 입히기.
-research: 「그 인형들한테 왜 자꾸 옷을 입혀요?」 「입혀 두면 등불 앞에서 사람처럼 그림자가 지거든. 그 그림자를 베면, 진짜도 아파하더라.」
+  description: 셜커 상자를 48번 열기.
+research: 셜커 상자 마흔여덟 개를 차례로 열자 벽에 비친 그림자들이 연극을 시작했다.
 cast:
   command: 마법 shadow_play
   cooldown-seconds: 9

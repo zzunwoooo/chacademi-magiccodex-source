@@ -5,8 +5,8 @@ description: 조준한 땅에 작은 소용돌이를 3초 동안 엽니다. 소�
 icon: magiccodex:textures/spells/nova150/whirlpool_disc.png
 permission: magic.learned.whirlpool_disc
 discovery:
-  description: 삼지창을 얻기.
-research: 바다 밑을 떠도는 녀석들 가운데 드물게 갈래진 창을 쥔 놈이 있다던데. 그걸 손에 넣은 사람 발밑에서는 물이 저절로 맴돈다더라.
+  description: 켈프를 4개 캐기.
+research: 켈프를 베면 그 자리에 작은 소용돌이가 생긴다. 네 줄기를 베고 나니 소용돌이를 원반처럼 던질 수 있었다.
 cast:
   command: 마법 whirlpool_disc
   cooldown-seconds: 9

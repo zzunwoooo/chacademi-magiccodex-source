@@ -5,8 +5,8 @@ description: 손바닥에 돌풍을 모아 앞의 적을 강하게 밀쳐 칩니
 icon: magiccodex:textures/spells/nova150/gust_palm.png
 permission: magic.learned.gust_palm
 discovery:
-  description: 돌풍구(윈드 차지)를 50번 던지기.
-research: "실험 기록 — 재료: 구리빛 방에서 얻은 작은 바람 덩어리. 방법: 벽과 바닥, 발밑에 되풀이해 던짐. 결과: 손바닥에 반동이 남음. 덩어리가 없어도 같은 반동이 나기 시작함."
+  description: 크리퍼를 4마리 처치하기.
+research: 쉭쉭거리는 초록 녀석이 다가오면 손바닥으로 바람을 밀어내야 한다. 네 번쯤 밀어내고 나니, 손바닥만 펴도 돌풍이 따라 나왔다.
 cast:
   command: 마법 gust_palm
   cooldown-seconds: 5

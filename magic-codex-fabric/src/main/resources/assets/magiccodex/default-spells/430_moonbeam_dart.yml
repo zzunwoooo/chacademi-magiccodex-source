@@ -5,8 +5,8 @@ description: 가늘고 빠른 달빛 화살을 한 발 쏩니다.
 icon: magiccodex:textures/spells/nova150/moonbeam_dart.png
 permission: magic.learned.moonbeam_dart
 discovery:
-  description: 쇠뇌로 몬스터를 50마리 처치하기.
-research: 밤길 나서는 자들아, 활 말고 방아쇠 달린 것을 들고 가라. 당겨 두었다 놓는 그 짧은 살이 오래 쌓이면, 살 끝이 달빛을 닮게 된다 하오.
+  description: 거미를 8마리 처치하기 (동굴 거미 포함).
+research: 거미 여덟 마리를 쓰러뜨린 밤, 거미줄 사이로 새어 든 달빛이 화살처럼 곧게 섰다.
 cast:
   command: 마법 moonbeam_dart
   cooldown-seconds: 2

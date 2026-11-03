@@ -5,8 +5,8 @@ description: 앞으로 나아가는 거대한 세로 바람 장막을 펼칩니�
 icon: magiccodex:textures/spells/nova150/shear_curtain.png
 permission: magic.learned.shear_curtain
 discovery:
-  description: 가위로 거미줄을 32개 끊기.
-research: 버려진 갱도의 끈적한 줄 말이오? 가위로 서걱서걱 끊다 보면, 끊긴 자리마다 바람이 벽처럼 꼿꼿이 서 있더이다. 손대면 베여요, 손님.
+  description: 거미줄을 25개 걷어 내기.
+research: 버려진 갱도의 끈적한 줄 말이오? 걷어 낼 때마다 끊긴 자리에 바람이 벽처럼 꼿꼿이 서 있더이다. 손대면 베여요, 손님.
 cast:
   command: 마법 shear_curtain
   cooldown-seconds: 16

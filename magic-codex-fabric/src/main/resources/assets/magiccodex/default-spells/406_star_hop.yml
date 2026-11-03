@@ -5,8 +5,8 @@ description: 작은 별빛이 조준한 적에게 튀어 간 뒤, 가까운 다�
 icon: magiccodex:textures/spells/nova150/star_hop.png
 permission: magic.learned.star_hop
 discovery:
-  description: 알레이가 가져다준 아이템을 64개 받기.
-research: 「그 파란 꼬마가 또 뭘 물어 왔어?」 「몰라, 노래만 틀어 주면 계속 갖다줘.」 — 꼬마가 이 손에서 저 손으로 날아다니는 걸 따라, 별빛도 깡충깡충 튀었다.
+  description: 몬스터 전리품 상자를 10개 열기.
+research: 몬스터 전리품 상자를 열 개 열자 그 안에서 작은 별들이 튀어나와 발판처럼 깔렸다.
 cast:
   command: 마법 star_hop
   cooldown-seconds: 5

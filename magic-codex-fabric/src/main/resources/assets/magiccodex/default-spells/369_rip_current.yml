@@ -5,8 +5,8 @@ description: 앞쪽으로 거센 해류를 일으킵니다. 물마루에 휩쓸�
 icon: magiccodex:textures/spells/nova150/rip_current.png
 permission: magic.learned.rip_current
 discovery:
-  description: 가디언을 100마리 처치하기.
-research: "\"눈에서 빛줄기를 쏘던 가시 돋친 물고기들 기억나?\" \"그 신전에서 지겹도록 잡았지.\" \"그러다 보니 물살이 어느 쪽으로 끌어당기는지 몸이 먼저 알게 됐어.\""
+  description: 오징어를 8마리 처치하기.
+research: 오징어들이 도망칠 때 물이 한쪽으로 쓸려 간다. 여덟 마리를 쫓고 나니 그 물살을 내가 만들 수 있었다.
 cast:
   command: 마법 rip_current
   cooldown-seconds: 18

@@ -5,8 +5,8 @@ description: 그믐달의 장막으로 2.5초 동안 모습을 감춥니다. 나
 icon: magiccodex:textures/spells/nova150/new_moon_veil.png
 permission: magic.learned.new_moon_veil
 discovery:
-  description: 어둠 효과를 10번 받고 살아남기.
-research: 「그것이 다가오면 빛이 숨을 쉬듯 꺼졌다 켜진다. 겁먹지 말고 버텨라.」 스승님 말씀대로 몇 번이고 그 어둠 속에서 살아 나오자, 빛이 꺼지는 그 틈에 나 또한 숨을 수 있게 되었다.
+  description: 박쥐를 6마리 처치하기.
+research: 동굴의 박쥐 여섯을 쫓아낸 날, 그믐달처럼 빛 없는 장막이 나를 감쌌다.
 cast:
   command: 마법 new_moon_veil
   cooldown-seconds: 32

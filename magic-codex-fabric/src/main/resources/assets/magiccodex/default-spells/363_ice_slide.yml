@@ -5,8 +5,8 @@ description: 발밑에 얼음 판을 깔고 앞으로 빠르게 미끄러져 나
 icon: magiccodex:textures/spells/nova150/ice_slide.png
 permission: magic.learned.ice_slide
 discovery:
-  description: 얼음 위에서 보트로 누적 1,000블록 미끄러지기.
-research: 노를 젓지 않아도 탈것이 저 혼자 한참을 미끄러지는 길이 있다. 지평선이 몇 번이나 바뀌도록 그 길을 달렸더니, 이제는 탈것 없이도 발밑이 미끄러진다.
+  description: 통을 28번 열기.
+research: 통 속에 얼음을 채워 두고 스물여덟 번을 열어 보았다. 열 때마다 미끄러운 냉기가 바닥을 타고 흘러나왔다.
 cast:
   command: 마법 ice_slide
   cooldown-seconds: 7

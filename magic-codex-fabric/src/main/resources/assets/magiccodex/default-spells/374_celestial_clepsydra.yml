@@ -5,8 +5,8 @@ description: 조준한 곳 하늘에 거대한 물시계를 불러냅니다. 시
 icon: magiccodex:textures/spells/nova150/celestial_clepsydra.png
 permission: magic.learned.celestial_clepsydra
 discovery:
-  description: 의뢰를 100번 완료하기.
-research: 하루가 다시 시작될 때마다 새 의뢰가 붙는다. 백 번을 채운 날, 의뢰 게시판 위 물시계가 한 방울을 떨어뜨리고 멈췄다. 하늘의 시간이 잠시 내 편이 된 것처럼.
+  description: 프리즈머린 조각·수정을 170개 모으기.
+research: 프리즈머린 백칠십 조각으로 하늘에 물시계를 걸었다. 그 시계는 별이 지는 속도로 물을 떨어뜨린다.
 cast:
   command: 마법 celestial_clepsydra
   cooldown-seconds: 200

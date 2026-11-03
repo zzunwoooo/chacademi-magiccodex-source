@@ -5,8 +5,8 @@ description: 조준한 곳에 별 세 개를 떨어뜨려 삼각형으로 잇습
 icon: magiccodex:textures/spells/nova150/triad_constellation.png
 permission: magic.learned.triad_constellation
 discovery:
-  description: 30레벨 마법 부여를 10번 하기.
-research: 「책장을 둘러 세우고, 쌓을 수 있는 데까지 쌓은 경험을 단번에 쏟아부어라. 그걸 몇 번이고 해낸 자의 눈에는 하늘의 세 점이 저절로 이어진다.」 — 천문학 교수의 첫 수업
+  description: 마법 스크롤을 1장 쓰기.
+research: 마법 스크롤을 처음 펼친 순간 별 셋이 이어진 삼각형이 눈앞에 떠올랐다.
 cast:
   command: 마법 triad_constellation
   cooldown-seconds: 10

@@ -5,8 +5,8 @@ description: 땅속에서 거대한 화석 뱀뼈를 불러내 앞으로 돌진�
 icon: magiccodex:textures/spells/nova150/fossil_wyrm.png
 permission: magic.learned.fossil_wyrm
 discovery:
-  description: 스니퍼 알을 부화시키기.
-research: 관찰 기록. 이끼 위에 둔 커다란 알이 아주 미세하게 흔들린다. 껍질이 갈라지던 날, 오래전 사라진 것들도 땅속에서 다시 몸을 일으킬 수 있음을 확인함.
+  description: 뼈를 78개 모으기.
+research: 뼈 일흔여덟 개를 이어 붙이니 뱀의 등뼈가 되었다. 밤마다 그 뼈가 땅속을 기어 다닌다.
 cast:
   command: 마법 fossil_wyrm
   cooldown-seconds: 16

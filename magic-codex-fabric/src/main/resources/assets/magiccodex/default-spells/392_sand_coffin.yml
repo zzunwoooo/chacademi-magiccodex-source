@@ -5,8 +5,8 @@ description: 적을 모래관에 가둬 2초 동안 꼼짝 못 하게 한 뒤, �
 icon: magiccodex:textures/spells/nova150/sand_coffin.png
 permission: magic.learned.sand_coffin
 discovery:
-  description: 좀비 주민을 3명 치료하기.
-research: "\"또 그 신음 소리야?\" \"응, 철창 안에서 좀 기다려야 해. 약을 먹이고 나면 썩어 가던 얼굴이 원래대로 돌아오거든.\" \"가둬 두는 게 살리는 거라니, 이상한 일이네.\""
+  description: 에메랄드를 30개 모으기.
+research: 주민에게서 받은 에메랄드를 서른 개 모아 모래 속에 묻었다. 그 자리에 모래관이 솟아올랐다.
 cast:
   command: 마법 sand_coffin
   cooldown-seconds: 16

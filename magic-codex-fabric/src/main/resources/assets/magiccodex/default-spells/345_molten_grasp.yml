@@ -5,8 +5,8 @@ description: 적의 발밑에서 거대한 쇳물 손을 솟아오르게 합니�
 icon: magiccodex:textures/spells/nova150/molten_grasp.png
 permission: magic.learned.molten_grasp
 discovery:
-  description: 네더라이트 장비를 4개 만들기.
-research: "스승님 말씀: \"빛나는 것 위에 더 어두운 것을 덧씌울 때마다, 땅 밑의 무언가가 손을 뻗는다. 머리부터 발끝까지 다 덧씌웠다면, 이제 그 손을 쥐는 건 네 차례다.\""
+  description: 고대 잔해를 100개 캐기.
+research: 고대 잔해를 백 개 캐내는 동안 손은 몇 번이고 녹았다가 다시 굳었다. 이제 이 손은 쇳물을 쥘 수 있다.
 cast:
   command: 마법 molten_grasp
   cooldown-seconds: 40

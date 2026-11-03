@@ -5,8 +5,8 @@ description: 조준한 적을 상승 기류로 띄운 뒤 바람 낙하산에 �
 icon: magiccodex:textures/spells/nova150/gust_canopy.png
 permission: magic.learned.gust_canopy
 discovery:
-  description: 겉날개로 누적 10,000블록 날기.
-research: 절벽에서 몸을 던져 등 뒤의 날개를 펼친 게 몇 번째인지 모르겠다. 땅이 다가올 때마다 바람이 등을 받쳐 주던 그 느낌을, 이제는 남에게 덮어씌울 수 있다.
+  description: 누적 14,000블록 떨어지기.
+research: 높은 곳에서 떨어질 때마다 바람이 등을 받쳐 주는 순간이 있다. 만 번이 넘게 떨어지고 나니, 그 순간을 내가 고를 수 있게 되었다.
 cast:
   command: 마법 gust_canopy
   cooldown-seconds: 18

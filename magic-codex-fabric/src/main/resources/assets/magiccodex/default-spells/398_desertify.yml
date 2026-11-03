@@ -5,8 +5,8 @@ description: 주변 7블록을 8초 동안 메마른 사막으로 바꿉니다. 
 icon: magiccodex:textures/spells/nova150/desertify.png
 permission: magic.learned.desertify
 discovery:
-  description: 칭호를 15개 모으기.
-research: 이름이 많아질수록 사람은 메말라 간다고 했던가. 열다섯 번째 칭호를 얻던 날, 내 발밑의 풀이 누렇게 바랬다.
+  description: 스컬크 블록을 15,000개 캐기.
+research: 깊은 어둠 속 스컬크를 만오천 개 걷어 냈다. 그 자리는 다시는 아무것도 자라지 않는 사막이 되었다.
 cast:
   command: 마법 desertify
   cooldown-seconds: 40

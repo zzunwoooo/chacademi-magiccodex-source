@@ -5,8 +5,8 @@ description: 몸을 박쥐 떼로 흩뜨려 앞으로 4블록 날아갑니다. �
 icon: magiccodex:textures/spells/nova150/bat_cloak.png
 permission: magic.learned.bat_cloak
 discovery:
-  description: 투명화 물약을 10번 마시기.
-research: 마시면 거울에서 내가 사라짐 → 맛은 비리고 씀 → 그래도 계속 마심 → 어느 날 내 그림자가 날개 치며 흩어짐 (진짜임)
+  description: 엔더 진주를 2개 줍기.
+research: 엔더 진주 두 알을 망토에 꿰매자 몸이 박쥐 떼처럼 흩어졌다가 다시 모였다.
 cast:
   command: 마법 bat_cloak
   cooldown-seconds: 10

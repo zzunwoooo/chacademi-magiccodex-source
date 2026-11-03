@@ -5,8 +5,8 @@ description: 주위에 무대의 막을 내려 안에 갇힌 적들의 시야를
 icon: magiccodex:textures/spells/nova150/curtain_fall.png
 permission: magic.learned.curtain_fall
 discovery:
-  description: 밤에 야생의 차카데미 고유 몬스터를 300마리 처치하기.
-research: 무대의 막은 밤에 내린다. 삼백 번째 짐승이 쓰러지던 순간, 정말로 검은 막이 하늘에서 스르르 내려왔다.
+  description: 스트레이를 20마리 처치하기.
+research: 얼음 들판의 스트레이 스물을 쓰러뜨린 뒤, 하늘에서 검은 막이 내려왔다.
 cast:
   command: 마법 curtain_fall
   cooldown-seconds: 40

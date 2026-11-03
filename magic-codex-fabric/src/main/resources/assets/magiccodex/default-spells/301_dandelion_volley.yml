@@ -5,8 +5,8 @@ description: 느릿느릿 떠가는 민들레 홀씨 다섯 개를 앞쪽 부채
 icon: magiccodex:textures/spells/nova150/dandelion_volley.png
 permission: magic.learned.dandelion_volley
 discovery:
-  description: 민들레를 64송이 꺾기.
-research: ♪ 노랑 꽃 똑 따서 한 바구니, 또 한 바구니 / 바구니 넘치면 하얀 머리 후— / 후— 하고 불면 바람이 대신 달려가지 ♪ (들판 아이들이 부르는 노래)
+  description: 꽃을 12송이 꺾기.
+research: 들판의 꽃을 한 송이씩 꺾을 때마다 꽃잎 끝에 매달린 홀씨가 바람을 타고 흩어졌다. 열두 송이째, 홀씨들이 내 손끝을 따라 한쪽으로만 날아가기 시작했다.
 cast:
   command: 마법 dandelion_volley
   cooldown-seconds: 4

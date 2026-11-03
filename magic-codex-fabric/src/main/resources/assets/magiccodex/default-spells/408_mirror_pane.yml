@@ -5,8 +5,8 @@ description: 눈앞에 거울판을 6초 동안 세웁니다. 거울판은 날�
 icon: magiccodex:textures/spells/nova150/mirror_pane.png
 permission: magic.learned.mirror_pane
 discovery:
-  description: 그림을 16개 걸기.
-research: 선배에게, 기숙사 벽이 너무 허전해서 천에 그린 그림을 하나씩 걸었어요. 벽이 빈틈없이 채워지던 날, 그림들 사이의 빈 공기에서 거울 한 장이 미끄러져 나오더라고요.
+  description: 마법 부여대로 3번 마법 부여하기.
+research: 마법 부여대 위의 책장이 넘어갈 때마다 빛이 반사되어 판처럼 섰다. 세 번 부여하고 나니 그 판을 세울 수 있었다.
 cast:
   command: 마법 mirror_pane
   cooldown-seconds: 12

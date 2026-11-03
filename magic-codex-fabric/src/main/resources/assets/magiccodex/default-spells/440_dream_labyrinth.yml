@@ -5,8 +5,8 @@ description: 적 하나를 꿈속 미로에 3초 동안 가둬 아무것도 못 
 icon: magiccodex:textures/spells/nova150/dream_labyrinth.png
 permission: magic.learned.dream_labyrinth
 discovery:
-  description: 고대 도시의 상자를 10번 열기.
-research: 경고. 아주 깊은 곳에 숨소리마저 삼키는 폐허가 있다. 거기 놓인 궤짝을 열 때마다 길이 하나씩 엉켜, 나는 깨어서도 미로를 걷게 되었다. 발소리를 내지 말 것.
+  description: 통을 76번 열기.
+research: 통을 일흔여섯 번 열자 통 속 어둠이 미로처럼 끝없이 이어졌다.
 cast:
   command: 마법 dream_labyrinth
   cooldown-seconds: 20

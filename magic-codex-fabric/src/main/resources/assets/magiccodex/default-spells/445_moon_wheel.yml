@@ -5,8 +5,8 @@ description: 달빛 칼날 여덟 개를 불러내 6초 동안 내 주위를 돌
 icon: magiccodex:textures/spells/nova150/moon_wheel.png
 permission: magic.learned.moon_wheel
 discovery:
-  description: 위더를 소환해 처치하기.
-research: 검은 해골을 제단에 올리던 손이 떨렸다. 그것이 깨어나 하늘을 깨뜨리고, 마침내 차가운 별 하나를 떨구었을 때, 내 주위로 칼날 같은 달이 돌기 시작했다.
+  description: 위더 스켈레톤을 9마리 처치하기.
+research: 네더 요새의 검은 해골 아홉을 쓰러뜨리자 그들의 칼이 달빛 바퀴가 되어 돌았다.
 cast:
   command: 마법 moon_wheel
   cooldown-seconds: 35
