@@ -887,6 +887,17 @@ final class ReaperBoss extends Mech {
             } catch (ReflectiveOperationException | RuntimeException | LinkageError ex) { return null; }
         }
 
+        /** Static system kept until stopped (held runes / circles). Handle for {@link #stop}. */
+        static UUID held(String id, Location at, float yaw, int ticks) {
+            if (at == null || at.getWorld() == null || !resolve()) return null;
+            try {
+                double a = Math.toRadians(yaw);
+                Object r = req(id, at, ticks), b = basis.getMethod("projectile", double.class, double.class, double.class).invoke(null, -Math.sin(a), 0d, Math.cos(a));
+                Object res = api.getMethod("startCast", request, basis, long.class, double.class, double.class, double.class).invoke(service, r, b, RNG.nextLong(), 0d, 0d, -1d);
+                return (UUID) res.getClass().getMethod("handle").invoke(res);
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError ex) { return null; }
+        }
+
         static void stop(UUID handle) {
             if (handle == null || service == null) return;
             try { api.getMethod("stop", UUID.class).invoke(service, handle); } catch (ReflectiveOperationException | RuntimeException | LinkageError ignored) {}

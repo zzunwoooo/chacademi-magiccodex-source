@@ -1,0 +1,92 @@
+# 모르디안의 원령 보스 모션 + 기믹 소품 모션 (2026-11-03).
+# 패턴·기믹(예고·판정·VFX·대상 고르기)은 전부 애드온 chamord (MordianBoss.java) 안. 여기는 ModelEngine 상태 재생만.
+# 애드온이 CHA_MD_a_<모션> 을 보스에게, CHA_MD_p_<무엇> 을 소품에게 시전.
+# 루프 모션(cast·seal_struggle)과 hold 모션(vanish)은 다음 모션 전에 지운다 (CHA_MD_clear).
+# idle·walk·death 는 ModelEngine 기본 (death = 재봉인 끝 자세 유지, 모델에서 처리).
+
+CHA_MD_clear:
+  Skills:
+  - state{s=cast;r=true} @self
+  - state{s=seal_struggle;r=true} @self
+  - state{s=vanish;r=true} @self
+
+# ---------------- 짤패턴
+CHA_MD_a_spawn:
+  Skills:
+  - state{s=spawn;li=0;lo=3} @self
+CHA_MD_a_attack:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=attack;li=0;lo=2} @self
+CHA_MD_a_attack2:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=attack2;li=0;lo=2} @self
+CHA_MD_a_slam:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=slam;li=0;lo=3} @self
+# 바닥으로 녹아 사라짐 (hold) → 반드시 emerge 로 되돌림
+CHA_MD_a_vanish:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=vanish;li=0;lo=0} @self
+CHA_MD_a_emerge:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=emerge;li=0;lo=3} @self
+CHA_MD_a_tether:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=tether;li=0;lo=3} @self
+CHA_MD_a_brand:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=brand;li=0;lo=3} @self
+CHA_MD_a_roar:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=roar;li=0;lo=3} @self
+CHA_MD_a_chain_spin:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=chain_spin;li=0;lo=3} @self
+CHA_MD_a_dash:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=dash;li=0;lo=2} @self
+# 손아귀·어둠의 비: 의식 시전 2.5초만
+CHA_MD_a_cast_short:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=cast;li=2;lo=3} @self
+  - delay 50
+  - state{s=cast;r=true} @self
+
+# ---------------- 기믹
+# ②④⑤ 의식 시전 (루프, 다음 모션이 지움)
+CHA_MD_a_cast:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=cast;li=3;lo=0} @self
+# ⑥ 봉인 저항 (루프)
+CHA_MD_a_seal_struggle:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=seal_struggle;li=3;lo=0} @self
+# ⑥ 성공 → 재봉인 5초 (hold, 끝나면 애드온이 처치)
+CHA_MD_a_sealed:
+  Skills:
+  - skill{s=CHA_MD_clear} @self
+  - state{s=sealed;li=2;lo=0} @self
+
+# ---------------- 소품
+CHA_MD_p_stake_hit:
+  Skills:
+  - state{s=hit;li=0;lo=1} @self
+CHA_MD_p_shadow_attack:
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+CHA_MD_p_pillar_hit:
+  Skills:
+  - state{s=hit;li=0;lo=1} @self

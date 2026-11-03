@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>모르디안의 원령</title>
+<style>
+:root{--bg:#1e1f26;--panel:#272832;--panel2:#2f303c;--line:#3b3d4c;--text:#d7d8e2;--dim:#8c8ea3;--acc:#3e90ff;--acc2:#b07cff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:13px/1.4 system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif;overflow:hidden}
+#app{display:flex;height:100%}
+#side{width:240px;flex:none;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+#side h1{font-size:14px;margin:0;padding:12px 14px 4px;font-weight:600}
+#side .sub{color:var(--dim);padding:0 14px 10px;font-size:12px;border-bottom:1px solid var(--line)}
+.sec{padding:10px 14px;border-bottom:1px solid var(--line)}
+.sec h2{font-size:11px;letter-spacing:.06em;color:var(--dim);margin:0 0 8px;font-weight:600}
+.seg{display:flex;background:var(--bg);border-radius:6px;padding:2px}
+.seg button{flex:1;border:0;background:none;color:var(--dim);padding:6px 0;border-radius:4px;cursor:pointer;font:inherit}
+.seg button.on{background:var(--panel2);color:var(--text)}
+#anims{flex:1;overflow:auto;padding:6px 0}
+#anims button{display:flex;justify-content:space-between;width:100%;border:0;background:none;color:var(--text);padding:6px 14px;text-align:left;cursor:pointer;font:inherit}
+#anims button span{color:var(--dim);font-size:11px}
+#anims button:hover{background:var(--panel2)}
+#anims button.on{background:var(--acc);color:#fff}
+#anims button.on span{color:#dfe9ff}
+label.chk{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer;color:var(--text)}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#view{flex:1;position:relative;min-height:0}
+#view canvas{display:block;width:100%;height:100%;cursor:grab}
+#hint{position:absolute;right:10px;top:8px;color:var(--dim);font-size:11px;pointer-events:none}
+#info{position:absolute;left:10px;top:8px;color:var(--dim);font-size:11px;pointer-events:none}
+#bar{flex:none;height:46px;background:var(--panel);border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 12px}
+#bar button{border:0;background:var(--panel2);color:var(--text);height:28px;min-width:32px;border-radius:5px;cursor:pointer;font:inherit}
+#time{flex:1;accent-color:var(--acc)}
+#tlabel{font-variant-numeric:tabular-nums;color:var(--dim);width:92px;text-align:right}
+select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:5px;height:28px;font:inherit}
+@media (max-width:700px){
+  #app{flex-direction:column}
+  #side{width:100%;max-height:42%;border-right:0;border-bottom:1px solid var(--line)}
+  #anims{display:flex;flex-wrap:wrap;gap:4px;padding:8px 14px}
+  #anims button{width:auto;padding:5px 9px;border-radius:5px;background:var(--panel2)}
+  #anims button span{display:none}
+  #hint{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="side">
+    <h1>모르디안의 원령</h1>
+    <div class="sub">mordian_wraith · 큐브 95 · 512×256</div>
+    <div class="sec">
+      <h2>텍스처</h2>
+      <div class="seg" id="skin"><button data-v="0" class="on">기본</button><button data-v="1">이로치</button></div>
+    </div>
+    <div class="sec">
+      <h2>표시</h2>
+      <label class="chk"><input type="checkbox" id="cGrid" checked> 바닥 격자</label>
+      <label class="chk"><input type="checkbox" id="cHit"> 히트박스</label>
+      <label class="chk"><input type="checkbox" id="cRot" > 자동 회전</label>
+    </div>
+    <div class="sec" style="border-bottom:0;padding-bottom:0"><h2>애니메이션</h2></div>
+    <div id="anims"></div>
+  </div>
+  <div id="main">
+    <div id="view"><div id="info"></div><div id="hint">드래그: 회전 · 우클릭 드래그: 이동 · 휠: 확대</div></div>
+    <div id="bar">
+      <button id="play">❚❚</button>
+      <input type="range" id="time" min="0" max="1000" value="0">
+      <span id="tlabel">0.00 / 0.00s</span>
+      <select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select>
+    </div>
+  </div>
+</div>
+<script>
+const MODELS=__MODELS__;
+const LABEL={spawn:'등장',idle:'대기',walk:'이동(부유)',attack:'할퀴기 (오른손)',attack2:'할퀴기 (왼손)',slam:'내려찍기',
+  death:'사망',cast:'의식 시전',tether:'사슬 던지기',brand:'가리키기',roar:'포효',vanish:'바닥으로 사라짐',
+  emerge:'바닥에서 솟아오름',seal_struggle:'봉인 저항',groggy:'그로기',chain_spin:'사슬 회전',dash:'그림자 돌진',sealed:'재봉인 (최종)'};
+const D=Math.PI/180,S=1/16;
+// ---------- 행렬 ----------
+const M4={
+  I:()=>[1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1],
+  mul(a,b){const o=new Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s}return o},
+  T:(x,y,z)=>[1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1],
+  Sc:(x,y,z)=>[x,0,0,0, 0,y,0,0, 0,0,z,0, 0,0,0,1],
+  Rx(a){const c=Math.cos(a),s=Math.sin(a);return [1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]},
+  Ry(a){const c=Math.cos(a),s=Math.sin(a);return [c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]},
+  Rz(a){const c=Math.cos(a),s=Math.sin(a);return [c,s,0,0, -s,c,0,0, 0,0,1,0, 0,0,0,1]},
+  ZYX(x,y,z){return M4.mul(M4.Rz(z),M4.mul(M4.Ry(y),M4.Rx(x)))},
+  persp(f,a,n,fa){const t=1/Math.tan(f/2);return [t/a,0,0,0, 0,t,0,0, 0,0,(fa+n)/(n-fa),-1, 0,0,2*fa*n/(n-fa),0]},
+  look(e,c,u){const z=norm(sub(e,c)),x=norm(cross(u,z)),y=cross(z,x);
+    return [x[0],y[0],z[0],0, x[1],y[1],z[1],0, x[2],y[2],z[2],0, -dot(x,e),-dot(y,e),-dot(z,e),1]},
+  apply(m,v){return [m[0]*v[0]+m[4]*v[1]+m[8]*v[2]+m[12],m[1]*v[0]+m[5]*v[1]+m[9]*v[2]+m[13],m[2]*v[0]+m[6]*v[1]+m[10]*v[2]+m[14]]}
+};
+function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
+function norm(a){const l=Math.hypot(...a)||1;return [a[0]/l,a[1]/l,a[2]/l]}
+
+// ---------- GL ----------
+const view=document.getElementById('view');
+const cv=document.createElement('canvas'); view.appendChild(cv);
+const gl=cv.getContext('webgl',{antialias:true});
+function prog(vs,fs){const p=gl.createProgram();[[gl.VERTEX_SHADER,vs],[gl.FRAGMENT_SHADER,fs]].forEach(([t,s])=>{const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw gl.getShaderInfoLog(sh);gl.attachShader(p,sh)});gl.linkProgram(p);return p}
+const P1=prog(`attribute vec3 p;attribute vec2 uv;attribute vec3 n;uniform mat4 vp,m;varying vec2 v;varying float l;
+void main(){vec3 N=normalize(mat3(m)*n);vec3 L1=normalize(vec3(0.35,0.8,-0.45));vec3 L2=normalize(vec3(-0.5,0.3,0.8));
+l=0.52+0.42*max(dot(N,L1),0.)+0.18*max(dot(N,L2),0.)+0.08*N.y;v=uv;gl_Position=vp*m*vec4(p,1.);}`,
+`precision mediump float;uniform sampler2D t;varying vec2 v;varying float l;void main(){vec4 c=texture2D(t,v);if(c.a<0.04)discard;gl_FragColor=vec4(c.rgb*l,1.);}`);
+const P2=prog(`attribute vec3 p;uniform mat4 vp;void main(){gl_Position=vp*vec4(p,1.);}`,
+`precision mediump float;uniform vec3 c;void main(){gl_FragColor=vec4(c,1.);}`);
+function buf(arr,T){const b=gl.createBuffer();gl.bindBuffer(T||gl.ARRAY_BUFFER,b);gl.bufferData(T||gl.ARRAY_BUFFER,arr,gl.STATIC_DRAW);return b}
+function lines(pts){return {b:buf(new Float32Array(pts)),n:pts.length/3}}
+function loadTex(src){const t=gl.createTexture();const img=new Image();img.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,t);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+  [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.NEAREST));
+  [gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE))};img.src=src;return t}
+
+// ---------- 모델 ----------
+function buildModel(m){
+  const W=m.resolution.width,H=m.resolution.height,tex=loadTex(m.textures[0].source);
+  const el={};m.elements.forEach(e=>el[e.uuid]=e);
+  const bones=[],byName={};let hit=null;
+  function cubeInto(e,bo,acc){
+    const inf=e.inflate||0,f=e.from.map(v=>v-inf),t=e.to.map(v=>v+inf);
+    const [X0,Y0,Z0]=f,[X1,Y1,Z1]=t,o=e.origin;
+    const R=M4.ZYX(e.rotation[0]*D,e.rotation[1]*D,e.rotation[2]*D);
+    const P={north:[[X1,Y1,Z0],[X0,Y1,Z0],[X1,Y0,Z0],[0,0,-1]],south:[[X0,Y1,Z1],[X1,Y1,Z1],[X0,Y0,Z1],[0,0,1]],
+      east:[[X1,Y1,Z1],[X1,Y1,Z0],[X1,Y0,Z1],[1,0,0]],west:[[X0,Y1,Z0],[X0,Y1,Z1],[X0,Y0,Z0],[-1,0,0]],
+      up:[[X1,Y1,Z1],[X0,Y1,Z1],[X1,Y1,Z0],[0,1,0]],down:[[X1,Y0,Z0],[X0,Y0,Z0],[X1,Y0,Z1],[0,-1,0]]};
+    for(const face in e.faces){
+      const u=e.faces[face].uv,x1=Math.min(u[0],u[2]),x2=Math.max(u[0],u[2]),y1=Math.min(u[1],u[3]),y2=Math.max(u[1],u[3]);
+      if(x2<=x1||y2<=y1)continue;
+      const [c0,cu,cvv,n]=P[face],c3=[cu[0]+cvv[0]-c0[0],cu[1]+cvv[1]-c0[1],cu[2]+cvv[2]-c0[2]];
+      const q=[c0,cu,c3,cvv].map(p=>{const r=M4.apply(R,sub(p,o));return [(r[0]+o[0]-bo[0])*S,(r[1]+o[1]-bo[1])*S,(r[2]+o[2]-bo[2])*S]});
+      const nn=M4.apply(R,n),uv=[[x1/W,y1/H],[x2/W,y1/H],[x2/W,y2/H],[x1/W,y2/H]];
+      const ord=dot(cross(sub(cu,c0),sub(cvv,c0)),n)>0?[0,1,2,0,2,3]:[0,2,1,0,3,2];
+      ord.forEach(i=>{acc.p.push(...q[i]);acc.uv.push(...uv[i]);acc.n.push(...nn)});
+    }
+  }
+  function bone(g,parent,po){
+    const b={name:g.name,parent,rest:[(g.origin[0]-po[0])*S,(g.origin[1]-po[1])*S,(g.origin[2]-po[2])*S],rot:g.rotation||[0,0,0]};
+    const acc={p:[],uv:[],n:[]};
+    bones.push(b);byName[g.name]=b;
+    g.children.forEach(c=>{if(typeof c==='string')cubeInto(el[c],g.origin,acc);});
+    b.count=acc.p.length/3;
+    if(b.count){b.bp=buf(new Float32Array(acc.p));b.buv=buf(new Float32Array(acc.uv));b.bn=buf(new Float32Array(acc.n))}
+    g.children.forEach(c=>{if(typeof c!=='string')bone(c,b,g.origin)});
+  }
+  m.outliner.forEach(g=>{
+    if(g.export===false){const pts=[];
+      g.children.forEach(id=>{const e=el[id],f=e.from.map(v=>v*S),t=e.to.map(v=>v*S);
+        const cs=[];for(const x of[f[0],t[0]])for(const y of[f[1],t[1]])for(const z of[f[2],t[2]])cs.push([x,y,z]);
+        for(let i=0;i<8;i++)for(let j=i+1;j<8;j++){let d=0;for(let k=0;k<3;k++)if(cs[i][k]!==cs[j][k])d++;if(d===1)pts.push(...cs[i],...cs[j])}});
+      hit=lines(pts);
+    } else bone(g,null,[0,0,0]);
+  });
+  const anims=m.animations.map(a=>{const tr={};
+    Object.values(a.animators).forEach(an=>{const ch={};
+      an.keyframes.forEach(k=>{(ch[k.channel]=ch[k.channel]||[]).push({t:+k.time,v:['x','y','z'].map(q=>+k.data_points[0][q]),i:k.interpolation})});
+      for(const c in ch)ch[c].sort((p,q)=>p.t-q.t);tr[an.name]=ch});
+    return {name:a.name.split('.').pop(),length:+a.length,loop:a.loop,tracks:tr}});
+  return {tex,bones,anims,hit};
+}
+function cat(p0,p1,p2,p3,t){const t2=t*t,t3=t2*t;return 0.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t2+(-p0+3*p1-3*p2+p3)*t3)}
+function sample(keys,t,def){
+  if(!keys||!keys.length)return def;const L=keys.length;
+  if(t<=keys[0].t)return keys[0].v; if(t>=keys[L-1].t)return keys[L-1].v;
+  for(let i=0;i<L-1;i++){const a=keys[i],b=keys[i+1];
+    if(t<=b.t){const f=(t-a.t)/(b.t-a.t||1);
+      if(a.i==='catmullrom'||b.i==='catmullrom'){const p0=(keys[i-1]||a).v,p3=(keys[i+2]||b).v;return [0,1,2].map(j=>cat(p0[j],a.v[j],b.v[j],p3[j],f))}
+      return [0,1,2].map(j=>a.v[j]+(b.v[j]-a.v[j])*f)}}
+  return keys[L-1].v;
+}
+function poseMatrices(M,a,t){
+  M.bones.forEach(b=>{const tr=a&&a.tracks[b.name];
+    const r=tr?sample(tr.rotation,t,[0,0,0]):[0,0,0],p=tr?sample(tr.position,t,[0,0,0]):[0,0,0],s=tr?sample(tr.scale,t,[1,1,1]):[1,1,1];
+    const R=b.rot;
+    let m=M4.mul(M4.T(b.rest[0]-p[0]*S,b.rest[1]+p[1]*S,b.rest[2]+p[2]*S),M4.mul(M4.ZYX((R[0]-r[0])*D,(R[1]-r[1])*D,(R[2]+r[2])*D),M4.Sc(s[0],s[1],s[2])));
+    b.world=b.parent?M4.mul(b.parent.world,m):m;});
+}
+
+// 격자
+const gp=[],gs=[];for(let i=-8;i<=8;i++){gp.push(i,0,-8,i,0,8,-8,0,i,8,0,i)}
+for(let i=-.5;i<=.5001;i+=1/16){gs.push(i,.002,-.5,i,.002,.5,-.5,.002,i,.5,.002,i)}
+const G1=lines(gp),G2=lines(gs),AZ=lines([0,.004,0,0,.004,-1.2]),AX=lines([0,.004,0,1.2,.004,0]);
+
+const models=MODELS.map(buildModel);
+let cur=0,animIdx=Math.max(0,models[0].anims.findIndex(a=>a.name==='idle')),time=0,playing=true,speed=1,wait=0;
+
+// UI
+const list=document.getElementById('anims');
+models[0].anims.forEach((a,i)=>{const b=document.createElement('button');
+  b.innerHTML=`${LABEL[a.name]||a.name}<span>${a.name} · ${a.length}s</span>`;
+  b.onclick=()=>{animIdx=i;time=0;wait=0;playing=true;sync()};list.appendChild(b)});
+const tl=document.getElementById('time'),tlab=document.getElementById('tlabel'),pb=document.getElementById('play');
+function sync(){[...list.children].forEach((b,i)=>b.classList.toggle('on',i===animIdx));pb.textContent=playing?'❚❚':'▶';
+  const a=models[cur].anims[animIdx];document.getElementById('info').textContent=`animation.mordian_wraith.${a.name} · ${a.loop}`}
+pb.onclick=()=>{playing=!playing;sync()};
+tl.oninput=()=>{const a=models[cur].anims[animIdx];time=tl.value/1000*a.length;playing=false;sync()};
+document.getElementById('speed').onchange=e=>speed=+e.target.value;
+document.querySelectorAll('#skin button').forEach(b=>b.onclick=()=>{cur=+b.dataset.v;document.querySelectorAll('#skin button').forEach(x=>x.classList.toggle('on',x===b))});
+const cHit=document.getElementById('cHit'),cGrid=document.getElementById('cGrid'),cRot=document.getElementById('cRot');
+
+// 카메라
+let yaw=-0.55,pitch=0.18,dist=18,target=[0,3.8,0],drag=null,camM=null;
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,b:e.button};cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'});
+cv.addEventListener('pointerup',()=>{drag=null;cv.style.cursor='grab'});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
+  if((drag.b===2||e.shiftKey)&&camM){const r=[camM[0],camM[4],camM[8]],u=[camM[1],camM[5],camM[9]],k=dist*0.0015;
+    for(let i=0;i<3;i++)target[i]+=-dx*k*r[i]+dy*k*u[i]}
+  else{yaw-=dx*0.008;pitch=Math.max(-1.4,Math.min(1.4,pitch+dy*0.008))}});
+cv.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(3,Math.min(60,dist*Math.exp(e.deltaY*0.001)))},{passive:false});
+function resize(){const r=devicePixelRatio>2?2:devicePixelRatio;cv.width=view.clientWidth*r;cv.height=view.clientHeight*r;cv.style.width=view.clientWidth+'px';cv.style.height=view.clientHeight+'px'}
+addEventListener('resize',resize);resize();
+
+function drawLines(L,vp,c){gl.useProgram(P2);gl.uniformMatrix4fv(gl.getUniformLocation(P2,'vp'),false,vp);gl.uniform3fv(gl.getUniformLocation(P2,'c'),c);
+  const a=gl.getAttribLocation(P2,'p');gl.bindBuffer(gl.ARRAY_BUFFER,L.b);gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,3,gl.FLOAT,false,0,0);gl.drawArrays(gl.LINES,0,L.n)}
+let last=performance.now();
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;const M=models[cur],a=M.anims[animIdx];
+  if(playing){if(wait>0){wait-=dt;if(wait<=0)time=0}else{time+=dt*speed;if(time>=a.length){if(a.loop==='loop')time%=a.length;else{time=a.length;wait=1}}}}
+  if(cRot.checked)yaw+=dt*.35;
+  tl.value=Math.round(time/a.length*1000);tlab.textContent=`${time.toFixed(2)} / ${a.length.toFixed(2)}s`;
+  gl.viewport(0,0,cv.width,cv.height);gl.clearColor(.118,.122,.149,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+  const eye=[target[0]+dist*Math.cos(pitch)*Math.sin(yaw),target[1]+dist*Math.sin(pitch),target[2]-dist*Math.cos(pitch)*Math.cos(yaw)];
+  camM=M4.look(eye,target,[0,1,0]);const vp=M4.mul(M4.persp(40*D,cv.width/cv.height,.05,200),camM);
+  if(cGrid.checked){drawLines(G1,vp,[.27,.28,.35]);drawLines(G2,vp,[.2,.21,.26]);drawLines(AZ,vp,[.24,.56,1]);drawLines(AX,vp,[1,.33,.33])}
+  poseMatrices(M,a,time);
+  gl.useProgram(P1);gl.uniformMatrix4fv(gl.getUniformLocation(P1,'vp'),false,vp);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,M.tex);gl.uniform1i(gl.getUniformLocation(P1,'t'),0);
+  const ap=gl.getAttribLocation(P1,'p'),au=gl.getAttribLocation(P1,'uv'),an=gl.getAttribLocation(P1,'n'),um=gl.getUniformLocation(P1,'m');
+  gl.enable(gl.CULL_FACE);gl.cullFace(gl.BACK);gl.frontFace(gl.CCW);
+  M.bones.forEach(b=>{if(!b.count)return;gl.uniformMatrix4fv(um,false,b.world);
+    [[ap,b.bp,3],[au,b.buv,2],[an,b.bn,3]].forEach(([l,bb,n])=>{gl.bindBuffer(gl.ARRAY_BUFFER,bb);gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,n,gl.FLOAT,false,0,0)});
+    gl.drawArrays(gl.TRIANGLES,0,b.count)});
+  gl.disable(gl.CULL_FACE);
+  gl.disableVertexAttribArray(au);gl.disableVertexAttribArray(an);
+  if(cHit.checked&&M.hit)drawLines(M.hit,vp,[1,.3,.3]);
+  requestAnimationFrame(frame);
+}
+sync();requestAnimationFrame(frame);
+</script>
+</body>
+</html>

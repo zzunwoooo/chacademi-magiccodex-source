@@ -1,0 +1,125 @@
+# 3인 파티 기믹 보스 "모르디안의 원령" + 기믹 소품 (2026-11-03). 진행(짤패턴 11·기믹 6·재봉인)은 애드온 chamord (MordianBoss.java).
+# 경기장 = 보스 소환 위치 중심 반경 16 (chamord arena=). 소환 때 보스가 바라본 방향 = 경기장 정면 (룬·봉인석 배치 기준).
+#
+# 체력 설계 (3인): 지능(마력) 140 기준 마법 한 방 중앙값 약 60, 궁극기 약 300 (server-config/spell-runtime.yml).
+#   3인 × 1분에 약 4000~5000 → 100→10% 딜 구간 약 3분 + 기믹 6개(각 20~40초) → 전투 약 6~7분. 10% 아래는 재봉인 연출로만 끝남.
+#   실제 딜이 다르면 Health 하나만 바꾸면 된다 (기믹 기준선은 비율).
+# 공격력: 패턴 피해는 애드온 안의 값 (14~34, 원소 dark). 기믹 피해는 최대 체력 비율 (그림자 25%, 낭독 40%, 빈 마법진 50%), 실패 = 즉사.
+# 모델: ModelEngine mordian_wraith (models/mordian/*.bbmodel). _shiny 는 지금 안 씀.
+
+CA_Boss_mordian_wraith:
+  Type: HUSK
+  Display: '&5&l모르디안의 원령'
+  Health: 16000
+  Damage: 20
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&5&l모르디안의 원령'
+    Range: 48
+    Color: PURPLE
+    Style: SEGMENTED_10
+    CreateFog: true
+    DarkenSky: true
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.25
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=mordian_wraith;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - chamord{a=start;arena=16} @self ~onSpawn
+  - skill{s=CHA_MD_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ======================================================================== 기믹 소품 (애드온이 소환·제거)
+
+# ① 결박의 사슬 — 그림자 말뚝 3개. 묶이지 않은 사람만 부술 수 있음 (애드온이 판정). 셋 다 부서지면 성공.
+CA_Mordian_stake:
+  Type: HUSK
+  Display: '&5그림자 말뚝'
+  Health: 600
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: true
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=mordian_stake;n=false} @self ~onSpawn
+  - state{s=spawn;li=0;lo=2} @self ~onSpawn
+
+# ③ 각자의 그림자 — 플레이어 한 명마다 하나, 주인만 쫓음 (애드온이 대상 고정). 주인은 못 때림. 닿기 판정·피해는 애드온.
+CA_Mordian_shadow:
+  Type: HUSK
+  Display: '&8그림자'
+  Health: 400
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.3
+    KnockbackResistance: 0.6
+    AlwaysShowName: true
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=mordian_shadow;n=false;drive=true} @self ~onSpawn
+  - state{s=spawn;li=0;lo=2} @self ~onSpawn
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  AITargetSelectors:
+  - clear
+
+# ⑥ 대마법사의 봉인 — 봉인석 기둥 3개 (안 맞음, 균열 연출은 VFX + hit 모션).
+CA_Mordian_seal_pillar:
+  Type: HUSK
+  Display: '&f봉인석'
+  Health: 1000
+  Options:
+    NoAI: true
+    NoGravity: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=mordian_seal_pillar;n=false} @self ~onSpawn
+  - state{s=spawn;li=0;lo=2} @self ~onSpawn

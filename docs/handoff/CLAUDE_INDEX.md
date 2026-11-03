@@ -1,5 +1,7 @@
 > 현재 운영 기준: [LIVE_SOURCE_HANDOFF_20261025](LIVE_SOURCE_HANDOFF_20261025.md) — 운영 상태와 재현 한계를 먼저 확인하세요.
 
+> Claude 2026-11-03 (not built, not compiled here): [3인 파티 기믹 보스 모르디안의 원령 — chamord 진행자·기믹 6·짤패턴 11·모델·VFX 16팩](CLAUDE_MORDIAN_BOSS_20261103.md). Branch claude/mordian-boss-20261103 on claude/time-wraith-boss-20261103 @ d1a5014. MagicMythic jar + MythicMobs yml + ModelEngine blueprints + client VFX packs.
+
 > Claude 2026-11-03 (not built, not compiled here): [3인 고난도 보스 시간의 망령 — 애드온 chatime(짤패턴 7, 75% 시간 감옥 = 딜 1등 가둠·체력=누적 딜, 50% 바닥의 시계 = 원소별 바늘 맞추기, 25% 멈춘 세계 = 방패 1명이 탄 다 받기 3라운드, 0% 가짜 클리어 → 되감기 2페이즈 50%까지 회복·유저 잔상 판정) + 미몹 Mobs/Skills yml + ModelEngine 보스·소품 모델 + VFX 팩 TW_* 9개 + /테스트 보스 시간의망령](CLAUDE_TIME_WRAITH_BOSS_20261103.md). Branch claude/time-wraith-boss-20261103 on claude/ash-shadow-boss-20261103. MagicMythic jar + MythicMobs yml + ModelEngine blueprints (models/time_wraith) + client PortableVFX packs (portable-vfx-runtime/assets/TW_*).
 
 > Claude 2026-11-03 (not built, not compiled here): [1인 던전 보스 재의 그림자 + 잡몹 3종 — 애드온 chaash(빛 발산 장치 3개 회복·배율, 유도 패턴으로 장치 파괴, 50% 그림자 탄막 25초, 그로기 10초, 장치 흡수 변신, 광폭화) + 미몹 Mobs/Skills yml + ModelEngine 모델 8종 + VFX 팩 AS_*·AM_* + /테스트 보스 재의그림자](CLAUDE_ASH_SHADOW_BOSS_20261103.md). Branch claude/ash-shadow-boss-20261103 on claude/pumpkin-reaper-boss-20261031. MagicMythic jar + MythicMobs yml + ModelEngine blueprints (models/ash_shadow) + client PortableVFX packs (portable-vfx-runtime/assets/AS_*, AM_*).
