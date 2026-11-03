@@ -148,20 +148,50 @@ for w, off in ((0, 0), (1, 22.5)):
     evs.append(ev(0.8 + 0.6 * w, 'as_desperate__scream', yaw=off))
 scene('desperate', '발악 · 장치가 0개가 된 직후 (8방향 직선 10×3 ×2, 예고 0.5초)', 2.8, clip('c_desp', (B, 'skill_desperate', 0)), BOSS,
       [actor(BOSS), P(still([2, 0, 6], 180))], evs, camera=cam([0, 2, 0], 30, -35, 45))
-# 11 50% 그림자 탄막 (발췌: 별 → 고리)
-evs = [ev(0, 'as_fate__vanish'), ev(0.4, 'as_fate__appear'), ev(0.5, 'as_barrage__start'), ev(0.5, 'as_barrage__aura')]
-R, SPD = 16, 6.4
-def shot(t, deg):
-    a = math.radians(deg); to = [round(math.sin(a) * R, 2), 1.0, round(math.cos(a) * R, 2)]
-    evs.append(ev(t, 'as_barrage__shard', **{"from": [0, 1.0, 0], "to": to, "flight": round(R / SPD, 2), "normal": None}))
-for k in range(8):
-    for j in range(5): shot(1.8 + 0.3 * k, j * 72 + k * 9)
-for w in range(2):
-    for j in range(16): shot(4.6 + 1.0 * w, j * 22.5 + (11.25 if w else 0))
-bpath = [[0, [-6, 0, 8], 160], [2.2, [-2, 0, 7], 160], [3.0, [2, 0, 6], 200], [4.4, [5, 0, 5], 210], [5.6, [3, 0, 8], 200], [7.5, [-3, 0, 7], 160]]
-scene('barrage', '50% · 그림자 탄막 25초 (발췌: 5갈래 회전 별 → 동심 고리) · 두 번 맞으면 죽음', 8.0,
-      clip('c_barrage', (B, 'barrage_start', 0.5), (B, 'barrage_loop', 2.3), (B, 'barrage_loop', 4.3), (B, 'barrage_loop', 6.3)), BOSS,
-      [actor(BOSS), P(bpath)], evs, camera=cam([0, 1, 2], 36, -30, 55))
+# 11 50% 그림자 탄막: 서버(AshShadowBoss.Barrage)와 같은 시간표로 25초 전체 + 그로기 진입
+T0 = 1.5; ARENA = 16; EDGE = ARENA + 1
+evs = [ev(0, 'as_fate__vanish'), ev(0.4, 'as_fate__appear'), ev(T0, 'as_barrage__start'), ev(T0, 'as_barrage__aura')]
+import random; rng = random.Random(7)
+def fire(age, x, z, deg, spt):
+    a = math.radians(deg); vx, vz = -math.sin(a), math.cos(a); spd = spt * 20
+    b = x * vx + z * vz; c = x * x + z * z - EDGE * EDGE; d = -b + math.sqrt(b * b - c)   # 경기장 밖까지 거리
+    d = min(d, spd * 8)
+    evs.append(ev(T0 + age / 20, 'as_barrage__shard', **{"from": [round(x, 2), 1.0, round(z, 2)], "to": [round(x + vx * d, 2), 1.0, round(z + vz * d, 2)], "flight": round(d / spd, 2), "normal": None, "impact": "none"}))
+for age in range(0, 461):
+    if age <= 70 and age % 6 == 0:
+        for k in range(5): fire(age, 0, 0, k * 72 + age * 1.5, 0.30)
+    elif 80 <= age <= 160 and (age - 80) % 20 == 0:
+        off = 0 if ((age - 80) // 20) % 2 == 0 else 11.25
+        for k in range(16): fire(age, 0, 0, k * 22.5 + off, 0.26)
+    elif 170 <= age <= 260 and age % 4 == 0:
+        b0 = (age - 170) * 3.5; fire(age, 0, 0, b0, 0.30); fire(age, 0, 0, b0 + 180, 0.30)
+    elif 270 <= age <= 340 and (age - 270) % 10 == 0:
+        b0 = (age - 270) * 1.5
+        for k in range(4):
+            for j in range(3): fire(age + max(1, j * 3), 0, 0, k * 90 + b0, 0.34)
+    elif 350 <= age <= 420 and (age - 350) % 35 == 0:
+        rot = ((age - 350) // 35) * 30; r = ARENA - 1; gap = rng.randrange(6)
+        for side in range(6):
+            if side == gap: continue
+            a0, a1 = math.radians(rot + side * 60), math.radians(rot + side * 60 + 60)
+            for j in range(6):
+                u = (j + 0.5) / 6; x = (math.cos(a0) * (1 - u) + math.cos(a1) * u) * r; z = (math.sin(a0) * (1 - u) + math.sin(a1) * u) * r
+                fire(age, x, z, math.degrees(math.atan2(x, -z)), 0.22)
+    elif 430 <= age <= 460 and (age - 430) % 15 == 0:
+        off = (age - 430) // 15 * 5.0
+        for k in range(24): fire(age, 0, 0, k * 15 + off, 0.36)
+TEND = T0 + 25
+evs += [ev(TEND + 0.45, 'as_groggy__fall'), ev(TEND + 1.1, 'as_groggy__stun')]
+# 플레이어: 경기장 안을 돌며 피함
+bpath = []; 
+for i in range(0, 60):
+    t = i * 0.5; ang = math.radians(150 + 40 * math.sin(t * 0.37) + t * 9); rr = 7 + 3 * math.sin(t * 0.6)
+    bpath.append([round(t, 2), [round(-math.sin(ang) * rr, 2), 0, round(math.cos(ang) * rr, 2)], round(math.degrees(ang) + 180, 1)])
+segs = [(B, 'barrage_start', T0)] + [(B, 'barrage_loop', T0 + 1.8 + 2.0 * k) for k in range(12)] + [(B, 'groggy_start', TEND), (B, 'groggy_loop', TEND + 1.1)]
+scene('barrage', '50% · 그림자 탄막 25초 전체 (별 → 고리 → 2중 나선 → 십자 → 좁혀오는 육각 → 마무리 고리) → 그로기 · 두 번 맞으면 죽음', TEND + 3.5,
+      clip('c_barrage', *segs), BOSS, [actor(BOSS), P(bpath)], evs, camera=cam([0, 1, 0], 40, -30, 60))
+SC['barrage']['stops'] = {sid('as_barrage__aura'): TEND}
+print('barrage shots', sum(1 for e in evs if e['system'] == 'as_barrage__shard'))
 # 12 그로기 10초
 scene('groggy', '탄막 버팀 → 그로기 10초 (공격 안 함, 극딜 구간)', 4.0, clip('c_groggy', (B, 'groggy_start', 0), (B, 'groggy_loop', 1.1)), BOSS,
       [actor(BOSS), P(still([0, 0, 6], 180))], [ev(0.45, 'as_groggy__fall'), ev(1.1, 'as_groggy__stun')], camera=cam([0, 2, 2], 22, -40, 25))
