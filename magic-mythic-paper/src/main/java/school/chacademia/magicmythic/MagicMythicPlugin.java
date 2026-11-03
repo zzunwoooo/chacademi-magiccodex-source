@@ -95,6 +95,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new DiscoveryHooks(this), this);
         getServer().getPluginManager().registerEvents(new ReaperBoss.Hooks(), this); // 할로윈 보스 하베스트 (무적·기준선·소품 판정)
         getServer().getPluginManager().registerEvents(new AshShadowBoss.Hooks(), this); // 1인 던전 보스 재의 그림자 (무적·50%·장치·배율)
+        getServer().getPluginManager().registerEvents(new TimeWraithBoss.Hooks(), this); // 3인 보스 시간의 망령 (기준선·기믹 소품·누적 딜·바늘 원소)
         dummies = new TrainingDummies(this); // #107 마법 연습장 훈련 허수아비
         getServer().getPluginManager().registerEvents(dummies, this);
         spellRoutes = new SpellRoutes(new java.io.File(getDataFolder().getParentFile(), "MagicCodexBridge/spell-runtime.yml"));
@@ -108,6 +109,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
     @Override public void onDisable() {
         ReaperBoss.closeAll();
         AshShadowBoss.closeAll();
+        TimeWraithBoss.closeAll();
         if (reactions != null) reactions.close();
         if (dummies != null) { dummies.close(); dummies = null; }
         Targets.sealed = null;
@@ -159,6 +161,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chaboss" -> new ReaperBoss(this, p);      // 할로윈 보스 하베스트 진행자
             case "chavfx" -> new ReaperBoss.VfxMech(this, p); // PortableVFX 한 번 재생 / 따라가기
             case "chaash" -> new AshShadowBoss(this, p);     // 1인 던전 보스 재의 그림자 진행자
+            case "chatime" -> new TimeWraithBoss(this, p);   // 3인 보스 시간의 망령 진행자
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);

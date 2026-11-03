@@ -1,0 +1,201 @@
+# 3인 고난도 보스 "시간의 망령" + 기믹 소품 (2026-11-03). 진행(패턴·기믹 3종·가짜 클리어·2페이즈)은 애드온 chatime (TimeWraithBoss.java).
+# 경기장 = 보스 소환 위치 중심 반경 18 (chatime arena=). 소환 때 보스가 바라본 방향 = 경기장 정면 = 바닥 시계 12시.
+#
+# 체력 설계 (3인 고난도): 지능(마력) 140 기준 마법 한 방 중앙값 약 60, 궁극기 약 300 (server-config/spell-runtime.yml).
+#   3인 × 1분에 약 4000~5000 → 1페이즈 100→0% 약 3~4분 + 기믹 3개 + 2페이즈(50%까지 차오른 뒤 처치) → Health 18000.
+#   기믹1 시간 감옥 체력 = 갇힌 사람 누적 딜 × 1.0 (TimeWraithBoss.PRISON_RATIO) → 75% 시점 1등 딜 약 1600~2200, 둘이 20초 안에 깨는 수준.
+#   실제 딜이 다르면 Health 하나만 바꾸면 된다 (나머지는 비율).
+# 공격력: 패턴 피해는 애드온 안의 값 (18~32, 2페이즈 ×1.2). 멈춘 세계 탄 = 최대 체력 45% (두 발 = 죽음, 방패는 피해 없음).
+# 모델: ModelEngine time_wraith (models/time_wraith/*.bbmodel). _shiny 는 지금 안 씀.
+
+CA_Boss_time_wraith:
+  Type: HUSK
+  Display: '&3&l시간의 망령'
+  Health: 18000
+  Damage: 26
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&3&l시간의 망령'
+    Range: 48
+    Color: BLUE
+    Style: SEGMENTED_12
+    CreateFog: true
+    DarkenSky: false
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 44
+    MovementSpeed: 0.26
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_wraith;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - chatime{a=start;arena=18} @self ~onSpawn
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ======================================================================== 기믹 소품 (애드온이 소환·제거, 스스로 움직이지 않음)
+
+# 기믹1 시간 감옥 (모래시계 우리). 체력은 애드온이 소환 직후 정함. 갇힌 본인 공격은 막힘. 부서지면 기믹 성공.
+CA_Time_prison:
+  Type: HUSK
+  Display: '&6시간 감옥'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: true
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_prison;n=false} @self ~onSpawn
+  - state{s=hit;li=0;lo=1} @self ~onDamaged
+
+# 기믹2 바닥 시계 문자판 (지름 약 14). 12시 = 엔티티 정면.
+CA_Time_floor_clock:
+  Type: HUSK
+  Display: '&b바닥의 시계'
+  Health: 1000
+  Options:
+    NoAI: true
+    NoGravity: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_floor_clock;n=false} @self ~onSpawn
+
+# 기믹2 바늘 3종: 원점 = 시계 중심, 모델은 엔티티 정면을 가리킴 → 애드온이 yaw 로 시각을 맞춤.
+CA_Time_hand_hour:
+  Type: HUSK
+  Display: '&c시침'
+  Health: 1000
+  Options:
+    NoAI: true
+    NoGravity: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_hand_hour;n=false} @self ~onSpawn
+CA_Time_hand_minute:
+  Type: HUSK
+  Display: '&9분침'
+  Health: 1000
+  Options:
+    NoAI: true
+    NoGravity: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_hand_minute;n=false} @self ~onSpawn
+CA_Time_hand_second:
+  Type: HUSK
+  Display: '&e초침'
+  Health: 1000
+  Options:
+    NoAI: true
+    NoGravity: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_hand_second;n=false} @self ~onSpawn
+
+# 기믹2 바늘 끝/꼬리 판정점 (안 보이는 엔티티, 모델 없음). 원소 마법에 맞으면 바늘이 한 칸.
+CA_Time_hand_node:
+  Type: HUSK
+  Display: ' '
+  Health: 1000
+  Options:
+    NoAI: true
+    Invisible: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+
+# 2페이즈 유저 잔상 (2초 전 위치를 따라감, 맞지 않음 — 판정은 애드온이 위치로 함)
+CA_Time_player_echo:
+  Type: HUSK
+  Display: ' '
+  Health: 1000
+  Options:
+    NoAI: true
+    NoGravity: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=time_player_echo;n=false} @self ~onSpawn

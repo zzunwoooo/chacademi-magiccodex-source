@@ -37,7 +37,7 @@ final class MythicCommands {
             "마나·쿨타임 없이 마법의 미몹 스킬만 실행", "마법 시전 ");
         ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("몹").then(telegraph()).then(telegraphFx()).then(status()),
             "몹 예고 장판·예고 효과·상태이상 시험", "몹 예고 전부");
-        ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("보스").then(reaper()).then(ashShadow()),
+        ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("보스").then(reaper()).then(ashShadow()).then(timeWraith()),
             "보스 시험: 하베스트(기믹 1~3·패턴 pXX·혼자·초기화) / 재의그림자(패턴·장치 0~3·탄막·그로기·변신·초기화) (64칸 안)", "보스 하베스트 기믹 1");
         if (plugin.dummies() != null)
             ChacaLink.branch(plugin, ChacaLink.컨텐츠관리, plugin.dummies().command(), "마법 연습장 훈련 허수아비 설치(서 있는 곳)·제거(3칸 안)·목록", "연습장 허수아비 설치");
@@ -141,6 +141,22 @@ final class MythicCommands {
             .then(Commands.literal("그로기").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), AshShadowBoss.test(self(ctx), "그로기", "")); return 1; }))
             .then(Commands.literal("변신").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), AshShadowBoss.test(self(ctx), "변신", "")); return 1; }))
             .then(Commands.literal("초기화").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), AshShadowBoss.test(self(ctx), "초기화", "")); return 1; }));
+    }
+
+    // ------------------------------------------------------------------ /테스트 보스 시간의망령
+
+    private LiteralArgumentBuilder<CommandSourceStack> timeWraith() {
+        var pats = List.of("attack", "second", "thrust", "sand", "pendulum", "stasis", "foresight");
+        return Commands.literal("시간의망령")
+            .then(Commands.literal("패턴").then(Commands.argument("패턴", ChacaLink.word(() -> pats))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), TimeWraithBoss.test(self(ctx), "패턴", StringArgumentType.getString(ctx, "패턴"))); return 1; })))
+            .then(Commands.literal("기믹").then(Commands.argument("번호", IntegerArgumentType.integer(1, 3))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), TimeWraithBoss.test(self(ctx), "기믹", String.valueOf(IntegerArgumentType.getInteger(ctx, "번호")))); return 1; })))
+            .then(Commands.literal("2페이즈").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), TimeWraithBoss.test(self(ctx), "2페이즈", "")); return 1; }))
+            .then(Commands.literal("혼자")
+                .then(Commands.literal("켜기").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), TimeWraithBoss.test(self(ctx), "혼자", "켜기")); return 1; }))
+                .then(Commands.literal("끄기").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), TimeWraithBoss.test(self(ctx), "혼자", "끄기")); return 1; })))
+            .then(Commands.literal("초기화").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), TimeWraithBoss.test(self(ctx), "초기화", "")); return 1; }));
     }
 
     // ------------------------------------------------------------------ /테스트 몹 예고 · 예고효과 · 상태이상

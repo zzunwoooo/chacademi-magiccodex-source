@@ -1,0 +1,95 @@
+# 시간의 망령 보스 모션 + 기믹 소품 모션 (2026-11-03).
+# 보스 패턴·기믹(예고·판정·VFX·대상 고르기)은 전부 애드온 chatime (TimeWraithBoss.java) 안. 여기는 ModelEngine 상태 재생만.
+# 애드온이 CHA_TW_a_<모션> 을 보스에게, CHA_TW_p_<무엇> 을 소품에게 시전.
+
+# ---------------- 보스 모션 (time_wraith.bbmodel 애니 21개 중 애드온이 부르는 것; idle·walk·death 는 ModelEngine 기본)
+CHA_TW_a_spawn:
+  Skills:
+  - state{s=spawn;li=0;lo=3} @self
+CHA_TW_a_attack:
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+CHA_TW_a_skill_second_slash:
+  Skills:
+  - state{s=skill_second_slash;li=0;lo=3} @self
+CHA_TW_a_skill_hour_thrust:
+  Skills:
+  - state{s=skill_hour_thrust;li=0;lo=3} @self
+CHA_TW_a_skill_sand_fall:
+  Skills:
+  - state{s=skill_sand_fall;li=0;lo=3} @self
+CHA_TW_a_skill_pendulum:
+  Skills:
+  - state{s=skill_pendulum;li=0;lo=3} @self
+CHA_TW_a_skill_stasis_orb:
+  Skills:
+  - state{s=skill_stasis_orb;li=0;lo=3} @self
+CHA_TW_a_skill_foresight:
+  Skills:
+  - state{s=skill_foresight;li=0;lo=3} @self
+# 기믹1 감옥 시전 (칼끝 지목 → 움켜쥠)
+CHA_TW_a_skill_prison:
+  Skills:
+  - state{s=skill_prison;li=0;lo=3} @self
+# 기믹2 시계 소환 (떠올랐다가 바닥 내리침)
+CHA_TW_a_skill_clock_summon:
+  Skills:
+  - state{s=skill_clock_summon;li=0;lo=3} @self
+# 기믹3 멈춘 세계: 시작(떠오름) → 2초 뒤 유지 루프. 정지 순간 애드온이 world_stop_loop 을 한 번 더 부름(이미 재생 중이면 그대로).
+CHA_TW_a_world_stop_start:
+  Skills:
+  - state{s=world_stop_start;li=0;lo=0} @self
+  - delay 40
+  - state{s=world_stop_loop;li=2;lo=0} @self
+CHA_TW_a_world_stop_loop:
+  Skills:
+  - state{s=world_stop_loop;li=2;lo=0} @self
+# 손가락 튕겨 탄을 놓아줌 → 기본 자세로
+CHA_TW_a_world_stop_release:
+  Skills:
+  - state{s=world_stop_loop;r=true} @self
+  - state{s=world_stop_start;r=true} @self
+  - state{s=world_stop_release;li=0;lo=3} @self
+# 그로기: 추락(마지막 자세) → 애드온이 1.4초 뒤 groggy_loop → 끝날 때 groggy_end
+CHA_TW_a_groggy_start:
+  Skills:
+  - state{s=world_stop_loop;r=true} @self
+  - state{s=world_stop_start;r=true} @self
+  - state{s=groggy_start;li=0;lo=0} @self
+CHA_TW_a_groggy_loop:
+  Skills:
+  - state{s=groggy_loop;li=0;lo=0} @self
+CHA_TW_a_groggy_end:
+  Skills:
+  - state{s=groggy_loop;r=true} @self
+  - state{s=groggy_start;r=true} @self
+# 가짜 클리어 (쓰러진 채 hold) → 되감기 부활(fake_death 를 거꾸로) → 2페이즈 포효
+CHA_TW_a_fake_death:
+  Skills:
+  - state{s=groggy_loop;r=true} @self
+  - state{s=fake_death;li=0;lo=0} @self
+CHA_TW_a_revive:
+  Skills:
+  - state{s=fake_death;r=true} @self
+  - state{s=revive;li=0;lo=2} @self
+CHA_TW_a_phase2_roar:
+  Skills:
+  - state{s=phase2_roar;li=0;lo=3} @self
+
+# ---------------- 소품 모션
+# 감옥: drain 은 10초짜리 → 감옥 제한 20초에 맞춰 0.5배속 (모래가 다 떨어지는 순간 = 제한 시간 끝)
+CHA_TW_p_prison_drain:
+  Skills:
+  - state{s=drain;li=0;lo=0;speed=0.5} @self
+CHA_TW_p_clock_success:
+  Skills:
+  - state{s=success;li=0;lo=2} @self
+CHA_TW_p_hand_forward:
+  Skills:
+  - state{s=tick_forward;li=0;lo=1} @self
+CHA_TW_p_hand_back:
+  Skills:
+  - state{s=tick_back;li=0;lo=1} @self
+CHA_TW_p_hand_locked:
+  Skills:
+  - state{s=locked;li=0;lo=2} @self
