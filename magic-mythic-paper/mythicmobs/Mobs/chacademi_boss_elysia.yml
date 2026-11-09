@@ -12,7 +12,7 @@
 CA_Boss_elysia:
   Type: HUSK
   Display: '&e&l엘리시아'
-  Health: 6000
+  Health: 7000
   Damage: 18
   Armor: 0
   BossBar:
@@ -54,7 +54,7 @@ CA_Boss_elysia:
 CA_Boss_elysia_reset:
   Type: HUSK
   Display: '&e&l엘리시아'
-  Health: 6000
+  Health: 7000
   Damage: 18
   BossBar:
     Enabled: true
@@ -94,7 +94,7 @@ CA_Boss_elysia_reset:
 CA_Boss_belzar:
   Type: HUSK
   Display: '&4&l벨자르'
-  Health: 6000
+  Health: 7000
   Damage: 22
   Armor: 0
   BossBar:

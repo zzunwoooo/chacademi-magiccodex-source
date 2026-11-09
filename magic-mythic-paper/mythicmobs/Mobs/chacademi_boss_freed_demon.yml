@@ -12,7 +12,7 @@
 CA_Boss_freed_demon:
   Type: HUSK
   Display: '&4&l해방된 악마'
-  Health: 7000
+  Health: 9999
   Damage: 20
   Armor: 0
   BossBar:

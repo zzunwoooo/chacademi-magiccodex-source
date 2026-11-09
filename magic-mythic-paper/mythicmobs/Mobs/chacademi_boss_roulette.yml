@@ -13,7 +13,7 @@
 CA_Boss_roulette:
   Type: HUSK
   Display: '&6&l룰레타'
-  Health: 3800
+  Health: 4500
   Damage: 20
   Armor: 0
   BossBar:
@@ -55,7 +55,7 @@ CA_Boss_roulette:
 CA_Boss_roulette_reset:
   Type: HUSK
   Display: '&6&l룰레타'
-  Health: 3800
+  Health: 4500
   Damage: 20
   Armor: 0
   BossBar:
