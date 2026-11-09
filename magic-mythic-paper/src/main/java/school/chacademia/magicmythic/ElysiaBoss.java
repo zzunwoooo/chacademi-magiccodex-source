@@ -754,6 +754,7 @@ final class ElysiaBoss extends Mech {
             Cores(Fight f, boolean shield) {
                 super(f, shield ? 5 : 1);
                 this.shield = shield;
+                if (shield) { f.nextAt = Integer.MAX_VALUE; f.boss.setAI(false); }   // [기능:보스기믹중정지] 11/09 오너: 기믹(코어 치기) 동안 보스는 가만히
                 for (int i = 0; i < 3; i++) {
                     float yaw = f.front + i * 120 + (shield ? 60 : 0);
                     Location at = ground(f.center.clone().add(dir(yaw).multiply(10)));
@@ -761,7 +762,7 @@ final class ElysiaBoss extends Mech {
                     if (e != null) cores.add(e);
                 }
             }
-            @Override boolean patterns() { return shield; }
+            @Override boolean patterns() { return false; }   // [기능:보스기믹중정지] 예전: 보호막(빌린 힘의 반환) 동안 일반 패턴 계속
             @Override void propHit(Entity prop, Player by) {
                 if (!cores.contains(prop) || over) return;
                 f.propAnim(prop, "CHA_EL_p_core_hit");
