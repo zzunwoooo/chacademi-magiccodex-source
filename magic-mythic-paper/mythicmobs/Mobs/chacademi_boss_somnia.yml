@@ -13,7 +13,7 @@
 CA_Boss_somnia:
   Type: HUSK
   Display: '&d&l솜니아'
-  Health: 4000
+  Health: 5000
   Damage: 18
   Armor: 0
   BossBar:
@@ -55,7 +55,7 @@ CA_Boss_somnia:
 CA_Boss_somnia_dream:
   Type: HUSK
   Display: '&d&l솜니아'
-  Health: 4000
+  Health: 5000
   Damage: 18
   Armor: 0
   BossBar:
@@ -96,7 +96,7 @@ CA_Boss_somnia_dream:
 CA_Boss_somnia_reset:
   Type: HUSK
   Display: '&d&l솜니아'
-  Health: 4000
+  Health: 5000
   Damage: 18
   Armor: 0
   BossBar:
