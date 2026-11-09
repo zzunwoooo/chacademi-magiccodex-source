@@ -38,6 +38,7 @@ CA_Boss_freed_demon:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=freed_demon;n=false;drive=true} @self ~onSpawn
   - skill{s=CHA_FD_lie_off} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
@@ -72,6 +73,7 @@ CA_Freed_mirror:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=freed_demon;n=false} @self ~onSpawn
   - skill{s=CHA_FD_lie_off} @self ~onSpawn
 
@@ -94,6 +96,7 @@ CA_Freed_altar:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=demon_altar;n=false} @self ~onSpawn
 
 # 고해의 석상 6개 (70% 기믹, 반경 10). 위에 번호·문장 글자판. 진실 = reveal, 거짓 = crumble.
@@ -115,6 +118,7 @@ CA_Freed_statue:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=truth_statue;n=false} @self ~onSpawn
   - state{s=idle;li=0;lo=0} @self ~onSpawn
 
@@ -138,6 +142,7 @@ CA_Freed_chain_red:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=hell_chain_red;n=false} @self ~onSpawn
 
 # 검은 사슬 (40% 줄넘기, 높게 = 바닥 위 1.6). 붉은 사슬 반대편.
@@ -160,6 +165,7 @@ CA_Freed_chain_black:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=hell_chain_black;n=false} @self ~onSpawn
 
 # 보상 상자 = 미믹 (1% 가짜 사망). 가까이 가면 물어 버림.
@@ -181,6 +187,7 @@ CA_Freed_mimic:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=mimic_chest;n=false} @self ~onSpawn
 
 # 진짜 성배 (40% 뒤 35초마다 한 쌍, 서로 반대편). 닿으면 최대 체력 30% 회복.
@@ -202,6 +209,7 @@ CA_Freed_true_grail:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=true_grail;n=false} @self ~onSpawn
 
 # 거짓 성배. 닿으면 부풀다가 3초 뒤 폭발 (반경 3.2 · 최대 체력 40%). 겉모습 차이는 모델(넘침·금 간 자국)뿐.
@@ -223,6 +231,7 @@ CA_Freed_false_grail:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=false_grail;n=false} @self ~onSpawn
 
 # ======================================================================== 잡몹 (애드온이 보스 근처에 소환). 이로치 1/8.

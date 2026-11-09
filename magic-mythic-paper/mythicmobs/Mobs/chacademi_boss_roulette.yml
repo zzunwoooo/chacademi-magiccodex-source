@@ -37,6 +37,7 @@ CA_Boss_roulette:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=roulette;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - charoulette{a=start;arena=18;table=4} @self ~onSpawn
@@ -78,6 +79,7 @@ CA_Boss_roulette_reset:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=roulette;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - skill{s=CHA_RL_a_attack} @self ~onAttack
@@ -111,6 +113,7 @@ CA_Roulette_dice:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=roulette_dice;n=false} @self ~onSpawn
 
 # 칩 탑: 하늘에서 떨어짐(drop, 0.7초 착지) → 판정 뒤 무너짐(topple).
@@ -133,6 +136,7 @@ CA_Roulette_chip_tower:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=roulette_chip_tower;n=false} @self ~onSpawn
 
 # 동전: 튀어올라 돌다 기울며 결과를 보여주고 눕는다 (flip_heads = 앞면 → 보스 주변 r8 / flip_tails = 뒷면 → 바깥 8~18).
@@ -155,6 +159,7 @@ CA_Roulette_coin:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=roulette_coin;n=false} @self ~onSpawn
 
 # ======================================================================== 잡몹 (보스 방 앞 복도 2구간)

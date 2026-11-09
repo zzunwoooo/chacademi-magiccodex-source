@@ -112,7 +112,7 @@ CHA_FD_p_grail_burst:
 CHA_FD_a_minion_spawn:
   Skills:
   - state{s=spawn;li=0;lo=2} @self
-  - chavfx{id=freeddemon_minions/imp_spawn;at=caster} @self
+  - chabossvfx{id=freeddemon_minions/imp_spawn;at=caster} @self   # 11/09 학교는 chavfx 를 던전 플러그인이 씀 → chabossvfx
 
 # 속삭이는 임프 - 밀치기: 바로 앞 원 반경 1.8, 예고 0.5초. 피해 4 (dark) + 2.2칸 밀어냄. 고해 발판·줄넘기 박자를 흔드는 용도.
 CHA_MOB_fd_imp_shove:

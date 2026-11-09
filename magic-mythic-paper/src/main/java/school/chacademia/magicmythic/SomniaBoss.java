@@ -43,6 +43,9 @@ final class SomniaBoss extends Mech {
     static final String TAG = "chacademi_somnia_prop", BELL_TAG = "chacademi_somnia_bell", DREAM_TAG = "chacademi_somnia_dream";
     static final String NAME = "§8[§d솜니아§8] §f";
     static final String VFX = "claude:somnia_boss/";
+    // [기능:보스VFX팩나눔] 11/09 클라 상한(팩당 시스템 16)으로 Somnia_Boss 를 둘로 나눔
+    static final java.util.Set<String> PACK2 = java.util.Set.of("groggy", "eternal", "dreamfall", "wake", "boundary", "enrage");
+    static String fx(String sys) { return (PACK2.contains(sys) ? "claude:somnia_boss2/" : VFX) + sys; }
     static final List<String> PATTERN_IDS = List.of("lullaby", "gust", "feather", "pillow", "stairs", "eyelid", "clone", "collapse");
     static final double BOUNDARY_DEG_PER_S = Math.toDegrees(0.12);
 
@@ -119,7 +122,7 @@ final class SomniaBoss extends Mech {
                 }
                 spawnBells(); spawnPools();
             });
-            later(30, () -> { title("§d§l몽마 솜니아", "§7눈을 감아. 나는 거기서 기다릴게."); say("눈을 감아. 나는 거기서 기다릴게."); });
+            later(30, () -> { say("눈을 감아. 나는 거기서 기다릴게."); });
         }
 
         /* ---------------------------------------------------------------- 대상 */
@@ -203,8 +206,8 @@ final class SomniaBoss extends Mech {
             Sleeper s = sleeper(pl);
             if (inDream(pl)) return;
             s.cooldownUntil = t + 60;
-            Fx.follow(pl, VFX + "enter", 30, 0);
-            tell(pl, "§d§l꿈속으로", forced ? "§f빠져나갈 수 없다" : "§f빛나는 종을 쳐서 깨어나라 — 졸음이 차오른다");
+            Fx.follow(pl, fx("enter"), 30, 0);
+            tell(pl, "§d§l꿈속으로", forced ? "§7빠져나갈 수 없다" : "§7어딘가에서 종소리가 들린다");
             later(14, () -> {
                 if (!pl.isValid() || pl.isDead()) return;
                 Location to = randomIn(dream, 5); to.setYaw(yawTo(to, dream)); pl.teleport(to.add(0, 0.1, 0));
@@ -218,10 +221,10 @@ final class SomniaBoss extends Mech {
             double a = ReaperBoss.RNG.nextDouble() * Math.PI * 2, d = 6 + ReaperBoss.RNG.nextDouble() * (arena - 9);
             Location to = ground(center.clone().add(Math.cos(a) * d, 0, Math.sin(a) * d)); to.setYaw(yawTo(to, center));
             pl.teleport(to.add(0, 0.1, 0));
-            later(1, () -> Fx.follow(pl, VFX + "exit", 20, 0));
+            later(1, () -> Fx.follow(pl, fx("exit"), 20, 0));
         }
         void eternal(Player pl) {
-            Fx.follow(pl, VFX + "eternal", 40, 0);
+            Fx.follow(pl, fx("eternal"), 40, 0);
             tell(pl, "§5§l영원한 잠", "§7졸음을 이기지 못했다");
             say("쉿... 이제 푹 자렴.");
             later(30, () -> { if (pl.isValid() && !pl.isDead()) hurtPct(pl, 10, "dark"); });
@@ -246,7 +249,7 @@ final class SomniaBoss extends Mech {
             LivingEntity b = bells[glowBell];
             if (b == null) return;
             castAt(b, "CHA_SN_p_bell_glow");
-            bellFx = Fx.held(VFX + "bell_glow", ground(b.getLocation()), 0, 1200);
+            bellFx = Fx.held(fx("bell_glow"), ground(b.getLocation()), 0, 1200);
         }
         void bellsOff() { Fx.stop(bellFx); bellFx = null; glowBell = -1; }
 
@@ -254,24 +257,24 @@ final class SomniaBoss extends Mech {
             if (phase == P_BELL && bell.equals(wakeBell)) { ringWake(); return; }
             if (phase != P_FIGHT || enraged || glowBell < 0 || !bell.equals(bells[glowBell])) { tell(pl, "", "§7이 종은 울리지 않는다"); return; }
             castAt((LivingEntity) bell, "CHA_SN_p_bell_ring");
-            Fx.effect(plugin, VFX + "bell_ring", ground(bell.getLocation()), 0, 40);
+            Fx.effect(plugin, fx("bell_ring"), ground(bell.getLocation()), 0, 40);
             exitDream(pl, true);
             later(10, this::pickGlowBell);
         }
 
         void spawnPools() {
             for (UUID h : poolFx) Fx.stop(h);
-            for (Location l : pools) Fx.effect(plugin, VFX + "pool_close", l, 0, 30);
+            for (Location l : pools) Fx.effect(plugin, fx("pool_close"), l, 0, 30);
             pools.clear(); poolFx.clear();
             for (int k = 0; k < 2; k++) {
                 Location l = randomIn(center, arena - 4);
                 pools.add(l);
-                Fx.effect(plugin, VFX + "pool_open", l, 0, 30);
-                poolFx.add(Fx.held(VFX + "pool", l, 0, 420));
+                Fx.effect(plugin, fx("pool_open"), l, 0, 30);
+                poolFx.add(Fx.held(fx("pool"), l, 0, 420));
             }
             poolMoveAt = t + 400;
         }
-        void poolsOff() { for (UUID h : poolFx) Fx.stop(h); for (Location l : pools) Fx.effect(plugin, VFX + "pool_close", l, 0, 30); pools.clear(); poolFx.clear(); }
+        void poolsOff() { for (UUID h : poolFx) Fx.stop(h); for (Location l : pools) Fx.effect(plugin, fx("pool_close"), l, 0, 30); pools.clear(); poolFx.clear(); }
 
         /* ---------------------------------------------------------------- 패턴 */
 
@@ -317,8 +320,7 @@ final class SomniaBoss extends Mech {
         int lullaby() {
             castAt(boss, "CHA_SN_clear"); anim("lullaby");
             Location c = ground(boss.getLocation());
-            Fx.effect(plugin, VFX + "lullaby", c, 0, 80);
-            title("", "§d자장가 — 고리를 뛰어넘어라");
+            Fx.effect(plugin, fx("lullaby"), c, 0, 80);
             Map<UUID, Integer> hitMask = new HashMap<>();
             plugin.ticker().add(new Ticker.Tick() {
                 int age;
@@ -337,7 +339,7 @@ final class SomniaBoss extends Mech {
                             hitMask.put(pl.getUniqueId(), mask | bit);
                             hurt(pl, 16, "dark");
                             Sleeper s = sleeper(pl); s.pending = Math.max(s.pending, 0.3);
-                            Fx.follow(pl, VFX + "drowsy", 50, 0);
+                            Fx.follow(pl, fx("drowsy"), 50, 0);
                         }
                     }
                     return age < 54;
@@ -354,7 +356,7 @@ final class SomniaBoss extends Mech {
             anim("wing_gust");
             Location c = ground(boss.getLocation());
             float yaw = yawTo(c, target.getLocation());
-            strike(Shape.CONE, c, yaw, 12, 0, 120, sp(16), 24, "wind", VFX + "gust", 0, hit -> { for (Player pl : hit) knock(pl, c, 1.4, 0.35); });
+            strike(Shape.CONE, c, yaw, 12, 0, 120, sp(16), 24, "wind", fx("gust"), 0, hit -> { for (Player pl : hit) knock(pl, c, 1.4, 0.35); });
             return sp(28);
         }
 
@@ -367,7 +369,7 @@ final class SomniaBoss extends Mech {
                     List<Player> r = real();
                     for (int k = 0; k < n; k++) {
                         Location at = (k == 0 && !r.isEmpty()) ? ground(r.get(ReaperBoss.RNG.nextInt(r.size())).getLocation()) : randomIn(center, arena - 1);
-                        strike(Shape.CIRCLE, at, 0, 2, 0, 0, sp(18), 18, "light", VFX + "feather", 6, null);
+                        strike(Shape.CIRCLE, at, 0, 2, 0, 0, sp(18), 18, "light", fx("feather"), 6, null);
                     }
                 });
             }
@@ -384,7 +386,7 @@ final class SomniaBoss extends Mech {
                 animOn(pw, "CHA_SN_p_pillow_drop");
                 later(32, () -> { animOn(pw, "CHA_SN_p_pillow_vanish"); removeLater(pw, 20); });
             });
-            strike(Shape.CIRCLE, at, 0, 5, 0, 0, warn, 30, "dark", VFX + "pillow", 12, null);
+            strike(Shape.CIRCLE, at, 0, 5, 0, 0, warn, 30, "dark", fx("pillow"), 12, null);
             return warn + 16;
         }
 
@@ -397,7 +399,7 @@ final class SomniaBoss extends Mech {
             for (int k = 0; k < n; k++) {
                 double off = (k - (n - 1) / 2.0) * 5 + (ReaperBoss.RNG.nextDouble() - 0.5) * 2;
                 Location start = ground(dream.clone().add(side.clone().multiply(off)).subtract(dir(yaw).multiply(9)));
-                later(1 + 6 * k, () -> strike(Shape.LINE, start, yaw, 18, 3, 0, 12, 26, "dark", VFX + "stairs", 8, null));
+                later(1 + 6 * k, () -> strike(Shape.LINE, start, yaw, 18, 3, 0, 12, 26, "dark", fx("stairs"), 8, null));
             }
             return 12 + 6 * n + 8;
         }
@@ -408,12 +410,11 @@ final class SomniaBoss extends Mech {
             float yaw = ReaperBoss.RNG.nextFloat() * 180;
             Vector f = dir(yaw), side = dir(yaw + 90);
             Location c = ground(dream);
-            title("", "§d눈꺼풀 — 가운데 띠로");
             for (int sgn = -1; sgn <= 1; sgn += 2) {
                 Location start = ground(c.clone().add(side.clone().multiply(sgn * (1.5 + 7.25))).subtract(f.clone().multiply(arena)));
                 strike(Shape.LINE, start, yaw, arena * 2, 14.5, 0, 18, 34, "dark", null, 0, null);
             }
-            later(17, () -> Fx.effect(plugin, VFX + "eyelid", c, yaw, 40));
+            later(17, () -> Fx.effect(plugin, fx("eyelid"), c, yaw, 40));
             return 34;
         }
 
@@ -421,12 +422,11 @@ final class SomniaBoss extends Mech {
         int clone(Player target) {
             if (target == null) return 10;
             if (dreamBody != null) castAt(dreamBody, "CHA_SN_a_dream_cast");
-            title("", "§5악몽 분신 — 멈추지 마라");
             List<Location> trail = new ArrayList<>();
             ArmorStand[] shades = new ArmorStand[2]; UUID[] fx = new UUID[2];
             for (int i = 0; i < 2; i++) {
                 shades[i] = dream.getWorld().spawn(target.getLocation(), ArmorStand.class, a -> { a.setInvisible(true); a.setMarker(true); a.setGravity(false); a.setPersistent(false); a.addScoreboardTag(TAG); });
-                fx[i] = Fx.follow(shades[i], VFX + "clone", 120, 0);
+                fx[i] = Fx.follow(shades[i], fx("clone"), 120, 0);
             }
             Map<UUID, Integer> cd = new HashMap<>();
             plugin.ticker().add(new Ticker.Tick() {
@@ -459,7 +459,7 @@ final class SomniaBoss extends Mech {
             if (dreamBody != null) castAt(dreamBody, "CHA_SN_a_eyelid");
             float yaw = ReaperBoss.RNG.nextFloat() * 360;
             Location c = ground(dream);
-            strike(Shape.CONE, c, yaw, arena, 0, 180, 20, 20, "dark", VFX + "collapse", 0, hit -> { for (Player pl : hit) later(6, () -> exitDream(pl, false)); });
+            strike(Shape.CONE, c, yaw, arena, 0, 180, 20, 20, "dark", fx("collapse"), 0, hit -> { for (Player pl : hit) later(6, () -> exitDream(pl, false)); });
             return 34;
         }
 
@@ -496,27 +496,25 @@ final class SomniaBoss extends Mech {
             castAt(boss, "CHA_SN_clear");
             poolsOff(); bellsOff();
             for (Player pl : real()) enterDream(pl, true);
-            Fx.effect(plugin, VFX + "dreamfall", ground(dream), 0, 60);
+            Fx.effect(plugin, fx("dreamfall"), ground(dream), 0, 60);
             if (dreamBody != null) castAt(dreamBody, "CHA_SN_a_dream_cast");
-            title("§5§l깨지 않는 꿈", "§f바닥이 바깥부터 무너진다 — 25초를 버텨라");
             say("이번엔... 깨지 못할 거야.");
         }
         void wakeCall() {
             phase = P_BELL; phaseAt = t;
             if (dreamBody != null) castAt(dreamBody, "CHA_SN_a_wake");
-            Fx.effect(plugin, VFX + "wake", ground(dream), 0, 60);
+            Fx.effect(plugin, fx("wake"), ground(dream), 0, 60);
             wakeBell = prop("CA_Somnia_bell", ground(dream));
-            if (wakeBell != null) { wakeBell.addScoreboardTag(BELL_TAG); castAt(wakeBell, "CHA_SN_p_bell_glow"); wakeBellFx = Fx.held(VFX + "bell_glow", ground(dream), 0, 1200); }
-            title("§e§l일어나", "§f가운데 종을 쳐라");
+            if (wakeBell != null) { wakeBell.addScoreboardTag(BELL_TAG); castAt(wakeBell, "CHA_SN_p_bell_glow"); wakeBellFx = Fx.held(fx("bell_glow"), ground(dream), 0, 1200); }
             say("...일어나.");
         }
         void ringWake() {
             Fx.stop(wakeBellFx); wakeBellFx = null;
-            if (wakeBell != null) { castAt(wakeBell, "CHA_SN_p_bell_ring"); Fx.effect(plugin, VFX + "bell_ring", ground(wakeBell.getLocation()), 0, 40); removeLater(wakeBell, 40); wakeBell = null; }
+            if (wakeBell != null) { castAt(wakeBell, "CHA_SN_p_bell_ring"); Fx.effect(plugin, fx("bell_ring"), ground(wakeBell.getLocation()), 0, 40); removeLater(wakeBell, 40); wakeBell = null; }
             for (Player pl : dreamers()) exitDream(pl, true);
             invulnerable = false;
             later(10, () -> {
-                Fx.effect(plugin, VFX + "wake", ground(boss.getLocation()), 0, 60);
+                Fx.effect(plugin, fx("wake"), ground(boss.getLocation()), 0, 60);
                 groggy(200);
                 spawnBells(); spawnPools();
             });
@@ -526,8 +524,7 @@ final class SomniaBoss extends Mech {
             boss.setAI(false);
             castAt(boss, "CHA_SN_clear"); anim("groggy");
             castAt(boss, "CHA_SN_solid"); solid = true;
-            Fx.stop(groggyFx); groggyFx = Fx.follow(boss, VFX + "groggy", ticks + 10, 0);
-            title("§6§l그로기", "§f" + ticks / 20 + "초 — 현실에서도 피해가 그대로 들어간다");
+            Fx.stop(groggyFx); groggyFx = Fx.follow(boss, fx("groggy"), ticks + 10, 0);
         }
         void endGroggy() {
             Fx.stop(groggyFx); groggyFx = null;
@@ -545,8 +542,7 @@ final class SomniaBoss extends Mech {
             poolsOff(); bellsOff();
             for (Player pl : dreamers()) exitDream(pl, false);
             castAt(boss, "CHA_SN_clear"); anim("enrage");
-            Fx.effect(plugin, VFX + "enrage", ground(boss.getLocation()), 0, 60);
-            title("§5§l경계 붕괴", "§f반은 꿈, 반은 현실 — 꿈 쪽에 서면 졸음이 찬다");
+            Fx.effect(plugin, fx("enrage"), ground(boss.getLocation()), 0, 60);
             say("꿈과 현실의 경계 따위... 이제 없어.");
             later(44, () -> startBoundary(ReaperBoss.RNG.nextFloat() * 360));
             realNextAt = t + 60;
@@ -554,7 +550,7 @@ final class SomniaBoss extends Mech {
         void startBoundary(float yaw) {
             Fx.stop(boundaryFx);
             boundaryYaw0 = yaw; boundaryAt = t;
-            boundaryFx = Fx.held(VFX + "boundary", ground(center), yaw, 1220);
+            boundaryFx = Fx.held(fx("boundary"), ground(center), yaw, 1220);
         }
         /** 지금 경계선 방향 (VFX +Z 축과 같은 방향으로 돎). 회전 방향이 VFX 와 반대로 보이면 부호만 바꾼다. */
         float boundaryYaw() { return boundaryYaw0 + (float) (BOUNDARY_DEG_PER_S * (t - boundaryAt) / 20.0); }
@@ -666,8 +662,7 @@ final class SomniaBoss extends Mech {
         public void death(EntityDeathEvent e) {
             Fight f = FIGHTS.get(e.getEntity().getUniqueId());
             if (f == null) return;
-            Fx.effect(f.plugin, VFX + "wake", e.getEntity().getLocation(), 0, 60);
-            f.title("§d§l솜니아 처치", "§7긴 꿈에서 깨어났다");
+            Fx.effect(f.plugin, fx("wake"), e.getEntity().getLocation(), 0, 60);
             f.say("아... 아침이... 오는구나...");
             f.close();
         }

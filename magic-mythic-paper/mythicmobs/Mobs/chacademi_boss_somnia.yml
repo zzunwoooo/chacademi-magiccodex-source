@@ -37,6 +37,7 @@ CA_Boss_somnia:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=somnia_veil;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - chasomnia{a=start;arena=16;dx=0;dy=0;dz=120} @self ~onSpawn
@@ -78,6 +79,7 @@ CA_Boss_somnia_dream:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=somnia;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - skill{s=CHA_SN_a_attack} @self ~onAttack
@@ -118,6 +120,7 @@ CA_Boss_somnia_reset:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=somnia_veil;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - skill{s=CHA_SN_a_attack} @self ~onAttack
@@ -151,6 +154,7 @@ CA_Somnia_bell:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=dream_bell;n=false} @self ~onSpawn
 
 # 거대 베개 (베개 짓누르기): 떨어져 꾹 눌림(drop, 0.6초 착지) → 사라짐(vanish).
@@ -173,6 +177,7 @@ CA_Somnia_pillow:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=dream_pillow;n=false} @self ~onSpawn
 
 # ======================================================================== 잡몹 (보스 방 앞 복도 2구간, 두 번째 구간은 꿈 맵 색감)

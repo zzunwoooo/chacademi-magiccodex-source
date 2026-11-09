@@ -36,6 +36,7 @@ CA_Boss_elysia:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - chaelysia{a=start;arena=16} @self ~onSpawn
@@ -76,6 +77,7 @@ CA_Boss_elysia_reset:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - skill{s=CHA_EL_a_attack} @self ~onAttack
@@ -118,6 +120,7 @@ CA_Boss_belzar:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=belzar;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
   - skill{s=CHA_EL_b_attack} @self ~onAttack
@@ -150,6 +153,7 @@ CA_Elysia_statue:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_grace_statue;n=false} @self ~onSpawn
 
 # 빛의 핵 3개 (축복의 제안 / 빌린 힘의 반환). 4초 안에 셋 다 치면 깨짐.
@@ -172,6 +176,7 @@ CA_Elysia_core:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_light_core;n=false} @self ~onSpawn
 
 # 찬송 석주 3개 (계시의 제안). 낮은음 / 가운데음 / 높은음.
@@ -193,6 +198,7 @@ CA_Elysia_pillar_low:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_hymn_pillar_low;n=false} @self ~onSpawn
 
 CA_Elysia_pillar_mid:
@@ -213,6 +219,7 @@ CA_Elysia_pillar_mid:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_hymn_pillar_mid;n=false} @self ~onSpawn
 
 CA_Elysia_pillar_high:
@@ -233,6 +240,7 @@ CA_Elysia_pillar_high:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_hymn_pillar_high;n=false} @self ~onSpawn
 
 # 금빛 깃털 (축복의 제안 = 줍기 / 아기천사 처치 드롭 = 은총의 깃털). 가까이 가면 애드온이 줍기 처리.
@@ -255,6 +263,7 @@ CA_Elysia_grace_feather:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_grace_feather;n=false} @self ~onSpawn
 
 # 상환 증서 (채무자의 망령 드롭). 주우면 빚 1 상환.
@@ -277,6 +286,7 @@ CA_Elysia_deed:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_repayment_deed;n=false} @self ~onSpawn
 
 # 천사의 손 (구원의 제안). 우클릭 = 손을 잡음.
@@ -299,6 +309,7 @@ CA_Elysia_hand:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_angel_hand;n=false} @self ~onSpawn
   - state{s=spawn;li=0;lo=2} @self ~onSpawn
 
@@ -322,6 +333,7 @@ CA_Elysia_ledger:
     NoGravity: true
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_ledger;n=false} @self ~onSpawn
   - state{s=spawn;li=0;lo=2} @self ~onSpawn
 
@@ -344,6 +356,7 @@ CA_Elysia_seal:
     Despawn: false
   Drops: []
   Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=elysia_seal_circle;n=false} @self ~onSpawn
 
 # ======================================================================== 잡몹 (애드온이 보스 근처에 소환, 각 최대 3 / 망령 2). 이로치 1/8.

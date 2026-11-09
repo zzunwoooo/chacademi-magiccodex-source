@@ -142,7 +142,6 @@ final class ElysiaBoss extends Mech {
             anim("spawn");
             later(30, this::placeStatues);
             later(50, () -> {
-                title("§e§l엘리시아", "§7자비의 천사");
                 say("길 잃은 아이야, 두려워 말거라. 나는 그대를 도우러 왔으니.");
             });
         }
@@ -610,13 +609,13 @@ final class ElysiaBoss extends Mech {
             FIGHTS.put(boss.getUniqueId(), this);
             setYaw(boss, front);
             boss.setHealth(Math.max(1, maxHp() * GATES[3]));
+            boss.addScoreboardTag("chaca_boss_next:" + old.getUniqueId());   // 11/09 던전이 새 몸(벨자르)을 이 판 보스로 이어 받게 (ChacaDungeon 던전보스이어받기)
             old.remove();
             boss.setAI(false);
             anim("spawn");
             List<Player> ps = players();
             for (Player pl : ps) refresh(pl);
             later(30, () -> {
-                title("§4§l벨자르", "§7가면의 악마");
                 say("자, 장부를 펼쳐 볼까.");
             });
             later(70, () -> {
@@ -624,7 +623,7 @@ final class ElysiaBoss extends Mech {
                 for (Player pl : players()) {
                     int[] d = debt(pl);
                     if (total(pl) > 0) nothing = false;
-                    StringBuilder sb = new StringBuilder("§e" + pl.getName() + "§f. ");
+                    StringBuilder sb = new StringBuilder("§e" + ChacaLink.name(pl.getUniqueId()) + "§f. ")   /* 한글 닉네임 */;
                     for (int i = 0; i < 4; i++) if (d[i] > 0) sb.append(DEBT_NAME[i]).append(" ").append(d[i]).append(", ");
                     sb.append("합계 빚 §c").append(total(pl)).append("§f.");
                     if (total(pl) > 0) say(sb.toString());
@@ -634,7 +633,7 @@ final class ElysiaBoss extends Mech {
                     say("…아무것도, 받지 않았다고? 계약이… 성립하지 않는군.");
                     boss.setHealth(Math.max(1, maxHp() * (GATES[3] - 0.10)));
                     for (int k = 4; k <= 7; k++) gateDone[k] = true;
-                    for (Player pl : players()) plugin.getLogger().info("[엘리시아] 청렴 클리어 조건 달성 후보: " + pl.getName());
+                    for (Player pl : players()) plugin.getLogger().info("[엘리시아] 청렴 클리어 조건 달성 후보: " + ChacaLink.name(pl.getUniqueId()));
                 } else later(30, () -> say("이제 갚을 시간이다."));
             });
             later(120, () -> { phase = FIGHTING; invulnerable = false; boss.setAI(true); nextAt = t + 20; minionAt = t + 100; });
@@ -843,7 +842,6 @@ final class ElysiaBoss extends Mech {
             pl.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 9, false, false, false));
             Location at = pl.getLocation().clone(); at.add(dir(at.getYaw()).multiply(1.2)); at.setYaw(at.getYaw() + 180);
             hand = prop("CA_Elysia_hand", at, "hand");
-            ReaperBoss.Fight.title(pl, "§f아직 그대의 때가 아니다", "§7손을 잡겠느냐?");
             tell(pl, "아직 그대의 때가 아니다. 손을 잡겠느냐?");
             handUntil = t + 100;
             later(100, () -> {
@@ -1097,7 +1095,7 @@ final class ElysiaBoss extends Mech {
                 if (ledger != null) f.propAnim(ledger, "CHA_EL_p_ledger_burn");
                 Fx.effect(f.plugin, "claude:belzar_contractburn/burn", f.center.clone().add(0, 6, 0), 0, 100);
                 f.anim("death");
-                f.later(44, () -> { f.title("§f…고마워요", "§7이제야, 돌아갈 수 있겠네요"); for (Player pl : f.players()) pl.sendMessage(ReaperBoss.LEG.deserialize("§f§o…고마워요. 이제야, 돌아갈 수 있겠네요.")); });
+                f.later(44, () -> { for (Player pl : f.players()) pl.sendMessage(ReaperBoss.LEG.deserialize("§f§o…고마워요. 이제야, 돌아갈 수 있겠네요.")); });
                 f.later(90, () -> {
                     f.phase = P_END; f.invulnerable = false;
                     spellHit = true;
@@ -1260,7 +1258,6 @@ final class ElysiaBoss extends Mech {
         public void death(EntityDeathEvent e) {
             Fight f = FIGHTS.get(e.getEntity().getUniqueId());
             if (f != null) {
-                if (f.demon) f.title("§6§l계약 파기", "§7장부는 재가 되어 흩어졌다");
                 FIGHTS.remove(e.getEntity().getUniqueId());
                 f.close();
                 return;

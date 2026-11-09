@@ -39,6 +39,9 @@ final class RouletteBoss extends Mech {
     static final String TAG = "chacademi_roulette_prop";
     static final String NAME = "§8[§6룰레타§8] §f";
     static final String VFX = "claude:roulette_boss/";
+    // [기능:보스VFX팩나눔] 11/09 클라 상한(팩당 시스템 16·시스템당 레이어 64)으로 Roulette_Boss 를 둘로 나눔 (pip_5·pip_6·lose 는 _b 반쪽과 같이 재생)
+    static final java.util.Set<String> PACK2 = java.util.Set.of("pip_1", "pip_2", "pip_3", "pip_4", "pip_5", "pip_5_b", "pip_6", "pip_6_b", "dealer_cross", "dealer_x", "enrage", "enrage_aura");
+    static String fx(String sys) { return (PACK2.contains(sys) ? "claude:roulette_boss2/" : VFX) + sys; }
     static final List<String> PATTERN_IDS = List.of("cards", "chips", "dice", "dealer", "coin", "allin", "recall");
     static final String[] SECTOR = {"§c빨강", "§8검정", "§a초록", "§9파랑", "§5보라", "§6금색"};
 
@@ -98,7 +101,6 @@ final class RouletteBoss extends Mech {
             this.table = table;
             anim("spawn");
             later(30, () -> {
-                title("§6§l도박의 악마 룰레타", "§7판돈은 네 목숨. 자, 걸어 봐.");
                 say("판돈은 네 목숨. 자, 걸어 봐.");
             });
         }
@@ -118,7 +120,7 @@ final class RouletteBoss extends Mech {
             if (ps.isEmpty()) { if ((emptyFor += 5) >= 1200) reset(); return true; }
             emptyFor = 0;
             if (phase == P_GROGGY && t >= groggyUntil) endGroggy();
-            if (enraged && t >= enrageFxAt) { Fx.stop(auraFx); auraFx = Fx.follow(boss, VFX + "enrage_aura", 1200, 0); enrageFxAt = t + 1100; }
+            if (enraged && t >= enrageFxAt) { Fx.stop(auraFx); auraFx = Fx.follow(boss, fx("enrage_aura"), 1200, 0); enrageFxAt = t + 1100; }
             if (phase == P_FIGHT) {
                 if (t >= rouletteAt && t >= nextAt - 20) roulette(-1, ReaperBoss.RNG.nextFloat() < (enraged ? 0.5f : 0.3f), false);
                 else if (t >= nextAt) pattern();
@@ -169,8 +171,8 @@ final class RouletteBoss extends Mech {
                 float yaw = base + o;
                 Location end = from.clone().add(dir(yaw).multiply(18));
                 strike(Shape.LINE, from, yaw, 18, 1.5, 0, warn, 18, "dark", null, 0, null);
-                later(Math.max(1, warn - 5), () -> Fx.fall(plugin, VFX + "card", boss.getLocation().add(0, 4.2, 0), end.clone().add(0, 0.9, 0), 6));
-                later(warn + 1, () -> Fx.effect(plugin, VFX + "card_hit", end.clone().add(0, 0.9, 0), yaw, 30));
+                later(Math.max(1, warn - 5), () -> Fx.fall(plugin, fx("card"), boss.getLocation().add(0, 4.2, 0), end.clone().add(0, 0.9, 0), 6));
+                later(warn + 1, () -> Fx.effect(plugin, fx("card_hit"), end.clone().add(0, 0.9, 0), yaw, 30));
             }
         }
 
@@ -185,7 +187,7 @@ final class RouletteBoss extends Mech {
                     int warn = sp(14);
                     LivingEntity tower = prop("CA_Roulette_chip_tower", c);
                     animOn(tower, "CHA_RL_p_chip_drop");
-                    strike(Shape.CIRCLE, c, 0, 3, 0, 0, warn, 20, "fire", VFX + "chip_drop", 2, hit -> {
+                    strike(Shape.CIRCLE, c, 0, 3, 0, 0, warn, 20, "fire", fx("chip_drop"), 2, hit -> {
                         animOn(tower, "CHA_RL_p_chip_topple");
                         removeLater(tower, 40);
                         chipSpots.addLast(c); while (chipSpots.size() > 8) chipSpots.removeFirst();
@@ -206,7 +208,7 @@ final class RouletteBoss extends Mech {
             Location end = ground(start.clone().add(dir(yaw).multiply(len)));
             LivingEntity die = prop("CA_Roulette_dice", start);
             animOn(die, "CHA_RL_p_dice_roll");
-            UUID trail = die == null ? null : Fx.follow(die, VFX + "dice_trail", 80, 0);
+            UUID trail = die == null ? null : Fx.follow(die, fx("dice_trail"), 80, 0);
             int warn = sp(16), roll = 20;
             Location st = start;
             strike(Shape.LINE, start, yaw, len, 3, 0, warn, 22, "earth", null, 0, null);
@@ -226,13 +228,12 @@ final class RouletteBoss extends Mech {
             later(warn + roll, () -> {
                 Fx.stop(trail);
                 animOn(die, "CHA_RL_p_dice_land_" + n);
-                title("", "§f주사위 눈 §6" + n);
             });
             int lineWarn = sp(14), at = warn + roll + 32;
             later(at - lineWarn, () -> {
                 float first = ReaperBoss.RNG.nextFloat() * 360;
                 Location from = die != null && die.isValid() ? ground(die.getLocation()) : end;
-                later(Math.max(1, lineWarn - 2), () -> Fx.effect(plugin, VFX + "pip_" + n, from, first, 60));
+                later(Math.max(1, lineWarn - 2), () -> { Fx.effect(plugin, fx("pip_" + n), from, first, 60); if (n >= 5) Fx.effect(plugin, fx("pip_" + n + "_b"), from, first, 60); });   // 5·6 은 반쪽 둘 (보스VFX팩나눔)
                 for (int i = 0; i < n; i++) strike(Shape.LINE, from, first + i * 360f / n, 16, 2, 0, lineWarn, 22, "earth", null, 0, null);
                 removeLater(die, lineWarn + 30);
             });
@@ -250,7 +251,7 @@ final class RouletteBoss extends Mech {
         }
         void cross(Location c, float yaw, String sys, int delay) {
             int warn = sp(14);
-            later(Math.max(1, warn - 1), () -> Fx.effect(plugin, VFX + sys, c, yaw, 60));
+            later(Math.max(1, warn - 1), () -> Fx.effect(plugin, fx(sys), c, yaw, 60));
             for (int k = 0; k < 4; k++) strike(Shape.LINE, c, yaw + 90 * k, 16, 3, 0, warn, 22, "dark", null, 0, null);
         }
 
@@ -263,7 +264,6 @@ final class RouletteBoss extends Mech {
             animOn(coin, heads ? "CHA_RL_p_coin_heads" : "CHA_RL_p_coin_tails");
             int hitAt = 48, warn = 24;
             later(hitAt - warn, () -> {
-                title("", heads ? "§6앞면 §f— 보스 곁이 위험하다" : "§6뒷면 §f— 바깥이 위험하다");
                 if (heads) warnOnly(Shape.CIRCLE, c, 0, 8, 0, 0, warn);
                 else for (int s = 0; s < 12; s++) {   // 8~18 고리 = 접선 방향 띠 12개
                     float a = s * 30f; Vector radial = dir(a), tan = dir(a + 90);
@@ -271,7 +271,7 @@ final class RouletteBoss extends Mech {
                     warnOnly(Shape.LINE, st, yawOf(tan), 7.2, 10, 0, warn);
                 }
             });
-            later(hitAt - 1, () -> Fx.effect(plugin, VFX + (heads ? "coin_heads" : "coin_tails"), c, 0, 60));
+            later(hitAt - 1, () -> Fx.effect(plugin, fx(heads ? "coin_heads" : "coin_tails"), c, 0, 60));
             later(hitAt, () -> {
                 for (Player pl : players()) {
                     double d = Math.sqrt(ReaperBoss.flat2(pl.getLocation(), c));
@@ -288,7 +288,7 @@ final class RouletteBoss extends Mech {
             anim("all_in");
             Location c = ground(boss.getLocation());
             float yaw = yawTo(c, target.getLocation());
-            strike(Shape.CONE, c, yaw, 10, 0, 180, sp(17), 32, "fire", VFX + "all_in", 1, hit -> { for (Player pl : hit) knock(pl, c, 1.3, 0.45); });
+            strike(Shape.CONE, c, yaw, 10, 0, 180, sp(17), 32, "fire", fx("all_in"), 1, hit -> { for (Player pl : hit) knock(pl, c, 1.3, 0.45); });
             return sp(32);
         }
 
@@ -304,7 +304,7 @@ final class RouletteBoss extends Mech {
                     if (len < 1) return;
                     int warn = sp(12);
                     strike(Shape.LINE, s, yawTo(s, b), len, 1.5, 0, warn, 14, "fire", null, 0, null);
-                    later(Math.max(1, warn - 8), () -> { var l = Fx.link(VFX + "recall", s.clone().add(0, 0.3, 0), boss.getLocation().add(0, 4, 0)); later(14, () -> { if (l != null) l.close(); }); });
+                    later(Math.max(1, warn - 8), () -> { var l = Fx.link(fx("recall"), s.clone().add(0, 0.3, 0), boss.getLocation().add(0, 4, 0)); later(14, () -> { if (l != null) l.close(); }); });
                 });
             }
             chipSpots.clear();
@@ -327,18 +327,16 @@ final class RouletteBoss extends Mech {
             castAt(boss, "CHA_RL_clear");
             anim("spin_cast");
             castAt(boss, (trick ? "CHA_RL_needle_trick_" : "CHA_RL_needle_stop_") + res);
-            Fx.stop(spinFx); spinFx = Fx.follow(boss, VFX + "spin", 160, 0);
-            title("§6§l룰렛", "§f바늘이 멈출 색으로 가라 — 마감 2초 전에 고정");
+            Fx.stop(spinFx); spinFx = Fx.follow(boss, fx("spin"), 160, 0);
             if (!house) say(trick ? "행운의 여신은 변덕스럽지." : "돌려라, 돌려라~");
-            if (trick) later(40, () -> Fx.follow(boss, VFX + "trick", 40, 0));
+            if (trick) later(40, () -> Fx.follow(boss, fx("trick"), 40, 0));
             int lock = trick ? 90 : 80, judge = trick ? 130 : 120;
             later(lock, () -> {
                 anim("call_bets");
-                Fx.effect(plugin, VFX + "betlock", center, center.getYaw(), 40);
+                Fx.effect(plugin, fx("betlock"), center, center.getYaw(), 40);
                 bets.clear();
                 for (Player pl : players()) {
                     int s = sectorOf(pl); bets.put(pl.getUniqueId(), s);
-                    tell(pl, "§c§l베팅 마감", s < 0 ? "§7테이블 — 베팅 안 함" : "§f베팅: " + SECTOR[s]);
                 }
                 Fx.stop(spinFx); spinFx = null;
                 // 터질 5구역 예고 (판정은 마감 때 고정된 베팅)
@@ -349,16 +347,16 @@ final class RouletteBoss extends Mech {
 
         void judgeRoulette(int res, boolean house) {
             float safeYaw = center.getYaw() + 60 * res;
-            Fx.effect(plugin, VFX + "lose", center, safeYaw, 60);
-            Fx.effect(plugin, VFX + "table", center, 0, 40);
+            Fx.effect(plugin, fx("lose"), center, safeYaw, 60);
+            Fx.effect(plugin, fx("lose_b"), center, safeYaw, 60);   // 반쪽 (보스VFX팩나눔)
+            Fx.effect(plugin, fx("table"), center, 0, 40);
             int wins = 0;
             for (Player pl : players()) {
                 Integer s = bets.get(pl.getUniqueId());
                 if (s == null) s = sectorOf(pl);   // 마감 뒤 들어온 사람 = 지금 자리
                 if (s == res) {
                     wins++;
-                    Fx.follow(pl, VFX + "win", 40, 0);
-                    tell(pl, "§6§l적중!", "§f" + SECTOR[res] + " §f— 보스가 휘청인다");
+                    Fx.follow(pl, fx("win"), 40, 0);
                     if (!house) boss.damage(maxHp() * 0.06, pl);
                 } else hurtPct(pl, s < 0 ? 0.30 : house ? 0.35 : 0.45, "dark");
             }
@@ -373,8 +371,7 @@ final class RouletteBoss extends Mech {
             boss.setAI(false);
             castAt(boss, "CHA_RL_clear");
             anim("groggy");
-            Fx.stop(groggyFx); groggyFx = Fx.follow(boss, VFX + "groggy", ticks + 10, 0);
-            title("§6§l그로기", "§f" + ticks / 20 + "초 — 받는 피해 1.5배");
+            Fx.stop(groggyFx); groggyFx = Fx.follow(boss, fx("groggy"), ticks + 10, 0);
         }
         void endGroggy() {
             Fx.stop(groggyFx); groggyFx = null;
@@ -400,7 +397,6 @@ final class RouletteBoss extends Mech {
             houseDone = true;
             Fx.stop(groggyFx); groggyFx = null;
             phase = P_HOUSE; invulnerable = true; houseLeft = 3; houseWins = 0;
-            title("§6§l하우스 룰", "§f룰렛 3연속 — 맞힌 만큼 그로기");
             say("이제부터는 하우스 룰이다. 판을 키우지!");
             later(30, this::houseRound);
         }
@@ -426,8 +422,7 @@ final class RouletteBoss extends Mech {
             if (enraged) return;
             enraged = true;
             anim("enrage");
-            Fx.effect(plugin, VFX + "enrage", ground(boss.getLocation()), 0, 60);
-            title("§c§l더블 오어 낫싱", "§f룰렛이 빨라지고 속임수가 잦아진다");
+            Fx.effect(plugin, fx("enrage"), ground(boss.getLocation()), 0, 60);
             say("올인이다! 전부 걸어라!");
             AttributeInstance spd = boss.getAttribute(Attribute.MOVEMENT_SPEED);
             if (spd != null) spd.setBaseValue(spd.getBaseValue() * 1.3);
@@ -497,8 +492,7 @@ final class RouletteBoss extends Mech {
         public void death(EntityDeathEvent e) {
             Fight f = FIGHTS.remove(e.getEntity().getUniqueId());
             if (f == null) return;
-            Fx.effect(f.plugin, VFX + "enrage", e.getEntity().getLocation(), 0, 60);
-            f.title("§6§l룰레타 처치", "§7판은 끝났다. 하우스가... 졌다.");
+            Fx.effect(f.plugin, fx("enrage"), e.getEntity().getLocation(), 0, 60);
             f.say("말도 안 돼... 내가... 잃다니...");
             f.close();
         }

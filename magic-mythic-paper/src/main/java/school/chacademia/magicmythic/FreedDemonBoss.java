@@ -128,7 +128,6 @@ final class FreedDemonBoss extends Mech {
             anim("spawn");
             Fx.effect(plugin, "claude:freeddemon_story/spawn", ground(center), front, 100);
             later(40, () -> say("……사슬이, 가볍구나."));
-            later(62, () -> title("§4§l해방된 악마", "§7봉인은 끝났다"));
             later(80, () -> { boss.setAI(true); nextAt = t + 20; });
         }
 
@@ -928,11 +927,11 @@ final class FreedDemonBoss extends Mech {
                 if (!super.step()) return false;
                 if (!ready) return true;
                 if (age % 24 == 0) for (int k = 0; k < 8; k++)   // 구역마다 새겨진 표식 (계속 보임)
-                    Fx.effect(f.plugin, "claude:freeddemon_signature/mark" + sectorMark[k], ground(f.center.clone().add(dir(sectorYaw(k)).multiply(8))).add(0, 1.6, 0), 0, 30);
+                    Fx.effect(f.plugin, "claude:freeddemon_signature2/mark" + sectorMark[k], ground(f.center.clone().add(dir(sectorYaw(k)).multiply(8))).add(0, 1.6, 0), 0, 30);
                 if (idx < shown.size() && age >= showAt) {
                     int[] m = shown.get(idx++);
                     String sys = (m[1] == 1 ? "rev" : m[1] == 2 ? "fake" : "mark") + m[0];
-                    Fx.effect(f.plugin, "claude:freeddemon_signature/" + sys, f.boss.getLocation().add(0, 8.5, 0), 0, 30);
+                    Fx.effect(f.plugin, (sys.startsWith("fake") ? "claude:freeddemon_signature3/" : "claude:freeddemon_signature2/") + sys,   /* 보스VFX팩나눔: mark·rev → 2, fake → 3 */ f.boss.getLocation().add(0, 8.5, 0), 0, 30);
                     showAt = age + 28;
                     if (idx == shown.size()) boomAt = age + 50;
                 }
@@ -974,7 +973,6 @@ final class FreedDemonBoss extends Mech {
                 f.anim("fake_death");
                 Fx.effect(f.plugin, "claude:freeddemon_story/fake_death", ground(f.boss.getLocation()), f.boss.getLocation().getYaw(), 80);
                 f.later(48, () -> {
-                    f.title("§6§l토벌 완료", "§7해방된 악마가 쓰러졌다");
                     Location c = ground(f.boss.getLocation().clone().add(dir(f.boss.getLocation().getYaw()).multiply(4))); c.setYaw(f.boss.getLocation().getYaw() + 180);
                     mimic = f.prop("CA_Freed_mimic", c, "mimic");
                 });
@@ -1168,7 +1166,6 @@ final class FreedDemonBoss extends Mech {
         public void death(EntityDeathEvent e) {
             Fight f = FIGHTS.get(e.getEntity().getUniqueId());
             if (f != null) {
-                f.title("§6§l재봉인", "§7악마는 다시 사슬 아래 잠들었다");
                 FIGHTS.remove(e.getEntity().getUniqueId());
                 f.close();
                 return;
