@@ -144,6 +144,21 @@ abstract class DemonFight implements Ticker.Tick {
     static float yawOf(Vector v) { return (float) Math.toDegrees(Math.atan2(-v.getX(), v.getZ())); }
     static Vector dir(float yaw) { double a = Math.toRadians(yaw); return new Vector(-Math.sin(a), 0, Math.cos(a)); }
     static Location ground(Location at) { return ReaperBoss.ground(at); }
+
+    // [기능:줄어드는바닥표시 시작] 11/09 오너 "바닥이 줄어드는 게 보여야지": 안전 구역 경계를 원으로 그림 (0.5초마다 부르면 계속 보임)
+    static void ringFx(Location c, double r, Color color) {
+        World w = c.getWorld(); if (w == null) return;
+        var dust = new Particle.DustOptions(color, 1.8f);
+        int n = Math.max(32, (int) (r * 2 * Math.PI / 0.7));
+        double y = ReaperBoss.ground(c).getY() + 0.2;
+        for (int i = 0; i < n; i++) {
+            double a = i * Math.PI * 2 / n;
+            Location p = new Location(w, c.getX() + Math.cos(a) * r, y, c.getZ() + Math.sin(a) * r);
+            w.spawnParticle(Particle.DUST, p, 1, 0, 0, 0, 0, dust);
+            if (i % 4 == 0) w.spawnParticle(Particle.DUST, p.clone().add(0, 0.6, 0), 1, 0, 0, 0, 0, dust);
+        }
+    }
+    // [기능:줄어드는바닥표시 끝]
     /** 중심에서 yaw 방향 d 만큼 (바닥 높이). */
     static Location polar(Location c, float yaw, double d) { return ground(c.clone().add(dir(yaw).multiply(d))); }
     /** 중심 기준 각도 (마인크래프트 yaw). */

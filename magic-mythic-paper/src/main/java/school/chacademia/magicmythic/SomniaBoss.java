@@ -165,6 +165,7 @@ final class SomniaBoss extends Mech {
             }
             if (phase == P_NIGHTMARE) {
                 double r = Math.max(6, arena - (arena - 6) * (t - phaseAt) / 500.0);
+                ringFx(dream, r, Color.fromRGB(0xB070FF));   // [기능:줄어드는바닥표시]
                 for (Player pl : dreamers()) if (ReaperBoss.flat2(pl.getLocation(), dream) > r * r) {
                     hurtPct(pl, 0.05, "dark");
                     Vector in = dream.toVector().subtract(pl.getLocation().toVector()).setY(0);

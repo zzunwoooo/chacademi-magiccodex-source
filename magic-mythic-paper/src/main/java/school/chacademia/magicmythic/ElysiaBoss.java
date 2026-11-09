@@ -1058,6 +1058,7 @@ final class ElysiaBoss extends Mech {
                 if (!super.step()) return false;
                 if (burning) return true;
                 double r = radius();
+                if (age % 10 == 0) DemonFight.ringFx(f.center, r, org.bukkit.Color.fromRGB(0xFF3A1A));   // [기능:줄어드는바닥표시]
                 if (age % 10 == 0) for (Player pl : f.players()) {
                     if (ReaperBoss.flat2(pl.getLocation(), f.center) > r * r) { f.hurtPct(pl, 0.05); Fx.effect(f.plugin, "claude:belzar_hellfire/hellfire", ground(pl.getLocation()), 0, 40); }
                 }
