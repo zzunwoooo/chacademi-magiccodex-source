@@ -364,7 +364,7 @@ CA_Elysia_seal:
 CA_Elysia_cherub:
   Type: HUSK
   Display: '&f성가대 아기천사'
-  Health: 180
+  Health: 140
   Damage: 8
   Options:
     PreventOtherDrops: true
@@ -397,7 +397,7 @@ CA_Elysia_cherub:
 CA_Elysia_cherub_shiny:
   Type: HUSK
   Display: '&f성가대 아기천사'
-  Health: 180
+  Health: 140
   Damage: 8
   Options:
     PreventOtherDrops: true
@@ -431,7 +431,7 @@ CA_Elysia_cherub_shiny:
 CA_Belzar_imp:
   Type: HUSK
   Display: '&c이자 징수 임프'
-  Health: 120
+  Health: 90
   Damage: 6
   Options:
     PreventOtherDrops: true
@@ -462,7 +462,7 @@ CA_Belzar_imp:
 CA_Belzar_imp_shiny:
   Type: HUSK
   Display: '&c이자 징수 임프'
-  Health: 120
+  Health: 90
   Damage: 6
   Options:
     PreventOtherDrops: true
@@ -494,7 +494,7 @@ CA_Belzar_imp_shiny:
 CA_Belzar_wraith:
   Type: HUSK
   Display: '&7채무자의 망령'
-  Health: 520
+  Health: 360
   Damage: 10
   Options:
     PreventOtherDrops: true
@@ -526,7 +526,7 @@ CA_Belzar_wraith:
 CA_Belzar_wraith_shiny:
   Type: HUSK
   Display: '&7채무자의 망령'
-  Health: 520
+  Health: 360
   Damage: 10
   Options:
     PreventOtherDrops: true
