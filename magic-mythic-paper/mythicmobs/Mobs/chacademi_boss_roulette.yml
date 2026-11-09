@@ -167,7 +167,7 @@ CA_Roulette_coin:
 CA_Roulette_chip_imp:
   Type: HUSK
   Display: '&c칩 임프'
-  Health: 200
+  Health: 150
   Damage: 6
   Options:
     PreventOtherDrops: true
@@ -199,7 +199,7 @@ CA_Roulette_chip_imp:
 CA_Roulette_chip_imp_shiny:
   Type: HUSK
   Display: '&c칩 임프'
-  Health: 200
+  Health: 150
   Damage: 6
   Options:
     PreventOtherDrops: true
@@ -234,7 +234,7 @@ CA_Roulette_chip_imp_shiny:
 CA_Roulette_card_soldier:
   Type: HUSK
   Display: '&f카드 병정'
-  Health: 700
+  Health: 450
   Damage: 10
   Options:
     PreventOtherDrops: true
@@ -265,7 +265,7 @@ CA_Roulette_card_soldier:
 CA_Roulette_card_soldier_shiny:
   Type: HUSK
   Display: '&f카드 병정'
-  Health: 700
+  Health: 450
   Damage: 10
   Options:
     PreventOtherDrops: true
@@ -298,7 +298,7 @@ CA_Roulette_card_soldier_shiny:
 CA_Roulette_dice_mage:
   Type: HUSK
   Display: '&5주사위 술사'
-  Health: 320
+  Health: 220
   Damage: 0
   Options:
     PreventOtherDrops: true
@@ -329,7 +329,7 @@ CA_Roulette_dice_mage:
 CA_Roulette_dice_mage_shiny:
   Type: HUSK
   Display: '&5주사위 술사'
-  Health: 320
+  Health: 220
   Damage: 0
   Options:
     PreventOtherDrops: true
