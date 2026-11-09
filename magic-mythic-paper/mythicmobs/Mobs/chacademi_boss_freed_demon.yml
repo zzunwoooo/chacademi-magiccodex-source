@@ -12,7 +12,7 @@
 CA_Boss_freed_demon:
   Type: HUSK
   Display: '&4&l재의 군주 아스칼론'
-  Health: 9999
+  Health: 12500
   Damage: 20
   Armor: 0
   BossBar:
