@@ -97,6 +97,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new AshShadowBoss.Hooks(), this); // 1인 던전 보스 재의 그림자 (무적·50%·장치·배율)
         getServer().getPluginManager().registerEvents(new TimeWraithBoss.Hooks(), this); // 3인 보스 시간의 망령 (기준선·기믹 소품·누적 딜·바늘 원소)
         getServer().getPluginManager().registerEvents(new MordianBoss.Hooks(), this); // 3인 보스 모르디안의 원령 (기준선·기믹 소품·그림자 대상)
+        getServer().getPluginManager().registerEvents(new ElysiaBoss.Hooks(), this); // 1인 레이드 엘리시아·벨자르 (기준선·빚·소품·구원·회복 막기)
         dummies = new TrainingDummies(this); // #107 마법 연습장 훈련 허수아비
         getServer().getPluginManager().registerEvents(dummies, this);
         spellRoutes = new SpellRoutes(new java.io.File(getDataFolder().getParentFile(), "MagicCodexBridge/spell-runtime.yml"));
@@ -112,6 +113,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         AshShadowBoss.closeAll();
         TimeWraithBoss.closeAll();
         MordianBoss.closeAll();
+        ElysiaBoss.closeAll();
         if (reactions != null) reactions.close();
         if (dummies != null) { dummies.close(); dummies = null; }
         Targets.sealed = null;
@@ -165,6 +167,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chaash" -> new AshShadowBoss(this, p);     // 1인 던전 보스 재의 그림자 진행자
             case "chatime" -> new TimeWraithBoss(this, p);   // 3인 보스 시간의 망령 진행자
             case "chamord" -> new MordianBoss(this, p);      // 3인 보스 모르디안의 원령 진행자
+            case "chaelysia" -> new ElysiaBoss(this, p);     // 1인 레이드 엘리시아 → 벨자르 진행자
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);

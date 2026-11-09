@@ -1,0 +1,77 @@
+// Elysia_Reveal — 50% 정체 폭로. static, P = 보스 발밑, 정면 = 보스 방향. 약 4.6 s.
+// 엘리시아 reveal 모션(4 s)과 같이 시작 → 2.6 s 후광이 깨짐 → 2.8 s 검붉은 폭발(여기서 모드가 벨자르 모델로 교체 + belzar spawn) → 잔불.
+const HALO = 3.45, CHEST = 2.1, TB = 2.6, TX = 2.8;
+var EXTRA_MESHES = {
+  halo: merge([ringM(0.5, 0.06, 0), ringM(0.44, 0.015, 0)]),
+  hCircle: merge([ringM(1, 0.03, 0.03), ringM(0.95, 0.012, 0.03), polygram(6, 2, 0.92, 0.016, 0.035), vtxCircles(6, 0.92, 0.06, 0.012, 0.035), ringM(0.6, 0.02, 0.04), polygram(6, 1, 0.6, 0.012, 0.04, Math.PI / 6)]),
+  hRune: runeArcs(12, 0.78, 0.12, 0.032),
+  wing: crescentXY(Math.PI * 0.55, 0.12),
+  col: merge([{ verts: [[-0.5, 0, 0], [0.5, 0, 0], [-0.5, 1, 0], [0.5, 1, 0]], uvs: [[0, 1], [1, 1], [0, 0], [1, 0]], tris: [0, 1, 2, 1, 3, 2] },
+              { verts: [[0, 0, -0.5], [0, 0, 0.5], [0, 1, -0.5], [0, 1, 0.5]], uvs: [[0, 1], [1, 1], [0, 0], [1, 0]], tris: [0, 1, 2, 1, 3, 2] }]),
+};
+const L = [
+  // --- 균열: 후광이 깜빡이며 금이 감, 바닥에서 검은 기운이 점점 거세짐 ---
+  { name: "A01 HaloFlicker", mat: "line", mode: "mesh", mesh: "halo", fudge: -2, pos: [0, HALO, 0.1], size: 1, rot3: [0.25, 0, -0.17], rotLife: [0, 2.5, 0], bursts: [[0, 1]], life: TB,
+    alpha: [[0, 0.9], [0.2, 0.5], [0.25, 1], [0.45, 0.4], [0.5, 1], [0.7, 0.3], [0.74, 1], [0.86, 0.2], [0.9, 1], [1, 1]] },
+  { name: "A02 RedCracks", mat: "hStreak", mode: "stretch", vs: 0.0, ls: 1, fudge: -3, pos: [0, HALO, 0.1], life: [0.12, 0.2], size: [0.04, 0.07], shape: { type: "circle", r: 0.5, th: 0, y: 0 },
+    bursts: [[0.4, 2], [0.9, 3], [1.4, 4], [1.8, 5], [2.1, 6], [2.35, 8]], speed: [2, 3], alpha: [[0, 1], [1, 0]] },
+  { name: "A03 Seep", mat: "mist", fudge: 26, life: [1.0, 1.4], size: [0.8, 1.4], rot: [0, TAU], shape: { type: "circle", r: 1.6, th: 1, y: 0.1 },
+    bursts: [[0.2, 2], [0.6, 3], [1.0, 4], [1.4, 6], [1.8, 8], [2.2, 10]], vel: { y: [0.5, 1.0], rad: [-0.3, -0.1] }, sizeLife: [[0, 0.5], [1, 1.3]], alpha: [[0, 0], [0.3, 0.6], [1, 0]], flip: { x: 4, y: 4 } },
+  { name: "A04 FloorCrack", mat: "hCrack", mode: "mesh", mesh: "quad", fudge: 43, pos: [0, 0.025, 0], size: 5, rot3: YAW, bursts: [[0.5, 1]], life: 4,
+    sizeLife: [[0, 0.2, 0, 1], [0.55, 1]], alpha: [[0, 0], [0.1, 0.5], [0.5, 0.9], [0.8, 0.8], [1, 0]] },
+  { name: "A05 DarkFeathers", mat: "featherDark", fudge: 14, life: [1.4, 1.8], size: [0.25, 0.38], rot: [0, TAU], rotZ: [-1.5, 1.5], shape: { type: "circle", r: 1.6, th: 1, y: 3.2 },
+    bursts: [[0.6, 3], [1.2, 4], [1.8, 5]], vel: { y: [-1.4, -1.0] }, noise: { s: 0.5, f: 0.8, sp: 0.4 }, alpha: [[0, 0], [0.15, 1], [0.8, 1], [1, 0]] },
+  { name: "A06 GoldFade", mat: "glow", fudge: 2, pos: [0, CHEST, 0], size: 3.4, bursts: [[0, 1]], life: TB, alpha: [[0, 0.4], [0.5, 0.25], [1, 0]] },
+  { name: "A07 Pull", mat: "hStreak", mode: "stretch", vs: 0.08, ls: 1.6, fudge: -4, pos: [0, CHEST, 0], life: 0.4, size: [0.05, 0.09], shape: { type: "sphere", r: 3, th: 0 },
+    bursts: [[1.6, 8], [1.9, 12], [2.2, 16], [2.4, 20]], vel: { rad: [-7.5, -6.5] }, alpha: [[0, 0], [0.3, 1], [1, 0.8]] },
+  // --- 2.6 s: 후광이 깨짐 ---
+  { name: "B01 HaloShatter", mat: "shardLight", fudge: -4, pos: [0, HALO, 0.1], life: [0.7, 1.1], size: [0.12, 0.22], rot: [0, TAU], rotZ: [-12, 12], shape: { type: "circle", r: 0.5, th: 0, y: 0 },
+    bursts: [[TB, 26]], vel: { rad: [2.5, 4.5], y: [0.5, 2] }, gravity: 1.2, alpha: [[0, 1], [0.8, 1], [1, 0]] },
+  { name: "B02 HaloFlash", mat: "flare", fudge: -7, pos: [0, HALO, 0.1], size: 2.6, rot: [0, TAU], bursts: [[TB, 1]], life: 0.3, sizeLife: [[0, 0.3], [0.3, 1], [1, 1.1]], alpha: [[0, 0.8], [1, 0]] },
+  // --- 2.8 s: 검붉은 폭발 ---
+  { name: "C01 Flash", mat: "hStar", fudge: -8, pos: [0, CHEST, 0], size: 6, rot: [0, TAU], bursts: [[TX, 1]], life: 0.25, sizeLife: [[0, 0.3], [0.25, 1], [1, 0]] },
+  { name: "C02 Flare", mat: "hFlare", fudge: -7, pos: [0, CHEST, 0], size: 8, rot: [0, TAU], rotZ: [-0.5, 0.5], bursts: [[TX, 1]], life: 0.55, sizeLife: [[0, 0.4], [0.3, 1], [1, 1.2]], alpha: [[0, 0.8], [1, 0]] },
+  { name: "C03 Wings", mat: "hSlash", mode: "mesh", mesh: "wing", fudge: 5, pos: [0, CHEST + 0.3, 0.6], life: 0.6, size: [2.8, 3.4], bursts: [[TX, 6]],
+    rot3: [0, [-0.4, 0.4], [0, TAU]], rotLife: [0, 0, [-1.5, 1.5]], sizeLife: [[0, 0.3, 0, 4], [0.4, 1], [1, 1.15]], flip: { x: 2, y: 8 } },
+  { name: "C04 WingInk", mat: "ink", mode: "mesh", mesh: "wing", fudge: 12, pos: [0, CHEST + 0.3, 0.7], life: 0.7, size: [2.6, 3.2], bursts: [[TX, 6]],
+    rot3: [0, [-0.4, 0.4], [0, TAU]], sizeLife: [[0, 0.3, 0, 4], [0.4, 1], [1, 1.1]], alpha: [[0, 0.9], [0.6, 0.6], [1, 0]] },
+  { name: "C05 Wave1", mat: "hWave", mode: "mesh", mesh: "quad", fudge: 30, pos: [0, 0.06, 0], size: 11, rot3: YAW, bursts: [[TX, 1]], life: 0.6, sizeLife: [[0, 0.1, 0, 3], [1, 1]], alpha: [[0, 0.8], [1, 0]] },
+  { name: "C06 Wave2", mat: "hWave", mode: "mesh", mesh: "quad", fudge: 31, pos: [0, 0.08, 0], size: 8, rot3: YAW, bursts: [[TX + 0.12, 1]], life: 0.6, sizeLife: [[0, 0.1, 0, 3], [1, 1]], alpha: [[0, 0.6], [1, 0]] },
+  { name: "C07 MistBurst", mat: "mist", fudge: 25, pos: [0, 1.0, 0], life: [1.2, 1.8], size: [1.8, 2.8], rot: [0, TAU], shape: { type: "sphere", r: 0.6, th: 1 }, bursts: [[TX, 16]],
+    speed: [4, 7], drag: 2.4, vel: { y: [0.3, 0.8], space: "world" }, sizeLife: [[0, 0.5], [1, 1.4]], alpha: [[0, 0], [0.1, 0.7], [1, 0]], flip: { x: 4, y: 4 } },
+  { name: "C08 Flames", mat: "hFlame", fudge: 3, life: [0.6, 1.0], size: [1.0, 1.8], rot: [0, TAU], shape: { type: "circle", r: 2.0, th: 1, y: 0.4 }, bursts: [[TX, 24], [TX + 0.15, 14]],
+    vel: { y: [2, 4], rad: [1, 2] }, sizeLife: [[0, 0.5, 0, 3], [1, 1.1]], flip: { x: 4, y: 4 } },
+  { name: "C09 Column", mat: "hPillar", mode: "mesh", mesh: "col", fudge: 7, size: 1, rot3: YAW, rotLife: [0, 2, 0], bursts: [[TX, 1]], life: 1.0,
+    sizeLife: [[0, 3, 0, -4], [0.2, 2.2], [1, 1.2]], alpha: [[0, 1], [0.5, 0.7], [1, 0]] },
+  { name: "C10 Pages", mat: "page", fudge: 13, pos: [0, CHEST, 0], life: [1.4, 2.0], size: [0.22, 0.34], rot: [0, TAU], rotZ: [-5, 5], shape: { type: "sphere", r: 0.4, th: 1 }, bursts: [[TX, 18]],
+    speed: [4, 7], drag: 2, gravity: 0.2, noise: { s: 0.6, f: 0.8, sp: 0.5 }, alpha: [[0, 1], [0.8, 1], [1, 0]] },
+  { name: "C11 DarkShards", mat: "shardDark", fudge: 17, pos: [0, CHEST, 0], life: [0.7, 1.0], size: [0.2, 0.4], rot: [0, TAU], rotZ: [-10, 10], shape: { type: "sphere", r: 0.4, th: 1 }, bursts: [[TX, 16]],
+    speed: [6, 10], drag: 1.2, gravity: 1.2, alpha: [[0, 1], [0.85, 1], [1, 0]] },
+  { name: "C12 Sparks", mat: "hDot", mode: "stretch", vs: 0.05, ls: 1.4, fudge: -6, pos: [0, CHEST, 0], life: [0.6, 1.0], size: [0.05, 0.1], shape: { type: "sphere", r: 0.4, th: 1 }, bursts: [[TX, 60]],
+    speed: [6, 13], drag: 2.4, gravity: 0.5, color: [[0, EMB], [0.5, CRIM], [1, DEEP]], alpha: [[0, 1], [1, 0]] },
+  { name: "C13 Circle", mat: "hLine", mode: "mesh", mesh: "hCircle", fudge: 40, size: 3.2, rot3: YAW, rotLife: [0, -0.6, 0], bursts: [[TX, 1]], life: 1.8,
+    sizeLife: [[0, 1.5, 0, -4], [0.12, 1]], alpha: [[0, 0], [0.06, 1], [0.6, 0.8], [1, 0]] },
+  { name: "C14 CircleRune", mat: "hRune", mode: "mesh", mesh: "hRune", fudge: 39, size: 3.2, rot3: YAW, rotLife: [0, 0.8, 0], bursts: [[TX + 0.05, 1]], life: 1.7,
+    sizeLife: [[0, 1.4, 0, -4], [0.12, 1]], alpha: [[0, 0], [0.06, 0.9], [0.6, 0.7], [1, 0]] },
+  { name: "C15 Sigil", mat: "hSigil", mode: "mesh", mesh: "quad", fudge: 38, pos: [0, 0.05, 0], size: 3.6, rot3: YAW, rotLife: [0, -0.4, 0], bursts: [[TX + 0.08, 1]], life: 1.6,
+    sizeLife: [[0, 1.4, 0, -4], [0.12, 1]], alpha: [[0, 0], [0.06, 0.9], [0.6, 0.7], [1, 0]] },
+  { name: "C16 Embers", mat: "hDot", fudge: -7, life: [1.2, 2.0], size: [0.04, 0.08], shape: { type: "circle", r: 2.5, th: 1, y: 0.2 }, bursts: [[TX + 0.1, 50]],
+    vel: { y: [0.8, 2] }, noise: { s: 0.7, f: 1, sp: 0.5 }, color: [[0, EMB], [0.6, CRIM], [1, DEEP]], alpha: [[0, 0], [0.1, 1], [1, 0]] },
+];
+const MATS = {
+  line: { tex: "T_Line", tint: [2.6, 2.1, 1.0], add: true }, glow: { tex: "T_Glow", tint: [1.2, 0.9, 0.4], add: true }, flare: { tex: "T_Flare", tint: [2.2, 1.8, 0.9], add: true },
+  shardLight: { tex: "T_ShardLight", tint: [2.3, 1.9, 0.9], add: true }, featherDark: { tex: "T_Feather", tint: [0.12, 0.07, 0.09], add: false },
+  hStreak: { tex: "T_Streak", tint: [2.6, 0.7, 0.3], add: true }, mist: { tex: "T_DarkMist_Sheet", tint: [1, 1, 1], add: false }, hCrack: { tex: "T_Crack", tint: [2.4, 0.55, 0.22], add: true },
+  hStar: { tex: "T_Star", tint: [2.8, 1.2, 0.7], add: true }, hFlare: { tex: "T_Flare", tint: [2.4, 0.75, 0.35], add: true }, hSlash: { tex: "T_SlashHell_Sheet", tint: [2.0, 1.5, 1.3], add: true },
+  ink: { tex: "T_ShardDark", tint: [1.4, 0.4, 0.3], add: false }, hWave: { tex: "T_Wave", tint: [1.9, 0.45, 0.2], add: true }, hFlame: { tex: "T_HellFlame_Sheet", tint: [1.7, 1.2, 1.0], add: true },
+  hPillar: { tex: "T_PillarHell", tint: [2.0, 1.4, 1.2], add: true }, page: { tex: "T_Page", tint: [1, 1, 1], add: false }, shardDark: { tex: "T_ShardDark", tint: [2.2, 0.8, 0.4], add: false },
+  hDot: { tex: "T_Dot", tint: [2.4, 1.1, 0.55], add: true }, hLine: { tex: "T_Line", tint: [2.6, 0.7, 0.32], add: true }, hRune: { tex: "T_Rune", tint: [2.4, 0.6, 0.28], add: true },
+  hSigil: { tex: "T_SigilHell", tint: [2.4, 0.55, 0.26], add: true },
+};
+const SCENE = {
+  name: "Elysia_Reveal", bloom: BLOOM_HELL, tonemapping: "neutral",
+  systems: [{ id: "reveal", role: "static", loop: false, duration: 3.0, layers: L }],
+  demo: Object.assign({}, DEMO_BG, { interval: 5.5, dummy: { height: 3.6 },
+    scenarios: { center: { label: "정체 폭로", from: [0, 0, 0], to: [0, 0, 0], normal: [0, 1, 0], flight: 0.01, anchor: [0, 0, 0], targets: [[0, 0, 0, 180]],
+      camera: { target: [0, 2.0, 0], dist: 13, yaw: -90, pitch: 14 } } } }),
+};

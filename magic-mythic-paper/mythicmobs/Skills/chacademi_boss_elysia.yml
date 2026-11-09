@@ -1,0 +1,111 @@
+# 엘리시아 / 벨자르 보스 모션 + 기믹 소품 모션 + 잡몹 스킬 (2026-11-09).
+# 패턴·기믹(예고·판정·VFX·빚·대상)은 전부 애드온 chaelysia (ElysiaBoss.java) 안. 보스·소품은 ModelEngine 상태 재생만.
+# 애드온이 CHA_EL_a_<모션>(엘리시아) / CHA_EL_b_<모션>(벨자르) 을 보스에게, CHA_EL_p_<무엇> 을 소품에게 시전.
+# hold 모션(offer·reveal)은 다음 모션 전에 지운다 (CHA_EL_clear). idle·walk·death 는 ModelEngine 기본.
+
+CHA_EL_clear:
+  Skills:
+  - state{s=offer;r=true} @self
+  - state{s=reveal;r=true} @self
+
+# ---------------- 엘리시아
+CHA_EL_a_spawn:
+  Skills:
+  - state{s=spawn;li=0;lo=3} @self
+CHA_EL_a_attack:
+  Skills:
+  - skill{s=CHA_EL_clear} @self
+  - state{s=attack;li=0;lo=2} @self
+CHA_EL_a_cast:
+  Skills:
+  - skill{s=CHA_EL_clear} @self
+  - state{s=cast;li=0;lo=3} @self
+# 두 손을 내밀어 제안 (마지막 자세 유지) → 다음 모션이 지움
+CHA_EL_a_offer:
+  Skills:
+  - skill{s=CHA_EL_clear} @self
+  - state{s=offer;li=0;lo=0} @self
+# 정체 폭로 (4초, 끝 자세 유지). 2.8초에 애드온이 벨자르로 교체
+CHA_EL_a_reveal:
+  Skills:
+  - skill{s=CHA_EL_clear} @self
+  - state{s=reveal;li=0;lo=0} @self
+CHA_EL_a_death:
+  Skills:
+  - skill{s=CHA_EL_clear} @self
+  - state{s=death;li=0;lo=0} @self
+
+# ---------------- 벨자르
+CHA_EL_b_spawn:
+  Skills:
+  - state{s=spawn;li=0;lo=3} @self
+CHA_EL_b_attack:
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+CHA_EL_b_tail_swing:
+  Skills:
+  - state{s=tail_swing;li=0;lo=2} @self
+# 수금: 장부를 들었다 1.15초에 내리찍음 (예고 1초)
+CHA_EL_b_collect:
+  Skills:
+  - state{s=collect;li=0;lo=3} @self
+CHA_EL_b_cast:
+  Skills:
+  - state{s=cast;li=0;lo=3} @self
+# 계약 파기 끝: 봉인되며 주저앉음 (끝 자세 유지)
+CHA_EL_b_death:
+  Skills:
+  - state{s=death;li=0;lo=0} @self
+
+# ---------------- 소품
+CHA_EL_p_pickup:
+  Skills:
+  - state{s=pickup;li=0;lo=0} @self
+CHA_EL_p_core_hit:
+  Skills:
+  - state{s=hit;li=0;lo=1} @self
+CHA_EL_p_core_break:
+  Skills:
+  - state{s=break;li=0;lo=0} @self
+CHA_EL_p_pillar_ring:
+  Skills:
+  - state{s=ring;li=0;lo=1} @self
+CHA_EL_p_pillar_wrong:
+  Skills:
+  - state{s=wrong;li=0;lo=1} @self
+CHA_EL_p_statue_crumble:
+  Skills:
+  - state{s=crumble;li=0;lo=0} @self
+CHA_EL_p_hand_grab:
+  Skills:
+  - state{s=grab;li=0;lo=0} @self
+CHA_EL_p_hand_vanish:
+  Skills:
+  - state{s=grab;r=true} @self
+  - state{s=vanish;li=0;lo=0} @self
+CHA_EL_p_seal_activate:
+  Skills:
+  - state{s=activate;li=0;lo=0} @self
+CHA_EL_p_ledger_burn:
+  Skills:
+  - state{s=burn;li=0;lo=0} @self
+
+# ---------------- 잡몹
+
+# 성가대 아기천사 - 찬송: 자기 중심 원 반경 3, 예고 0.8초. 피해 10 (light).
+CHA_MOB_el_cherub_hymn:
+  Cooldown: 5
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=circle;at=caster;r=3;ticks=16;flat=10;element=light;vfx=elysia_hymn/ring;vfxref=3;vfxlead=0;spell=mob_el_cherub_hymn} @target
+
+# 채무자의 망령 - 사슬 내려치기: 자기 중심 원 반경 3, 예고 0.8초. 피해 18 (dark) + 둔화 1.5초.
+CHA_MOB_bz_wraith_chain:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=3;ticks=16;flat=18;element=dark;status=slow:30:0.3;vfx=belzar_collection/collect;vfxref=3;vfxlead=0;spell=mob_bz_wraith_chain} @target
