@@ -1,0 +1,130 @@
+# 솜니아 보스 모션 + 기믹 소품 모션 + 잡몹 스킬 (2026-11-09).
+# 패턴·기믹(예고·판정·VFX·대상·졸음)은 애드온 chasomnia (SomniaBoss.java, 다음 작업) 안. 보스·소품은 ModelEngine 상태 재생만.
+# 애드온이 CHA_SN_a_<모션> 을 보스(현실·꿈 몸 둘 다)에게, CHA_SN_p_<무엇> 을 소품에게 시전. 반복 모션(lullaby·dream_cast·groggy)은 CHA_SN_clear 로 지운다.
+# idle·walk·death 는 ModelEngine 기본.
+#
+# 애드온용 패턴 대응표 (모션 스킬 / VFX 팩 Somnia_Boss = claude:somnia_boss/<시스템> / 예고 모양·수치는 기획서 4번):
+#   [현실] 자장가        CHA_SN_a_lullaby  lullaby(보스 발밑) — 고리 3겹, 맞으면 drowsy(attached) + 졸음 30%
+#          날개 바람      CHA_SN_a_wing_gust (0.8초 휘두름)  gust — 앞 부채꼴 120° r12 + 밀침
+#          깃털 비        CHA_SN_a_feather_rain  feather(지점마다, 착탄 0.32초) — 원 r2 열네 곳
+#          베개 짓누르기  CHA_SN_a_pillow_press + CA_Somnia_pillow drop  pillow(착탄 0.6초) — 원 r5
+#   [꿈]   (패턴 중 dream_cast 반복)  stairs(줄마다) / eyelid(+Z = 안전 띠 방향) / clone(분신 attached) / collapse(+Z = 꺼지는 반원)
+#   잠의 웅덩이          pool_open → pool(static 반복, 20초마다 옮길 때 정지·재생) → pool_close / 들어갈 때 enter, 종 치면 exit
+#   종                   CA_Somnia_bell glow_idle + bell_glow(칠 종) / CHA_SN_p_bell_ring + bell_ring
+#   졸음 100%            eternal(attached) → 사망
+#   50% 깨지 않는 꿈     CHA_SN_a_dream_cast + dreamfall → (25초) → CHA_SN_a_wake + wake → 그로기 CHA_SN_a_groggy + groggy
+#   30% 경계 붕괴        CHA_SN_a_enrage + enrage → boundary(static 반복, 0.12 rad/s 회전, 60초마다 현재 각도로 다시 재생)
+#   현실 ↔ 꿈 모델       CHA_SN_veil (반투명 somnia_veil) / CHA_SN_solid (실체 somnia) — 광폭화 때 보스가 꿈 쪽에 있으면 solid
+
+CHA_SN_clear:
+  Skills:
+  - state{s=lullaby;r=true} @self
+  - state{s=dream_cast;r=true} @self
+  - state{s=groggy;r=true} @self
+
+# 반투명(현실) ↔ 실체(꿈) 모델 교체
+CHA_SN_veil:
+  Skills:
+  - model{mid=somnia;r=true} @self
+  - model{mid=somnia_veil;n=false;drive=true} @self
+CHA_SN_solid:
+  Skills:
+  - model{mid=somnia_veil;r=true} @self
+  - model{mid=somnia;n=false;drive=true} @self
+
+# ---------------- 솜니아
+CHA_SN_a_spawn:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+CHA_SN_a_attack:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=attack;li=0;lo=2} @self
+CHA_SN_a_wing_gust:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=wing_gust;li=0;lo=3} @self
+CHA_SN_a_feather_rain:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=feather_rain;li=0;lo=3} @self
+CHA_SN_a_pillow_press:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=pillow_press;li=0;lo=3} @self
+CHA_SN_a_eyelid:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=eyelid;li=0;lo=3} @self
+CHA_SN_a_wake:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=wake;li=0;lo=3} @self
+CHA_SN_a_enrage:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=enrage;li=0;lo=3} @self
+CHA_SN_a_death:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=death;li=0;lo=0} @self
+# 반복: 자장가 / 꿈 패턴 시전 / 그로기 (다음 모션 전에 CHA_SN_clear)
+CHA_SN_a_lullaby:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=lullaby;li=0;lo=3} @self
+CHA_SN_a_dream_cast:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=dream_cast;li=0;lo=3} @self
+CHA_SN_a_groggy:
+  Skills:
+  - skill{s=CHA_SN_clear} @self
+  - state{s=groggy;li=0;lo=3} @self
+
+# ---------------- 소품
+CHA_SN_p_bell_glow:
+  Skills:
+  - state{s=glow_idle;li=0;lo=3} @self
+CHA_SN_p_bell_ring:
+  Skills:
+  - state{s=glow_idle;r=true} @self
+  - state{s=ring;li=0;lo=3} @self
+CHA_SN_p_pillow_drop:
+  Skills:
+  - state{s=drop;li=0;lo=0} @self
+CHA_SN_p_pillow_vanish:
+  Skills:
+  - state{s=drop;r=true} @self
+  - state{s=vanish;li=0;lo=0} @self
+
+# ---------------- 잡몹 (VFX 팩 Somnia_Mobs = claude:somnia_mobs/<시스템>)
+
+# 졸음 나방 - 들이받기: 몸 앞 부채꼴 반경 2 · 90°, 체술이라 예고 없음 (모션 0.5초에 판정). 피해 10 + 둔화 1초.
+CHA_MOB_sn_moth_ram:
+  Cooldown: 2
+  Conditions:
+  - targetwithin{d=3} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=cone;at=caster;r=2;angle=90;ticks=10;warn=false;flat=10;element=dark;status=slow:20:0.3;vfx=somnia_mobs/moth_hit;vfxref=2;vfxlead=0;spell=mob_sn_moth_ram} @target
+
+# 몽유 거인 - 큰 손 휘두르기: 몸 앞 반원 반경 4.5, 예고 0.9초 (모션 0.9초에 휘두름). 피해 24.
+CHA_MOB_sn_walker_swing:
+  Cooldown: 5
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=180;ticks=18;flat=24;element=dark;knock=0.5;vfx=somnia_mobs/walker_swing;vfxref=4.5;vfxlead=0;spell=mob_sn_walker_swing} @target
+
+# 악몽 인형 - 바늘 3연발: 가벼운 투사체(예고 없음, 보고 피함), 0.15초부터 0.3초 간격. 각 12.
+CHA_MOB_sn_doll_needles:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=20} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - delay 3
+  - chamobshot{count=3;spread=6;interval=6;flat=12;element=dark;radius=0.4;speed=1.1;range=18;fromy=2.4;fromz=0.4;vfx=somnia_mobs/needle;hitvfx=somnia_mobs/needle_hit} @target

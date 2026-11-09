@@ -1,0 +1,251 @@
+# 룰레타 보스 모션 + 기믹 소품 모션 + 잡몹 스킬 (2026-11-09).
+# 패턴·기믹(예고·판정·VFX·대상)은 애드온 charoulette (RouletteBoss.java, 다음 작업) 안. 보스·소품은 ModelEngine 상태 재생만.
+# 애드온이 CHA_RL_a_<모션> 을 보스에게, CHA_RL_p_<무엇> 을 소품에게 시전. 반복 모션(spin_cast·groggy)은 CHA_RL_clear 로 지운다.
+# idle·walk·death 는 ModelEngine 기본.
+#
+# 애드온용 패턴 대응표 (모션 스킬 / VFX 팩 Roulette_Boss = claude:roulette_boss/<시스템> / 예고 모양·수치는 기획서 3번):
+#   룰렛 (35초마다)      CHA_RL_a_spin_cast + spin(attached 반복) → 속임수 회차면 trick → 6초 뒤 needle_stop_k 또는 needle_trick_k
+#                        → 멈추기 2초 전 CHA_RL_a_call_bets + betlock(경기장 중앙) → 판정: 맞힌 사람 win / lose(+Z = 안전 구역 방향) / table
+#   카드 날리기          CHA_RL_a_card_throw (0.5초 손 휘두름)  card(projectile) + card_hit  — 부채꼴 5갈래 직선 폭 1.5 × 18, 사이 각도로 한 번 더
+#   칩 탑 낙하           CHA_RL_a_chip_drop + CA_Roulette_chip_tower drop  chip_drop(착지 0.12초) — 원 r3 네 곳 0.3초 간격
+#   주사위 굴리기        CHA_RL_a_dice_roll + CA_Roulette_dice roll/land_n  dice_trail(attached) → pip_n(+Z = 첫 줄 방향)
+#   딜러의 손            CHA_RL_a_dealer_hand  dealer_cross → dealer_x — 십자 직선 폭 3 × 16 → 45° 돌려 X자
+#   동전 던지기          CHA_RL_a_coin_flip + CA_Roulette_coin flip_heads/flip_tails  coin_heads(r8) / coin_tails(8~18)
+#   올인                 CHA_RL_a_all_in (0.85초 내려찍기)  all_in — 앞 반원 r10
+#   칩 회수              CHA_RL_a_chip_recall  recall(link, 칩마다) — 경로 직선 여러 개
+#   그로기 (적중·하우스 룰)  CHA_RL_a_groggy + groggy(attached 반복)
+#   광폭화 (30%)         CHA_RL_a_enrage + enrage → enrage_aura(attached 반복)
+
+CHA_RL_clear:
+  Skills:
+  - state{s=spin_cast;r=true} @self
+  - state{s=groggy;r=true} @self
+  - state{s=needle_fast;r=true} @self
+
+# ---------------- 룰레타
+CHA_RL_a_spawn:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+CHA_RL_a_attack:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=attack;li=0;lo=2} @self
+CHA_RL_a_call_bets:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=call_bets;li=0;lo=3} @self
+CHA_RL_a_card_throw:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=card_throw;li=0;lo=3} @self
+CHA_RL_a_chip_drop:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=chip_drop;li=0;lo=3} @self
+CHA_RL_a_dice_roll:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=dice_roll;li=0;lo=3} @self
+CHA_RL_a_dealer_hand:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=dealer_hand;li=0;lo=3} @self
+CHA_RL_a_coin_flip:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=coin_flip;li=0;lo=3} @self
+CHA_RL_a_all_in:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=all_in;li=0;lo=3} @self
+CHA_RL_a_chip_recall:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=chip_recall;li=0;lo=3} @self
+CHA_RL_a_enrage:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=enrage;li=0;lo=3} @self
+CHA_RL_a_death:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=death;li=0;lo=0} @self
+# 반복: 룰렛 돌리기 / 그로기 (다음 모션 전에 CHA_RL_clear)
+CHA_RL_a_spin_cast:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=spin_cast;li=0;lo=3} @self
+CHA_RL_a_groggy:
+  Skills:
+  - skill{s=CHA_RL_clear} @self
+  - state{s=groggy;li=0;lo=3} @self
+# 바늘 (needle 본만 움직임 — 몸 모션과 같이 재생된다). fast = 계속 빠르게, stop_k = 6초 감속 후 구역 k(정면에서 볼 때 맨 위부터 시계방향 0~5)에 멈춤,
+# trick_k = 한 칸 앞에서 멈춘 척하다 6.5초에 k 로 넘어감. 멈춘 자세는 다음 needle 상태 전까지 유지.
+CHA_RL_needle_clear:
+  Skills:
+  - state{s=needle_stop_0;r=true} @self
+  - state{s=needle_trick_0;r=true} @self
+  - state{s=needle_stop_1;r=true} @self
+  - state{s=needle_trick_1;r=true} @self
+  - state{s=needle_stop_2;r=true} @self
+  - state{s=needle_trick_2;r=true} @self
+  - state{s=needle_stop_3;r=true} @self
+  - state{s=needle_trick_3;r=true} @self
+  - state{s=needle_stop_4;r=true} @self
+  - state{s=needle_trick_4;r=true} @self
+  - state{s=needle_stop_5;r=true} @self
+  - state{s=needle_trick_5;r=true} @self
+  - state{s=needle_fast;r=true} @self
+CHA_RL_needle_fast:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_fast;li=0;lo=0} @self
+CHA_RL_needle_stop_0:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_stop_0;li=0;lo=0} @self
+CHA_RL_needle_trick_0:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_trick_0;li=0;lo=0} @self
+CHA_RL_needle_stop_1:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_stop_1;li=0;lo=0} @self
+CHA_RL_needle_trick_1:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_trick_1;li=0;lo=0} @self
+CHA_RL_needle_stop_2:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_stop_2;li=0;lo=0} @self
+CHA_RL_needle_trick_2:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_trick_2;li=0;lo=0} @self
+CHA_RL_needle_stop_3:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_stop_3;li=0;lo=0} @self
+CHA_RL_needle_trick_3:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_trick_3;li=0;lo=0} @self
+CHA_RL_needle_stop_4:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_stop_4;li=0;lo=0} @self
+CHA_RL_needle_trick_4:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_trick_4;li=0;lo=0} @self
+CHA_RL_needle_stop_5:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_stop_5;li=0;lo=0} @self
+CHA_RL_needle_trick_5:
+  Skills:
+  - skill{s=CHA_RL_needle_clear} @self
+  - state{s=needle_trick_5;li=0;lo=0} @self
+
+# ---------------- 소품
+CHA_RL_p_dice_roll:
+  Skills:
+  - state{s=roll;li=0;lo=0} @self
+CHA_RL_p_dice_land_1:
+  Skills:
+  - state{s=roll;r=true} @self
+  - state{s=land_1;li=0;lo=0} @self
+CHA_RL_p_dice_land_2:
+  Skills:
+  - state{s=roll;r=true} @self
+  - state{s=land_2;li=0;lo=0} @self
+CHA_RL_p_dice_land_3:
+  Skills:
+  - state{s=roll;r=true} @self
+  - state{s=land_3;li=0;lo=0} @self
+CHA_RL_p_dice_land_4:
+  Skills:
+  - state{s=roll;r=true} @self
+  - state{s=land_4;li=0;lo=0} @self
+CHA_RL_p_dice_land_5:
+  Skills:
+  - state{s=roll;r=true} @self
+  - state{s=land_5;li=0;lo=0} @self
+CHA_RL_p_dice_land_6:
+  Skills:
+  - state{s=roll;r=true} @self
+  - state{s=land_6;li=0;lo=0} @self
+CHA_RL_p_chip_drop:
+  Skills:
+  - state{s=drop;li=0;lo=0} @self
+CHA_RL_p_chip_topple:
+  Skills:
+  - state{s=drop;r=true} @self
+  - state{s=topple;li=0;lo=0} @self
+CHA_RL_p_coin_heads:
+  Skills:
+  - state{s=flip_heads;li=0;lo=0} @self
+CHA_RL_p_coin_tails:
+  Skills:
+  - state{s=flip_tails;li=0;lo=0} @self
+
+# ---------------- 잡몹 (VFX 팩 Roulette_Mobs = claude:roulette_mobs/<시스템>)
+
+# 칩 임프 - 굴러 들이받기: 몸 앞 부채꼴 반경 2 · 90°, 체술이라 예고 없음 (모션 0.7초에 판정). 피해 12.
+CHA_MOB_rl_imp_roll:
+  Cooldown: 2
+  Conditions:
+  - targetwithin{d=3} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=cone;at=caster;r=2;angle=90;ticks=14;warn=false;flat=12;element=fire;vfx=roulette_mobs/imp_hit;vfxref=2;vfxlead=0;spell=mob_rl_imp_roll} @target
+
+# 칩 임프 - 사망 동전 폭발: 자기 중심 원 반경 2, 예고 0.4초 (죽어도 취소 안 됨). 피해 8.
+CHA_MOB_rl_imp_pop:
+  Skills:
+  - chatelegraph{shape=circle;at=caster;r=2;ticks=8;flat=8;element=fire;cancel=false;vfx=roulette_mobs/imp_pop;vfxref=2;vfxlead=2;spell=mob_rl_imp_pop} @self
+
+# 카드 병정 - 3연 베기: 몸 앞 부채꼴 반경 4 · 120°, 0.35 / 0.8 / 1.25초에 판정 (오른→왼, 왼→오른, 내려베기). 각 18.
+CHA_MOB_rl_soldier_slash:
+  Cooldown: 5
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=4;angle=120;ticks=7;flat=18;element=dark;vfx=roulette_mobs/slash_a;vfxref=4;vfxlead=0;spell=mob_rl_soldier_slash} @target
+  - delay 7
+  - chatelegraph{shape=cone;at=caster;r=4;angle=120;ticks=9;flat=18;element=dark;vfx=roulette_mobs/slash_b;vfxref=4;vfxlead=0;spell=mob_rl_soldier_slash} @target
+  - delay 9
+  - chatelegraph{shape=cone;at=caster;r=4;angle=120;ticks=9;flat=18;element=dark;knock=0.6;vfx=roulette_mobs/slash_c;vfxref=4;vfxlead=0;spell=mob_rl_soldier_slash} @target
+
+# 주사위 술사 - 주사위 투척: 대상 발밑 원 반경 2.5, 예고 1.2초. 0.75초에 던짐 (투사체는 보여주기, 판정은 예고 원). 피해 = 눈 × 6 (무작위 1~6).
+CHA_MOB_rl_mage_dice:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=22} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - randomskill{s=CHA_MOB_rl_mage_dice_1,CHA_MOB_rl_mage_dice_2,CHA_MOB_rl_mage_dice_3,CHA_MOB_rl_mage_dice_4,CHA_MOB_rl_mage_dice_5,CHA_MOB_rl_mage_dice_6} @target
+  - delay 15
+  - chamobshot{flat=0;radius=0.2;speed=0.7;rise=0.35;range=26;fromy=1.8;fromz=0.4;vfx=roulette_mobs/dice} @target
+CHA_MOB_rl_mage_dice_1:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=6;element=dark;vfx=roulette_mobs/dice_hit;vfxref=2.5;vfxlead=2;spell=mob_rl_mage_dice} @target
+CHA_MOB_rl_mage_dice_2:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=12;element=dark;vfx=roulette_mobs/dice_hit;vfxref=2.5;vfxlead=2;spell=mob_rl_mage_dice} @target
+CHA_MOB_rl_mage_dice_3:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=18;element=dark;vfx=roulette_mobs/dice_hit;vfxref=2.5;vfxlead=2;spell=mob_rl_mage_dice} @target
+CHA_MOB_rl_mage_dice_4:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=24;element=dark;vfx=roulette_mobs/dice_hit;vfxref=2.5;vfxlead=2;spell=mob_rl_mage_dice} @target
+CHA_MOB_rl_mage_dice_5:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=30;element=dark;vfx=roulette_mobs/dice_hit;vfxref=2.5;vfxlead=2;spell=mob_rl_mage_dice} @target
+CHA_MOB_rl_mage_dice_6:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=36;element=dark;vfx=roulette_mobs/dice_hit;vfxref=2.5;vfxlead=2;spell=mob_rl_mage_dice} @target

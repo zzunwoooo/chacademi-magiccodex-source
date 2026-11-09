@@ -1,0 +1,369 @@
+# 1인 레이드 "몽마 솜니아" + 기믹 소품 + 잡몹 3종 (2026-11-09). 기획서: Claude Docs "차카데미 악마 1인 레이드 5종 기획서" 4번.
+# 현실 = 무너진 탑 침실 반경 16 / 꿈 = 같은 구조를 다른 좌표에 복제한 맵 (가장자리 종탑 4곳). 두 맵은 직접 짓는다.
+# 진행(꿈·현실 전환, 졸음 게이지, 잠의 웅덩이, 종, 50% 깨지 않는 꿈, 30% 경계 붕괴)은 애드온 chasomnia (SomniaBoss.java, 아직 없음 → 다음 작업).
+#   애드온이 없으면 이 몹은 근접 공격만 하는 몸으로 나온다. 패턴 → 모션 스킬 → VFX 대응표는 Skills 파일 머리말.
+# 현실 쪽 몸은 반투명 모델 somnia_veil (받는 피해 20%는 애드온), 꿈 쪽 몸은 실체 모델 somnia (CA_Boss_somnia_dream, 체력은 애드온이 현실 몸과 맞춤).
+#
+# 체력 설계 (1인): 기획 4400. 꿈 딜은 15초 단위로 끊기고 현실 딜은 20%라 체력을 높게 잡음.
+#   지능 140 1분 딜 약 1500 기준 꿈 딜 비율 약 60% → 딜 구간 약 4분 + 50% 그로기 10초 → 전투 약 6~7분.
+#   실제 딜이 다르면 두 몸의 Health 를 같이 바꾸면 된다.
+# 공격력: 짤패턴 피해는 애드온 안의 값(16~34). 졸음 가득 = 즉사. 자장가 = 졸음 +30%.
+# 모델: ModelEngine somnia / somnia_veil (모양·모션 같음, 텍스처만 반투명).
+
+CA_Boss_somnia:
+  Type: HUSK
+  Display: '&d&l솜니아'
+  Health: 4400
+  Damage: 18
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&d&l솜니아'
+    Range: 48
+    Color: PURPLE
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.24
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=somnia_veil;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - chasomnia{a=start;arena=16} @self ~onSpawn
+  - skill{s=CHA_SN_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 꿈 맵 쪽 실체 (애드온이 꿈 맵에 소환, 진행 시작 스킬 없음, 체력은 현실 몸과 공유하도록 애드온이 맞춤).
+CA_Boss_somnia_dream:
+  Type: HUSK
+  Display: '&d&l솜니아'
+  Health: 4400
+  Damage: 18
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&d&l솜니아'
+    Range: 48
+    Color: PURPLE
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.24
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=somnia;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SN_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# /테스트 보스 솜니아 초기화 때 다시 소환하는 몸 (진행 시작 스킬 없음).
+CA_Boss_somnia_reset:
+  Type: HUSK
+  Display: '&d&l솜니아'
+  Health: 4400
+  Damage: 18
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&d&l솜니아'
+    Range: 48
+    Color: PURPLE
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.24
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=somnia_veil;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SN_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ======================================================================== 기믹 소품 (애드온이 소환·제거)
+# 종탑 종 (꿈 맵 가장자리 4곳). 칠 종은 glow_idle + VFX somnia_boss/bell_glow, 치면 ring + bell_ring.
+CA_Somnia_bell:
+  Type: HUSK
+  Display: '&b종탑 종'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=dream_bell;n=false} @self ~onSpawn
+
+# 거대 베개 (베개 짓누르기): 떨어져 꾹 눌림(drop, 0.6초 착지) → 사라짐(vanish).
+CA_Somnia_pillow:
+  Type: HUSK
+  Display: '&f거대 베개'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=dream_pillow;n=false} @self ~onSpawn
+
+# ======================================================================== 잡몹 (보스 방 앞 복도 2구간, 두 번째 구간은 꿈 맵 색감)
+# 졸음 나방 - 빠른 근접 비행. 들이받기 10 + 둔화 1초 (체술, 예고 없음).
+CA_Somnia_sleepy_moth:
+  Type: HUSK
+  Display: '&d졸음 나방'
+  Health: 160
+  Damage: 5
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.36
+    KnockbackResistance: 0.2
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=sleepy_moth;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_sn_moth_ram} @target ~onTimer:40 0.8
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Somnia_sleepy_moth_shiny:
+  Type: HUSK
+  Display: '&d졸음 나방'
+  Health: 160
+  Damage: 5
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.36
+    KnockbackResistance: 0.2
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=sleepy_moth_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_sn_moth_ram} @target ~onTimer:40 0.8
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 몽유 거인 - 탱커. 큰 손 휘두르기 앞 반원 반경 4.5, 예고 0.9초, 24.
+CA_Somnia_sleepwalker:
+  Type: HUSK
+  Display: '&7몽유 거인'
+  Health: 750
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.18
+    KnockbackResistance: 0.9
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=sleepwalker;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_sn_walker_swing} @target ~onTimer:100 0.7
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Somnia_sleepwalker_shiny:
+  Type: HUSK
+  Display: '&7몽유 거인'
+  Health: 750
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.18
+    KnockbackResistance: 0.9
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=sleepwalker_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_sn_walker_swing} @target ~onTimer:100 0.7
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 악몽 인형 - 원거리. 다가오지 않고 바늘 3연발 (가벼운 투사체, 예고 없음, 보고 피함), 각 12.
+CA_Somnia_nightmare_doll:
+  Type: HUSK
+  Display: '&5악몽 인형'
+  Health: 300
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 26
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=nightmare_doll;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_sn_doll_needles} @target ~onTimer:60 0.75
+  AIGoalSelectors:
+  - clear
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Somnia_nightmare_doll_shiny:
+  Type: HUSK
+  Display: '&5악몽 인형'
+  Health: 300
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 26
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=nightmare_doll_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_sn_doll_needles} @target ~onTimer:60 0.75
+  AIGoalSelectors:
+  - clear
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget

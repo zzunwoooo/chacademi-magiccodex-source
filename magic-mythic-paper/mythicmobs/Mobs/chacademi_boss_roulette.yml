@@ -1,0 +1,354 @@
+# 1인 레이드 "도박의 악마 룰레타" + 기믹 소품 + 잡몹 3종 (2026-11-09). 기획서: Claude Docs "차카데미 악마 1인 레이드 5종 기획서" 3번.
+# 경기장 = 룰레타 소환 위치 중심 반경 18 (가운데 딜러 테이블 반경 4). 바닥 6색 부채꼴 구역(60°씩)은 맵에 직접 깐다.
+# 진행(룰렛 기믹·짤패턴·50% 하우스 룰·30% 광폭화)은 애드온 charoulette (RouletteBoss.java, 아직 없음 → 다음 작업).
+#   애드온이 없으면 이 몹은 근접 공격만 하는 몸으로 나온다. 패턴 → 모션 스킬 → VFX 대응표는 Skills 파일 머리말.
+# 소품(주사위·칩 탑·동전)은 애드온이 직접 소환·제거한다 (무적, 피해 없음).
+#
+# 체력 설계 (1인): 기획 3800. 룰렛 적중 1회 = 최대 체력 6% 고정 피해(애드온) + 4초 그로기.
+#   지능 140 1분 딜 약 1500 → 딜 구간 약 2분 + 룰렛 약 6회(적중 시 약 36%) + 하우스 룰 그로기 → 전투 약 5~6분.
+#   20% 즉사기 전에 30% 광폭화를 한 번은 보게 된다. 실제 딜이 다르면 Health 하나만 바꾸면 된다.
+# 공격력: 짤패턴 피해는 애드온 안의 값(18~32). 룰렛 틀림 = 최대 체력 45% (테이블 30%, 하우스 룰 35%).
+# 모델: ModelEngine roulette (등 뒤 룰렛 바늘은 needle 본, needle_stop_0~5 / needle_trick_0~5 상태로 멈출 구역을 정함).
+
+CA_Boss_roulette:
+  Type: HUSK
+  Display: '&6&l룰레타'
+  Health: 3800
+  Damage: 20
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&6&l룰레타'
+    Range: 48
+    Color: YELLOW
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.22
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=roulette;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - charoulette{a=start;arena=18;table=4} @self ~onSpawn
+  - skill{s=CHA_RL_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# /테스트 보스 룰레타 초기화 때 다시 소환하는 몸 (진행 시작 스킬 없음, 애드온이 기존 진행에 붙임).
+CA_Boss_roulette_reset:
+  Type: HUSK
+  Display: '&6&l룰레타'
+  Health: 3800
+  Damage: 20
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&6&l룰레타'
+    Range: 48
+    Color: YELLOW
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.22
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=roulette;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_RL_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ======================================================================== 기믹 소품 (애드온이 소환·제거)
+# 큰 주사위: 맵을 가로질러 굴러감(roll) → 멈춘 눈이 위로(land_1~6). 굴러가는 동안 VFX roulette_boss/dice_trail 을 붙인다.
+CA_Roulette_dice:
+  Type: HUSK
+  Display: '&f주사위'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=roulette_dice;n=false} @self ~onSpawn
+
+# 칩 탑: 하늘에서 떨어짐(drop, 0.7초 착지) → 판정 뒤 무너짐(topple).
+CA_Roulette_chip_tower:
+  Type: HUSK
+  Display: '&c칩 탑'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=roulette_chip_tower;n=false} @self ~onSpawn
+
+# 동전: 튀어올라 돌다 기울며 결과를 보여주고 눕는다 (flip_heads = 앞면 → 보스 주변 r8 / flip_tails = 뒷면 → 바깥 8~18).
+CA_Roulette_coin:
+  Type: HUSK
+  Display: '&6동전'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=roulette_coin;n=false} @self ~onSpawn
+
+# ======================================================================== 잡몹 (보스 방 앞 복도 2구간)
+# 칩 임프 - 빠른 근접. 굴러와 몸통박치기 12 (체술, 예고 없음). 죽으면 반경 2 동전 폭발 8 (짧은 예고, 주변 몹에게는 피해 없음).
+CA_Roulette_chip_imp:
+  Type: HUSK
+  Display: '&c칩 임프'
+  Health: 200
+  Damage: 6
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.34
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=chip_imp;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_rl_imp_roll} @target ~onTimer:40 0.8
+  - skill{s=CHA_MOB_rl_imp_pop} @self ~onDeath
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Roulette_chip_imp_shiny:
+  Type: HUSK
+  Display: '&c칩 임프'
+  Health: 200
+  Damage: 6
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.34
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=chip_imp_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_rl_imp_roll} @target ~onTimer:40 0.8
+  - skill{s=CHA_MOB_rl_imp_pop} @self ~onDeath
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 카드 병정 - 탱커. 3연 베기 부채꼴 120° 반경 4 (0.35 / 0.8 / 1.25초), 각 18.
+#   기획의 "정면 피해 50% 감소"는 MythicMobs 만으로 방향 판정이 안 돼 애드온 쪽(charoulette guard)으로 넘긴다. 지금은 KnockbackResistance 만 높음.
+CA_Roulette_card_soldier:
+  Type: HUSK
+  Display: '&f카드 병정'
+  Health: 700
+  Damage: 10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.2
+    KnockbackResistance: 0.9
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=card_soldier;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_rl_soldier_slash} @target ~onTimer:100 0.7
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Roulette_card_soldier_shiny:
+  Type: HUSK
+  Display: '&f카드 병정'
+  Health: 700
+  Damage: 10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.2
+    KnockbackResistance: 0.9
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=card_soldier_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_rl_soldier_slash} @target ~onTimer:100 0.7
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 주사위 술사 - 원거리. 다가오지 않고 주사위 투척: 대상 발밑 원 반경 2.5, 예고 1.2초. 피해 = 공중에 보이는 눈 × 6 (6~36, 무작위).
+CA_Roulette_dice_mage:
+  Type: HUSK
+  Display: '&5주사위 술사'
+  Health: 320
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 26
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=dice_mage;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_rl_mage_dice} @target ~onTimer:70 0.75
+  AIGoalSelectors:
+  - clear
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+CA_Roulette_dice_mage_shiny:
+  Type: HUSK
+  Display: '&5주사위 술사'
+  Health: 320
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 26
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=dice_mage_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_MOB_rl_mage_dice} @target ~onTimer:70 0.75
+  AIGoalSelectors:
+  - clear
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
