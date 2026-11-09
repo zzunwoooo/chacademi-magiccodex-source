@@ -1,5 +1,5 @@
 # 솜니아 보스 모션 + 기믹 소품 모션 + 잡몹 스킬 (2026-11-09).
-# 패턴·기믹(예고·판정·VFX·대상·졸음)은 애드온 chasomnia (SomniaBoss.java, 다음 작업) 안. 보스·소품은 ModelEngine 상태 재생만.
+# 패턴·기믹(예고·판정·VFX·대상·졸음)은 애드온 chasomnia (SomniaBoss.java) 안. 보스·소품은 ModelEngine 상태 재생만.
 # 애드온이 CHA_SN_a_<모션> 을 보스(현실·꿈 몸 둘 다)에게, CHA_SN_p_<무엇> 을 소품에게 시전. 반복 모션(lullaby·dream_cast·groggy)은 CHA_SN_clear 로 지운다.
 # idle·walk·death 는 ModelEngine 기본.
 #

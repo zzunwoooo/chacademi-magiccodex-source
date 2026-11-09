@@ -98,6 +98,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new TimeWraithBoss.Hooks(), this); // 3인 보스 시간의 망령 (기준선·기믹 소품·누적 딜·바늘 원소)
         getServer().getPluginManager().registerEvents(new MordianBoss.Hooks(), this); // 3인 보스 모르디안의 원령 (기준선·기믹 소품·그림자 대상)
         getServer().getPluginManager().registerEvents(new ElysiaBoss.Hooks(), this); // 1인 레이드 엘리시아·벨자르 (기준선·빚·소품·구원·회복 막기)
+        getServer().getPluginManager().registerEvents(new RouletteBoss.Hooks(), this); // 악마 1인 레이드 룰레타 (룰렛 구역 베팅·하우스 룰)
+        getServer().getPluginManager().registerEvents(new SomniaBoss.Hooks(), this); // 악마 1인 레이드 솜니아 (꿈·졸음·종·경계 붕괴)
         dummies = new TrainingDummies(this); // #107 마법 연습장 훈련 허수아비
         getServer().getPluginManager().registerEvents(dummies, this);
         spellRoutes = new SpellRoutes(new java.io.File(getDataFolder().getParentFile(), "MagicCodexBridge/spell-runtime.yml"));
@@ -114,6 +116,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         TimeWraithBoss.closeAll();
         MordianBoss.closeAll();
         ElysiaBoss.closeAll();
+        RouletteBoss.closeAll();
+        SomniaBoss.closeAll();
         if (reactions != null) reactions.close();
         if (dummies != null) { dummies.close(); dummies = null; }
         Targets.sealed = null;
@@ -168,6 +172,8 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chatime" -> new TimeWraithBoss(this, p);   // 3인 보스 시간의 망령 진행자
             case "chamord" -> new MordianBoss(this, p);      // 3인 보스 모르디안의 원령 진행자
             case "chaelysia" -> new ElysiaBoss(this, p);     // 1인 레이드 엘리시아 → 벨자르 진행자
+            case "charoulette" -> new RouletteBoss(this, p); // 악마 1인 레이드 도박의 악마 룰레타 진행자
+            case "chasomnia" -> new SomniaBoss(this, p);     // 악마 1인 레이드 몽마 솜니아 진행자
             default -> null;
         };
         if (mechanic != null) event.register(mechanic);

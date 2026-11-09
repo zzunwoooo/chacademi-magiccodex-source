@@ -1,6 +1,6 @@
 # 1인 레이드 "몽마 솜니아" + 기믹 소품 + 잡몹 3종 (2026-11-09). 기획서: Claude Docs "차카데미 악마 1인 레이드 5종 기획서" 4번.
 # 현실 = 무너진 탑 침실 반경 16 / 꿈 = 같은 구조를 다른 좌표에 복제한 맵 (가장자리 종탑 4곳). 두 맵은 직접 짓는다.
-# 진행(꿈·현실 전환, 졸음 게이지, 잠의 웅덩이, 종, 50% 깨지 않는 꿈, 30% 경계 붕괴)은 애드온 chasomnia (SomniaBoss.java, 아직 없음 → 다음 작업).
+# 진행(꿈·현실 전환, 졸음 게이지, 잠의 웅덩이, 종, 50% 깨지 않는 꿈, 30% 경계 붕괴)은 애드온 chasomnia (SomniaBoss.java). 꿈 맵 = 소환 위치 + (dx,dy,dz), 현실 경기장과 같은 구조로 지어 둘 것.
 #   애드온이 없으면 이 몹은 근접 공격만 하는 몸으로 나온다. 패턴 → 모션 스킬 → VFX 대응표는 Skills 파일 머리말.
 # 현실 쪽 몸은 반투명 모델 somnia_veil (받는 피해 20%는 애드온), 꿈 쪽 몸은 실체 모델 somnia (CA_Boss_somnia_dream, 체력은 애드온이 현실 몸과 맞춤).
 #
@@ -39,7 +39,7 @@ CA_Boss_somnia:
   Skills:
   - model{mid=somnia_veil;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
-  - chasomnia{a=start;arena=16} @self ~onSpawn
+  - chasomnia{a=start;arena=16;dx=0;dy=0;dz=120} @self ~onSpawn
   - skill{s=CHA_SN_a_attack} @self ~onAttack
   AIGoalSelectors:
   - clear

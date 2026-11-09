@@ -1,6 +1,6 @@
 # 1인 레이드 "도박의 악마 룰레타" + 기믹 소품 + 잡몹 3종 (2026-11-09). 기획서: Claude Docs "차카데미 악마 1인 레이드 5종 기획서" 3번.
 # 경기장 = 룰레타 소환 위치 중심 반경 18 (가운데 딜러 테이블 반경 4). 바닥 6색 부채꼴 구역(60°씩)은 맵에 직접 깐다.
-# 진행(룰렛 기믹·짤패턴·50% 하우스 룰·30% 광폭화)은 애드온 charoulette (RouletteBoss.java, 아직 없음 → 다음 작업).
+# 진행(룰렛 기믹·짤패턴·50% 하우스 룰·30% 광폭화)은 애드온 charoulette (RouletteBoss.java). 소환 위치 = 경기장 중심, 바라보는 방향 = 0번 구역.
 #   애드온이 없으면 이 몹은 근접 공격만 하는 몸으로 나온다. 패턴 → 모션 스킬 → VFX 대응표는 Skills 파일 머리말.
 # 소품(주사위·칩 탑·동전)은 애드온이 직접 소환·제거한다 (무적, 피해 없음).
 #
@@ -225,7 +225,7 @@ CA_Roulette_chip_imp_shiny:
   - hurtbytarget
 
 # 카드 병정 - 탱커. 3연 베기 부채꼴 120° 반경 4 (0.35 / 0.8 / 1.25초), 각 18.
-#   기획의 "정면 피해 50% 감소"는 MythicMobs 만으로 방향 판정이 안 돼 애드온 쪽(charoulette guard)으로 넘긴다. 지금은 KnockbackResistance 만 높음.
+#   정면 ±60° 피해 50% 감소는 애드온 RouletteBoss.Hooks.guard (몹 이름으로 판정).
 CA_Roulette_card_soldier:
   Type: HUSK
   Display: '&f카드 병정'
