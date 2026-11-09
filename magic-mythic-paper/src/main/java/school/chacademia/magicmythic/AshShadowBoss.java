@@ -387,6 +387,7 @@ final class AshShadowBoss extends Mech {
                 double off = w * 22.5;
                 later(6 + 12 * w, () -> {
                     areaFxLater(10, "claude:as_desperate/scream", c, 10, (float) off);
+                    areaFxLater(10, "claude:as_desperate/scream_b", c, 10, (float) off);   // 11/09 클라 한도(레이어 64)로 반쪽씩 나눔
                     for (int s = 0; s < 8; s++) strike(Shape.LINE, c, (float) (s * 45 + off), 10, 3, 0, 10, 28, "dark", false, null, 0, null);
                 });
             }
