@@ -1,0 +1,54 @@
+{
+  "freed_demon": {
+    "width": 2.6,
+    "height": 6.0,
+    "eye_height": 4.9,
+    "java": "EntityType.Builder.of(FreedDemonEntity::new, MobCategory.MONSTER).sized(2.6f, 6.0f).eyeHeight(4.9f)",
+    "shiny_texture": "freed_demon_shiny.png"
+  },
+  "whisper_imp": {
+    "width": 0.6,
+    "height": 1.05,
+    "eye_height": 0.88,
+    "java": "EntityType.Builder.of(WhisperImpEntity::new, MobCategory.MONSTER).sized(0.6f, 1.05f).eyeHeight(0.88f)",
+    "shiny_texture": "whisper_imp_shiny.png"
+  },
+  "contract_enforcer": {
+    "width": 1.0,
+    "height": 2.75,
+    "eye_height": 2.25,
+    "java": "EntityType.Builder.of(ContractEnforcerEntity::new, MobCategory.MONSTER).sized(1.0f, 2.75f).eyeHeight(2.25f)",
+    "shiny_texture": "contract_enforcer_shiny.png"
+  },
+  "false_grail": {
+    "width": 0.7,
+    "height": 1.15,
+    "eye_height": 0.7,
+    "java": "EntityType.Builder.of(FalseGrailEntity::new, MobCategory.MONSTER).sized(0.7f, 1.15f).eyeHeight(0.7f)"
+  },
+  "true_grail": {
+    "width": 0.7,
+    "height": 1.15,
+    "eye_height": 0.7,
+    "java": "EntityType.Builder.of(TrueGrailEntity::new, MobCategory.MONSTER).sized(0.7f, 1.15f).eyeHeight(0.7f)"
+  },
+  "fleeing_shadow": {
+    "width": 0.8,
+    "height": 0.75,
+    "eye_height": 0.5,
+    "java": "EntityType.Builder.of(FleeingShadowEntity::new, MobCategory.MONSTER).sized(0.8f, 0.75f).eyeHeight(0.5f)",
+    "shiny_texture": "fleeing_shadow_shiny.png"
+  },
+  "truth_statue": {
+    "width": 1.0,
+    "height": 2.6,
+    "eye_height": 2.3,
+    "java": "EntityType.Builder.of(TruthStatueEntity::new, MobCategory.MONSTER).sized(1.0f, 2.6f).eyeHeight(2.3f)"
+  },
+  "mimic_chest": {
+    "width": 0.9,
+    "height": 0.85,
+    "eye_height": 0.6,
+    "java": "EntityType.Builder.of(MimicChestEntity::new, MobCategory.MONSTER).sized(0.9f, 0.85f).eyeHeight(0.6f)"
+  }
+}
