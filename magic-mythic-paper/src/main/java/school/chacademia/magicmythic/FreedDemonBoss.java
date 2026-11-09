@@ -42,7 +42,7 @@ import school.chacademia.magicmythic.ReaperBoss.Fx;
 final class FreedDemonBoss extends Mech {
     static final Map<UUID, Fight> FIGHTS = new HashMap<>();
     static final String TAG = "chacademi_freed_prop";
-    static final String NAME = "§4[§c해방된 악마§4] §f";
+    static final String NAME = "§4[§c재의 군주 아스칼론§4] §f";
     static boolean spellHit, test;
     /** 구역 k 의 가운데 방향 = 정면 + SECTOR_SIGN × 45k. VFX sector0~7 은 +Z 에서 시계 방향으로 구워져 있음 — 서버에서 거울 반대로 보이면 -1 ↔ 1. */
     static int SECTOR_SIGN = -1;

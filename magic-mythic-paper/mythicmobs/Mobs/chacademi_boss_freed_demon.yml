@@ -11,13 +11,13 @@
 
 CA_Boss_freed_demon:
   Type: HUSK
-  Display: '&4&l해방된 악마'
+  Display: '&4&l재의 군주 아스칼론'
   Health: 9999
   Damage: 20
   Armor: 0
   BossBar:
     Enabled: true
-    Title: '&4&l해방된 악마'
+    Title: '&4&l재의 군주 아스칼론'
     Range: 48
     Color: RED
     Style: SEGMENTED_10
@@ -57,7 +57,7 @@ CA_Boss_freed_demon:
 # 거울 돌진의 분신 (본체와 같은 모델, 돌진 뒤 사라짐). 이름·체력바 없음.
 CA_Freed_mirror:
   Type: HUSK
-  Display: '&4해방된 악마'
+  Display: '&4재의 군주 아스칼론'
   Health: 1000
   Options:
     NoAI: true
