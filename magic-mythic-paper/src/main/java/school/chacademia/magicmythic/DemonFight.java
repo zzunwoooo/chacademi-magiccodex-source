@@ -31,13 +31,15 @@ abstract class DemonFight implements Ticker.Tick {
 
     /* ---------------------------------------------------------------- 대상 */
 
-    /** 경기장(중심 반경 arena + 6, 높이 ±24) 안 생존 플레이어. */
+    // [기능:보스대상100칸] 11/09 오너 "보스 즉사 범위 100칸 정도": 경기장 밖으로 멀리 도망가 즉사·전체 패턴을 피하던 것 막기
+    static final double REACH = 100, REACH_Y = 40;
+    /** 경기장 안 생존 플레이어 (가로 max(arena + 6, 100)칸, 높이 ±40). */
     List<Player> playersNear(Location c) {
         List<Player> out = new ArrayList<>();
-        double r = arena + 6;
+        double r = Math.max(arena + 6, REACH);
         for (Player pl : c.getWorld().getPlayers()) {
             if (pl.isDead() || pl.getGameMode() == GameMode.SPECTATOR || pl.getGameMode() == GameMode.CREATIVE) continue;
-            if (ReaperBoss.flat2(pl.getLocation(), c) <= r * r && Math.abs(pl.getLocation().getY() - c.getY()) < 24) out.add(pl);
+            if (ReaperBoss.flat2(pl.getLocation(), c) <= r * r && Math.abs(pl.getLocation().getY() - c.getY()) < REACH_Y) out.add(pl);
         }
         return out;
     }

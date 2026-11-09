@@ -180,10 +180,10 @@ final class ElysiaBoss extends Mech {
 
         List<Player> players() {
             List<Player> out = new ArrayList<>();
-            double r = arena + 6;
+            double r = Math.max(arena + 6, DemonFight.REACH);   // [기능:보스대상100칸]
             for (Player pl : boss.getWorld().getPlayers()) {
                 if (pl.isDead() || pl.getGameMode() == GameMode.SPECTATOR || pl.getGameMode() == GameMode.CREATIVE) continue;
-                if (ReaperBoss.flat2(pl.getLocation(), center) <= r * r && Math.abs(pl.getLocation().getY() - center.getY()) < 24) out.add(pl);
+                if (ReaperBoss.flat2(pl.getLocation(), center) <= r * r && Math.abs(pl.getLocation().getY() - center.getY()) < DemonFight.REACH_Y) out.add(pl);
             }
             return out;
         }
