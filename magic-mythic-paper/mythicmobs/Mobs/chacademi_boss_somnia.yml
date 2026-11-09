@@ -40,7 +40,7 @@ CA_Boss_somnia:
   - addtag{t=chacademia_boss} @self ~onSpawn   # 11/09 크로스 애로우 처형·보스 체력바 (보스·기믹 소품)
   - model{mid=somnia_veil;n=false;drive=true} @self ~onSpawn
   - addtag{t=chacademia_custom} @self ~onSpawn
-  - chasomnia{a=start;arena=16;dx=0;dy=0;dz=120} @self ~onSpawn
+  - chasomnia{a=start;arena=16;dx=1.33;dy=12;dz=-242.24} @self ~onSpawn
   - skill{s=CHA_SN_a_attack} @self ~onAttack
   AIGoalSelectors:
   - clear
