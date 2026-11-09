@@ -150,7 +150,8 @@ final class SomniaBoss extends Mech {
             if (phase == P_FIGHT || phase == P_NIGHTMARE) {
                 List<Player> r = real(), d = dreamers();
                 if (phase == P_FIGHT && !r.isEmpty() && t >= realNextAt) realPattern(r);
-                if (!enraged && !d.isEmpty() && t >= dreamNextAt) dreamPattern(d);
+                // [기능:솜니아깨지않는꿈휴식] 11/09 오너 "그동안 보스가 가만히 있어야지, 너무 빡셈": 깨지 않는 꿈(50%) 동안은 패턴 없이 줄어드는 바닥만
+                if (phase == P_FIGHT && !enraged && !d.isEmpty() && t >= dreamNextAt) dreamPattern(d);
             }
             return true;
         }
@@ -498,6 +499,7 @@ final class SomniaBoss extends Mech {
             for (Player pl : real()) enterDream(pl, true);
             Fx.effect(plugin, fx("dreamfall"), ground(dream), 0, 60);
             if (dreamBody != null) castAt(dreamBody, "CHA_SN_a_dream_cast");
+            if (dreamBody != null) dreamBody.setAI(false);   // [기능:솜니아깨지않는꿈휴식] 평타로 쫓아오지 않게
             say("이번엔... 깨지 못할 거야.");
         }
         void wakeCall() {
@@ -513,6 +515,7 @@ final class SomniaBoss extends Mech {
             if (wakeBell != null) { castAt(wakeBell, "CHA_SN_p_bell_ring"); Fx.effect(plugin, fx("bell_ring"), ground(wakeBell.getLocation()), 0, 40); removeLater(wakeBell, 40); wakeBell = null; }
             for (Player pl : dreamers()) exitDream(pl, true);
             invulnerable = false;
+            if (dreamBody != null && dreamBody.isValid()) dreamBody.setAI(true);   // [기능:솜니아깨지않는꿈휴식]
             later(10, () -> {
                 Fx.effect(plugin, fx("wake"), ground(boss.getLocation()), 0, 60);
                 groggy(200);
