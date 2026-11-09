@@ -1,0 +1,419 @@
+# 1인 레이드 "해방된 악마" + 기믹 소품 + 잡몹 (2026-11-09). 진행은 애드온 chafreed (FreedDemonBoss.java).
+# 경기장 = 보스 소환 위치(중앙 제단) 중심 반경 14 (chafreed arena=). 소환 때 바라본 방향 = 정면 (석상 6개·서명 8구역 배치 기준).
+# 소품·잡몹은 애드온이 직접 소환한다 (손으로 소환하면 진행 없이 몸만 나옴).
+#
+# 체력 설계 (1인): 엘리시아(6000, 기믹 9개)보다 기믹은 4개로 적고 짤패턴이 18종이라 딜 구간이 길다 → 7000.
+#   지능 140 1분 딜 약 1500 → 딜 구간 약 4.5분 + 기믹 4개(각 20~40초) → 전투 약 7~8분.
+#   기준선 70 / 40 / 10 / 1% (비율이라 Health 만 바꾸면 된다). 1% 가짜 사망 뒤 그림자를 놓치면 15% 로 부활.
+# 공격력: 패턴 피해는 애드온 안의 값 (14~32, 원소 fire) + 비율 피해 (낙인 45%·가짜 안전지대 60%·반격 40%·불벽 6%/0.5초).
+#   기믹 실패 = 즉사 (줄넘기는 50% + 낙인, 낙인 2 = 즉사). 실패한 사람에게만 짧은 단서 한 줄 (규칙 설명 타이틀 없음).
+# 모델: ModelEngine (models/freed_demon/). 거짓말 = 보라 눈 (본 eyes_lie, 평소 숨김). _shiny 보스 모델은 지금 안 씀.
+
+CA_Boss_freed_demon:
+  Type: HUSK
+  Display: '&4&l해방된 악마'
+  Health: 7000
+  Damage: 20
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&4&l해방된 악마'
+    Range: 48
+    Color: RED
+    Style: SEGMENTED_10
+    CreateFog: true
+    DarkenSky: true
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.25
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=freed_demon;n=false;drive=true} @self ~onSpawn
+  - skill{s=CHA_FD_lie_off} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - chafreed{a=start;arena=14} @self ~onSpawn
+  - skill{s=CHA_FD_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ======================================================================== 기믹 소품 (애드온이 소환·제거, 피해는 애드온이 항상 취소)
+# 거울 돌진의 분신 (본체와 같은 모델, 돌진 뒤 사라짐). 이름·체력바 없음.
+CA_Freed_mirror:
+  Type: HUSK
+  Display: '&4해방된 악마'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=freed_demon;n=false} @self ~onSpawn
+  - skill{s=CHA_FD_lie_off} @self ~onSpawn
+
+# 중앙 제단 (전투 시작 때 경기장 중심, 끝날 때 제거). 장식.
+CA_Freed_altar:
+  Type: HUSK
+  Display: '&8봉인 제단'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=demon_altar;n=false} @self ~onSpawn
+
+# 고해의 석상 6개 (70% 기믹, 반경 10). 위에 번호·문장 글자판. 진실 = reveal, 거짓 = crumble.
+CA_Freed_statue:
+  Type: HUSK
+  Display: '&7고해의 석상'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=truth_statue;n=false} @self ~onSpawn
+  - state{s=idle;li=0;lo=0} @self ~onSpawn
+
+# 붉은 사슬 (40% 줄넘기, 낮게). 애드온이 매 틱 yaw 로 돌림 (모델은 +X 로 뻗음, CHAIN_YAW_OFFSET).
+CA_Freed_chain_red:
+  Type: HUSK
+  Display: '&c지옥 사슬'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=hell_chain_red;n=false} @self ~onSpawn
+
+# 검은 사슬 (40% 줄넘기, 높게 = 바닥 위 1.6). 붉은 사슬 반대편.
+CA_Freed_chain_black:
+  Type: HUSK
+  Display: '&8지옥 사슬'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - model{mid=hell_chain_black;n=false} @self ~onSpawn
+
+# 보상 상자 = 미믹 (1% 가짜 사망). 가까이 가면 물어 버림.
+CA_Freed_mimic:
+  Type: HUSK
+  Display: '&6보상 상자'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=mimic_chest;n=false} @self ~onSpawn
+
+# 진짜 성배 (40% 뒤 35초마다 한 쌍, 서로 반대편). 닿으면 최대 체력 30% 회복.
+CA_Freed_true_grail:
+  Type: HUSK
+  Display: '&6성배'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=true_grail;n=false} @self ~onSpawn
+
+# 거짓 성배. 닿으면 부풀다가 3초 뒤 폭발 (반경 3.2 · 최대 체력 40%). 겉모습 차이는 모델(넘침·금 간 자국)뿐.
+CA_Freed_false_grail:
+  Type: HUSK
+  Display: '&6성배'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=false_grail;n=false} @self ~onSpawn
+
+# ======================================================================== 잡몹 (애드온이 보스 근처에 소환). 이로치 1/8.
+# 속삭이는 임프 (70% 고해 때 2마리, 이후 30초마다 최대 2). 밀치기: 바로 앞 사람을 2.2칸 밀어냄 (발판·사슬 박자 방해).
+CA_Freed_imp:
+  Type: HUSK
+  Display: '&5속삭이는 임프'
+  Health: 90
+  Damage: 4
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.32
+    KnockbackResistance: 0.2
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=whisper_imp;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_FD_a_minion_spawn} @self ~onSpawn
+  - skill{s=CHA_MOB_fd_imp_shove} @target ~onTimer:80 0.7
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Freed_imp_shiny:
+  Type: HUSK
+  Display: '&5속삭이는 임프'
+  Health: 90
+  Damage: 4
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.32
+    KnockbackResistance: 0.2
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=whisper_imp_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_FD_a_minion_spawn} @self ~onSpawn
+  - skill{s=CHA_MOB_fd_imp_shove} @target ~onTimer:80 0.7
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - randomstroll
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 계약의 집행자 (55% · 25% 에 1마리씩). 맞으면 낙인 1 (애드온 판정, 25초마다 1 감소). 낙인 2 = 즉사.
+CA_Freed_enforcer:
+  Type: HUSK
+  Display: '&4계약의 집행자'
+  Health: 650
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.8
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=contract_enforcer;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_FD_a_minion_spawn} @self ~onSpawn
+  - skill{s=CHA_MOB_fd_enforcer_smash} @target ~onTimer:120 0.6
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Freed_enforcer_shiny:
+  Type: HUSK
+  Display: '&4계약의 집행자'
+  Health: 650
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.8
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=contract_enforcer_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_FD_a_minion_spawn} @self ~onSpawn
+  - skill{s=CHA_MOB_fd_enforcer_smash} @target ~onTimer:120 0.6
+  - state{s=attack;li=0;lo=2} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# 도망치는 그림자 (1% 가짜 사망). 공격하지 않음, 애드온이 매 틱 밀어서 도망. 10초 안에 잡으면 재봉인.
+CA_Freed_shadow:
+  Type: HUSK
+  Display: '&8그림자'
+  Health: 60
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.0
+    KnockbackResistance: 0
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=fleeing_shadow;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - state{s=spawn;li=0;lo=2} @self ~onSpawn
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - clear
+
+CA_Freed_shadow_shiny:
+  Type: HUSK
+  Display: '&8그림자'
+  Health: 60
+  Damage: 0
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    FollowRange: 24
+    MovementSpeed: 0.0
+    KnockbackResistance: 0
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=fleeing_shadow_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - state{s=spawn;li=0;lo=2} @self ~onSpawn
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - clear
+

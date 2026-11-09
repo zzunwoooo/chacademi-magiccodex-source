@@ -1,0 +1,134 @@
+# 해방된 악마 보스 모션 + 거짓말 눈 + 기믹 소품 모션 + 잡몹 스킬 (2026-11-09).
+# 패턴·기믹(예고·판정·VFX·낙인·즉사·단서)은 전부 애드온 chafreed (FreedDemonBoss.java) 안. 보스·소품은 ModelEngine 상태 재생만.
+# 애드온이 CHA_FD_a_<모션> 을 보스에게, CHA_FD_p_<무엇> 을 소품에게, CHA_FD_lie_on/off 를 보스에게 시전.
+# 반복·유지 모션(taunt·chain_spin·fake_death)은 다음 모션 전에 지운다 (CHA_FD_clear). idle·walk·death 는 ModelEngine 기본.
+
+CHA_FD_clear:
+  Skills:
+  - state{s=taunt;r=true} @self
+  - state{s=chain_spin;r=true} @self
+  - state{s=fake_death;r=true} @self
+
+# ---------------- 거짓말 = 보라 눈. 붉은 눈(eyes) ↔ 보라 눈(eyes_lie) 본을 바꿔 보임.
+# ModelEngine 4 partvisibility (서버 버전에 따라 이름이 partvis 일 수 있음 - 안 바뀌면 /meg 문서 확인).
+CHA_FD_lie_on:
+  Skills:
+  - partvisibility{m=freed_demon;p=eyes;v=false} @self
+  - partvisibility{m=freed_demon;p=eyes_lie;v=true} @self
+CHA_FD_lie_off:
+  Skills:
+  - partvisibility{m=freed_demon;p=eyes_lie;v=false} @self delay 1
+  - partvisibility{m=freed_demon;p=eyes;v=true} @self delay 1
+
+# ---------------- 보스
+CHA_FD_a_spawn:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+CHA_FD_a_attack:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=attack;li=0;lo=2} @self
+CHA_FD_a_claw_combo:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=claw_combo;li=0;lo=2} @self
+# 지연 내려찍기: 손을 든 채 멈칫 (예고 1.1초에 맞춘 모션)
+CHA_FD_a_slam:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=slam;li=0;lo=2} @self
+CHA_FD_a_dash:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=dash;li=0;lo=2} @self
+CHA_FD_a_cast:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=cast;li=0;lo=3} @self
+CHA_FD_a_wing_gust:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=wing_gust;li=0;lo=3} @self
+# 광란 5연격: 쌍갈래 모션을 두 번 (애드온 9틱 간격 부채꼴 4번 + 마무리)
+CHA_FD_a_frenzy:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=claw_combo;li=0;lo=1;sp=1.6} @self
+  - state{s=claw_combo;li=0;lo=1;sp=1.6} @self delay 18
+  - state{s=slam;li=0;lo=2;sp=1.4} @self delay 36
+# 유황 행진: 걷기는 ModelEngine 기본 walk (AI 이동)
+CHA_FD_a_walk_fast:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+# 도발 (3초 반복, 애드온이 CHA_FD_clear 로 지움)
+CHA_FD_a_taunt:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=taunt;li=0;lo=0} @self
+# 줄넘기 동안 사슬을 돌리는 자세 (반복)
+CHA_FD_a_chain_spin:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=chain_spin;li=0;lo=0} @self
+# 가짜 사망 (쓰러진 자세 유지) → 부활 때 CHA_FD_a_spawn 이 지움
+CHA_FD_a_fake_death:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=fake_death;li=0;lo=0} @self
+# 재봉인 (끝 자세 유지, 4.2초 뒤 애드온이 체력 0)
+CHA_FD_a_death:
+  Skills:
+  - skill{s=CHA_FD_clear} @self
+  - state{s=death;li=0;lo=0} @self
+
+# ---------------- 소품
+CHA_FD_p_mirror_dash:
+  Skills:
+  - state{s=dash;li=0;lo=2} @self
+CHA_FD_p_statue_reveal:
+  Skills:
+  - state{s=idle;r=true} @self
+  - state{s=reveal;li=0;lo=1} @self
+CHA_FD_p_statue_crumble:
+  Skills:
+  - state{s=idle;r=true} @self
+  - state{s=crumble;li=0;lo=0} @self
+CHA_FD_p_mimic_bite:
+  Skills:
+  - state{s=bite;li=0;lo=0} @self
+CHA_FD_p_grail_pour:
+  Skills:
+  - state{s=pour;li=0;lo=1} @self
+# 거짓 성배: 부풀어 오름 (attack 모션 반복, 2.85초 뒤 애드온이 폭발)
+CHA_FD_p_grail_burst:
+  Skills:
+  - state{s=attack;li=0;lo=1} @self
+  - state{s=attack;li=0;lo=1;sp=1.5} @self delay 20
+  - state{s=attack;li=0;lo=1;sp=2} @self delay 38
+
+# ---------------- 잡몹
+
+CHA_FD_a_minion_spawn:
+  Skills:
+  - state{s=spawn;li=0;lo=2} @self
+  - chavfx{id=freeddemon_minions/imp_spawn;at=caster} @self
+
+# 속삭이는 임프 - 밀치기: 바로 앞 원 반경 1.8, 예고 0.5초. 피해 4 (dark) + 2.2칸 밀어냄. 고해 발판·줄넘기 박자를 흔드는 용도.
+CHA_MOB_fd_imp_shove:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=3} true
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=circle;at=caster;r=1.8;ticks=10;flat=4;element=dark;vfx=freeddemon_minions/imp_shove;vfxref=1.8;vfxlead=0;spell=mob_fd_imp_shove} @target
+  - throw{velocity=6;velocityY=2.5} @PlayersInRadius{r=2.2} delay 10
+
+# 계약의 집행자 - 낙인 내려찍기: 자기 중심 원 반경 3, 예고 0.9초. 피해 16 (fire) + 둔화 1.5초. 맞으면 낙인 1 (애드온).
+CHA_MOB_fd_enforcer_smash:
+  Cooldown: 6
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=caster;r=3;ticks=18;flat=16;element=fire;status=slow:30:0.3;vfx=freeddemon_minions/enforcer_smash;vfxref=3;vfxlead=0;spell=mob_fd_enforcer_smash} @target
