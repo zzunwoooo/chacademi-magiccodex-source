@@ -142,7 +142,7 @@ final class ElysiaBoss extends Mech {
             anim("spawn");
             later(30, this::placeStatues);
             later(50, () -> {
-                say("길 잃은 아이야, 두려워 말거라. 나는 그대를 도우러 왔으니.");
+                say("위기에 맞서 싸우는 그대여, 두려워 말아요. 내가 당신을 축복해 주겠어요.");
             });
         }
 
@@ -589,7 +589,8 @@ final class ElysiaBoss extends Mech {
             boss.setAI(false);
             for (Entity e : List.copyOf(props)) if (e.getScoreboardTags().contains(TAG + ":minion")) removeProp(e);
             Location c = center.clone(); boss.teleport(c);
-            say("…연극은 여기까지다.");
+            say("하하하! …멍청한 그 녀석이랑은 다르구나.");
+            later(30, () -> say("…연극은 여기까지다."));
             anim("reveal");
             Fx.effect(plugin, "claude:elysia_reveal/reveal", ground(c), front, 100);
             for (UUID u : List.copyOf(blessFx.keySet())) { Player pl = Bukkit.getPlayer(u); Fx.stop(blessFx.get(u)); if (pl != null) Fx.follow(pl, "claude:elysia_blessing/end", 30, 0); }
