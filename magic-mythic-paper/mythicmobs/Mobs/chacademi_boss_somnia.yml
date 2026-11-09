@@ -185,7 +185,7 @@ CA_Somnia_pillow:
 CA_Somnia_sleepy_moth:
   Type: HUSK
   Display: '&d졸음 나방'
-  Health: 160
+  Health: 120
   Damage: 5
   Options:
     PreventOtherDrops: true
@@ -216,7 +216,7 @@ CA_Somnia_sleepy_moth:
 CA_Somnia_sleepy_moth_shiny:
   Type: HUSK
   Display: '&d졸음 나방'
-  Health: 160
+  Health: 120
   Damage: 5
   Options:
     PreventOtherDrops: true
@@ -249,7 +249,7 @@ CA_Somnia_sleepy_moth_shiny:
 CA_Somnia_sleepwalker:
   Type: HUSK
   Display: '&7몽유 거인'
-  Health: 750
+  Health: 450
   Damage: 12
   Options:
     PreventOtherDrops: true
@@ -280,7 +280,7 @@ CA_Somnia_sleepwalker:
 CA_Somnia_sleepwalker_shiny:
   Type: HUSK
   Display: '&7몽유 거인'
-  Health: 750
+  Health: 450
   Damage: 12
   Options:
     PreventOtherDrops: true
@@ -313,7 +313,7 @@ CA_Somnia_sleepwalker_shiny:
 CA_Somnia_nightmare_doll:
   Type: HUSK
   Display: '&5악몽 인형'
-  Health: 300
+  Health: 200
   Damage: 0
   Options:
     PreventOtherDrops: true
@@ -344,7 +344,7 @@ CA_Somnia_nightmare_doll:
 CA_Somnia_nightmare_doll_shiny:
   Type: HUSK
   Display: '&5악몽 인형'
-  Health: 300
+  Health: 200
   Damage: 0
   Options:
     PreventOtherDrops: true
