@@ -20,26 +20,27 @@ function judgment(hell) {
         dt = hell ? "hDot" : "dot", fl = hell ? "hFlare" : "flare", sl = hell ? "hSlash" : "slash";
   const HOT = hell ? EMB : PALE, MID = hell ? CRIM : GOLD, LOW = hell ? DEEP : AMBER;
   const E = T0 + 1.55;  // 원이 사라지는 시각
-  const circ = (nm, mesh, f, w, t0, a1) => ({ name: nm, mat: c1, mode: "mesh", mesh, fudge: f, size: R, rot3: YAW, rotLife: [0, w, 0], bursts: [[t0, 1]], life: E - t0,
-    sizeLife: [[0, 0.82, 0, 1.5], [0.18, 1]], alpha: [[0, 0], [(T0 - t0) / (E - t0) * 0.6, a1 * 0.7], [(T0 - t0) / (E - t0), a1 * 0.7], [(T0 + 0.05 - t0) / (E - t0), 1], [0.7, 0.75], [1, 0]] });
+  // 낙하 전에는 바닥에 아무것도 그리지 않는다 (장판 예고는 모드 예고 시스템). 마법진은 낙하 순간(T0) 바닥에 찍힌다.
+  const circ = (nm, mesh, f, w, dt, a1) => ({ name: nm, mat: c1, mode: "mesh", mesh, fudge: f, size: R, rot3: YAW, rotLife: [0, w, 0], bursts: [[T0 + dt, 1]], life: E - T0 - dt,
+    sizeLife: [[0, 1.25, 0, -3], [0.08, 1]], alpha: [[0, 0], [0.03, 1], [0.12, a1 * 0.9], [0.7, a1 * 0.7], [1, 0]] });
   const L = [
-    // --- 바닥 마법진 (그려지며 회전, 낙하 순간 번쩍) ---
+    // --- 바닥 마법진 (낙하 순간 찍히며 회전) ---
     circ("C01 OuterRing", "cOuter", 40, 0.35, 0.0, 1),
-    circ("C02 Ticks", "cTicks", 39, -0.2, 0.03, 0.8),
-    circ("C03 Octagram", "cStar", 38, -0.55, 0.06, 0.9),
-    circ("C04 InnerRing", "cInner", 37, 0.8, 0.1, 0.9),
-    { name: "C05 RuneBand", mat: rn, mode: "mesh", mesh: "cRune", fudge: 36, size: R, rot3: YAW, rotLife: [0, 0.5, 0], bursts: [[0.04, 1]], life: E - 0.04,
-      alpha: [[0, 0], [0.18, 0.7], [0.2, 1], [0.7, 0.7], [1, 0]], sizeLife: [[0, 0.9], [0.2, 1]] },
-    { name: "C06 Sigil", mat: sg, mode: "mesh", mesh: "quad", fudge: 35, pos: [0, 0.05, 0], size: R * 1.12, rot3: YAW, rotLife: [0, -0.3, 0], bursts: [[0.08, 1]], life: E - 0.08,
-      alpha: [[0, 0], [0.17, 0.75], [0.19, 1], [0.65, 0.7], [1, 0]], sizeLife: [[0, 0.6, 0, 2], [0.17, 1], [0.2, 1.06], [1, 0.96]] },
+    circ("C02 Ticks", "cTicks", 39, -0.2, 0.01, 0.8),
+    circ("C03 Octagram", "cStar", 38, -0.55, 0.02, 0.9),
+    circ("C04 InnerRing", "cInner", 37, 0.8, 0.03, 0.9),
+    { name: "C05 RuneBand", mat: rn, mode: "mesh", mesh: "cRune", fudge: 36, size: R, rot3: YAW, rotLife: [0, 0.5, 0], bursts: [[T0 + 0.03, 1]], life: E - T0 - 0.03,
+      alpha: [[0, 0], [0.04, 1], [0.7, 0.7], [1, 0]], sizeLife: [[0, 1.2, 0, -3], [0.08, 1]] },
+    { name: "C06 Sigil", mat: sg, mode: "mesh", mesh: "quad", fudge: 35, pos: [0, 0.05, 0], size: R * 1.12, rot3: YAW, rotLife: [0, -0.3, 0], bursts: [[T0 + 0.02, 1]], life: E - T0 - 0.02,
+      alpha: [[0, 0], [0.04, 1], [0.65, 0.7], [1, 0]], sizeLife: [[0, 1.3, 0, -3], [0.08, 1], [1, 0.96]] },
     { name: "C07 CircleFlare", mat: c1, mode: "mesh", mesh: "cOuter", fudge: 34, size: R, rot3: YAW, bursts: [[T0, 1]], life: 0.5,
       sizeLife: [[0, 1], [1, 1.25]], alpha: [[0, 1], [1, 0]] },
-    { name: "C08 FloorGlow", mat: gl, mode: "mesh", mesh: "quad", fudge: 44, pos: [0, 0.02, 0], size: R * 2.4, rot3: YAW, bursts: [[0, 1]], life: E,
-      alpha: [[0, 0], [T0 / E, 0.35], [(T0 + 0.05) / E, 0.6], [0.6, 0.25], [1, 0]] },
+    { name: "C08 FloorGlow", mat: gl, mode: "mesh", mesh: "quad", fudge: 44, pos: [0, 0.02, 0], size: R * 2.4, rot3: YAW, bursts: [[T0, 1]], life: E - T0,
+      alpha: [[0, 0], [0.04, 0.6], [0.5, 0.25], [1, 0]] },
     // --- 예비: 하늘에서 내려와 모이는 빛줄기 + 가는 예비 광선 ---
     { name: "A01 Gather", mat: sk, mode: "stretch", vs: 0.06, ls: 2.5, fudge: 5, life: [0.25, 0.32], size: [0.08, 0.16], shape: { type: "circle", r: 1.8, th: 1, y: 9 },
       bursts: [[0, 6], [0.08, 8], [0.16, 10]], vel: { y: [-28, -22], rad: [-4, -2] }, alpha: [[0, 0], [0.2, 1], [1, 0.6]] },
-    { name: "A02 PreBeam", mat: pl, mode: "mesh", mesh: "beamCore", fudge: 8, size: 0.6, rot3: YAW, bursts: [[0.08, 1]], life: T0 - 0.06,
+    { name: "A02 PreBeam", mat: pl, mode: "mesh", mesh: "beamCore", fudge: 8, pos: [0, 2.5, 0], size: 0.6, rot3: YAW, bursts: [[0.08, 1]], life: T0 - 0.06,
       alpha: [[0, 0], [0.5, 0.35], [1, 0.6]], sizeLife: [[0, 0.3], [1, 1]] },
     { name: "A03 SkyGlow", mat: gl, fudge: 9, pos: [0, 9, 0], size: 4, bursts: [[0, 1]], life: T0 + 0.4, alpha: [[0, 0], [0.6, 0.45], [1, 0]], sizeLife: [[0, 0.5], [0.6, 1], [1, 1.4]] },
     // --- 낙하: 기둥, 섬광, 충격파 ---

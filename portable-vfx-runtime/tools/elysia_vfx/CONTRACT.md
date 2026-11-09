@@ -5,7 +5,7 @@
 | 팩 | 시스템 | 역할 | 붙이는 곳 (ElysiaBoss.java) |
 |---|---|---|---|
 | Elysia_LightSpear | projectile / impact | 투사체 / 착탄 | 빛의 창 (Fx.fall → 판정 때 impact) |
-| Elysia_Judgment | judgment | static | 낙하 패턴(판정 7틱 전 시작, 0.35초 낙하) · 가호의 빛 · 보스 중앙 이동 |
+| Elysia_Judgment | judgment | static | 낙하 패턴(판정 7틱 전 시작, 0.35초 낙하 — 그 전엔 하늘만, 바닥 표시 없음) · 가호의 빛 · 보스 중앙 이동 |
 | Belzar_Hellfire | hellfire | static | 지옥불 패턴 · 그림자 몰수 · 계약 파기 무너지는 바깥 |
 | Elysia_Sanctuary | begin / sustain / end | static (sustain = Fx.held, 멈추면 end) | 치유의 성역 · 가호 금빛 원 · 계시 답 원 |
 | Elysia_Blessing | begin / sustain / end | attached (플레이어) | 축복 수락 ~ 정체 폭로 |
