@@ -96,6 +96,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new ReaperBoss.Hooks(), this); // 할로윈 보스 하베스트 (무적·기준선·소품 판정)
         getServer().getPluginManager().registerEvents(new AshShadowBoss.Hooks(), this); // 1인 던전 보스 재의 그림자 (무적·50%·장치·배율)
         getServer().getPluginManager().registerEvents(new TimeWraithBoss.Hooks(), this); // 3인 보스 시간의 망령 (기준선·기믹 소품·누적 딜·바늘 원소)
+        getServer().getPluginManager().registerEvents(new PeperoBoss.Hooks(), this); // [기능:빼빼로데이보스] 3인 이벤트 보스 쇼콜라 (기준선·분신·자물쇠)
         getServer().getPluginManager().registerEvents(new MordianBoss.Hooks(), this); // 3인 보스 모르디안의 원령 (기준선·기믹 소품·그림자 대상)
         getServer().getPluginManager().registerEvents(new ElysiaBoss.Hooks(), this); // 1인 레이드 엘리시아·벨자르 (기준선·빚·소품·구원·회복 막기)
         getServer().getPluginManager().registerEvents(new RouletteBoss.Hooks(), this); // 악마 1인 레이드 룰레타 (룰렛 구역 베팅·하우스 룰)
@@ -115,6 +116,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
         ReaperBoss.closeAll();
         AshShadowBoss.closeAll();
         TimeWraithBoss.closeAll();
+        PeperoBoss.closeAll(); // [기능:빼빼로데이보스]
         MordianBoss.closeAll();
         ElysiaBoss.closeAll();
         RouletteBoss.closeAll();
@@ -172,6 +174,7 @@ public final class MagicMythicPlugin extends JavaPlugin implements Listener {
             case "chavfx" -> new ReaperBoss.VfxMech(this, p); // PortableVFX 한 번 재생 / 따라가기
             case "chaash" -> new AshShadowBoss(this, p);     // 1인 던전 보스 재의 그림자 진행자
             case "chatime" -> new TimeWraithBoss(this, p);   // 3인 보스 시간의 망령 진행자
+            case "chapepero" -> new PeperoBoss(this, p);     // [기능:빼빼로데이보스] 3인 이벤트 보스 쇼콜라 진행자
             case "chamord" -> new MordianBoss(this, p);      // 3인 보스 모르디안의 원령 진행자
             case "chaelysia" -> new ElysiaBoss(this, p);     // 1인 레이드 엘리시아 → 벨자르 진행자
             case "charoulette" -> new RouletteBoss(this, p); // 악마 1인 레이드 도박의 악마 룰레타 진행자

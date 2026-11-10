@@ -11,8 +11,8 @@ import java.util.Set;
 public final class BossOpacity {
     private static final Set<String> PACKS = Set.of("elementreactions", "conduitturn", "dimensionmark", "lightbeam", "mirrortune", "prismtint",
         "rewind", "statuewake", "steamignition", "stoneweight", "thawingheat", "vineawaken", "waterlevel");
-    /** 보스: 재의 그림자 as_ · 모르디안 mordian · 호로겐 tw_ · 모르바스 archlich · 하베스트 pr_ · (11/09 4장) 엘리시아 elysia_ · 벨자르 belzar_ · 해방된 악마 freeddemon_ · 룰레타 roulette_ · 솜니아 somnia_ · (11/11 빼빼로데이) 쇼콜라 pepchocola·pepsweet */
-    private static final String[] BOSS = {"as_", "mordian", "tw_", "archlich", "pr_", "elysia_", "belzar_", "freeddemon_", "roulette_", "somnia_", "pepchocola", "pepsweet"};
+    /** 보스: 재의 그림자 as_ · 모르디안 mordian · 호로겐 tw_ · 모르바스 archlich · 하베스트 pr_ · (11/09 4장) 엘리시아 elysia_ · 벨자르 belzar_ · 해방된 악마 freeddemon_ · 룰레타 roulette_ · 솜니아 somnia_ · (11/11 빼빼로데이) 쇼콜라 pepchocola·pepsweet·pepgimmick */
+    private static final String[] BOSS = {"as_", "mordian", "tw_", "archlich", "pr_", "elysia_", "belzar_", "freeddemon_", "roulette_", "somnia_", "pepchocola", "pepsweet", "pepgimmick"};
 
     private BossOpacity() {}
 
