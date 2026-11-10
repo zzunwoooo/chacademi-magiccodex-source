@@ -6,7 +6,7 @@
 ## 파일
 | 무엇 | 레포 위치 | 넣을 곳 |
 |---|---|---|
-| 애드온 (보스 진행) | magic-mythic-paper/src/.../PeperoBoss.java + MagicMythicPlugin·MythicCommands 의 `[기능:빼빼로데이보스]` 줄 | 학교 ChAcademiaMagicMythic jar (표시 주석 부분만 라이브 소스에 넣어 빌드). 참고 빌드 = Desktop\클로드\빼빼로데이던전\chacademia-magic-mythic-pepero-20261111.jar (이 브랜치 바탕이라 그대로 쓰지 말 것) |
+| 애드온 (보스 진행) | magic-mythic-paper/src/.../PeperoBoss.java (+ 브랜치 MagicMythicPlugin·MythicCommands 의 `[기능:빼빼로데이보스]` 줄) | **라이브용 = 저쪽 hb2/n1111/m35/mythic35-{school,arena,wild}.jar** (= mythic34 + PeperoBoss + ReaperHook 연결, Fx.held → MordianFx.held, build.sh). 5대 plugins/update 에 넣고 재시작 |
 | 미몹 몹 8종 | magic-mythic-paper/mythicmobs/Mobs/chacademi_boss_pepero.yml | 학교 plugins/MythicMobs/mobs/ |
 | 미몹 스킬 (모션 16 + 졸개 6) | magic-mythic-paper/mythicmobs/Skills/chacademi_boss_pepero.yml | 학교 plugins/MythicMobs/skills/ |
 | 모델 6개 | magic-mythic-paper/models/pepero_day/*.bbmodel (giftbox 빠짐, heartlock 추가) | 학교 plugins/ModelEngine/blueprints/ → /meg reload → /iazip → generated.zip 5대 + 실행기 통합팩 |
@@ -30,3 +30,11 @@
 - 막대·리본·초콜릿 판 선·초코 경계는 입자(DUST)로 그림 (VFX 아님).
 - 관전 중(쓰러진) 사람은 클리어 의뢰 진행 안 됨. 일일 의뢰는 하루 3개 상한 때문에 안 만듦.
 - 입장창 배경(art pepero_day)·코코 초상화 그림 없음 → 그림_프롬프트.md. 그림 없으면 리치 연구실 배경.
+
+## 11/11 점검 (지난 사고 기록 대조)
+- 교화 봉인(30초) 중 기믹·마지막 한 입·패턴 전부 멈춤 (10/31 하베스트 봉인 중 공격 사고).
+- 패턴 쓰는 동안 보스 제자리 (11/11 아스칼론 예고 뒤 걸어 다님).
+- 보스·졸개 공격은 방패로 못 막음 (11/04 3인 던전 방패 관통과 같게).
+- 기믹 설명·성공/실패 타이틀 → 채팅 대사로 (11/03 오너 "기믹을 대놓고 알려주지 말 것", 보스 타이틀 정리). 기믹 이름·남은 시간 타이틀만 남김.
+- 라이브 jar 에 ReaperBoss.Fx.held 가 없음 → 라이브판은 MordianFx.held (mythic33·34 와 같은 방식). 브랜치 jar 를 그대로 넣으면 기믹 3·5 에서 오류.
+- 모델 hitbox 뼈대 상자 1개 + 눈높이 = 뼈대 기준점 (10/31 납작 히트박스·질식), model{hb=true}, chacademia_boss 태그, VFX 팩은 spell-catalog 에 넣지 않음 (client not ready 방지).

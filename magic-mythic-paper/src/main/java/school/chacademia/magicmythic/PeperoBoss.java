@@ -116,7 +116,6 @@ final class PeperoBoss extends Mech {
             anim("spawn");
             Fx.effect(plugin, "claude:pepsweet/phase", ground(center), 0, 40);
             later(40, () -> {
-                title(white ? "§f§l화이트 쇼콜라" : "§d§l외톨이 마녀 쇼콜라", "§7올해도… 아무도 안 줄 거잖아");
                 say("빼빼로? 흥. 올해도 나한테 주는 사람은 없을 거잖아. 그럼 아무도 못 먹게 할 거야!");
             });
         }
@@ -132,6 +131,13 @@ final class PeperoBoss extends Mech {
             if (closed) return false;
             if (!boss.isValid() || boss.isDead()) { close(); return false; }
             t++;
+            // 쓰러져 교화 봉인(30초) 중에는 기믹·마지막 한 입·패턴 전부 멈춤 (10/31 하베스트 봉인 정지와 같은 사고 막기)
+            if (sealed()) {
+                if (gimmick != null) { Gimmick g = gimmick; gimmick = null; g.cleanup(); }
+                finale = null; focus = null; clearFull();
+                nextAt = Math.max(nextAt, t + 40);
+                return true;
+            }
             if (gimmick != null && !gimmick.step()) { Gimmick g = gimmick; gimmick = null; g.cleanup(); afterGimmick(g); }
             if (finale != null) finale.step();
             if (t % 5 != 0) return true;
@@ -147,6 +153,11 @@ final class PeperoBoss extends Mech {
 
         double maxHp() { var a = boss.getAttribute(Attribute.MAX_HEALTH); return a == null ? boss.getHealth() : a.getValue(); }
         boolean patternsAllowed() { return !closed && (gimmick == null || gimmick.patterns()); }
+        /** MagicCodexBridge 교화 봉인 표시 (TamingBridge.seal: PDC magiccodexbridge:taming_grace + AI 끔 + 무적). */
+        static final NamespacedKey SEAL = NamespacedKey.fromString("magiccodexbridge:taming_grace");
+        boolean sealed() { return boss.getPersistentDataContainer().has(SEAL, org.bukkit.persistence.PersistentDataType.BYTE) || (!boss.hasAI() && boss.isInvulnerable()); }
+        /** 보스가 기믹 때문에 제자리여야 하는 동안 (패턴이 끝나도 AI 를 켜면 안 됨). */
+        boolean holdStill() { return gimmick != null && (gimmick.frozen() || gimmick instanceof Clones); }
 
         List<Player> players() {
             List<Player> out = new ArrayList<>();
@@ -203,6 +214,8 @@ final class PeperoBoss extends Mech {
             };
             last = id;
             nextAt = t + len + (enraged ? 4 : 14);
+            // 공격하는 동안 제자리 (11/11 아스칼론 "예고 뒤에도 걸어 다님" 과 같은 사고 막기)
+            if (!holdStill()) { boss.setAI(false); int until = len; later(until, () -> { if (!holdStill() && t >= nextAt - (enraged ? 4 : 14) - 1) boss.setAI(true); }); }
         }
         String vfx(String sys) { return "claude:pepchocola/" + sys + (white ? "_w" : ""); }
 
@@ -248,7 +261,6 @@ final class PeperoBoss extends Mech {
             if (target == null) return 10;
             if (animate) { face(target.getLocation()); anim("almond_throw"); }
             UUID mark = Fx.follow(target, "claude:pepchocola/almond_mark", 80, 0);
-            if (!animate) titleTo(target, "", "§6아몬드 폭탄");
             later(60, () -> {
                 Fx.stop(mark);
                 if (!alive(target)) return;
@@ -275,7 +287,7 @@ final class PeperoBoss extends Mech {
                 anim("fondue_burst");
                 for (Player pl : inside(s)) if (plugin.status() != null) plugin.status().apply(boss, pl, Status.STUN, 16, 0);
             });
-            later(44, () -> { if (gimmick == null || !gimmick.frozen()) boss.setAI(true); });
+            later(44, () -> { if (!holdStill()) boss.setAI(true); });
             return 52;
         }
         /** 공방 일꾼 부르기: 졸개 6마리 넘으면 안 함. */
@@ -468,7 +480,6 @@ final class PeperoBoss extends Mech {
                 fa = Fx.follow(a, "claude:pepsweet/pair_mark", GRACE + EAT + 20, 0);
                 if (b != null) fb = Fx.follow(b, "claude:pepsweet/pair_mark", GRACE + EAT + 20, 0);
                 if (f.focus != null) {
-                    f.titleTo(f.focus, "", "§c쇼콜라가 당신을 노린다");
                     for (int k = 0; k < 2; k++) { Location at = ground(f.focus.getLocation().add(dir(ReaperBoss.RNG.nextFloat() * 360).multiply(5))); f.later(10, () -> f.prop("CA_Pep_stick_soldier", at, "minion")); }
                 }
             }
@@ -483,7 +494,6 @@ final class PeperoBoss extends Mech {
                 Location pa = a.getLocation(), pb = other();
                 double d = Math.sqrt(ReaperBoss.flat2(pa, pb)), L = len();
                 if (age % 2 == 0) stick(pa, pb, L);
-                if (age % 20 == 0 && age > GRACE) { String s = String.format(Locale.ROOT, "§d막대 §f%.1f칸", L); f.titleTo(a, "", s); if (b != null) f.titleTo(b, "", s); }
                 if (age <= GRACE) return true;
                 if (d > L + 0.5) return finish(false, "막대가 부러졌다");
                 if (d < L - BAND && age < GRACE + EAT - 10) return finish(false, "너무 서둘렀다");
@@ -510,11 +520,10 @@ final class PeperoBoss extends Mech {
                 Location mid = a.getLocation().clone().add(other()).multiply(0.5);
                 if (ok) {
                     Fx.effect(f.plugin, "claude:pepsweet/pair_success", ground(mid), 0, 30);
-                    f.title("§d§l…끝까지 먹었다", "");
                     f.say("뭐, 뭐야… 진짜로 끝까지 먹었어…?");
                 } else {
                     Fx.effect(f.plugin, "claude:pepgimmick/pocky_break", ground(mid), 0, 30);
-                    f.title("§c§l빼빼로 게임 실패", "§f" + why);
+                    f.say("§7(" + why + ")");
                     f.say("거봐. 결국 다들 혼자잖아.");
                     for (Player pl : new Player[]{a, b}) if (alive(pl)) { Fx.effect(f.plugin, "claude:pepsweet/pair_fail", ground(pl.getLocation()), 0, 20); f.hurt(pl, -0.6); }
                     f.boss.setHealth(Math.min(f.maxHp(), f.boss.getHealth() + f.maxHp() * 0.05));
@@ -538,7 +547,7 @@ final class PeperoBoss extends Mech {
                     mark[i] = Fx.held("claude:pepgimmick/gift_mark", pt[i], 0, 14);
                 }
                 f.anim("gift_summon");
-                f.title("§d§l선물 받아주기", n > 1 ? "§f상자 두 개" : "");
+                f.title("§d§l선물 받아주기", "");
                 f.say("자, 선물이야. …받아 줄 사람, 있으면 말이지.");
             }
             @Override boolean patterns() { return true; }
@@ -568,8 +577,8 @@ final class PeperoBoss extends Mech {
                         for (int k = 0; k < 3; k++) { Location at = ground(pt[i].clone().add(dir(k * 120f).multiply(1.5))); f.prop("CA_Pep_almond_roller", at, "minion"); }
                     }
                 }
-                if (all) { f.title("§d§l받았다", ""); f.say("…받아 준 거야? 진짜로?"); }
-                else { f.title("§c§l선물이 터졌다", ""); f.say("역시 아무도 안 받아 주잖아!"); }
+                if (all) f.say("…받아 준 거야? 진짜로?");
+                else f.say("역시 아무도 안 받아 주잖아!");
                 over = true;
                 return false;
             }
@@ -644,7 +653,7 @@ final class PeperoBoss extends Mech {
                 if (k >= order.size() * bite + 10) {
                     round++;
                     if (round >= rounds) { over = true; f.say("…다 먹었다. 맛없어."); return false; }
-                    pick(); phaseT = -30; f.title("", "§6한 판 더");
+                    pick(); phaseT = -30;
                 }
                 return true;
             }
@@ -695,7 +704,6 @@ final class PeperoBoss extends Mech {
                 float yaw = ReaperBoss.RNG.nextFloat() * 360;
                 lockA = spawnLock(ground(spot.clone().add(dir(yaw).multiply(6))));
                 lockB = spawnLock(ground(spot.clone().add(dir(yaw + 180).multiply(6))));
-                f.titleTo(trapped, "§d§l갇혔다", "§f20초");
             }
             Entity spawnLock(Location at) { if (ReaperBoss.flat2(at, f.center) > (f.arena - 1) * (f.arena - 1)) at = ground(f.center.clone().add(at.toVector().subtract(f.center.toVector()).setY(0).normalize().multiply(f.arena - 2))); return f.prop("CA_Pep_heart_lock", at, "lock"); }
             @Override boolean patterns() { return true; }
@@ -727,7 +735,6 @@ final class PeperoBoss extends Mech {
                 Fx.stop(cageFx);
                 if (ok) {
                     Fx.effect(f.plugin, "claude:pepgimmick/cage_break", spot, 0, 30);
-                    f.title("§d§l우리가 열렸다", "");
                     f.say("왜… 왜 다들 데리러 오는 건데.");
                     Player p = trapped;
                     f.later(5, () -> { if (alive(p)) f.almond(p, -0.35, false); });
@@ -781,7 +788,7 @@ final class PeperoBoss extends Mech {
                 if (age >= nextShuffle) {
                     shuffles++;
                     if (shuffles >= 3) { boom(); return false; }
-                    f.title("", "§d자리를 섞었다 §f" + shuffles + "/3");
+                    f.say("§7(자리를 섞었다 " + shuffles + "/3)");
                     spread(); nextShuffle = age + SHUFFLE;
                 }
                 return true;
@@ -819,13 +826,11 @@ final class PeperoBoss extends Mech {
             void found() {
                 for (Entity e : fakes) if (e.isValid()) { Fx.effect(f.plugin, "claude:pepgimmick/clone_poof", e.getLocation(), 0, 20); f.props.remove(e); e.remove(); }
                 fakes.clear();
-                f.title("§d§l찾았다", "");
                 f.say("…찾았네. 진짜 나를.");
             }
             void boom() {
                 over = true;
                 List<Location> at = new ArrayList<>(); for (Entity e : fakes) if (e.isValid()) at.add(ground(e.getLocation())); at.add(ground(f.boss.getLocation()));
-                f.title("§c§l전부 가짜였어", "");
                 f.say("아무도 진짜 나를 못 찾았어!");
                 for (Location l : at) f.strikeRaw(Shape.CIRCLE, l, 0, 6, 0, 0, 24, -0.6, f.vfx("fondue"), 9, null);
                 f.later(30, () -> { for (Entity e : fakes) if (e.isValid()) { f.props.remove(e); e.remove(); } fakes.clear(); });
@@ -864,7 +869,6 @@ final class PeperoBoss extends Mech {
                 }
                 if (age == LIMIT) {
                     Fx.effect(f.plugin, "claude:pepgimmick/flood", ground(f.center), 0, 60);
-                    f.title("§4§l초콜릿에 잠겼다", "");
                     f.say("…이제 아무 데도 못 가. 다 같이, 여기 있자.");
                     for (Player pl : f.players()) f.kill(pl, "초콜릿에 잠겼다");
                 }
@@ -940,6 +944,15 @@ final class PeperoBoss extends Mech {
     /* ======================================================================== events */
 
     static final class Hooks implements Listener {
+        /** 3인 던전 보스 공격은 방패로 못 막음 (11/04 호로겐·모르디안 [기능:3인방패관통] 과 같게, 쇼콜라·졸개 모두). */
+        @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+        public void pierceShield(EntityDamageByEntityEvent e) {
+            if (!(e.getEntity() instanceof Player pl) || !pl.isBlocking()) return;
+            Entity by = e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Entity s ? s : e.getDamager();
+            if (!FIGHTS.containsKey(by.getUniqueId()) && !by.getScoreboardTags().contains(TAG)) return;
+            if (e.isApplicable(EntityDamageEvent.DamageModifier.BLOCKING)) e.setDamage(EntityDamageEvent.DamageModifier.BLOCKING, 0);
+        }
+
         @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
         public void damage(EntityDamageEvent e) {
             Fight f = FIGHTS.get(e.getEntity().getUniqueId());
@@ -976,7 +989,6 @@ final class PeperoBoss extends Mech {
             Fight f = FIGHTS.remove(e.getEntity().getUniqueId());
             if (f != null) {
                 Fx.effect(f.plugin, "claude:pepsweet/death", e.getEntity().getLocation(), 0, 60);
-                f.title(f.white ? "§f§l화이트 쇼콜라 처치" : "§d§l쇼콜라 처치", "§7…나한테도, 하나 주는 거야?");
                 f.say(f.white ? "…다음 화이트데이엔, 나도 줄게." : "…나한테도, 하나 주는 거야?");
                 f.close();
                 return;
