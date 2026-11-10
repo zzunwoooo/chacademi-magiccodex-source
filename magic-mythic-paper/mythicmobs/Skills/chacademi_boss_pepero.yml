@@ -1,0 +1,449 @@
+# 빼빼로데이 3인 던전 「초코 막대 공방」 스킬 (2026-11-11). 몹은 Mobs/chacademi_boss_pepero.yml.
+# 0초 = 모션 시작 = 예고 시작. delay 는 틱(20틱 = 1초). 모션 이름·★판정 시점은 기획.md 6장과 같다.
+# VFX: claude:pepchocola/<시스템> (공격, 흰 초코 = _w) · claude:pepsweet/<시스템> (기믹·연출). vfxref = 예고 크기 (배율 1).
+# 피해는 chatelegraph (던전 이지 배율 적용). chatelegraph 에 타게터가 없으면 부른 쪽이 넘긴 대상을 그대로 씀.
+# 보스 대사는 채팅 한 줄 (공략 안내 없음, 11/03 오너 규칙).
+
+# ============================================================ 공통
+PEP_BEGIN:                          # 패턴 시작: 바쁨 + 제자리
+  Skills:
+  - setvariable{var=caster.busy;value=1;type=INTEGER} @self
+  - setAI{ai=false} @self
+PEP_END:                            # 패턴 끝 (기믹 중이면 움직임은 기믹이 정함)
+  Skills:
+  - setAI{ai=true} @self ?variableequals{var=caster.gim;value=0}
+  - setvariable{var=caster.busy;value=0;type=INTEGER} @self
+
+PEP_BOSS_SPAWN:                     # 등장 3초
+  Skills:
+  - setvariable{var=caster.busy;value=1;type=INTEGER} @self
+  - setvariable{var=caster.gim;value=1;type=INTEGER} @self
+  - setAI{ai=false} @self
+  - state{s=spawn;li=0;lo=3} @self
+  - chavfx{id=pepsweet/phase} @self
+  - sound{s=block.amethyst_block.chime;v=2;p=0.7} @self
+  - message{m="&d쇼콜라<&co> &f흥, 또 우르르 몰려왔네. 빼빼로는 나 혼자 다 먹을 거야!"} @PlayersInRadius{r=40}
+  - delay 60
+  - setAI{ai=true} @self
+  - setvariable{var=caster.gim;value=0;type=INTEGER} @self
+  - setvariable{var=caster.busy;value=0;type=INTEGER} @self
+
+PEP_BOSS_HURT:
+  Cooldown: 0.4
+  Skills:
+  - sound{s=block.honey_block.hit;v=1.4;p=1.3} @self
+
+PEP_SHIELD_BLOCK:                   # 기믹 2 초코 껍질: 피해 막음 (sync)
+  Skills:
+  - cancelevent
+  - sound{s=block.amethyst_block.hit;v=1;p=1.6} @self
+
+# ============================================================ 패턴 고르기
+PEP_AI:
+  Conditions:
+  - variableequals{var=caster.busy;value=0}
+  - variableequals{var=caster.gim;value=0}
+  Skills:
+  - skill{s=PEP_AI_P1} @target ?variableequals{var=caster.phase;value=1}
+  - skill{s=PEP_AI_P2} @target ?variableequals{var=caster.phase;value=2} ?variableequals{var=caster.enr;value=0}
+  - skill{s=PEP_AI_P3} @target ?variableequals{var=caster.enr;value=1}
+PEP_AI_P1:
+  Skills:
+  - randomskill{skills=PEP_SWING,PEP_SWING,PEP_RAIN,PEP_PUDDLE,PEP_ALMOND,PEP_SUMMON_TRY} @target
+PEP_AI_P2:
+  Skills:
+  - randomskill{skills=PEP_SWING,PEP_RAIN,PEP_PUDDLE,PEP_ALMOND,PEP_CROSS,PEP_CROSS,PEP_FONDUE,PEP_SUMMON_TRY} @target
+PEP_AI_P3:                          # 광폭 (15%): 막대 비 두 번, 퐁듀 자주
+  Skills:
+  - randomskill{skills=PEP_SWING,PEP_RAIN2,PEP_RAIN2,PEP_PUDDLE,PEP_ALMOND,PEP_CROSS,PEP_FONDUE,PEP_FONDUE} @target
+
+PEP_BASIC:                          # 가까운 적 평타 (부채꼴 r3, 예고 없음 = 체술)
+  Cooldown: 1.5
+  Conditions:
+  - variableequals{var=caster.busy;value=0}
+  - variableequals{var=caster.gim;value=0}
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=cone;at=caster;r=3;angle=120;ticks=9;warn=false;flat=6;element=earth;spell=boss_pep_basic} @target
+
+# ============================================================ 1) 초코 막대 휘두르기 — 부채꼴 r6 200°, 0.6초
+PEP_SWING:
+  Cooldown: 3
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - look{} @target
+  - state{s=swing;li=0;lo=3} @self
+  - chatelegraph{shape=cone;at=caster;r=6;angle=200;ticks=12;flat=9;knock=0.6;element=earth;vfx=pepchocola/swing;vfxref=6;vfxlead=3;spell=boss_pep_swing} @target ?!variableequals{var=caster.w;value=1}
+  - chatelegraph{shape=cone;at=caster;r=6;angle=200;ticks=12;flat=9;knock=0.6;element=earth;vfx=pepchocola/swing_w;vfxref=6;vfxlead=3;spell=boss_pep_swing} @target ?variableequals{var=caster.w;value=1}
+  - sound{s=entity.player.attack.sweep;v=1.4;p=0.8} @self
+  - delay 24
+  - skill{s=PEP_END} @self
+
+# ============================================================ 2) 막대 비 — 원 r2.5 × 전원 발밑, 1.2초 (VFX 낙하 0.5초)
+PEP_RAIN:
+  Cooldown: 6
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - state{s=stick_rain;li=0;lo=3} @self
+  - sound{s=entity.evoker.prepare_attack;v=1.5;p=1.4} @self
+  - skill{s=PEP_RAIN_ONE} @PlayersInRadius{r=30}
+  - delay 40
+  - skill{s=PEP_END} @self
+PEP_RAIN2:                          # 광폭: 0.7초 뒤 한 번 더 (그때 서 있는 곳)
+  Cooldown: 6
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - state{s=stick_rain;li=0;lo=3} @self
+  - sound{s=entity.evoker.prepare_attack;v=1.5;p=1.4} @self
+  - skill{s=PEP_RAIN_ONE} @PlayersInRadius{r=30}
+  - delay 14
+  - skill{s=PEP_RAIN_ONE} @PlayersInRadius{r=30}
+  - delay 40
+  - skill{s=PEP_END} @self
+PEP_RAIN_ONE:
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=10;element=earth;vfx=pepchocola/stickrain;vfxref=2.5;vfxlead=10;spell=boss_pep_rain} ?!variableequals{var=caster.w;value=1}
+  - chatelegraph{shape=circle;at=target;r=2.5;ticks=24;flat=10;element=earth;vfx=pepchocola/stickrain_w;vfxref=2.5;vfxlead=10;spell=boss_pep_rain} ?variableequals{var=caster.w;value=1}
+
+# ============================================================ 3) 녹은 초코 웅덩이 — 원 r4 대상 발밑, 0.9초 + 0.5초마다 4번, 둔화
+PEP_PUDDLE:
+  Cooldown: 5
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - state{s=puddle;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=18;flat=4;pulses=4;period=10;status=slow:30:0.4;element=water;vfx=pepchocola/puddle;vfxref=4;vfxlead=2;spell=boss_pep_puddle} @target ?!variableequals{var=caster.w;value=1}
+  - chatelegraph{shape=circle;at=target;r=4;ticks=18;flat=4;pulses=4;period=10;status=slow:30:0.4;element=water;vfx=pepchocola/puddle_w;vfxref=4;vfxlead=2;spell=boss_pep_puddle} @target ?variableequals{var=caster.w;value=1}
+  - sound{s=block.honey_block.slide;v=1.6;p=0.6} @self
+  - delay 28
+  - skill{s=PEP_END} @self
+
+# ============================================================ 4) 아몬드 폭탄 — 대상에게 4초 표식(따라다님) → 마지막 1초 원 r4 (둘레 친구도 맞음)
+PEP_ALMOND:
+  Cooldown: 9
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - look{} @target
+  - state{s=almond_throw;li=0;lo=3} @self
+  - delay 12
+  - skill{s=PEP_ALMOND_MARK} @target
+  - delay 12
+  - skill{s=PEP_END} @self
+PEP_ALMOND_MARK:                    # 보스가 넘긴 대상 한 명 (타게터 없는 줄 = 그 대상)
+  Skills:
+  - message{m="&d쇼콜라<&co> &f옜다, 아몬드! 혼자 꼭 끌어안고 있어~"} @PlayersInRadius{r=40}
+  - sound{s=entity.tnt.primed;v=1;p=1.6}
+  - chavfx{id=pepchocola/almond_mark}
+  - delay 20
+  - chavfx{id=pepchocola/almond_mark}
+  - delay 20
+  - chavfx{id=pepchocola/almond_mark}
+  - delay 20
+  - chavfx{id=pepchocola/almond_mark}
+  - chatelegraph{shape=circle;at=target;r=4;ticks=20;flat=14;knock=0.5;element=fire;vfx=pepchocola/almond_boom;vfxref=4;vfxlead=2;spell=boss_pep_almond}
+
+# ============================================================ 5) 십자 막대 베기 (2페이즈) — 직선 14×2.5 네 방향 0.8초 → 여덟 방향 1.3초
+PEP_CROSS:
+  Cooldown: 7
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - state{s=cross;li=0;lo=3} @self
+  - skill{s=PEP_CROSS_LINE} @Ring{radius=6;points=4}
+  - delay 10
+  - skill{s=PEP_CROSS_LINE} @Ring{radius=6;points=8}
+  - delay 30
+  - skill{s=PEP_END} @self
+PEP_CROSS_LINE:
+  Skills:
+  - chatelegraph{shape=line;at=caster;length=14;width=2.5;ticks=16;flat=11;element=earth;vfx=pepchocola/cross;vfxref=14;vfxlead=2;spell=boss_pep_cross} ?!variableequals{var=caster.w;value=1}
+  - chatelegraph{shape=line;at=caster;length=14;width=2.5;ticks=16;flat=11;element=earth;vfx=pepchocola/cross_w;vfxref=14;vfxlead=2;spell=boss_pep_cross} ?variableequals{var=caster.w;value=1}
+
+# ============================================================ 6) 초코 퐁듀 대폭발 (2페이즈) — 원 r9 보스 중심, 2.0초, 기절 0.8초
+PEP_FONDUE:
+  Cooldown: 12
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - state{s=fondue_charge;li=0;lo=0} @self
+  - message{m="&d쇼콜라<&co> &f다 같이 녹아 버려!"} @PlayersInRadius{r=40}
+  - sound{s=block.lava.ambient;v=2;p=0.6} @self
+  - chatelegraph{shape=circle;at=self;r=9;ticks=40;flat=22;knock=1;up=0.3;status=stun:16;element=earth;vfx=pepchocola/fondue;vfxref=9;vfxlead=3;spell=boss_pep_fondue} @self ?!variableequals{var=caster.w;value=1}
+  - chatelegraph{shape=circle;at=self;r=9;ticks=40;flat=22;knock=1;up=0.3;status=stun:16;element=earth;vfx=pepchocola/fondue_w;vfxref=9;vfxlead=3;spell=boss_pep_fondue} @self ?variableequals{var=caster.w;value=1}
+  - delay 37
+  - state{s=fondue_charge;r=true} @self
+  - state{s=fondue_burst;li=0;lo=3} @self
+  - sound{s=entity.generic.explode;v=1.6;p=1.3} @self
+  - delay 30
+  - skill{s=PEP_END} @self
+
+# ============================================================ 7) 공방 일꾼 부르기 — 일꾼 6마리 미만일 때만 (아니면 휘두르기)
+PEP_SUMMON_TRY:
+  Skills:
+  - skill{s=PEP_SUMMON} @target ?mobsinradius{types=CA_Pep_stick_soldier,CA_Pep_almond_roller,CA_Pep_sprinkle_fairy;a=<6;r=30}
+  - skill{s=PEP_SWING} @target ?!mobsinradius{types=CA_Pep_stick_soldier,CA_Pep_almond_roller,CA_Pep_sprinkle_fairy;a=<6;r=30}
+PEP_SUMMON:
+  Cooldown: 15
+  Skills:
+  - skill{s=PEP_BEGIN} @self
+  - state{s=gift_summon;li=0;lo=3} @self
+  - message{m="&d쇼콜라<&co> &f얘들아, 일어나! 손님 왔다!"} @PlayersInRadius{r=40}
+  - delay 20
+  - summon{type=CA_Pep_stick_soldier;amount=1;noise=4} @self
+  - summon{type=CA_Pep_almond_roller;amount=1;noise=4} @self
+  - summon{type=CA_Pep_sprinkle_fairy;amount=1;noise=4} @self ?variableequals{var=caster.phase;value=2}
+  - delay 20
+  - skill{s=PEP_END} @self
+
+# ============================================================ 2페이즈 (60%)
+PEP_PHASE2:
+  Skills:
+  - setvariable{var=caster.phase;value=2;type=INTEGER} @self
+  - chavfx{id=pepsweet/phase} @self
+  - sound{s=entity.illusioner.cast_spell;v=2;p=0.8} @self
+  - message{m="&d쇼콜라<&co> &f…왜 포기를 안 해? 너희끼리 사이좋은 거, 보기 싫단 말이야!"} @PlayersInRadius{r=40}
+
+# ============================================================ 기믹 1 — 빼빼로 게임 (70%, 2페이즈 30초마다)
+# 무작위 2명 표시(빛남 + 발밑 하트 1초마다) → 6초 뒤 각자 둘레 3.5칸에 플레이어 2명 이상이면 성공, 혼자면 초코 폭발.
+# 고르지 않은 사람에게는 막대 병정 2마리. 살아 있는 사람이 2명 미만이면 건너뜀 (관전자는 타게터가 빼 줌).
+PEP_G1:
+  Skills:
+  - setvariable{var=caster.g1;value=1;type=INTEGER} @self
+  - skill{s=PEP_G1_RUN} @self
+PEP_G1_REPEAT:
+  Skills:
+  - skill{s=PEP_G1_RUN} @self
+PEP_G1_RUN:
+  Conditions:
+  - playersinradius{a=>2;r=30}
+  Skills:
+  - setvariable{var=caster.gim;value=1;type=INTEGER} @self
+  - setAI{ai=false} @self
+  - removetag{t=pep_pair} @PlayersInRadius{r=60}
+  - state{s=pair_call;li=0;lo=3} @self
+  - sound{s=block.note_block.chime;v=2;p=1.2} @self
+  - message{m="&d쇼콜라<&co> &f빼빼로 게임 알지? 둘이서 한 막대를 끝까지 먹어 봐. …할 수 있으면 말이야."} @PlayersInRadius{r=40}
+  - addtag{t=pep_pair} @PlayersInRadius{r=30;sort=RANDOM;limit=2}
+  - delay 1
+  - skill{s=PEP_G1_GLOW} @PlayersInRadius{r=40}
+  - skill{s=PEP_G1_GUARDS} @PlayersInRadius{r=30}
+  - skill{s=PEP_G1_MARK} @PlayersInRadius{r=40}
+  - delay 20
+  - skill{s=PEP_G1_MARK} @PlayersInRadius{r=40}
+  - delay 12
+  - setAI{ai=true} @self
+  - delay 8
+  - skill{s=PEP_G1_MARK} @PlayersInRadius{r=40}
+  - delay 20
+  - skill{s=PEP_G1_MARK} @PlayersInRadius{r=40}
+  - delay 20
+  - skill{s=PEP_G1_MARK} @PlayersInRadius{r=40}
+  - delay 20
+  - skill{s=PEP_G1_MARK} @PlayersInRadius{r=40}
+  - delay 19
+  - skill{s=PEP_G1_OK} @PlayersInRadius{r=40}
+  - skill{s=PEP_G1_FAIL} @PlayersInRadius{r=40}
+  - delay 2
+  - removetag{t=pep_pair} @PlayersInRadius{r=60}
+  - setvariable{var=caster.gim;value=0;type=INTEGER} @self
+PEP_G1_GLOW:
+  TargetConditions:
+  - hastag{tag=pep_pair} true
+  Skills:
+  - potion{type=GLOWING;duration=125;lvl=0;p=false}
+  - sound{s=block.note_block.bell;v=1;p=1.6}
+PEP_G1_GUARDS:                      # 고르지 않은 사람에게 병정 2마리
+  TargetConditions:
+  - hastag{tag=pep_pair} false
+  Skills:
+  - summon{type=CA_Pep_stick_soldier;amount=2;noise=3}
+PEP_G1_MARK:
+  TargetConditions:
+  - hastag{tag=pep_pair} true
+  Skills:
+  - chavfx{id=pepsweet/pair_mark}
+PEP_G1_OK:
+  TargetConditions:
+  - hastag{tag=pep_pair} true
+  - playersinradius{a=>2;r=3.5} true
+  Skills:
+  - chavfx{id=pepsweet/pair_success}
+  - potion{type=STRENGTH;duration=200;lvl=0;p=false}
+  - heal{amount=6}
+  - sound{s=entity.player.levelup;v=1;p=1.5}
+PEP_G1_FAIL:
+  TargetConditions:
+  - hastag{tag=pep_pair} true
+  - playersinradius{a=<2;r=3.5} true
+  Skills:
+  - chatelegraph{shape=circle;at=target;r=3;ticks=2;warn=false;flat=18;status=root:20;element=earth;vfx=pepsweet/pair_fail;vfxref=3;vfxlead=1;spell=boss_pep_pair_fail}
+  - sound{s=entity.generic.explode;v=1;p=1.4}
+
+# ============================================================ 기믹 2 — 선물 상자 나눔 (40%)
+# 초코 껍질 15초 (피해 막음) + 상자 3개 (보스에서 9칸). 15초 안에 다 부수면 8초 기절, 못 부순 상자는 터짐 (상자마다 전원 16).
+PEP_G2:
+  Skills:
+  - setvariable{var=caster.g2;value=1;type=INTEGER} @self
+  - setvariable{var=caster.gim;value=1;type=INTEGER} @self
+  - setvariable{var=caster.boxes;value=0;type=INTEGER} @self
+  - setAI{ai=false} @self
+  - message{m="&d쇼콜라<&co> &f어차피… 아무도 나한테는 안 줄 거잖아!"} @PlayersInRadius{r=40}
+  - state{s=shield;li=0;lo=0} @self
+  - chavfx{id=pepsweet/shield_up} @self
+  - sound{s=block.honey_block.place;v=2;p=0.5} @self
+  - setvariable{var=caster.shield;value=1;type=INTEGER} @self
+  - summon{type=CA_Pep_gift_box;amount=1;noise=0} @Ring{radius=9;points=3}
+  - delay 16
+  - skill{s=PEP_G2_SHELL} @self
+  - delay 284
+  - skill{s=PEP_G2_TIMEOUT} @self ?variableequals{var=caster.shield;value=1}
+PEP_G2_SHELL:                       # 껍질 VFX 3초 조각을 껍질이 있는 동안만 이어 붙임
+  Skills:
+  - chavfx{id=pepsweet/shield} @self ?variableequals{var=caster.shield;value=1}
+  - delay 60
+  - chavfx{id=pepsweet/shield} @self ?variableequals{var=caster.shield;value=1}
+  - delay 60
+  - chavfx{id=pepsweet/shield} @self ?variableequals{var=caster.shield;value=1}
+  - delay 60
+  - chavfx{id=pepsweet/shield} @self ?variableequals{var=caster.shield;value=1}
+  - delay 60
+  - chavfx{id=pepsweet/shield} @self ?variableequals{var=caster.shield;value=1}
+PEP_BOX_SIGNAL:                     # 상자가 부서질 때마다 (상자 → signal PEP_BOX)
+  Skills:
+  - variableadd{var=caster.boxes;amount=1} @self
+  - skill{s=PEP_G2_SUCCESS} @self ?variableequals{var=caster.boxes;value=3} ?variableequals{var=caster.shield;value=1}
+PEP_G2_SUCCESS:                     # 다 부숨 → 감동해서 8초 기절
+  Skills:
+  - setvariable{var=caster.shield;value=0;type=INTEGER} @self
+  - state{s=shield;r=true} @self
+  - chavfx{id=pepsweet/shield_break} @self
+  - state{s=stunned;li=0;lo=0} @self
+  - sound{s=block.glass.break;v=2;p=1.2} @self
+  - message{m="&d쇼콜라<&co> &f…이거, 진짜로 나 주는 거야? 왜…?"} @PlayersInRadius{r=40}
+  - chavfx{id=pepsweet/stun} @self
+  - delay 40
+  - chavfx{id=pepsweet/stun} @self
+  - delay 40
+  - chavfx{id=pepsweet/stun} @self
+  - delay 40
+  - chavfx{id=pepsweet/stun} @self
+  - delay 40
+  - state{s=stunned;r=true} @self
+  - message{m="&d쇼콜라<&co> &f아, 아니야! 안 넘어가!"} @PlayersInRadius{r=40}
+  - setAI{ai=true} @self
+  - setvariable{var=caster.gim;value=0;type=INTEGER} @self
+PEP_G2_TIMEOUT:                     # 다 못 부숨 → 남은 상자는 스스로 터짐, 보스는 다시 싸움
+  Skills:
+  - setvariable{var=caster.shield;value=0;type=INTEGER} @self
+  - state{s=shield;r=true} @self
+  - chavfx{id=pepsweet/shield_break} @self
+  - message{m="&d쇼콜라<&co> &f…봐, 역시 아무도 안 주잖아."} @PlayersInRadius{r=40}
+  - setAI{ai=true} @self
+  - setvariable{var=caster.gim;value=0;type=INTEGER} @self
+
+# ---- 선물 상자
+PEP_GIFT_SPAWN:
+  Skills:
+  - chavfx{id=pepsweet/gift_spawn} @self
+  - state{s=spawn;li=0;lo=3} @self
+  - sound{s=entity.item.pickup;v=1.4;p=0.8} @self
+  - delay 300
+  - chatelegraph{shape=circle;at=self;r=30;ticks=20;flat=16;element=earth;spell=boss_pep_gift_boom} @self
+  - delay 20
+  - chavfx{id=pepsweet/gift_break} @self
+  - chavfx{id=pepchocola/almond_boom} @self
+  - sound{s=entity.generic.explode;v=1.6;p=1} @self
+  - delay 2
+  - remove @self                    # remove = 처치가 아님 (신호·아몬드 없음)
+PEP_GIFT_HURT:
+  Cooldown: 0.3
+  Skills:
+  - state{s=hurt;li=0;lo=1} @self
+  - sound{s=block.wool.hit;v=1.2;p=1.3} @self
+PEP_GIFT_DEATH:
+  Skills:
+  - state{s=death;li=0;lo=0} @self
+  - chavfx{id=pepsweet/gift_break} @self
+  - sound{s=entity.firework_rocket.twinkle;v=1.4;p=1.2} @self
+  - signal{s=PEP_BOX} @MobsInRadius{types=CA_Boss_pep_chocola,CA_Boss_pep_chocola_shiny;r=40}
+  - summon{type=CA_Pep_almond_roller;amount=1;noise=1} @self
+
+# ============================================================ 기믹 3 — 마지막 한 입 (15%): 광폭
+PEP_G3:
+  Skills:
+  - setvariable{var=caster.g3;value=1;type=INTEGER} @self
+  - setvariable{var=caster.gim;value=1;type=INTEGER} @self
+  - setvariable{var=caster.enr;value=1;type=INTEGER} @self
+  - setAI{ai=false} @self
+  - state{s=enrage;li=0;lo=3} @self
+  - chavfx{id=pepsweet/enrage} @self
+  - sound{s=entity.ravager.roar;v=1.6;p=1.4} @self
+  - message{m="&d쇼콜라<&co> &f싫어… 혼자는 싫단 말이야!"} @PlayersInRadius{r=40}
+  - delay 48
+  - setAI{ai=true} @self
+  - setvariable{var=caster.gim;value=0;type=INTEGER} @self
+
+# ============================================================ 사망
+PEP_BOSS_DEATH:
+  Skills:
+  - state{s=death;li=0;lo=0} @self
+  - chavfx{id=pepsweet/death} @self
+  - sound{s=entity.firework_rocket.large_blast;v=2;p=1} @self
+  - removetag{t=pep_pair} @PlayersInRadius{r=60}
+  - remove @MobsInRadius{types=CA_Pep_stick_soldier,CA_Pep_almond_roller,CA_Pep_sprinkle_fairy,CA_Pep_gift_box;r=40}
+  - message{m="&d쇼콜라<&co> &f…나한테도, 하나 주는 거야? …고마워. 진짜 달다."} @PlayersInRadius{r=40}
+PEP_BOSS_DEATH_SHINY:
+  Skills:
+  - state{s=death;li=0;lo=0} @self
+  - chavfx{id=pepsweet/death} @self
+  - sound{s=entity.firework_rocket.large_blast;v=2;p=1} @self
+  - removetag{t=pep_pair} @PlayersInRadius{r=60}
+  - remove @MobsInRadius{types=CA_Pep_stick_soldier,CA_Pep_almond_roller,CA_Pep_sprinkle_fairy,CA_Pep_gift_box;r=40}
+  - message{m="&f쇼콜라<&co> &f…고마워. 다음 화이트데이엔, 나도 줄게."} @PlayersInRadius{r=40}
+
+# ============================================================ 공방 일꾼
+PEP_MINION_SPAWN_LOCK:
+  Skills:
+  - chavfx{id=pepsweet/summon} @self
+  - state{s=spawn;li=0;lo=3} @self
+  - setAI{ai=false} @self
+  - delay 22
+  - setAI{ai=true} @self
+
+PEP_SOLDIER_POKE:                   # attack 1.0초, 0.45초 찌르기 (체술, 예고 없음)
+  Cooldown: 1.5
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=cone;at=caster;r=2.6;angle=90;ticks=9;warn=false;flat=5;element=earth;spell=mob_pep_soldier_poke} @target
+PEP_SOLDIER_THRUST:                 # thrust 1.4초, 0.75초 돌진 — 직선 6×1.5
+  Cooldown: 4
+  Skills:
+  - setAI{ai=false} @self
+  - look{} @target
+  - state{s=thrust;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=6;width=1.5;ticks=15;flat=8;element=earth;vfx=pepchocola/soldier_thrust;vfxref=6;vfxlead=2;spell=mob_pep_soldier_thrust} @target
+  - delay 14
+  - lunge{velocity=1.4;velocityY=0.15} @target
+  - delay 14
+  - setAI{ai=true} @self
+
+PEP_ALMOND_BUMP:                    # 몸통 박치기 (체술)
+  Cooldown: 1.5
+  Skills:
+  - state{s=attack;li=0;lo=2} @self
+  - chatelegraph{shape=circle;at=caster;r=1.6;ticks=6;warn=false;flat=4;knock=0.6;element=earth;spell=mob_pep_almond_bump} @target
+PEP_ALMOND_ROLL:                    # roll 1.6초, 0.6초부터 굴러옴 — 직선 8×2, 넉백
+  Cooldown: 4
+  Skills:
+  - setAI{ai=false} @self
+  - look{} @target
+  - state{s=roll;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=8;width=2;ticks=12;flat=7;knock=1;element=earth;vfx=pepchocola/almond_roll;vfxref=8;vfxlead=2;spell=mob_pep_almond_roll} @target
+  - delay 11
+  - lunge{velocity=1.8;velocityY=0.1} @target
+  - delay 20
+  - setAI{ai=true} @self
+
+PEP_FAIRY_SPRINKLE:                 # sprinkle 1.6초, 1.0초 — 원 r3 대상 발밑, 둔화 (VFX 0.4초 낙하)
+  Cooldown: 3
+  Skills:
+  - look{} @target
+  - state{s=sprinkle;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=3;ticks=20;flat=6;status=slow:30:0.3;element=light;vfx=pepchocola/fairy_sprinkle;vfxref=3;vfxlead=8;spell=mob_pep_fairy_sprinkle} @target

@@ -1,0 +1,155 @@
+# 빼빼로데이 3인 던전 「초코 막대 공방」 — 학교 plugins/ChacaDungeon/dungeons.yml 의 dungeons: 아래에 붙인다 (2026-11-11).
+# 맵 = 달콤한 악몽(sweet_nightmare) 칸 1~3 그대로 (대기실 + 반경 20 경기장). 입구(portal)도 같은 곳이라
+# 이벤트 동안 sweet_nightmare 는 portal 을 치우거나 permission 을 막아 둘 것 (같은 칸에 두 던전 파티가 겹치지 않게).
+# 입장 허가는 의뢰 「공방의 SOS」(pep_q1_sos) 보상으로 줌. 클리어마다 의뢰 이벤트 pep_clear +1 (각자).
+  pepero_day:
+    name: 초코 막대 공방
+    subtitle: 외톨이 마녀 쇼콜라
+    world: dungeon1
+    permission: chacademi.dungeon.enter.pepero_day
+    lock-message: 제과부 코코를 찾아가 보자.
+    ticket:
+      item: item:dungeon_ticket
+      amount: 1
+      free-until-first-clear: true
+    instances: 3
+    portal: world,444.24,108.00,-51.51,0.8,-5.0
+    portal-radius: 2.5
+    portal-label: 초코 막대 공방
+    exit: world,390.44,108.00,-64.42,87.0,4.7
+    clear-commands:
+    - 테스트 의뢰 이벤트 pep_clear 1 {player}
+    rewards:
+      first:
+      - item: item:random_artifact
+        amount: 1
+      - item: item:gift_ticket
+        amount: 3
+      base:
+      - item: item:core_unidentified
+        amount: 3
+      - item: item:core_unidentified
+        amount: 3
+      - item: item:money_pouch
+        amount: 5
+      - item: item:health_potion_big
+        amount: 2
+      random:
+      - item: item:random_artifact
+        amount: 1
+        chance: 15.0
+      - item: item:core_scroll_blue
+        amount: 1
+        chance: 10.0
+      - item: item:artifact_ticket_unique
+        amount: 1
+        chance: 2.0
+      - item: item:artifact_ticket_legendary
+        amount: 1
+        chance: 0.5
+    difficulty:
+      easy:
+        health: 0.6666666666666666
+        damage: 0.5
+      hard:
+        health: 1.0
+        damage: 1.0
+    easy-rewards:
+      first:
+      - item: item:random_artifact
+        amount: 1
+      - item: item:gift_ticket
+        amount: 3
+      base:
+      - item: item:core_unidentified
+        amount: 3
+      - item: item:money_pouch
+        amount: 2
+      - item: item:health_potion_big
+        amount: 1
+      random:
+      - item: item:random_artifact
+        amount: 1
+        chance: 8.0
+    natural-regen: false
+    party-size: 3
+    art: pepero_day
+    stages:
+    - name: 초코 막대 공방
+      goal: 달콤한 냄새가 난다. 공방 안으로 들어가자.
+      type: reach
+      target: 입장
+      radius: 3.0
+      open-doors:
+      - wait door
+    - name: 외톨이 마녀 쇼콜라
+      goal: 공방을 차지한 쇼콜라를 막고 빼빼로를 되찾자!
+      type: boss
+      target: chocola
+    slots:
+      '1':
+        start: dungeon1,958.34,65.00,0.63,-88.9,1.8
+        region:
+          '1': 940,61,-59
+          '2': 1058,163,59
+        rooms:
+          2-1 room:
+            '1': 954,65,-3
+            '2': 968,68,3
+            zones: []
+        bosses:
+          chocola:
+            mob: CA_Boss_pep_chocola
+            at: dungeon1,1000.25,65.00,0.58,91.6,-0.3
+        points:
+          출구: dungeon1,1024.38,65.00,0.56,90.0,1.1
+          입장: dungeon1,966.20,65.00,0.66,89.5,2.6
+        gimmicks: {}
+        doors:
+          wait door:
+            '1': 968,65,-3
+            '2': 968,68,3
+      '2':
+        start: dungeon1,1956.49,65.00,0.51,-89.8,-3.7
+        region:
+          '1': 1938,61,-59
+          '2': 2056,163,59
+        rooms:
+          2-1 room:
+            '1': 1952,65,-3
+            '2': 1966,68,3
+            zones: []
+        bosses:
+          chocola:
+            mob: CA_Boss_pep_chocola
+            at: dungeon1,1998.25,65.00,0.58,91.6,-0.3
+        points:
+          출구: dungeon1,2022.38,65.00,0.56,90.0,1.1
+          입장: dungeon1,1964.20,65.00,0.66,89.5,2.6
+        gimmicks: {}
+        doors:
+          wait door:
+            '1': 1966,65,-3
+            '2': 1966,68,3
+      '3':
+        start: dungeon1,2956.57,65.00,0.46,-89.5,-1.3
+        region:
+          '1': 2938,61,-59
+          '2': 3056,163,59
+        rooms:
+          2-1 room:
+            '1': 2952,65,-3
+            '2': 2966,68,3
+            zones: []
+        bosses:
+          chocola:
+            mob: CA_Boss_pep_chocola
+            at: dungeon1,2998.25,65.00,0.58,91.6,-0.3
+        points:
+          출구: dungeon1,3022.38,65.00,0.56,90.0,1.1
+          입장: dungeon1,2964.20,65.00,0.66,89.5,2.6
+        gimmicks: {}
+        doors:
+          wait door:
+            '1': 2966,65,-3
+            '2': 2966,68,3

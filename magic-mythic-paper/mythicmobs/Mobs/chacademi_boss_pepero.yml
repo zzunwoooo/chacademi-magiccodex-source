@@ -1,0 +1,302 @@
+# 빼빼로데이 이벤트 3인 던전 「초코 막대 공방」 (2026-11-11) — 보스 외톨이 마녀 쇼콜라 + 공방 일꾼 + 기믹 소품
+# 진행은 전부 이 yml 과 Skills/chacademi_boss_pepero.yml (애드온 코드 없음). 피해는 chatelegraph (던전 이지 배율이 그대로 먹음).
+# 모델: models/pepero_day/*.bbmodel → ModelEngine blueprints. VFX: PepChocola (공격) · PepSweet (기믹·연출).
+# 체력 % 조건(healthpercent)이라 던전 이지 체력 배율과 상관없이 70%·60%·40%·15% 에서 기믹이 나온다.
+# 변수: phase 1→2 (60%) · busy 패턴 중 · gim 기믹 중 · g1 g2 g3 한 번씩 · enr 광폭(15%) · shield 껍질 · boxes 부순 상자 수 · w 이로치(흰 VFX)
+
+CA_Boss_pep_chocola:
+  Type: HUSK
+  Display: '&d&l외톨이 마녀 &f&l쇼콜라'
+  Health: 8000
+  Damage: 0            # 피해는 전부 스킬(chatelegraph). 기본 근접은 이동용
+  Armor: 10
+  BossBar:
+    Enabled: true
+    Title: '&d&l외톨이 마녀 쇼콜라'
+    Range: 48
+    Color: PINK
+    Style: SEGMENTED_10
+    CreateFog: false
+    DarkenSky: false
+  Faction: pepero
+  Options:
+    MovementSpeed: 0.27
+    FollowRange: 40
+    KnockbackResistance: 1
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventRenaming: true
+    Silent: true
+    Despawn: false
+    Collidable: true
+    AlwaysShowName: false
+    MaxCombatDistance: 40
+  Modules:
+    ThreatTable: true
+  AIGoalSelectors:
+  - clear
+  - float
+  - meleeattack
+  - randomstroll
+  AITargetSelectors:
+  - clear
+  - players
+  - attacker
+  Equipment: []
+  Variables:
+    phase: 1
+    busy: 0
+    gim: 0
+    g1: 0
+    g2: 0
+    g3: 0
+    enr: 0
+    shield: 0
+    boxes: 0
+    w: 0
+  Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 크로스 애로우 처형 막기 + 보스 체력바
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - model{mid=pep_chocola;hb=true;n=false} @self ~onSpawn
+  - skill{s=PEP_BOSS_SPAWN} @self ~onSpawn
+  - skill{s=PEP_BOSS_HURT} @self ~onDamaged
+  - skill{s=PEP_SHIELD_BLOCK;sync=true} @self ~onDamaged ?variableequals{var=caster.shield;value=1}
+  # --- 2페이즈 (60%) · 기믹 (70 / 40 / 15%) — 기믹끼리는 겹치지 않게 gim=0 일 때만
+  - skill{s=PEP_PHASE2} @self ~onDamaged ?healthpercent{p=<0.6} ?variableequals{var=caster.phase;value=1}
+  - skill{s=PEP_G1} @self ~onDamaged ?healthpercent{p=<0.7} ?variableequals{var=caster.g1;value=0} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_G2} @self ~onDamaged ?healthpercent{p=<0.4} ?variableequals{var=caster.g2;value=0} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_G3} @self ~onDamaged ?healthpercent{p=<0.15} ?variableequals{var=caster.g3;value=0} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_BOX_SIGNAL} @self ~onSignal:PEP_BOX
+  # --- 2페이즈: 빼빼로 게임 30초마다
+  - skill{s=PEP_G1_REPEAT} @self ~onTimer:600 ?variableequals{var=caster.phase;value=2} ?variableequals{var=caster.gim;value=0}
+  # --- 패턴 고르기: 2초마다 (광폭 1.5초)
+  - skill{s=PEP_AI} @target ~onTimer:40 ?variableequals{var=caster.enr;value=0} ?targetwithin{d=30}
+  - skill{s=PEP_AI} @target ~onTimer:30 ?variableequals{var=caster.enr;value=1} ?targetwithin{d=30}
+  - skill{s=PEP_BASIC} @target ~onTimer:30 ?targetwithin{d=3}
+  - skill{s=PEP_BOSS_DEATH} @self ~onDeath
+  Drops: []
+
+# 이로치 1% (던전이 "<보스>_shiny" 가 있으면 boss-shiny-chance 로 대신 소환). 패턴 같음, 모델·VFX 색만 흰 초코.
+CA_Boss_pep_chocola_shiny:
+  Type: HUSK
+  Display: '&e&l✦ &f&l화이트 쇼콜라'
+  Health: 8000
+  Damage: 0
+  Armor: 10
+  BossBar:
+    Enabled: true
+    Title: '&f&l✦ 화이트 쇼콜라'
+    Range: 48
+    Color: WHITE
+    Style: SEGMENTED_10
+    CreateFog: false
+    DarkenSky: false
+  Faction: pepero
+  Options:
+    MovementSpeed: 0.27
+    FollowRange: 40
+    KnockbackResistance: 1
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventRenaming: true
+    Silent: true
+    Despawn: false
+    Collidable: true
+    AlwaysShowName: false
+    MaxCombatDistance: 40
+  Modules:
+    ThreatTable: true
+  AIGoalSelectors:
+  - clear
+  - float
+  - meleeattack
+  - randomstroll
+  AITargetSelectors:
+  - clear
+  - players
+  - attacker
+  Equipment: []
+  Variables:
+    phase: 1
+    busy: 0
+    gim: 0
+    g1: 0
+    g2: 0
+    g3: 0
+    enr: 0
+    shield: 0
+    boxes: 0
+    w: 1
+  Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - model{mid=pep_chocola_shiny;hb=true;n=false} @self ~onSpawn
+  - skill{s=PEP_BOSS_SPAWN} @self ~onSpawn
+  - skill{s=PEP_BOSS_HURT} @self ~onDamaged
+  - skill{s=PEP_SHIELD_BLOCK;sync=true} @self ~onDamaged ?variableequals{var=caster.shield;value=1}
+  - skill{s=PEP_PHASE2} @self ~onDamaged ?healthpercent{p=<0.6} ?variableequals{var=caster.phase;value=1}
+  - skill{s=PEP_G1} @self ~onDamaged ?healthpercent{p=<0.7} ?variableequals{var=caster.g1;value=0} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_G2} @self ~onDamaged ?healthpercent{p=<0.4} ?variableequals{var=caster.g2;value=0} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_G3} @self ~onDamaged ?healthpercent{p=<0.15} ?variableequals{var=caster.g3;value=0} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_BOX_SIGNAL} @self ~onSignal:PEP_BOX
+  - skill{s=PEP_G1_REPEAT} @self ~onTimer:600 ?variableequals{var=caster.phase;value=2} ?variableequals{var=caster.gim;value=0}
+  - skill{s=PEP_AI} @target ~onTimer:40 ?variableequals{var=caster.enr;value=0} ?targetwithin{d=30}
+  - skill{s=PEP_AI} @target ~onTimer:30 ?variableequals{var=caster.enr;value=1} ?targetwithin{d=30}
+  - skill{s=PEP_BASIC} @target ~onTimer:30 ?targetwithin{d=3}
+  - skill{s=PEP_BOSS_DEATH_SHINY} @self ~onDeath
+  Drops: []
+
+# ============================================================ 공방 일꾼 (보스가 부름, 최대 6마리)
+CA_Pep_stick_soldier:
+  Type: HUSK
+  Display: '&6초코 막대 병정'
+  Health: 160
+  Damage: 0            # 피해는 스킬 (0.45초 찌르기·0.75초 돌진)
+  Armor: 4
+  Faction: pepero
+  Options:
+    MovementSpeed: 0.3
+    FollowRange: 32
+    KnockbackResistance: 0.3
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventTransformation: true
+    Silent: true
+    Despawn: true
+    AlwaysShowName: false
+  AIGoalSelectors:
+  - clear
+  - float
+  - meleeattack
+  - randomstroll
+  AITargetSelectors:
+  - clear
+  - players
+  - attacker
+  Skills:
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - model{mid=pep_stick_soldier;hb=true;n=false} @self ~onSpawn
+  - skill{s=PEP_MINION_SPAWN_LOCK} @self ~onSpawn
+  - sound{s=block.bamboo.hit;v=1;p=1.4} @self ~onDamaged
+  - skill{s=PEP_SOLDIER_POKE} @target ~onTimer:30 ?targetwithin{d=2.6}
+  - skill{s=PEP_SOLDIER_THRUST} @target ~onTimer:80 ?targetwithin{d=7} ?!targetwithin{d=2.6}
+  - state{s=death;li=0;lo=0} @self ~onDeath
+  - sound{s=block.bamboo.break;v=1.2;p=1.2} @self ~onDeath
+  Drops: []
+
+CA_Pep_almond_roller:
+  Type: HUSK
+  Display: '&6아몬드 굴림이'
+  Health: 110
+  Damage: 0
+  Armor: 6
+  Faction: pepero
+  Options:
+    MovementSpeed: 0.26
+    FollowRange: 32
+    KnockbackResistance: 0.5
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventTransformation: true
+    Silent: true
+    Despawn: true
+    AlwaysShowName: false
+  AIGoalSelectors:
+  - clear
+  - float
+  - meleeattack
+  - randomstroll
+  AITargetSelectors:
+  - clear
+  - players
+  - attacker
+  Skills:
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - model{mid=pep_almond;hb=true;n=false} @self ~onSpawn
+  - skill{s=PEP_MINION_SPAWN_LOCK} @self ~onSpawn
+  - sound{s=block.wood.hit;v=1;p=1.6} @self ~onDamaged
+  - skill{s=PEP_ALMOND_BUMP} @target ~onTimer:30 ?targetwithin{d=2}
+  - skill{s=PEP_ALMOND_ROLL} @target ~onTimer:70 ?targetwithin{d=9} ?!targetwithin{d=2}
+  - state{s=death;li=0;lo=0} @self ~onDeath
+  - sound{s=block.wood.break;v=1.2;p=1.5} @self ~onDeath
+  Drops: []
+
+CA_Pep_sprinkle_fairy:
+  Type: HUSK
+  Display: '&d딸기 스프링클 요정'
+  Health: 90
+  Damage: 0
+  Armor: 2
+  Faction: pepero
+  Options:
+    MovementSpeed: 0.24
+    FollowRange: 32
+    KnockbackResistance: 0
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventTransformation: true
+    Silent: true
+    Despawn: true
+    AlwaysShowName: false
+  AIGoalSelectors:   # 다가오지 않고 떨어져서 뿌림
+  - clear
+  - float
+  - lookatplayers
+  - randomstroll
+  AITargetSelectors:
+  - clear
+  - players
+  - attacker
+  Skills:
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - model{mid=pep_fairy;hb=true;n=false} @self ~onSpawn
+  - skill{s=PEP_MINION_SPAWN_LOCK} @self ~onSpawn
+  - sound{s=entity.allay.hurt;v=1;p=1.3} @self ~onDamaged
+  - skill{s=PEP_FAIRY_SPRINKLE} @target ~onTimer:60 ?targetwithin{d=14}
+  - state{s=death;li=0;lo=0} @self ~onDeath
+  - sound{s=entity.allay.death;v=1;p=1.2} @self ~onDeath
+  Drops: []
+
+# ============================================================ 기믹 소품
+# 기믹 2 선물 상자: 움직이지 않음. 부서지면 보스에게 신호 + 아몬드 굴림이 1마리. 15초 지나도 살아 있으면 터짐 (전원 16).
+CA_Pep_gift_box:
+  Type: HUSK
+  Display: '&d빼빼로 선물 상자'
+  Health: 260
+  Damage: 0
+  Armor: 0
+  Faction: pepero
+  Options:
+    NoAI: true
+    MovementSpeed: 0
+    KnockbackResistance: 1
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventItemPickup: true
+    PreventSunburn: true
+    PreventTransformation: true
+    Silent: true
+    Collidable: true
+    Despawn: true
+    AlwaysShowName: false
+  Skills:
+  - addtag{t=chacademia_boss} @self ~onSpawn   # 처형 막기 (소품도 보스 취급, 11/03 모르디안 소품과 같음)
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - model{mid=pep_giftbox;hb=true;n=false} @self ~onSpawn
+  - skill{s=PEP_GIFT_SPAWN} @self ~onSpawn
+  - skill{s=PEP_GIFT_HURT} @self ~onDamaged
+  - skill{s=PEP_GIFT_DEATH} @self ~onDeath
+  Drops: []
+

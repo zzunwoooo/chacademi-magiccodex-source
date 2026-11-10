@@ -1,0 +1,16 @@
+# 학교 plugins/ChacaNPC/quests.yml 의 quests: 아래에 붙임 (AI 가 코코 대화에서 의뢰를 자연스럽게 꺼내는 설명).
+  pep_q1_sos:
+    summary: 공방이 외톨이 마녀에게 넘어갔다. 숲의 몬스터를 정리해 공방 가는 길을 열어 주면 공방 입장 허가를 내 준다.
+    min-score: 0
+  pep_q2_rescue:
+    summary: 친구 둘과 함께 초코 막대 공방에 들어가 쇼콜라를 막고 빼빼로를 되찾아 달라.
+    min-score: 0
+  pep_q3_soldier:
+    summary: 공방에 아직 행진하는 초코 막대 병정들을 정리해 달라.
+    min-score: 0
+  pep_q4_almond:
+    summary: 굴러다니는 아몬드 굴림이들을 붙잡아 달라.
+    min-score: 0
+  pep_q5_share:
+    summary: 쇼콜라도 사실 외로운 것 같다. 공방을 몇 번 더 찾아가 쇼콜라와 마주해 달라.
+    min-score: 0
