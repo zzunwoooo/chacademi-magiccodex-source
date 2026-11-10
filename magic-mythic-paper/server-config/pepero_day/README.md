@@ -10,11 +10,11 @@
 | 미몹 몹 8종 | magic-mythic-paper/mythicmobs/Mobs/chacademi_boss_pepero.yml | 학교 plugins/MythicMobs/mobs/ |
 | 미몹 스킬 (모션 16 + 졸개 6) | magic-mythic-paper/mythicmobs/Skills/chacademi_boss_pepero.yml | 학교 plugins/MythicMobs/skills/ |
 | 모델 6개 | magic-mythic-paper/models/pepero_day/*.bbmodel (giftbox 빠짐, heartlock 추가) | 학교 plugins/ModelEngine/blueprints/ → /meg reload → /iazip → generated.zip 5대 + 실행기 통합팩 |
-| VFX 3팩 (44종) | portable-vfx-runtime/assets/PepChocola, PepSweet, PepGimmick | 실행기 개별 파일 (client-assets.zip 에 넣지 말 것) + 서버 PortableVFX 쪽 같은 방식 |
+| VFX 3팩 (44종) | portable-vfx-runtime/assets/PepChocola, PepSweet, PepGimmick | **실행기 배포본 준비됨 = 저쪽 hb2/n1111/launcher-pep** (make.ps1 → Merge → Verify bad=0, publish.sh 는 오너 "배포해" 뒤에만). 개별 File 항목 79개 + 클라 jar bossfx4. 서버 PortableVFX effects·spell-catalog·bindings 에는 넣지 않음 |
 | 던전 등록 | server-config/pepero_day/dungeon-entry.yml | 학교 ChacaDungeon/dungeons.yml 의 dungeons: 아래 → /서버관리 새로고침 던전입장 |
 | 의뢰 5개 | server-config/pepero_day/quests-pepero.yml | 학교 MagicCodexBridge/quests.yml → /의뢰관리 reload |
 | NPC 코코 | server-config/pepero_day/npc/coco.yml + npc-quests-snippet.yml | 학교 ChacaNPC/npcs/ , ChacaNPC/quests.yml → 오너 배치 |
-| 클라 이펙트 줄이기 예외 | server-config/pepero_day/client/BossOpacity.java | 실행기 PortableVFX 클라 jar → bossfx4 (Desktop\클로드\빼빼로데이던전\client) |
+| 클라 이펙트 줄이기 예외 | server-config/pepero_day/client/BossOpacity.java | bossfx4 = 지금 배포된 bossfx2(md5 32d6cbd5) 에서 BossOpacity 클래스 하나만 다름. 설치 이름 mods/portable-vfx-preserved-245d836c.jar 그대로 (launcher-pep 에 포함) |
 
 ## 순서 (재시작 때)
 1. 애드온 jar · 미몹 yml 2개 · blueprints 6개 넣고 재시작 (리로드 = 재시작 규칙). 시작 로그에서 PEP_ / CA_Pep_ / chapepero 오류·skipped 확인.
@@ -38,3 +38,13 @@
 - 기믹 설명·성공/실패 타이틀 → 채팅 대사로 (11/03 오너 "기믹을 대놓고 알려주지 말 것", 보스 타이틀 정리). 기믹 이름·남은 시간 타이틀만 남김.
 - 라이브 jar 에 ReaperBoss.Fx.held 가 없음 → 라이브판은 MordianFx.held (mythic33·34 와 같은 방식). 브랜치 jar 를 그대로 넣으면 기믹 3·5 에서 오류.
 - 모델 hitbox 뼈대 상자 1개 + 눈높이 = 뼈대 기준점 (10/31 납작 히트박스·질식), model{hb=true}, chacademia_boss 태그, VFX 팩은 spell-catalog 에 넣지 않음 (client not ready 방지).
+
+## 11/11 VFX·실행기 점검 (지난 실행기·VFX 사고 기록 대조)
+- 클라 팩 상한: 팩당 시스템 ≤16 (15·13·16), 레이어 ≤64 (최대 19), 시스템 id 전부 소문자 → 실제 클라 로더(배포 중인 bossfx2 jar + load-limits 2048)로 0 오류.
+  레포 전체 111팩 같이 읽어도 빼빼로 팩 오류 없음 (오류 7건은 레포 원본이 옛 판인 재의 그림자·모르디안 팩 — 배포본은 11/04·11/09 에 이미 나눠 고침).
+- 배포된 팩과 이름 겹침 없음 (distribution 에 pep* 없음). 팩 수 684개 안팎 < max-packs 768. 텍스처 원본 RGBA 3.3+2.7+2.7 MiB (resident 2048 MiB 여유 충분).
+- client-assets.zip 은 건드리지 않음 (manifest·4096개·1GiB 사고) → 개별 File 항목. 릴리스는 --latest=false (실행기 앱 업데이트 사고).
+- 보스 팩은 서버 spell-catalog·bindings 에 넣지 않음 → 클라에 팩이 없어도 마법이 "client not ready" 로 막히지 않음 (11/03 교화 거절 사고).
+- 쇼콜라 코드가 부르는 VFX id 40개 전부 3팩 정의 안에 있음. 예고 크기 = VFX 크기 (팩 배율 고정): 분신 웅덩이 r4·분신 폭발 r9 로 맞춤, 깨물기 VFX 는 조각 가운데서.
+- 배포 직후: 서버 로그 `client not ready`·`received=` 확인, 재시작 뒤 5대 `skipped`·PortableVFX `0 skipped` 확인 (지금 학교 PortableVFX 는 보스 팩을 서버 쪽에 두지 않는 구조라 변화 없음).
+- 유저 안내: 실행기를 다시 켜야 새 VFX·bossfx4 를 받음 (11/03 "실행기 안 켠 클라" 거절 사례).

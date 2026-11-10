@@ -36,7 +36,7 @@ import school.chacademia.magicmythic.ReaperBoss.Fx;
  *   <li>30% 혼자는 싫어 - 한 명을 하트 우리에 가둠 (초당 5%, 20초 = 사망). 우리 양쪽 하트 자물쇠 둘을 2초 안에 같이 부숴야 풀림.
  *       풀린 사람에게 바로 아몬드 폭탄.</li>
  *   <li>20% 진짜 쇼콜라 찾기 - 넷으로 흩어짐 (진짜만 가끔 눈 깜빡임). 진짜는 3초 안에 전원이 때려야 피해가 들어감.
- *       가짜 = 반사 + 둔화. 10초마다 자리 섞기, 세 번 섞이면 넷이 동시에 터짐. 진짜에게 최대 체력 5% 넣으면 성공.</li>
+ *       가짜 = 반사 + 둔화. 10초마다 자리 섞기, 세 번 섞이면 넷이 동시에 터짐 (원 r 9). 진짜에게 최대 체력 5% 넣으면 성공.</li>
  *   <li>10% 마지막 한 입 - 초코가 가장자리부터 10초마다 2칸씩 차오름 (밖 = 초당 8% + 둔화), 60초 안에 못 잡으면 전멸.
  *       그동안 나눠 먹기·빼빼로 게임·초콜릿 판(짧게) 이 15초마다.</li>
  * </ol>
@@ -226,7 +226,7 @@ final class PeperoBoss extends Mech {
             Location at = ground(boss.getLocation());
             float yaw = yawTo(at, target.getLocation());
             strike(Shape.CONE, at, yaw, 6, 0, 200, 12, 14, vfx("swing"), 6, s -> {
-                for (Player pl : inside(s)) pl.setVelocity(pl.getLocation().toVector().subtract(at.toVector()).setY(0).normalize().multiply(0.9).setY(0.35));
+                for (Player pl : inside(s)) pl.setVelocity(flat(pl.getLocation().toVector().subtract(at.toVector())).multiply(0.9).setY(0.35));
             });
             return 26;
         }
@@ -665,8 +665,9 @@ final class PeperoBoss extends Mech {
             void chomp(int[] c, int warn) {
                 Location at = tile(c);
                 Location start = at.clone().add(0, 0, -TILE / 2);
-                f.strikeRaw(Shape.LINE, start, 0, TILE, (float) TILE, 0, Math.max(4, warn - 2), -0.3, "claude:pepgimmick/bite", 0, s -> {
-                    for (Player pl : f.inside(s)) pl.setVelocity(new Vector(0, 0.9, 0).add(pl.getLocation().toVector().subtract(f.center.toVector()).setY(0).normalize().multiply(0.4)));
+                f.strikeRaw(Shape.LINE, start, 0, TILE, (float) TILE, 0, Math.max(4, warn - 2), -0.3, null, 0, s -> {
+                    Fx.effect(f.plugin, "claude:pepgimmick/bite", at, 0, 20);   // 조각 가운데 (예고 시작점은 조각 가장자리)
+                    for (Player pl : f.inside(s)) pl.setVelocity(new Vector(0, 0.9, 0).add(flat(pl.getLocation().toVector().subtract(f.center.toVector())).multiply(0.4)));
                 });
             }
             void grid() {
@@ -793,7 +794,7 @@ final class PeperoBoss extends Mech {
                 }
                 return true;
             }
-            /** 넷 다 (진짜·가짜) 가까운 사람 발밑에 원 r 3. */
+            /** 넷 다 (진짜·가짜) 가까운 사람 발밑에 원 r 4. */
             void cast() {
                 List<Player> ps = f.targetable(f.players()); if (ps.isEmpty()) return;
                 List<Entity> all = new ArrayList<>(fakes); all.add(f.boss);
@@ -802,7 +803,7 @@ final class PeperoBoss extends Mech {
                     Player near = ps.stream().min(Comparator.comparingDouble(p -> p.getLocation().distanceSquared(e.getLocation()))).orElse(null);
                     if (near == null) continue;
                     if (e == f.boss) f.anim("puddle"); else f.propAnim(e, "CHA_PEP_a_puddle");
-                    f.strikeRaw(Shape.CIRCLE, ground(near.getLocation()), 0, 3, 0, 0, 22, 16, f.vfx("puddle"), 4, null);
+                    f.strikeRaw(Shape.CIRCLE, ground(near.getLocation()), 0, 4, 0, 0, 22, 16, f.vfx("puddle"), 4, null);   // VFX 크기 고정 → 예고도 r4
                 }
             }
             /** 진짜가 맞을 때: 3초 안에 전원이 때렸을 때만 피해. */
@@ -832,7 +833,7 @@ final class PeperoBoss extends Mech {
                 over = true;
                 List<Location> at = new ArrayList<>(); for (Entity e : fakes) if (e.isValid()) at.add(ground(e.getLocation())); at.add(ground(f.boss.getLocation()));
                 f.say("아무도 진짜 나를 못 찾았어!");
-                for (Location l : at) f.strikeRaw(Shape.CIRCLE, l, 0, 6, 0, 0, 24, -0.6, f.vfx("fondue"), 9, null);
+                for (Location l : at) f.strikeRaw(Shape.CIRCLE, l, 0, 9, 0, 0, 24, -0.6, f.vfx("fondue"), 9, null);   // VFX 크기 고정 → 예고도 r9
                 f.later(30, () -> { for (Entity e : fakes) if (e.isValid()) { f.props.remove(e); e.remove(); } fakes.clear(); });
             }
             @Override void cleanup() { for (Entity e : fakes) if (e.isValid()) { f.props.remove(e); e.remove(); } fakes.clear(); }
@@ -888,6 +889,8 @@ final class PeperoBoss extends Mech {
         static float yawTo(Location from, Location to) { return yawOf(to.toVector().subtract(from.toVector())); }
         static float yawOf(Vector v) { return (float) Math.toDegrees(Math.atan2(-v.getX(), v.getZ())); }
         static Vector dir(float yaw) { double a = Math.toRadians(yaw); return new Vector(-Math.sin(a), 0, Math.cos(a)); }
+        /** 수평 단위 벡터 (0 이면 +X — 정확히 같은 자리에서 normalize 하면 NaN → setVelocity 오류). */
+        static Vector flat(Vector v) { v.setY(0); return v.lengthSquared() < 1e-4 ? new Vector(1, 0, 0) : v.normalize(); }
         static Location ground(Location at) { return ReaperBoss.ground(at); }
 
         Player nearest(List<Player> ps) { return ps.stream().min(Comparator.comparingDouble(p -> p.getLocation().distanceSquared(boss.getLocation()))).orElse(null); }
