@@ -47,7 +47,7 @@ final class PeperoBoss extends Mech {
     static final Map<UUID, Fight> FIGHTS = new HashMap<>();
     static final String TAG = "chacademi_pepero_prop";
     static final String NAME = "§d[§f쇼콜라§d] §f";
-    static boolean spellHit, solo;
+    static boolean spellHit;
 
     PeperoBoss(MagicMythicPlugin plugin, Params p) { super(plugin, p); }
 
@@ -65,13 +65,13 @@ final class PeperoBoss extends Mech {
 
     /** /테스트 보스 쇼콜라 &lt;무엇&gt; [값] - 64칸 안 가장 가까운 쇼콜라. */
     static String test(Player p, String what, String arg) {
-        if (what.equals("혼자")) {
-            solo = arg.equals("켜기");
-            return solo ? "혼자 시험 모드 켬: 즉사 대신 알림 · 혼자여도 빼빼로 게임·삼각형 판정을 흉내" : "혼자 시험 모드 끔";
-        }
         Fight f = null; double best = 64 * 64;
         for (Fight x : FIGHTS.values()) if (x.boss.getWorld().equals(p.getWorld())) { double d = x.boss.getLocation().distanceSquared(p.getLocation()); if (d < best) { best = d; f = x; } }
         if (f == null) return "64칸 안에 쇼콜라가 없어요 (/mm mobs spawn CA_Boss_pep_chocola - 소환한 자리가 경기장 중심)";
+        if (what.equals("혼자")) {   // 그 보스 하나만 (서버 전체로 켜 두면 다른 파티 판정까지 바뀜)
+            f.solo = arg.equals("켜기");
+            return f.solo ? "혼자 시험 모드 켬 (이 쇼콜라만): 즉사 대신 알림 · 혼자여도 빼빼로 게임·삼각형 판정을 흉내" : "혼자 시험 모드 끔";
+        }
         switch (what) {
             case "패턴" -> {
                 List<Player> ps = f.players();
@@ -101,7 +101,9 @@ final class PeperoBoss extends Mech {
         final MagicMythicPlugin plugin; final LivingEntity boss; final Location center; final double arena; final boolean white;
         int t, nextAt = 70, emptyFor, rotateAt = Integer.MAX_VALUE, summonAt = 400;
         final boolean[] gateDone = new boolean[7];
-        boolean invulnerable, closed, phase2, enraged;
+        boolean invulnerable, closed, phase2, enraged, solo;
+        /** 지금 패턴이 끝나는 틱 (끝나면 AI 다시 켬). */
+        int castEnd;
         String last = "";
         Gimmick gimmick;
         Last finale;
@@ -215,7 +217,8 @@ final class PeperoBoss extends Mech {
             last = id;
             nextAt = t + len + (enraged ? 4 : 14);
             // 공격하는 동안 제자리 (11/11 아스칼론 "예고 뒤에도 걸어 다님" 과 같은 사고 막기)
-            if (!holdStill()) { boss.setAI(false); int until = len; later(until, () -> { if (!holdStill() && t >= nextAt - (enraged ? 4 : 14) - 1) boss.setAI(true); }); }
+            castEnd = t + len;
+            if (!holdStill()) { boss.setAI(false); later(len, () -> { if (!holdStill() && t >= castEnd) boss.setAI(true); }); }
         }
         String vfx(String sys) { return "claude:pepchocola/" + sys + (white ? "_w" : ""); }
 
@@ -292,6 +295,7 @@ final class PeperoBoss extends Mech {
         }
         /** 공방 일꾼 부르기: 졸개 6마리 넘으면 안 함. */
         void summon() {
+            props.removeIf(e -> !e.isValid());
             long alive = props.stream().filter(e -> e.isValid() && e.getScoreboardTags().contains(TAG + ":minion")).count();
             if (alive >= 6 || players().isEmpty()) return;
             anim("gift_summon");
@@ -317,7 +321,7 @@ final class PeperoBoss extends Mech {
                 s = new Show(plugin.telegraphs().id(), shape, at.getX(), Telegraphs.ground(at), at.getZ(), yaw, (float) size, width, (float) (angle <= 0 ? 60 : angle), Math.max(2, ticks), TelegraphProtocol.RED);
             } catch (IllegalArgumentException e) { return; }
             plugin.telegraphs().start(s, boss, boss.getWorld(), true, true, show -> {
-                if (closed) return;
+                if (closed || sealed()) return;
                 if (vfx != null) areaFx(vfx, at, size, yaw, vfxSize);
                 spellHit = true;
                 try { if (dmg != 0) for (Player pl : inside(show)) hurt(pl, dmg); }
@@ -328,6 +332,7 @@ final class PeperoBoss extends Mech {
         /** dmg &lt; 0 = 최대 체력 비율 (-0.3 = 30%). */
         void hurt(Player pl, double dmg) {
             double d = dmg < 0 ? ReaperBoss.Fight.maxOf(pl) * -dmg : dmg;
+            pl.setNoDamageTicks(0);   // 같은 틱 두 번째 판정(선물 2개·겹친 원)이 무적 시간에 먹히지 않게
             spellHit = true;
             try { plugin.targets().hurt(boss, pl, d, "earth"); } finally { spellHit = false; }
         }
@@ -464,15 +469,18 @@ final class PeperoBoss extends Mech {
         /* ---------------------------------------------------------------- 기믹2 빼빼로 게임 */
 
         static final class Pocky extends Gimmick {
-            static final int GRACE = 30, EAT = 160;
-            static final double START = 20, END = 1.5, BAND = 5;
+            static final int GRACE = 40, EAT = 160;
+            static final double END = 1.5, BAND = 5;
+            /** 처음 막대 길이 = 두 사람 사이 거리 + 2 (8~20칸): 붙어 있든 멀든 시작하자마자 깨지지 않게 (11/11 점검). */
+            double start = 20;
             Player a, b; boolean over; UUID fa, fb;
             Pocky(Fight f) {
                 super(f);
                 List<Player> ps = new ArrayList<>(f.players());
                 Collections.shuffle(ps, ReaperBoss.RNG);
-                if (ps.size() < 2 && !solo) { over = true; return; }
+                if (ps.isEmpty() || (ps.size() < 2 && !f.solo)) { over = true; return; }
                 a = ps.get(0); b = ps.size() > 1 ? ps.get(1) : null;
+                start = b == null ? 12 : Math.clamp(Math.sqrt(ReaperBoss.flat2(a.getLocation(), b.getLocation())) + 2, 8, 20);
                 if (ps.size() > 2) f.focus = ps.get(2);
                 f.anim("pair_call");
                 f.title("§d§l빼빼로 게임", "");
@@ -485,7 +493,7 @@ final class PeperoBoss extends Mech {
             }
             @Override boolean patterns() { return true; }
             @Override boolean frozen() { return false; }
-            double len() { int k = Math.max(0, age - GRACE); return START + (END - START) * Math.min(1, k / (double) EAT); }
+            double len() { int k = Math.max(0, age - GRACE); return start + (END - start) * Math.min(1, k / (double) EAT); }
             Location other() { return b != null ? b.getLocation() : a.getLocation().clone().add(dir(f.t * 3f).multiply(len() - 1)); }   // 혼자 시험: 가상 상대가 막대 끝
             @Override boolean step() {
                 super.step();
@@ -495,7 +503,7 @@ final class PeperoBoss extends Mech {
                 double d = Math.sqrt(ReaperBoss.flat2(pa, pb)), L = len();
                 if (age % 2 == 0) stick(pa, pb, L);
                 if (age <= GRACE) return true;
-                if (d > L + 0.5) return finish(false, "막대가 부러졌다");
+                if (d > L + 0.5 && age < GRACE + EAT) return finish(false, "막대가 부러졌다");   // 마지막 판정은 아래 2.5칸
                 if (d < L - BAND && age < GRACE + EAT - 10) return finish(false, "너무 서둘렀다");
                 if (throughBoss(pa, pb)) return finish(false, "막대가 쇼콜라에 걸려 부러졌다");
                 if (age >= GRACE + EAT) return finish(d <= 2.5, d <= 2.5 ? null : "끝까지 먹지 못했다");
@@ -645,6 +653,7 @@ final class PeperoBoss extends Mech {
                 if (over) return false;
                 phaseT++;
                 if (age % 10 == 0) grid();
+                if (age % 20 == 0 && phaseT >= 0) offBoard();
                 if (phaseT < 0) return true;
                 int s = show(), showEnd = order.size() * s, gap = 40, bite = round == 0 ? 8 : 6;
                 if (phaseT < showEnd) { if (phaseT % s == 0) flash(order.get(phaseT / s)); return true; }
@@ -670,6 +679,14 @@ final class PeperoBoss extends Mech {
                     for (Player pl : f.inside(s)) pl.setVelocity(new Vector(0, 0.9, 0).add(flat(pl.getLocation().toVector().subtract(f.center.toVector())).multiply(0.4)));
                 });
             }
+            /** 판 밖(경기장 가장자리)에 서서 버티면 기믹이 의미 없음 → 판 밖은 초당 8% + 둔화 (11/11 점검). */
+            void offBoard() {
+                double half = GRID * TILE / 2 + 0.5;
+                for (Player pl : f.players()) {
+                    Location l = pl.getLocation();
+                    if (Math.abs(l.getX() - f.center.getX()) > half || Math.abs(l.getZ() - f.center.getZ()) > half) { f.hurt(pl, -0.08); if (f.plugin.status() != null) f.plugin.status().apply(f.boss, pl, Status.SLOW, 25, 1); }
+                }
+            }
             void grid() {
                 var dust = new Particle.DustOptions(f.white ? Color.fromRGB(0xE3D6C6) : Color.fromRGB(0x3F2218), 1.0f);
                 double half = GRID * TILE / 2; World w = f.center.getWorld(); double y = ground(f.center).getY() + 0.15;
@@ -691,6 +708,8 @@ final class PeperoBoss extends Mech {
 
         static final class Cage extends Gimmick {
             static final int LIMIT = 400, SYNC = 40;
+            /** 구하러 갈 사람이 한 명만 남으면 혼자서 두 자물쇠를 깨야 하니 10초 (둘 이상 = 2초). */
+            int sync() { int free = 0; for (Player pl : f.players()) if (!pl.equals(trapped)) free++; return free >= 2 ? SYNC : 200; }
             Player trapped; Location spot; UUID cageFx; Entity lockA, lockB; int deadAt = -999; Entity firstDead; boolean over;
             Cage(Fight f) {
                 super(f);
@@ -712,10 +731,11 @@ final class PeperoBoss extends Mech {
                 super.step();
                 if (over) return false;
                 if (!alive(trapped)) return finish(false);
-                if (trapped.getLocation().distanceSquared(spot) > 1.0) { Location back = spot.clone(); back.setYaw(trapped.getLocation().getYaw()); back.setPitch(trapped.getLocation().getPitch()); trapped.teleport(back); }
+                if (!trapped.getWorld().equals(spot.getWorld())) return finish(false);   // 월드를 옮기면 distanceSquared 가 예외 → 싸움 전체가 멈춤 (11/11 점검)
+                if (ReaperBoss.flat2(trapped.getLocation(), spot) > 1.0 || Math.abs(trapped.getLocation().getY() - spot.getY()) > 2.5) { Location back = spot.clone(); back.setYaw(trapped.getLocation().getYaw()); back.setPitch(trapped.getLocation().getPitch()); trapped.teleport(back); }
                 if (age % 20 == 0) { f.hurt(trapped, -0.05); f.titleTo(trapped, "", "§d" + Math.max(0, (LIMIT - age) / 20) + "초"); }
                 if (age >= LIMIT) { f.kill(trapped, "하트 우리에서 나오지 못했다"); return finish(false); }
-                if (firstDead != null && f.t - deadAt > SYNC) {   // 하나만 부서짐 → 다시 붙음
+                if (firstDead != null && f.t - deadAt > sync()) {   // 하나만 부서짐 → 다시 붙음
                     Location at = firstDead.getLocation();
                     Entity again = f.prop("CA_Pep_heart_lock", at, "lock");
                     if (firstDead == lockA) lockA = again; else lockB = again;
@@ -728,7 +748,7 @@ final class PeperoBoss extends Mech {
                 if (over || (prop != lockA && prop != lockB)) return;
                 Fx.effect(f.plugin, "claude:pepgimmick/lock_break", prop.getLocation(), 0, 20);
                 if (firstDead == null || firstDead == prop) { firstDead = prop; deadAt = f.t; return; }
-                if (f.t - deadAt <= SYNC) finish(true);
+                if (f.t - deadAt <= sync()) finish(true);
             }
             boolean finish(boolean ok) {
                 if (over) return false;
@@ -759,7 +779,7 @@ final class PeperoBoss extends Mech {
                 f.anim("enrage");
                 f.title("§d§l진짜 쇼콜라 찾기", "");
                 f.say("나는 어디에도 있고, 어디에도 없어. …진짜 나를 찾아 줄 수 있어?");
-                f.later(20, this::spread);
+                f.later(20, () -> { if (!over && f.gimmick == this) spread(); });   // 그 사이 끝났거나 초기화됐으면 안 함
                 nextShuffle = SHUFFLE + 20;
             }
             @Override boolean frozen() { return false; }
@@ -777,6 +797,11 @@ final class PeperoBoss extends Mech {
                     Location at = spots.get(k); at.setYaw(yawTo(at, f.center));
                     Fx.effect(f.plugin, "claude:pepgimmick/clone_poof", at, 0, 20);
                     Entity e = f.prop(f.white ? "CA_Pep_clone_shiny" : "CA_Pep_clone", at, "clone");
+                    if (e instanceof LivingEntity le) {   // 머리 위 체력 표시로 진짜를 가려낼 수 없게 진짜와 같은 체력 (11/11 점검)
+                        AttributeInstance mh = le.getAttribute(Attribute.MAX_HEALTH);
+                        if (mh != null) mh.setBaseValue(f.maxHp());
+                        le.setHealth(Math.max(1, Math.min(f.maxHp(), f.boss.getHealth())));
+                    }
                     if (e != null) fakes.add(e);
                 }
                 lastHit.clear();
@@ -784,11 +809,12 @@ final class PeperoBoss extends Mech {
             @Override boolean step() {
                 super.step();
                 if (over) return false;
+                if (age % 4 == 0) for (Entity e : fakes) if (e instanceof LivingEntity le && le.isValid()) le.setHealth(Math.max(1, Math.min(f.maxHp(), f.boss.getHealth())));   // 진짜가 맞아도 체력 표시가 같이 줄게
                 if (age >= nextBlink) { f.anim("blink"); nextBlink = age + 50 + ReaperBoss.RNG.nextInt(30); }
                 if (age >= nextCast) { cast(); nextCast = age + 60; }
                 if (age >= nextShuffle) {
                     shuffles++;
-                    if (shuffles >= 3) { boom(); return false; }
+                    if (shuffles > 3) { boom(); return false; }   // 세 번 섞인 뒤에도 못 찾으면
                     f.say("§7(자리를 섞었다 " + shuffles + "/3)");
                     spread(); nextShuffle = age + SHUFFLE;
                 }
@@ -852,7 +878,7 @@ final class PeperoBoss extends Mech {
         }
         static final class Last {
             static final int LIMIT = 1200;
-            final Fight f; int age, nextMini = 300;
+            final Fight f; int age, nextMini = 300, lastMini = -1;
             Last(Fight f) { this.f = f; }
             double safe() { return Math.max(4, f.arena - 2 * (age / 200)); }
             void step() {
@@ -865,6 +891,8 @@ final class PeperoBoss extends Mech {
                 }
                 if (f.gimmick == null && age >= nextMini && age < LIMIT - 100) {
                     int k = ReaperBoss.RNG.nextInt(3);
+                    if (k == 0 && lastMini == 0) k = 1 + ReaperBoss.RNG.nextInt(2);   // 나눠 먹기 두 번 연속이면 배부름(20초)이 안 풀려 무조건 사망 (11/11 점검)
+                    lastMini = k;
                     f.gimmick = k == 0 ? new Share(f) : k == 1 && f.players().size() >= 2 ? new Pocky(f) : new Bite(f, 5, 1);
                     nextMini = age + 300;
                 }
@@ -907,7 +935,7 @@ final class PeperoBoss extends Mech {
             catch (RuntimeException | LinkageError ignored) {}
         }
         void later(int ticks, Runnable r) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> { if (!closed && boss.isValid() && !boss.isDead()) r.run(); }, Math.max(1, ticks));
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> { if (!closed && boss.isValid() && !boss.isDead() && !sealed()) r.run(); }, Math.max(1, ticks));
         }
         Entity prop(String mob, Location at, String kind) {
             try {
@@ -972,7 +1000,7 @@ final class PeperoBoss extends Mech {
             if (tags.contains(TAG + ":lock")) {   // 갇힌 본인은 자물쇠를 못 침
                 Player by = e instanceof EntityDamageByEntityEvent be ? attacker(be) : null;
                 if (by == null) { e.setCancelled(true); return; }
-                for (Fight fight : FIGHTS.values()) if (fight.gimmick instanceof Fight.Cage cg && by.equals(cg.trapped) && !solo) e.setCancelled(true);
+                for (Fight fight : FIGHTS.values()) if (fight.gimmick instanceof Fight.Cage cg && by.equals(cg.trapped) && !fight.solo) e.setCancelled(true);
             }
         }
 

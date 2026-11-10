@@ -1,5 +1,5 @@
 # 빼빼로데이 이벤트 3인 던전 「초코 막대 공방」 (2026-11-11 개편) — 보스 외톨이 마녀 쇼콜라 + 공방 일꾼 + 기믹 소품
-# 보스 진행(짤패턴 6·기믹 7·대사)은 애드온 chapepero (PeperoBoss.java). 경기장 = 보스 소환 위치 중심 반경 16 (arena=).
+# 보스 진행(짤패턴 6·기믹 7·대사)은 애드온 chapepero (PeperoBoss.java). 경기장 = 보스 소환 위치 중심 반경 20 (arena=, 달콤한 악몽 맵 = 하베스트와 같은 20).
 # 체력 12000 (8000 → 1.5배, 11/11 오너 "너무 쉽다"). 기믹 기준선 85·70·55·40·30·20·10%. 공짜 딜 시간(그로기) 없음.
 # 모델: models/pepero_day/*.bbmodel → ModelEngine blueprints. VFX: PepChocola (공격) · PepSweet (연출) · PepGimmick (기믹).
 # 소품(자물쇠·분신)은 애드온이 소환·제거한다. 졸개도 애드온이 부른다 (최대 6마리).
@@ -48,7 +48,7 @@ CA_Boss_pep_chocola:
   - addtag{t=chacademia_boss} @self ~onSpawn   # 크로스 애로우 처형 막기 + 보스 체력바
   - addtag{t=chacademia_custom} @self ~onSpawn
   - model{mid=pep_chocola;hb=true;n=false;drive=true} @self ~onSpawn
-  - chapepero{a=start;arena=16;white=false} @self ~onSpawn
+  - chapepero{a=start;arena=20;white=false} @self ~onSpawn
   - state{s=death;li=0;lo=0} @self ~onDeath
   Drops: []
 
@@ -97,7 +97,7 @@ CA_Boss_pep_chocola_shiny:
   - addtag{t=chacademia_boss} @self ~onSpawn   # 크로스 애로우 처형 막기 + 보스 체력바
   - addtag{t=chacademia_custom} @self ~onSpawn
   - model{mid=pep_chocola_shiny;hb=true;n=false;drive=true} @self ~onSpawn
-  - chapepero{a=start;arena=16;white=true} @self ~onSpawn
+  - chapepero{a=start;arena=20;white=true} @self ~onSpawn
   - state{s=death;li=0;lo=0} @self ~onDeath
   Drops: []
 
