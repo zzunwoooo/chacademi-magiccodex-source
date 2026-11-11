@@ -60,3 +60,18 @@
 - 봉인 중에도 예약된 패턴·예고가 터지던 것 → 예약 실행·예고 판정 모두 봉인 중엔 안 함.
 - 분신 기믹이 1초 안에 끝나도 분신이 뒤늦게 생기던 것, 혼자 시험 모드가 서버 전체에 걸리던 것(→ 그 보스만), 소품 목록 안 비우던 것, 구하러 갈 사람이 한 명뿐이면 자물쇠 2초 동시 파괴 불가(→ 10초).
 - 아몬드 굴림이 박치기 모션 없던 것 추가. 경기장 반경 16 → 20 (맵 = 하베스트와 같은 20). 의뢰 반영 명령 = /퀘스트관리 파일반영.
+
+## 11/11 넓은 범위 점검 (라이브 학교 서버 설정과 대조)
+- 보상·의뢰·선물 아이템 16종 전부 라이브 ItemsAdder 에 있음 (item: 이름 그대로).
+- 의뢰 파일 형식 = 라이브 quests.yml 과 같음 (EVENT·MYTHIC_KILL·iagive·lp). 반영 = /퀘스트관리 파일반영.
+- 코코 NPC 파일 형식 = 라이브 treat.yml 과 같음, 관계 대상(treat·tc_berna)·선물 아이템 있음.
+  ⚠ 코코는 3D 외형 모델이 없음 (라이브 NPC 는 클라 npc 모델 + npc-models.yml) → 그대로 두면 기본 사람 모습. 초상화 coco-neutral 도 없음.
+- 던전 칸 겹침: ChacaDungeon 은 칸 사용 중 표시를 던전별로 셈 → **pepero_day 와 sweet_nightmare 가 같은 칸·같은 입구(world 444,108,-51)** 라
+  둘 다 열려 있으면 두 파티가 한 칸에 겹침. sweet_nightmare 권한은 default 그룹 전원에게 있음 (10/31 lp group default ... sweet_nightmare true)
+  → 이벤트 시작 때 `lp group default permission unset chacademi.dungeon.enter.sweet_nightmare` (또는 sweet_nightmare portal 제거) 꼭 같이.
+- 던전 이지 배율: 체력은 소환 직후 곱하기 수정치(보스·분신 모두), 피해는 보스가 때린 것(EntityDamageByEntity)에 곱함 → 쇼콜라 패턴·기믹 피해에 그대로 먹음, 즉사(체력 0)는 그대로.
+  분신 체력 표시는 이 배율까지 계산해서 진짜와 맞춤.
+- 관전: 던전은 쓰러지면 SPECTATOR → 보스 코드의 "살아 있음" 판정에서 관전자 제외 (우리·빼빼로 게임·표식이 관전자에게 붙지 않게).
+- 교화: 교화 대상은 등록된 프로필 종류만이라 자물쇠·분신·졸개가 교화로 사라질 일 없음. 던전 보스 1% 교화 봉인 중엔 보스 코드 정지.
+- 졸개 스킬의 chavfx = 학교 ChacaDungeon 의 chavfx (id·r·ticks 같음), chatelegraph = 애드온.
+- 라이브 학교에 CA_Pep_·CHA_PEP_·PEP_·chapepero·pep_* 모델 이름 겹침 없음. 서버 PortableVFX effects 에는 보스 팩을 두지 않음 (다른 보스와 같음).

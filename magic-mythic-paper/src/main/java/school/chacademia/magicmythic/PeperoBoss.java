@@ -797,11 +797,7 @@ final class PeperoBoss extends Mech {
                     Location at = spots.get(k); at.setYaw(yawTo(at, f.center));
                     Fx.effect(f.plugin, "claude:pepgimmick/clone_poof", at, 0, 20);
                     Entity e = f.prop(f.white ? "CA_Pep_clone_shiny" : "CA_Pep_clone", at, "clone");
-                    if (e instanceof LivingEntity le) {   // 머리 위 체력 표시로 진짜를 가려낼 수 없게 진짜와 같은 체력 (11/11 점검)
-                        AttributeInstance mh = le.getAttribute(Attribute.MAX_HEALTH);
-                        if (mh != null) mh.setBaseValue(f.maxHp());
-                        le.setHealth(Math.max(1, Math.min(f.maxHp(), f.boss.getHealth())));
-                    }
+                    if (e instanceof LivingEntity le) syncHp(le);   // 머리 위 체력 표시로 진짜를 가려낼 수 없게 진짜와 같은 체력 (11/11 점검)
                     if (e != null) fakes.add(e);
                 }
                 lastHit.clear();
@@ -809,7 +805,7 @@ final class PeperoBoss extends Mech {
             @Override boolean step() {
                 super.step();
                 if (over) return false;
-                if (age % 4 == 0) for (Entity e : fakes) if (e instanceof LivingEntity le && le.isValid()) le.setHealth(Math.max(1, Math.min(f.maxHp(), f.boss.getHealth())));   // 진짜가 맞아도 체력 표시가 같이 줄게
+                if (age % 4 == 0) for (Entity e : fakes) if (e instanceof LivingEntity le && le.isValid()) syncHp(le);   // 진짜가 맞아도 체력 표시가 같이 줄게
                 if (age >= nextBlink) { f.anim("blink"); nextBlink = age + 50 + ReaperBoss.RNG.nextInt(30); }
                 if (age >= nextCast) { cast(); nextCast = age + 60; }
                 if (age >= nextShuffle) {
@@ -843,6 +839,12 @@ final class PeperoBoss extends Mech {
                 if (!all) { e.setCancelled(true); Fx.effect(f.plugin, "claude:pepgimmick/reflect", f.boss.getLocation(), 0, 10); return; }
                 dealt += e.getFinalDamage();
                 if (dealt >= f.maxHp() * 0.05) { over = true; f.later(1, this::found); }
+            }
+            /** 분신 최대·현재 체력 = 진짜. 던전 이지 체력 배율(곱하기 수정치)이 분신에도 붙으므로 실제 값 기준으로 맞춤. */
+            void syncHp(LivingEntity le) {
+                AttributeInstance mh = le.getAttribute(Attribute.MAX_HEALTH);
+                if (mh != null && Math.abs(mh.getValue() - f.maxHp()) > 0.5) mh.setBaseValue(Math.max(1, mh.getBaseValue() * f.maxHp() / Math.max(1e-6, mh.getValue())));
+                le.setHealth(Math.max(1, Math.min(le.getAttribute(Attribute.MAX_HEALTH) == null ? f.maxHp() : le.getAttribute(Attribute.MAX_HEALTH).getValue(), f.boss.getHealth())));
             }
             void fakeHit(Player by, Entity fake) {
                 Fx.effect(f.plugin, "claude:pepgimmick/reflect", fake.getLocation(), 0, 10);
@@ -911,7 +913,8 @@ final class PeperoBoss extends Mech {
             if (solo) { tell(pl, "§c[시험] 즉사 판정 (" + why + ") — 시험 모드라 살려 둠"); return; }
             later(4, () -> { if (alive(pl)) pl.setHealth(0); });
         }
-        static boolean alive(Player p) { return p != null && p.isValid() && !p.isDead(); }
+        /** 쓰러져 관전(SPECTATOR) 중인 사람은 살아 있지 않은 것으로 (우리·빼빼로 게임·표식이 관전자에게 붙지 않게, 11/11 점검). */
+        static boolean alive(Player p) { return p != null && p.isValid() && !p.isDead() && p.getGameMode() != GameMode.SPECTATOR; }
 
         void face(Location to) { Location l = boss.getLocation(); boss.setRotation(yawTo(l, to), 0); }
         static float yawTo(Location from, Location to) { return yawOf(to.toVector().subtract(from.toVector())); }
