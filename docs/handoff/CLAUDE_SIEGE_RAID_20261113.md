@@ -15,6 +15,10 @@
 | `mythicmobs/Skills/chacademi_raid_siege.yml` | 보스 모션 `CHA_SG_<SO\|RL\|BZ\|FD>_a_*` · 마수 스킬 `CHA_SGB_<마수>_<패턴>` · `CHA_SGB_portal_out` |
 | `magic-mythic-paper/models/siege/` | 보스 4 (+shiny) · `beasts/` 마수 8 (+shiny) · `source/` 생성기 |
 | `portable-vfx-runtime/assets/Siege_*` | VFX 팩 6개: Somnia · Roulette · Belzar · Demon · Beasts · Portal (`claude:siege_*`) |
+| `tools/siege_raid_vfx/` | VFX 원본: `Siege_*.js` 6개 + 공용 `lib.js` · `siege_lib.js` · `footer.js` + 텍스처 생성 `gen_raid.py` · `gen_siege.py` + `build.py` |
+| `magic-mythic-paper/models/siege/source/` | 모델 생성기: `siege_beasts.py` · `freed_demon_past.py` · `somnia_past.py` · `roulette_past.py` · `weapon_ik.py`(무기 방향) · `belzar/` |
+
+미리보기 (Claude 아티팩트): 모델 https://claude.ai/artifact/VJiYRDbRsAh2B2uTYi5qw1 · VFX https://claude.ai/artifact/4CuVQ1LLpSGVLpmxPEM8mR
 
 ## 1. 동작 요약
 
