@@ -1,0 +1,26 @@
+
+
+## PortableVFX client compatibility (tools/client_compat.py fix)
+
+- features removed: staticFacing
+- hound_bite: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- hound_lunge: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- hound_howl: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- ram_toss: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- ram_hit: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- lizard_sweep: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- lizard_spines: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- toad_spit: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- toad_tongue: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- toad_burst: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- twin_bite: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- twin_breath: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- behemoth_quake: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- behemoth_ram: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stalker_claw: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stalker_pounce: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stalker_dive: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stinger_stab: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stinger_shot: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stinger_blink_out: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- stinger_blink_in: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)

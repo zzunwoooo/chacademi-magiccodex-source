@@ -1,0 +1,25 @@
+
+
+## PortableVFX client compatibility (tools/client_compat.py fix)
+
+- features removed: staticFacing
+- debt_due: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- white_in: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- black_out: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- white_out: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- black_in: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- debt_chain: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- claw: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- feather_mine: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- mine_burst: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- halo_close: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- mirror_white: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- mirror_black: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- spear_step: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- interest_1: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- interest_2: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- interest_3: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- final_white: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- final_black: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- gate_strike: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)
+- enrage: staticFacing 표기 제거 (서버가 static 연출의 기준 방향을 시전자 수평 방향으로 이미 보냄 → 방향 유지)

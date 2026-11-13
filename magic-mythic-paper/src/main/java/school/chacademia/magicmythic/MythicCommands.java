@@ -37,7 +37,7 @@ final class MythicCommands {
             "마나·쿨타임 없이 마법의 미몹 스킬만 실행", "마법 시전 ");
         ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("몹").then(telegraph()).then(telegraphFx()).then(status()),
             "몹 예고 장판·예고 효과·상태이상 시험", "몹 예고 전부");
-        ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("보스").then(reaper()).then(ashShadow()).then(timeWraith()).then(mordian()).then(elysia()).then(roulette()).then(somnia()),
+        ChacaLink.branch(plugin, ChacaLink.테스트, Commands.literal("보스").then(reaper()).then(ashShadow()).then(timeWraith()).then(mordian()).then(elysia()).then(roulette()).then(somnia()).then(siege()),
             "보스 시험: 하베스트(기믹 1~3·패턴 pXX·혼자·초기화) / 재의그림자(패턴·장치 0~3·탄막·그로기·변신·초기화) (64칸 안)", "보스 하베스트 기믹 1");
         if (plugin.dummies() != null)
             ChacaLink.branch(plugin, ChacaLink.컨텐츠관리, plugin.dummies().command(), "마법 연습장 훈련 허수아비 설치(서 있는 곳)·제거(3칸 안)·목록", "연습장 허수아비 설치");
@@ -209,6 +209,25 @@ final class MythicCommands {
             .then(Commands.literal("하우스룰").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), RouletteBoss.test(self(ctx), "하우스룰", "")); return 1; }))
             .then(Commands.literal("광폭화").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), RouletteBoss.test(self(ctx), "광폭화", "")); return 1; }))
             .then(Commands.literal("초기화").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), RouletteBoss.test(self(ctx), "초기화", "")); return 1; }));
+    }
+
+    // ------------------------------------------------------------------ /테스트 보스 공성전 (3인 공성전 레이드)
+
+    private LiteralArgumentBuilder<CommandSourceStack> siege() {
+        var pats = SiegeRaid.PATTERN_IDS; var beasts = java.util.List.copyOf(SiegeRaid.BEASTS.keySet());
+        return Commands.literal("공성전")
+            .then(Commands.literal("단계").then(Commands.argument("단계", IntegerArgumentType.integer(1, 4))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "단계", String.valueOf(IntegerArgumentType.getInteger(ctx, "단계")))); return 1; })))
+            .then(Commands.literal("보스").then(Commands.argument("단계", IntegerArgumentType.integer(1, 4))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "보스", String.valueOf(IntegerArgumentType.getInteger(ctx, "단계")))); return 1; })))
+            .then(Commands.literal("패턴").then(Commands.argument("패턴", ChacaLink.word(() -> pats))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "패턴", StringArgumentType.getString(ctx, "패턴"))); return 1; })))
+            .then(Commands.literal("마수").then(Commands.argument("마수", ChacaLink.word(() -> beasts))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "마수", StringArgumentType.getString(ctx, "마수"))); return 1; })))
+            .then(Commands.literal("성문").then(Commands.argument("퍼센트", IntegerArgumentType.integer(1, 100))
+                .executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "성문", String.valueOf(IntegerArgumentType.getInteger(ctx, "퍼센트")))); return 1; })))
+            .then(Commands.literal("광폭화").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "광폭화", "")); return 1; }))
+            .then(Commands.literal("초기화").executes(ctx -> { ChacaLink.ok(ctx.getSource().getSender(), SiegeRaid.test(self(ctx), "초기화", "")); return 1; }));
     }
 
     private LiteralArgumentBuilder<CommandSourceStack> somnia() {

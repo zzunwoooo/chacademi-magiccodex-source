@@ -1,0 +1,734 @@
+# 공성전 레이드 보스 모션 + 마수 스킬 (2026-11-13).
+# 보스 짤패턴(예고·판정·VFX·대상)은 애드온 chasiege (SiegeRaid.java) 안. 보스는 ModelEngine 상태 재생만: CHA_SG_<SO|RL|BZ|FD>_a_<모션>.
+# 마수는 여기 스킬로 스스로 싸운다: 모션(state) + VFX(chavfx, 팩 Siege_Beasts = claude:siege_beasts/<시스템>) + 빨간 예고·판정(chatelegraph).
+#   VFX 는 마수 발밑·정면 기준으로 만들어져 있어 모션과 같은 순간에 재생하면 타격 시점이 맞는다. 포탈 등장은 CHA_SGB_portal_out.
+#   성문에 붙었을 때는 애드온이 CHA_SGB_<마수>_gate 를 2초마다 시전하고 성문 체력을 깎는다.
+#
+# 애드온 보스 패턴 대응표 (/테스트 보스 공성전 패턴 <id>)   모션 / VFX 시스템 / 범위
+#   [솜니아 claude:siege_somnia]  orb 꿈방울 orb_summon / dream_orb(따라감) → dream_orb_pop r2.5 · gaze 돌아가는 시선 gaze_sweep / 광선 3개 26×1.6 5초 회전
+#     lullaby 자장가 물결 lullaby_wave ×3 / 고리 2→18 뛰어넘기 · echo 악몽의 잔상 echo_cast / nightmare_echo r2 ×10 · yawn 하품 / yawn_pull → yawn_burst r7
+#     fog 잠의 안개 fog_cast / sleep_fog r4.6 8초 ×3 · eyelid 눈꺼풀 / eyelid_band 36×6 ×6 · fullmoon(광폭화) 만월 낙하 full_moon r8
+#   [룰레타 claude:siege_roulette]  cards 카드 부메랑 card_boomerang / card_out → card_back 18×1.5 ×5 · dice 튕기는 주사위 dice_roll / dice_hop ×3 → dice_pop_s|m|l
+#     domino 칩 도미노 chip_domino 20×3 ×2 · coin 동전 coin_flip / coin_toss → coin_heads_in r8 | coin_tails_out 8~16 · slot 슬롯 slot_pull / slot_lane 40×4 ×3
+#     sectors 룰렛 난사 call_bets / sector_red·gold·violet 60° r16 · hands 여섯 손 six_hands / hand_slam r2.5 ×6 · allin 올인 all_in 180° r12 · jackpot(광폭화) r2.5 ×24
+#   [벨자르 claude:siege_belzar]  debt 청구서 debt_mark(따라감) → debt_due r4 · invert 흑백 반전 invert_white_first|invert_black_first / white_in·black_out | white_out·black_in
+#     chain 사슬 포박 chain_pull / debt_chain 24×2 → claw 100° r5 · mines 깃털 지뢰 feather_scatter → black_wave / feather_mine → mine_burst r3.5 ×5
+#     halo 좁혀드는 후광 halo_close 18→1 뛰어넘기 · mirror 거울 일격 mirror_strike / mirror_white + mirror_black 20×5 · spears 행진하는 창 spear_march / spear_step r2 ×8
+#     interest 복리 interest_1~3 r3→5.5→8 · final(광폭화) 최후 청구 final_claim / final_white → final_black 12×12 체스판
+#   [악마 claude:siege_demon]  combo 대검 3연격 swing_r → swing_l → cleave · leap 도약 강타 leap / leap_crater r6 → leap_wave 6→24 · dash 지옥 돌진 dash 32×6 → dash_fire 5초
+#     throw 마검 투척 sword_throw r7 → sword_recall · fissure 지면 가르기 fissure / fissure_run 28×3 ×3 · breath 숨결 breath / breath_seg 30° r16 ×7
+#     pillars 추적 불기둥 pillar_cast / hell_pillar r2.5 ×6 · wings 강풍 wing_gust / wing_storm 160° r18 · roar 포효 / roar_wave 2→28 ×3 · doom(광폭화) doom_half 18×48 ×2
+#   [공통] gate 성문 강타 gate_strike / gate_strike 24×5(악마 6) — 성문 체력 5% (악마 8%) · 광폭화 enrage / enrage
+
+# ---------------- 몽마 솜니아
+CHA_SG_SO_clear:
+  Skills:
+  - state{s=lullaby;r=true} @self
+  - state{s=groggy;r=true} @self
+
+CHA_SG_SO_a_spawn:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+
+CHA_SG_SO_a_attack:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=attack;li=0;lo=3} @self
+
+CHA_SG_SO_a_wing_gust:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=wing_gust;li=0;lo=3} @self
+
+CHA_SG_SO_a_gaze:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=gaze;li=0;lo=3} @self
+
+CHA_SG_SO_a_staff_cast:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=staff_cast;li=0;lo=3} @self
+
+CHA_SG_SO_a_press:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=press;li=0;lo=3} @self
+
+CHA_SG_SO_a_enrage:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=enrage;li=0;lo=3} @self
+
+CHA_SG_SO_a_orb_summon:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=orb_summon;li=0;lo=3} @self
+
+CHA_SG_SO_a_gaze_sweep:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=gaze_sweep;li=0;lo=3} @self
+
+CHA_SG_SO_a_moon_orbit:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=moon_orbit;li=0;lo=3} @self
+
+CHA_SG_SO_a_lullaby_wave:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=lullaby_wave;li=0;lo=3} @self
+
+CHA_SG_SO_a_echo_cast:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=echo_cast;li=0;lo=3} @self
+
+CHA_SG_SO_a_yawn:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=yawn;li=0;lo=3} @self
+
+CHA_SG_SO_a_fog_cast:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=fog_cast;li=0;lo=3} @self
+
+CHA_SG_SO_a_eyelid:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=eyelid;li=0;lo=3} @self
+
+CHA_SG_SO_a_full_moon:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=full_moon;li=0;lo=3} @self
+
+CHA_SG_SO_a_gate_strike:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=gate_strike;li=0;lo=3} @self
+
+CHA_SG_SO_a_lullaby:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=lullaby;li=3;lo=3} @self
+
+CHA_SG_SO_a_groggy:
+  Skills:
+  - skill{s=CHA_SG_SO_clear} @self
+  - state{s=groggy;li=3;lo=3} @self
+
+# ---------------- 룰레타
+CHA_SG_RL_clear:
+  Skills:
+  - state{s=spin_cast;r=true} @self
+  - state{s=groggy;r=true} @self
+  - state{s=needle_fast;r=true} @self
+
+CHA_SG_RL_a_spawn:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+
+CHA_SG_RL_a_attack:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=attack;li=0;lo=3} @self
+
+CHA_SG_RL_a_call_bets:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=call_bets;li=0;lo=3} @self
+
+CHA_SG_RL_a_card_throw:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=card_throw;li=0;lo=3} @self
+
+CHA_SG_RL_a_cane_slam:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=cane_slam;li=0;lo=3} @self
+
+CHA_SG_RL_a_dice_roll:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=dice_roll;li=0;lo=3} @self
+
+CHA_SG_RL_a_all_in:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=all_in;li=0;lo=3} @self
+
+CHA_SG_RL_a_enrage:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=enrage;li=0;lo=3} @self
+
+CHA_SG_RL_a_card_boomerang:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=card_boomerang;li=0;lo=3} @self
+
+CHA_SG_RL_a_chip_domino:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=chip_domino;li=0;lo=3} @self
+
+CHA_SG_RL_a_coin_flip:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=coin_flip;li=0;lo=3} @self
+
+CHA_SG_RL_a_slot_pull:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=slot_pull;li=0;lo=3} @self
+
+CHA_SG_RL_a_six_hands:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=six_hands;li=0;lo=3} @self
+
+CHA_SG_RL_a_jackpot:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=jackpot;li=0;lo=3} @self
+
+CHA_SG_RL_a_gate_strike:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=gate_strike;li=0;lo=3} @self
+
+CHA_SG_RL_a_spin_cast:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=spin_cast;li=3;lo=3} @self
+
+CHA_SG_RL_a_groggy:
+  Skills:
+  - skill{s=CHA_SG_RL_clear} @self
+  - state{s=groggy;li=3;lo=3} @self
+
+# ---------------- 벨자르
+CHA_SG_BZ_clear:
+  Skills:
+  - state{s=groggy;r=true} @self
+
+CHA_SG_BZ_a_spawn:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+
+CHA_SG_BZ_a_attack:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=attack;li=0;lo=3} @self
+
+CHA_SG_BZ_a_judgment:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=judgment;li=0;lo=3} @self
+
+CHA_SG_BZ_a_collect:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=collect;li=0;lo=3} @self
+
+CHA_SG_BZ_a_wing_burst:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=wing_burst;li=0;lo=3} @self
+
+CHA_SG_BZ_a_tail_swing:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=tail_swing;li=0;lo=3} @self
+
+CHA_SG_BZ_a_cast:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=cast;li=0;lo=3} @self
+
+CHA_SG_BZ_a_debt_mark:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=debt_mark;li=0;lo=3} @self
+
+CHA_SG_BZ_a_invert_white_first:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=invert_white_first;li=0;lo=3} @self
+
+CHA_SG_BZ_a_invert_black_first:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=invert_black_first;li=0;lo=3} @self
+
+CHA_SG_BZ_a_chain_pull:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=chain_pull;li=0;lo=3} @self
+
+CHA_SG_BZ_a_feather_scatter:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=feather_scatter;li=0;lo=3} @self
+
+CHA_SG_BZ_a_black_wave:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=black_wave;li=0;lo=3} @self
+
+CHA_SG_BZ_a_halo_close:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=halo_close;li=0;lo=3} @self
+
+CHA_SG_BZ_a_mirror_strike:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=mirror_strike;li=0;lo=3} @self
+
+CHA_SG_BZ_a_spear_march:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=spear_march;li=0;lo=3} @self
+
+CHA_SG_BZ_a_interest:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=interest;li=0;lo=3} @self
+
+CHA_SG_BZ_a_final_claim:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=final_claim;li=0;lo=3} @self
+
+CHA_SG_BZ_a_gate_strike:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=gate_strike;li=0;lo=3} @self
+
+CHA_SG_BZ_a_enrage:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=enrage;li=0;lo=3} @self
+
+CHA_SG_BZ_a_groggy:
+  Skills:
+  - skill{s=CHA_SG_BZ_clear} @self
+  - state{s=groggy;li=3;lo=3} @self
+
+# ---------------- 해방된 악마
+CHA_SG_FD_clear:
+  Skills:
+  - state{s=taunt;r=true} @self
+  - state{s=groggy;r=true} @self
+
+CHA_SG_FD_a_spawn:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=spawn;li=0;lo=3} @self
+
+CHA_SG_FD_a_attack:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=attack;li=0;lo=3} @self
+
+CHA_SG_FD_a_sword_sweep:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=sword_sweep;li=0;lo=3} @self
+
+CHA_SG_FD_a_slam:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=slam;li=0;lo=3} @self
+
+CHA_SG_FD_a_claw:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=claw;li=0;lo=3} @self
+
+CHA_SG_FD_a_dash:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=dash;li=0;lo=3} @self
+
+CHA_SG_FD_a_cast:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=cast;li=0;lo=3} @self
+
+CHA_SG_FD_a_wing_gust:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=wing_gust;li=0;lo=3} @self
+
+CHA_SG_FD_a_roar:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=roar;li=0;lo=3} @self
+
+CHA_SG_FD_a_swing_r:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=swing_r;li=0;lo=3} @self
+
+CHA_SG_FD_a_swing_l:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=swing_l;li=0;lo=3} @self
+
+CHA_SG_FD_a_cleave:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=cleave;li=0;lo=3} @self
+
+CHA_SG_FD_a_leap:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=leap;li=0;lo=3} @self
+
+CHA_SG_FD_a_sword_throw:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=sword_throw;li=0;lo=3} @self
+
+CHA_SG_FD_a_sword_recall:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=sword_recall;li=0;lo=3} @self
+
+CHA_SG_FD_a_fissure:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=fissure;li=0;lo=3} @self
+
+CHA_SG_FD_a_breath:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=breath;li=0;lo=3} @self
+
+CHA_SG_FD_a_pillar_cast:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=pillar_cast;li=0;lo=3} @self
+
+CHA_SG_FD_a_doom:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=doom;li=0;lo=3} @self
+
+CHA_SG_FD_a_gate_strike:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=gate_strike;li=0;lo=3} @self
+
+CHA_SG_FD_a_enrage:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=roar;li=0;lo=3} @self
+
+CHA_SG_FD_a_taunt:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=taunt;li=3;lo=3} @self
+
+CHA_SG_FD_a_groggy:
+  Skills:
+  - skill{s=CHA_SG_FD_clear} @self
+  - state{s=groggy;li=3;lo=3} @self
+
+# ================================================================ 마수 공통
+# 포탈에서 튀어나옴 (애드온이 소환 직후 시전, VFX siege_portal/spawn_burst 와 짝)
+CHA_SGB_portal_out:
+  Skills:
+  - state{s=portal_out;li=0;lo=3} @self
+
+# ================================================================ 지옥견 — 근접·도약
+# 물기 (0.45초)
+CHA_SGB_hound_bite:
+  Cooldown: 2.5
+  Conditions:
+  - targetwithin{d=4.5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/hound_bite;at=caster;ticks=24}
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=90;ticks=9;warn=false;flat=12;element=fire;spell=mob_sg_hound_bite} @target
+
+# 도약 물어뜯기: 0.25초에 뛰어 0.6초에 물고 머리를 흔든다 (대상 자리 원 r3)
+CHA_SGB_hound_lunge:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=16} true
+  - targetwithin{d=5} false
+  Skills:
+  - state{s=lunge_bite;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/hound_lunge;at=target;ticks=34}
+  - chatelegraph{shape=circle;at=target;r=3;ticks=12;flat=18;element=fire;spell=mob_sg_hound_lunge} @target
+  - delay 5
+  - lunge{velocity=1.5;velocityY=0.35} @target
+
+# 무리 울음: 12칸 안 지옥견·쌍두 마견·추적자가 8초 동안 빨라지고 세진다
+CHA_SGB_hound_howl:
+  Cooldown: 30
+  Conditions:
+  - targetwithin{d=24} true
+  Skills:
+  - state{s=howl;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/hound_howl;at=caster;ticks=50}
+  - delay 12
+  - potion{type=SPEED;duration=160;level=1} @MobsInRadius{r=12;types=CA_Siege_hound,CA_Siege_hound_shiny,CA_Siege_twin,CA_Siege_twin_shiny,CA_Siege_stalker,CA_Siege_stalker_shiny}
+  - potion{type=STRENGTH;duration=160;level=0} @MobsInRadius{r=12;types=CA_Siege_hound,CA_Siege_hound_shiny,CA_Siege_twin,CA_Siege_twin_shiny,CA_Siege_stalker,CA_Siege_stalker_shiny}
+
+# 성문 물어뜯기 (애드온)
+CHA_SGB_hound_gate:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/hound_bite;at=caster;ticks=24}
+
+# ================================================================ 뿔 돌격수 — 근접·돌진 (성문 직행)
+# 뿔 치켜올리기 (0.55초, 띄움)
+CHA_SGB_ram_toss:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/ram_toss;at=caster;ticks=30}
+  - chatelegraph{shape=cone;at=caster;r=5.5;angle=70;ticks=11;flat=18;element=earth;up=0.9;spell=mob_sg_ram_toss} @target
+
+# 직선 돌진: 1초 땅을 긁고 → 0.5초 질주(불길 자국) → 충돌 (직선 16 × 3.5)
+CHA_SGB_ram_charge:
+  Cooldown: 12
+  Conditions:
+  - targetwithin{d=20} true
+  - targetwithin{d=6} false
+  Skills:
+  - state{s=charge_ready;li=0;lo=3} @self
+  - chatelegraph{shape=line;at=caster;length=16;width=3.5;ticks=30;flat=26;element=earth;knock=1.4;spell=mob_sg_ram_charge} @target
+  - delay 20
+  - state{s=charge_run;li=0;lo=0} @self
+  - chavfx{id=siege_beasts/ram_trail;at=caster;ticks=12;follow=true}
+  - lunge{velocity=2.1;velocityY=0.12} @target
+  - delay 10
+  - state{s=charge_run;r=true} @self
+  - state{s=charge_hit;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/ram_hit;at=caster;ticks=26}
+
+# 성문 들이받기 (애드온)
+CHA_SGB_ram_gate:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/ram_toss;at=caster;ticks=30}
+
+# ================================================================ 가시 도마뱀 — 원거리 (성문 직행)
+# 꼬리 쓸기: 몸을 한 바퀴 돌린다 (자기 주변 r6.5)
+CHA_SGB_lizard_sweep:
+  Cooldown: 4
+  Conditions:
+  - targetwithin{d=6} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/lizard_sweep;at=caster;ticks=28}
+  - chatelegraph{shape=circle;at=caster;r=6.5;ticks=10;flat=14;element=earth;knock=0.8;spell=mob_sg_lizard_sweep} @self
+
+# 등 가시 발사: 0.8초에 쏜다 (정면 직선 19 × 6)
+CHA_SGB_lizard_spines:
+  Cooldown: 8
+  Conditions:
+  - targetwithin{d=22} true
+  - targetwithin{d=7} false
+  Skills:
+  - state{s=spine_volley;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/lizard_spines;at=caster;ticks=46}
+  - chatelegraph{shape=line;at=caster;length=19;width=6;ticks=18;flat=16;element=earth;spell=mob_sg_lizard_spines} @target
+
+# 성문에 꼬리치기 (애드온)
+CHA_SGB_lizard_gate:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/lizard_sweep;at=caster;ticks=28}
+
+# ================================================================ 불씨 두꺼비 — 원거리·끌어당기기·자폭 (성문 직행)
+# 불씨 뱉기: 불덩이가 정면 10칸에 1.5초 뒤 떨어진다 (VFX 착탄이 정면 10칸 고정이라 대상이 7~12칸일 때만 쓴다)
+CHA_SGB_toad_spit:
+  Cooldown: 5
+  Conditions:
+  - targetwithin{d=12} true
+  - targetwithin{d=7} false
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/toad_spit;at=caster;ticks=90}
+  - chatelegraph{shape=circle;at=target;r=3.5;ticks=30;flat=18;element=fire;ignite=40;spell=mob_sg_toad_spit} @target
+
+# 혀로 끌어당기기: 0.45초에 혀가 닿으면 두꺼비 앞으로 끌려온다 (직선 13 × 1.6)
+CHA_SGB_toad_tongue:
+  Cooldown: 10
+  Conditions:
+  - targetwithin{d=13} true
+  - targetwithin{d=4} false
+  Skills:
+  - state{s=tongue_pull;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/toad_tongue;at=caster;ticks=40}
+  - chatelegraph{shape=line;at=caster;length=13;width=1.6;ticks=9;flat=6;element=fire;tpme=true;spell=mob_sg_toad_tongue} @target
+
+# 자폭: 플레이어가 4.5칸 안에 오면 부풀어 0.9초에 터지고 사라진다 (r5)
+CHA_SGB_toad_burst:
+  Cooldown: 20
+  Conditions:
+  - playerwithin{d=4.5} true
+  Skills:
+  - state{s=burst;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/toad_burst;at=caster;ticks=56}
+  - chatelegraph{shape=circle;at=caster;r=5;ticks=18;flat=30;element=fire;ignite=60;cancel=false;spell=mob_sg_toad_burst} @self
+  - delay 24
+  - remove @self
+
+# 성문 앞 자폭 (애드온이 성문 체력을 깎고, 두꺼비는 사라진다)
+CHA_SGB_toad_gate:
+  Skills:
+  - state{s=burst;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/toad_burst;at=caster;ticks=56}
+  - delay 24
+  - remove @self
+
+# ================================================================ 쌍두 마견 — 근접 + 원거리
+# 두 번 물기 (0.5초 · 0.7초)
+CHA_SGB_twin_bite:
+  Cooldown: 3
+  Conditions:
+  - targetwithin{d=5.5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/twin_bite;at=caster;ticks=28}
+  - chatelegraph{shape=cone;at=caster;r=5;angle=100;ticks=10;warn=false;flat=12;element=fire;spell=mob_sg_twin_bite} @target
+  - chatelegraph{shape=cone;at=caster;r=5;angle=100;ticks=14;warn=false;flat=12;element=dark;spell=mob_sg_twin_bite} @target
+
+# 쌍두 화염 숨결: 0.7~1.9초 동안 두 줄기가 교차 (정면 부채꼴 70° r14, 0.25초마다 5번)
+CHA_SGB_twin_breath:
+  Cooldown: 11
+  Conditions:
+  - targetwithin{d=14} true
+  Skills:
+  - state{s=twin_breath;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/twin_breath;at=caster;ticks=64}
+  - chatelegraph{shape=cone;at=caster;r=14;angle=70;ticks=14;flat=8;element=fire;ignite=40;pulses=5;period=5;spell=mob_sg_twin_breath} @target
+
+# 성문 물어뜯기 (애드온)
+CHA_SGB_twin_gate:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/twin_bite;at=caster;ticks=28}
+
+# ================================================================ 공성 거수 — 공성 (성문 직행, 큰 포탈)
+# 지진 발구르기: 1.05초에 내려찍는다 (자기 주변 r12, 띄움)
+CHA_SGB_behemoth_quake:
+  Cooldown: 7
+  Conditions:
+  - targetwithin{d=10} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/behemoth_quake;at=caster;ticks=64}
+  - chatelegraph{shape=circle;at=caster;r=12;ticks=21;flat=30;element=earth;up=0.6;spell=mob_sg_behemoth_quake} @self
+
+# 공성추 들이받기: 1.45초 (정면 직선 12 × 7, 크게 밀림)
+CHA_SGB_behemoth_ram:
+  Cooldown: 14
+  Conditions:
+  - targetwithin{d=16} true
+  Skills:
+  - state{s=gate_ram;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/behemoth_ram;at=caster;ticks=64}
+  - chatelegraph{shape=line;at=caster;length=12;width=7;ticks=29;flat=36;element=earth;knock=1.8;spell=mob_sg_behemoth_ram} @target
+
+# 성문 들이받기 (애드온, 성문 피해가 가장 크다)
+CHA_SGB_behemoth_gate:
+  Skills:
+  - state{s=gate_ram;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/behemoth_ram;at=caster;ticks=64}
+
+# ================================================================ 날개 추적자 — 도약·급강하
+# 할퀴기 (0.42초)
+CHA_SGB_stalker_claw:
+  Cooldown: 2.5
+  Conditions:
+  - targetwithin{d=4.5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/stalker_claw;at=caster;ticks=22}
+  - chatelegraph{shape=cone;at=caster;r=4.5;angle=90;ticks=8;warn=false;flat=14;element=dark;spell=mob_sg_stalker_claw} @target
+
+# 도약 덮치기: 0.85초에 대상 자리로 덮친다 (원 r4, 그 자리로 이동)
+CHA_SGB_stalker_pounce:
+  Cooldown: 9
+  Conditions:
+  - targetwithin{d=18} true
+  - targetwithin{d=6} false
+  Skills:
+  - state{s=pounce;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=4;ticks=17;flat=22;element=dark;blink=true;vfx=siege_beasts/stalker_pounce;vfxref=4;vfxlead=17;spell=mob_sg_stalker_pounce} @target
+
+# 급강하: 솟아올랐다가 1.3초에 내리꽂는다 (원 r5, 그 자리로 이동)
+CHA_SGB_stalker_dive:
+  Cooldown: 16
+  Conditions:
+  - targetwithin{d=24} true
+  - targetwithin{d=8} false
+  Skills:
+  - state{s=dive;li=0;lo=3} @self
+  - chatelegraph{shape=circle;at=target;r=5;ticks=26;flat=30;element=dark;blink=true;vfx=siege_beasts/stalker_dive;vfxref=5;vfxlead=26;spell=mob_sg_stalker_dive} @target
+
+# 성문 할퀴기 (애드온)
+CHA_SGB_stalker_gate:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/stalker_claw;at=caster;ticks=22}
+
+# ================================================================ 독침 마수 — 원거리·땅속 이동
+# 꼬리 찌르기 (0.5초, 둔화)
+CHA_SGB_stinger_stab:
+  Cooldown: 3.5
+  Conditions:
+  - targetwithin{d=6.5} true
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/stinger_stab;at=caster;ticks=50}
+  - chatelegraph{shape=cone;at=caster;r=6.5;angle=40;ticks=10;flat=14;element=dark;status=slow:40:0.3;spell=mob_sg_stinger_stab} @target
+
+# 독침 발사: 0.7초에 쏜다 (정면 직선 18 × 1.6, 둔화)
+CHA_SGB_stinger_shot:
+  Cooldown: 7
+  Conditions:
+  - targetwithin{d=20} true
+  - targetwithin{d=8} false
+  Skills:
+  - state{s=sting_shot;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/stinger_shot;at=caster;ticks=74}
+  - chatelegraph{shape=line;at=caster;length=18;width=1.6;ticks=14;flat=18;element=dark;status=slow:60:0.3;spell=mob_sg_stinger_shot} @target
+
+# 땅속 이동: 가라앉아 사라진 뒤 대상 옆에서 솟구치며 찌른다 (원 r4.5)
+CHA_SGB_stinger_blink:
+  Cooldown: 15
+  Conditions:
+  - targetwithin{d=26} true
+  - targetwithin{d=10} false
+  Skills:
+  - state{s=blink_out;li=0;lo=0} @self
+  - chavfx{id=siege_beasts/stinger_blink_out;at=caster;ticks=30}
+  - delay 14
+  - chatelegraph{shape=circle;at=target;r=4.5;ticks=8;flat=20;element=dark;blink=true;vfx=siege_beasts/stinger_blink_in;vfxref=4.5;vfxlead=6;spell=mob_sg_stinger_blink} @target
+  - delay 8
+  - state{s=blink_out;r=true} @self
+  - state{s=blink_in;li=0;lo=3} @self
+
+# 성문 찌르기 (애드온)
+CHA_SGB_stinger_gate:
+  Skills:
+  - state{s=attack;li=0;lo=3} @self
+  - chavfx{id=siege_beasts/stinger_stab;at=caster;ticks=50}

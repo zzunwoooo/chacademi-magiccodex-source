@@ -1,0 +1,749 @@
+# 3인 공성전 레이드 "100년 전, 성문 방어전" (2026-11-13) — 성문 · 보스 4 (봉인 전 3천왕 + 해방된 악마) · 네발 마수 8종(+이로치).
+# 진행(마수 물결 · 포탈 · 보스 등장 · 짤패턴 · 성문 체력 · 승패)은 애드온 chasiege (SiegeRaid.java).
+#   /mm mobs spawn CA_Siege_gate — 소환한 자리 = 성문, 바라본 방향 = 적이 오는 쪽. 포탈은 그 방향 40칸 앞에 좌우 12칸 간격으로 3개.
+#   애드온이 없으면 보스·마수는 아래 미몹 스킬만으로 싸우는 몸으로 나온다 (성문·물결 없음).
+# 기믹 없음. 보스는 짤패턴만 (보스마다 9~10개, 체력 30% 아래 광폭화 뒤 1개 추가). 패턴 수치는 애드온 안, 대응표는 Skills 파일 머리말.
+#
+# 체력 (3인 기준, 지능 140 1분 딜 약 1500 × 3): 솜니아 9000 · 룰레타 10000 · 벨자르 11000 · 악마 16000 → 보스당 3~4분, 전체 약 15~18분.
+#   마수는 한두 번의 광역기에 쓰러지는 약한 몸(260~700), 공성 거수만 2600. 성문 체력은 CA_Siege_gate 의 gatehp (기본 4000).
+# 모델(ModelEngine): somnia_past · roulette_past · belzar_past · freed_demon_past · siege_<마수>[_shiny]. belzar_past 는 작게 만들어져 있어 1.8배 권장.
+
+# 성문 (보이지 않는 진행용 몸). 체력은 애드온이 따로 관리하고 화면 위 막대로 보여 준다.
+CA_Siege_gate:
+  Type: HUSK
+  Display: '&c성문'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    Invincible: true
+  Drops: []
+  Skills:
+  - potion{type=INVISIBILITY;duration=999999;level=1;force=true;hasParticles=false} @self ~onSpawn
+  - chasiege{a=start;lane=40;gatehp=4000} @self ~onSpawn
+
+# 연출용 표식 (꿈방울이 붙는 보이지 않는 몸). 애드온이 소환·제거.
+CA_Siege_marker:
+  Type: HUSK
+  Display: '&7표식'
+  Health: 1000
+  Options:
+    NoAI: true
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    Silent: true
+    Collidable: false
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+    NoGravity: true
+  Drops: []
+  Skills:
+  - potion{type=INVISIBILITY;duration=999999;level=1;force=true;hasParticles=false} @self ~onSpawn
+
+# ---------------- 보스 4 (애드온이 큰 포탈에서 차례로 소환)
+CA_Siege_boss_somnia:
+  Type: HUSK
+  Display: '&d&l몽마 솜니아'
+  Health: 9000
+  Damage: 22
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&d&l몽마 솜니아'
+    Range: 64
+    Color: PINK
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 56
+    MovementSpeed: 0.2
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=somnia_past;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SG_SO_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_boss_roulette:
+  Type: HUSK
+  Display: '&6&l룰레타'
+  Health: 10000
+  Damage: 22
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&6&l룰레타'
+    Range: 64
+    Color: YELLOW
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 56
+    MovementSpeed: 0.22
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=roulette_past;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SG_RL_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_boss_belzar:
+  Type: HUSK
+  Display: '&f&l벨자르'
+  Health: 11000
+  Damage: 24
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&f&l벨자르'
+    Range: 64
+    Color: WHITE
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 56
+    MovementSpeed: 0.22
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=belzar_past;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SG_BZ_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_boss_demon:
+  Type: HUSK
+  Display: '&4&l해방된 악마'
+  Health: 16000
+  Damage: 30
+  Armor: 0
+  BossBar:
+    Enabled: true
+    Title: '&4&l해방된 악마'
+    Range: 64
+    Color: RED
+    Style: SEGMENTED_10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 56
+    MovementSpeed: 0.2
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: false
+  Drops: []
+  Skills:
+  - model{mid=freed_demon_past;n=false;drive=true} @self ~onSpawn
+  - partvisibility{m=freed_demon_past;p=eyes_lie;v=false} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SG_FD_a_attack} @self ~onAttack
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+# ---------------- 네발 마수 8종 (+이로치). 애드온이 포탈에서 쏟아낸다. 공격은 Skills 파일의 CHA_SGB_<마수>_<패턴>.
+CA_Siege_hound:
+  Type: HUSK
+  Display: '&c지옥견'
+  Health: 260
+  Damage: 8
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.34
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_hound;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_hound_bite} @target ~onTimer:20 0.9
+  - skill{s=CHA_SGB_hound_lunge} @target ~onTimer:40 0.6
+  - skill{s=CHA_SGB_hound_howl} @target ~onTimer:200 0.25
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_ram:
+  Type: HUSK
+  Display: '&c뿔 돌격수'
+  Health: 600
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.8
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_ram;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_ram_toss} @target ~onTimer:30 0.9
+  - skill{s=CHA_SGB_ram_charge} @target ~onTimer:60 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_lizard:
+  Type: HUSK
+  Display: '&c가시 도마뱀'
+  Health: 420
+  Damage: 8
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.6
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_lizard;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_lizard_sweep} @target ~onTimer:30 0.9
+  - skill{s=CHA_SGB_lizard_spines} @target ~onTimer:50 0.7
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_toad:
+  Type: HUSK
+  Display: '&c불씨 두꺼비'
+  Health: 380
+  Damage: 6
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.2
+    KnockbackResistance: 0.6
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_toad;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_toad_spit} @target ~onTimer:40 0.8
+  - skill{s=CHA_SGB_toad_tongue} @target ~onTimer:60 0.6
+  - skill{s=CHA_SGB_toad_burst} @target ~onTimer:20 1
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_twin:
+  Type: HUSK
+  Display: '&5쌍두 마견'
+  Health: 700
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.3
+    KnockbackResistance: 0.7
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_twin;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_twin_bite} @target ~onTimer:24 0.9
+  - skill{s=CHA_SGB_twin_breath} @target ~onTimer:60 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_behemoth:
+  Type: HUSK
+  Display: '&4공성 거수'
+  Health: 2600
+  Damage: 20
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.16
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_behemoth;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_behemoth_quake} @target ~onTimer:40 0.9
+  - skill{s=CHA_SGB_behemoth_ram} @target ~onTimer:80 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_stalker:
+  Type: HUSK
+  Display: '&5날개 추적자'
+  Health: 320
+  Damage: 10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.36
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_stalker;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_stalker_claw} @target ~onTimer:20 0.9
+  - skill{s=CHA_SGB_stalker_pounce} @target ~onTimer:50 0.6
+  - skill{s=CHA_SGB_stalker_dive} @target ~onTimer:90 0.4
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_stinger:
+  Type: HUSK
+  Display: '&a독침 마수'
+  Health: 360
+  Damage: 8
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.26
+    KnockbackResistance: 0.5
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_stinger;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_stinger_stab} @target ~onTimer:26 0.9
+  - skill{s=CHA_SGB_stinger_shot} @target ~onTimer:44 0.7
+  - skill{s=CHA_SGB_stinger_blink} @target ~onTimer:90 0.4
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_hound_shiny:
+  Type: HUSK
+  Display: '&c지옥견'
+  Health: 260
+  Damage: 8
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.34
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_hound_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_hound_bite} @target ~onTimer:20 0.9
+  - skill{s=CHA_SGB_hound_lunge} @target ~onTimer:40 0.6
+  - skill{s=CHA_SGB_hound_howl} @target ~onTimer:200 0.25
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_ram_shiny:
+  Type: HUSK
+  Display: '&c뿔 돌격수'
+  Health: 600
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.24
+    KnockbackResistance: 0.8
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_ram_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_ram_toss} @target ~onTimer:30 0.9
+  - skill{s=CHA_SGB_ram_charge} @target ~onTimer:60 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_lizard_shiny:
+  Type: HUSK
+  Display: '&c가시 도마뱀'
+  Health: 420
+  Damage: 8
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.22
+    KnockbackResistance: 0.6
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_lizard_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_lizard_sweep} @target ~onTimer:30 0.9
+  - skill{s=CHA_SGB_lizard_spines} @target ~onTimer:50 0.7
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_toad_shiny:
+  Type: HUSK
+  Display: '&c불씨 두꺼비'
+  Health: 380
+  Damage: 6
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.2
+    KnockbackResistance: 0.6
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_toad_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_toad_spit} @target ~onTimer:40 0.8
+  - skill{s=CHA_SGB_toad_tongue} @target ~onTimer:60 0.6
+  - skill{s=CHA_SGB_toad_burst} @target ~onTimer:20 1
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_twin_shiny:
+  Type: HUSK
+  Display: '&5쌍두 마견'
+  Health: 700
+  Damage: 12
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 40
+    MovementSpeed: 0.3
+    KnockbackResistance: 0.7
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_twin_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_twin_bite} @target ~onTimer:24 0.9
+  - skill{s=CHA_SGB_twin_breath} @target ~onTimer:60 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_behemoth_shiny:
+  Type: HUSK
+  Display: '&4공성 거수'
+  Health: 2600
+  Damage: 20
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.16
+    KnockbackResistance: 1
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_behemoth_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_behemoth_quake} @target ~onTimer:40 0.9
+  - skill{s=CHA_SGB_behemoth_ram} @target ~onTimer:80 0.6
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_stalker_shiny:
+  Type: HUSK
+  Display: '&5날개 추적자'
+  Health: 320
+  Damage: 10
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.36
+    KnockbackResistance: 0.3
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_stalker_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_stalker_claw} @target ~onTimer:20 0.9
+  - skill{s=CHA_SGB_stalker_pounce} @target ~onTimer:50 0.6
+  - skill{s=CHA_SGB_stalker_dive} @target ~onTimer:90 0.4
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
+
+CA_Siege_stinger_shiny:
+  Type: HUSK
+  Display: '&a독침 마수'
+  Health: 360
+  Damage: 8
+  Options:
+    PreventOtherDrops: true
+    PreventRandomEquipment: true
+    PreventSunburn: true
+    PreventTransformation: true
+    PreventItemPickup: true
+    PreventRenaming: true
+    Silent: true
+    FollowRange: 48
+    MovementSpeed: 0.26
+    KnockbackResistance: 0.5
+    AlwaysShowName: false
+    Despawn: true
+  Drops: []
+  Skills:
+  - model{mid=siege_stinger_shiny;n=false;drive=true} @self ~onSpawn
+  - addtag{t=chacademia_custom} @self ~onSpawn
+  - skill{s=CHA_SGB_stinger_stab} @target ~onTimer:26 0.9
+  - skill{s=CHA_SGB_stinger_shot} @target ~onTimer:44 0.7
+  - skill{s=CHA_SGB_stinger_blink} @target ~onTimer:90 0.4
+  AIGoalSelectors:
+  - clear
+  - meleeattack
+  - lookatplayers
+  AITargetSelectors:
+  - clear
+  - players
+  - hurtbytarget
